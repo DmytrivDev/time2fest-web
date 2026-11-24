@@ -1,0 +1,598 @@
+{
+  "version": 1,
+  "season": "2026-27",
+  "channels": [
+    {
+      "channelId": "UC0q2YQodHMDf2MBtVq4SFSQ",
+      "name": "Седьмой канал | SHOW",
+      "kind": "tv",
+      "zones": [
+        "utc+0500"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UC52X5wxOL_s5yw0dQk7NtgA",
+      "name": "Associated Press",
+      "kind": "tv",
+      "zones": [
+        "utc+0100",
+        "utc-0800",
+        "utc+0800"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UC5BMIWZe9isJXLZZWPWvBlg",
+      "name": "KOMPASTV",
+      "kind": "tv",
+      "zones": [
+        "utc+0700"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UC5IF8NlxMW1GkEUUqWJJBIw",
+      "name": "NET25",
+      "kind": "tv",
+      "zones": [
+        "utc+0800"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UC7cv4INhQQwfJqiU-mel0QQ",
+      "name": "Liberty UA",
+      "kind": "irl",
+      "zones": [
+        "utc+0200"
+      ],
+      "priority": 3
+    },
+    {
+      "channelId": "UC8ROUUjHzEQm-ndb69CX8Ww",
+      "name": "台視新聞 TTV NEWS",
+      "kind": "tv",
+      "zones": [
+        "utc+0800"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UC9mdw2mmn49ZuqGOpSri7Fw",
+      "name": "Metrópoles",
+      "kind": "tv",
+      "zones": [
+        "utc-0300"
+      ],
+      "priority": 2
+    },
+    {
+      "channelId": "UCAsvFcpUQegneSh0QAUd64A",
+      "name": "Neo News",
+      "kind": "tv",
+      "zones": [
+        "utc+0500"
+      ],
+      "priority": 2
+    },
+    {
+      "channelId": "UCCj956IF62FbT7Gouszaj9w",
+      "name": "BBC",
+      "kind": "celebration",
+      "zones": [
+        "utc+0000"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UCD1BPP6uODLsHRCK0ID5lxA",
+      "name": "Lietuvos Respublikos Prezidentas Gitanas Nausėda",
+      "kind": "address",
+      "zones": [
+        "utc+0200"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UCEL9_gFV9YRasbbsu5v8Ynw",
+      "name": "JAMAICA WALK BY",
+      "kind": "irl",
+      "zones": [
+        "utc-0500"
+      ],
+      "priority": 3
+    },
+    {
+      "channelId": "UCEpId-jtRABuZyX6D2z6FZQ",
+      "name": "MEGA Oficial",
+      "kind": "tv",
+      "zones": [
+        "utc-0300"
+      ],
+      "priority": 2
+    },
+    {
+      "channelId": "UCFqGa9uitcB-fWyNZK2xImw",
+      "name": "Emmanuel Macron",
+      "kind": "address",
+      "zones": [
+        "utc+0100"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UCHd0ByCTMXuTHvJb7XEidbw",
+      "name": "Capital 21",
+      "kind": "celebration",
+      "zones": [
+        "utc-0600"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UCIzXayRP7-P0ANpq-nD-h5g",
+      "name": "The Sun",
+      "kind": "tv",
+      "zones": [
+        "utc+0300"
+      ],
+      "priority": 2
+    },
+    {
+      "channelId": "UCJD2Br_xC-3vY4nkJ9YPYDA",
+      "name": "Nippon Television News Japan",
+      "kind": "tv",
+      "zones": [
+        "utc+0900"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UCKDi3klSRgweF2ltY0AymSw",
+      "name": "Albert VideoMaker",
+      "kind": "irl",
+      "zones": [
+        "utc+0100"
+      ],
+      "priority": 3
+    },
+    {
+      "channelId": "UCKcDyXwWIlVRa_7XNWXyYFQ",
+      "name": "Reverse Ops",
+      "kind": "irl",
+      "zones": [
+        "utc-1000"
+      ],
+      "priority": 3
+    },
+    {
+      "channelId": "UCNZyLULUQBp5e9Q1cKtvk6Q",
+      "name": "CBS New York",
+      "kind": "tv",
+      "zones": [
+        "utc-0500"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UCPCeBf3Uyx_uSaBZehylzPg",
+      "name": "The ZNS Network",
+      "kind": "celebration",
+      "zones": [
+        "utc-0500"
+      ],
+      "priority": 3
+    },
+    {
+      "channelId": "UCPFSLlkwCqpy23jwYDwAPrg",
+      "name": "Manchester Evening News",
+      "kind": "tv",
+      "zones": [
+        "utc+0300"
+      ],
+      "priority": 2
+    },
+    {
+      "channelId": "UCQYCldP17ZV5q1IaM3ICCLw",
+      "name": "Teleradio Moldova",
+      "kind": "tv",
+      "zones": [
+        "utc+0200"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UCQmiDkfy5A-9gIeoKAe8ppA",
+      "name": "ICONSIAM",
+      "kind": "celebration",
+      "zones": [
+        "utc+0700"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UCRjMuOBDCfSsCNIe2p0_tdg",
+      "name": "SHOWME Caribbean",
+      "kind": "webcam",
+      "zones": [
+        "utc-0400"
+      ],
+      "priority": 2
+    },
+    {
+      "channelId": "UCSS7tKTxrtZp35DaoCIe0rQ",
+      "name": "ABC Entertainment",
+      "kind": "celebration",
+      "zones": [
+        "utc+1100"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UCSSO4aKAvEQXYbfzLoY1GMw",
+      "name": "Zlatiborrs",
+      "kind": "celebration",
+      "zones": [
+        "utc+0100"
+      ],
+      "priority": 2
+    },
+    {
+      "channelId": "UCSnr4wFDHDZZMeeHQvaHpjA",
+      "name": "Armenian Public TV",
+      "kind": "address",
+      "zones": [
+        "utc+0400"
+      ],
+      "priority": 2
+    },
+    {
+      "channelId": "UCTDrjPTc-Q5zDbG86R2TmSA",
+      "name": "HONG KONG",
+      "kind": "celebration",
+      "zones": [
+        "utc+0800"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UCU06y1lD2_Qhae5hXzYTlrg",
+      "name": "Sin Límite de Viajes",
+      "kind": "irl",
+      "zones": [
+        "utc-0500"
+      ],
+      "priority": 3
+    },
+    {
+      "channelId": "UCW-h5p0xdpOPp1HKit94i6A",
+      "name": "Teleunion TV",
+      "kind": "tv",
+      "zones": [
+        "utc-0400"
+      ],
+      "priority": 2
+    },
+    {
+      "channelId": "UCWJ61FteZON0FV2k93-1JTQ",
+      "name": "António Travassos",
+      "kind": "irl",
+      "zones": [
+        "utc+0000"
+      ],
+      "priority": 3
+    },
+    {
+      "channelId": "UCWVTngiI0h4XpCB_nKtdY7g",
+      "name": "Presidenza della Repubblica Italiana Quirinale",
+      "kind": "address",
+      "zones": [
+        "utc+0100"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UCWgNxEKv9P7WI97UQS3bUFA",
+      "name": "Only Planes Network",
+      "kind": "irl",
+      "zones": [
+        "utc+1000"
+      ],
+      "priority": 3
+    },
+    {
+      "channelId": "UCX5CxaBSCrAJxQawnE1sKHw",
+      "name": "Δήμος Αθηναίων | City of Athens",
+      "kind": "celebration",
+      "zones": [
+        "utc+0200"
+      ],
+      "priority": 2
+    },
+    {
+      "channelId": "UCXBnEKuWjWib_rF4gZg6KjA",
+      "name": "Alcaldía de Caracas",
+      "kind": "celebration",
+      "zones": [
+        "utc-0400"
+      ],
+      "priority": 2
+    },
+    {
+      "channelId": "UCZUPZW5idAxYp-Asj__lVAA",
+      "name": "서울시 · Seoul",
+      "kind": "celebration",
+      "zones": [
+        "utc+0900"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UCaTXcCfYQd_G5VZeNwsYzPg",
+      "name": "Prezydent RP",
+      "kind": "address",
+      "zones": [
+        "utc+0100"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UCaVwOq2dw-_pghudWqMdalA",
+      "name": "TENGRI TV",
+      "kind": "address",
+      "zones": [
+        "utc+0500"
+      ],
+      "priority": 2
+    },
+    {
+      "channelId": "UCavEG1EhkrJpEzyxH-3nbiw",
+      "name": "DOUBLE EAT",
+      "kind": "tv",
+      "zones": [
+        "utc+0200"
+      ],
+      "priority": 3
+    },
+    {
+      "channelId": "UCcnFmkINMo4Jmkx5mvlCh6g",
+      "name": "Bundesregierung",
+      "kind": "address",
+      "zones": [
+        "utc+0100"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UCcweJsCV2TUP_kzMX25U-oQ",
+      "name": "BR24",
+      "kind": "tv",
+      "zones": [
+        "utc+0100"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UCdGvhFfmqL64cGQ45yMdVJw",
+      "name": "presidentaz",
+      "kind": "address",
+      "zones": [
+        "utc+0400"
+      ],
+      "priority": 2
+    },
+    {
+      "channelId": "UCdZJa6uuDYys8GcC-PEvs8A",
+      "name": "SkyCity Auckland",
+      "kind": "celebration",
+      "zones": [
+        "utc+1300"
+      ],
+      "priority": 2
+    },
+    {
+      "channelId": "UCfHvTms86Y-w63XIR3JYn6A",
+      "name": "Președinția Republicii Moldova",
+      "kind": "address",
+      "zones": [
+        "utc+0200"
+      ],
+      "priority": 2
+    },
+    {
+      "channelId": "UCgrNz-aDmcr2uuto8_DL2jg",
+      "name": "CGTN",
+      "kind": "address",
+      "zones": [
+        "utc+0800"
+      ],
+      "priority": 2
+    },
+    {
+      "channelId": "UChG7C8090M0h6eCU8TM-vGQ",
+      "name": "Valsts prezidents",
+      "kind": "address",
+      "zones": [
+        "utc+0200"
+      ],
+      "priority": 2
+    },
+    {
+      "channelId": "UCjn_H4RpjGwVn7G6xZgB0nw",
+      "name": "TVS Entertainment",
+      "kind": "tv",
+      "zones": [
+        "utc+0800"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UCkG71vWzNWVt7RTXTYy-oow",
+      "name": "Formula News",
+      "kind": "tv",
+      "zones": [
+        "utc+0400"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UCmLHH1rBEEGNhvR8iFZhBgw",
+      "name": "EmaarDubai",
+      "kind": "celebration",
+      "zones": [
+        "utc+0400"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UCmRbHAgG2k2vDUvb3xsEunQ",
+      "name": "CNBC-TV18",
+      "kind": "tv",
+      "zones": [
+        "utc+0530"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UCnFKsbAof9fRv614I4wJX_w",
+      "name": "MBC مصر",
+      "kind": "tv",
+      "zones": [
+        "utc+0200"
+      ],
+      "priority": 2
+    },
+    {
+      "channelId": "UCncq73xfx9sVA3Ht2uVRrCw",
+      "name": "Офіс Президента України",
+      "kind": "address",
+      "zones": [
+        "utc+0200"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UCop57Z1sYHrtCyxCpE2z2Bg",
+      "name": "MARCA",
+      "kind": "tv",
+      "zones": [
+        "utc+0100"
+      ],
+      "priority": 2
+    },
+    {
+      "channelId": "UCp6PchFsCg582xw6gEjpzVA",
+      "name": "Báo Pháp Luật TP HCM",
+      "kind": "tv",
+      "zones": [
+        "utc+0700"
+      ],
+      "priority": 2
+    },
+    {
+      "channelId": "UCrpMfcQNog595v5gAS-oUsQ",
+      "name": "Canal 26",
+      "kind": "tv",
+      "zones": [
+        "utc-0300"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UCruQg25yVBppUWjza8AlyZA",
+      "name": "FOX 4 Dallas-Fort Worth",
+      "kind": "tv",
+      "zones": [
+        "utc-0600"
+      ],
+      "priority": 2
+    },
+    {
+      "channelId": "UCrvG04V6wbOau6fVJI01OlQ",
+      "name": "DRM News",
+      "kind": "tv",
+      "zones": [
+        "utc+0200",
+        "utc+0300"
+      ],
+      "priority": 3
+    },
+    {
+      "channelId": "UCtM-kY8-zx8zzsrWKVUffyA",
+      "name": "Telefuturo",
+      "kind": "tv",
+      "zones": [
+        "utc-0300"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UCttK1zpjrSFu29rmcut2eAA",
+      "name": "Primaria Cluj-Napoca",
+      "kind": "celebration",
+      "zones": [
+        "utc+0200"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UCu9-DqNPLQzrtfXbCxJF5rg",
+      "name": "ITN Plus",
+      "kind": "tv",
+      "zones": [
+        "utc+0530"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UCuFFtHWoLl5fauMMD5Ww2jA",
+      "name": "CBC News",
+      "kind": "tv",
+      "zones": [
+        "utc-0500",
+        "utc-0330",
+        "utc-0400",
+        "utc-0700"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UCxGSpMz_9ATPWEpAtsb-Qbw",
+      "name": "Prefeitura de Fortaleza",
+      "kind": "celebration",
+      "zones": [
+        "utc-0300"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UCy3Gp6UL_LpxCI9e36DnrGA",
+      "name": "City of Calgary",
+      "kind": "celebration",
+      "zones": [
+        "utc-0600"
+      ],
+      "priority": 1
+    },
+    {
+      "channelId": "UCz8QaiQxApLq8sLNcszYyJw",
+      "name": "Firstpost",
+      "kind": "tv",
+      "zones": [
+        "utc+0100"
+      ],
+      "priority": 2
+    },
+    {
+      "channelId": "UCzdVA2160p2mg1_X1kAQReQ",
+      "name": "The Kallang",
+      "kind": "celebration",
+      "zones": [
+        "utc+0800"
+      ],
+      "priority": 2
+    }
+  ],
+  "blacklist": []
+}

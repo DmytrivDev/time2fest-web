@@ -60,8 +60,12 @@ describe('root cms endpoints per class', () => {
   // SPEC-08 W18 adds the owner's site-state endpoints in every class (switch, product, view).
   // SPEC-12 W30 appends the owner's live-air endpoints in every class (view + six actions).
   const liveRows = ['get /live/view', ...['hide', 'unhide', 'main', 'override', 'zone-live', 'replace'].map((a) => `post /live/${a}`)];
+  // SPEC-21a W26 appends the owner's stream sources endpoints in every class (view + nine actions).
+  const streamsRows = ['get /streams/view', ...['channel-add', 'channel-edit', 'blacklist', 'unblacklist', 'channel-approve', 'candidate-add', 'approve', 'reject', 'requeue'].map((a) => `post /streams/${a}`)];
   // SPEC-13b S10 appends the owner-only ops overview and settings routes in every class.
-  const site = ['post /site/product', 'post /site/switch', 'get /site/view', ...liveRows, 'get /ops/overview', 'post /ops/settings'];
+  // SPEC-21a W30: the stream agent's three addresses.
+  const agentRows = ['get /stream-agent/channels', 'get /stream-agent/candidates', 'post /stream-agent/candidates'];
+  const site = ['post /site/product', 'post /site/switch', 'get /site/view', ...liveRows, ...streamsRows, ...agentRows, 'get /ops/overview', 'post /ops/settings'];
   it('AC-52: production has only the read-only slice; rehearsal and test also have POST /clock', () => {
     expect(paths('production')).toEqual(['get /festival-state', ...site]);
     expect(paths('rehearsal')).toEqual(['get /festival-state', 'post /clock', ...site]);

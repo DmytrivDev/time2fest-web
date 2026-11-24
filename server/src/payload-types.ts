@@ -88,6 +88,8 @@ export interface Config {
     'scheduler-runs': SchedulerRun;
     seasons: Season;
     'spend-counters': SpendCounter;
+    'stream-candidates': StreamCandidate;
+    'stream-channels': StreamChannel;
     'stream-sources': StreamSource;
     traditions: Tradition;
     'unattended-windows': UnattendedWindow;
@@ -120,6 +122,8 @@ export interface Config {
     'scheduler-runs': SchedulerRunsSelect<false> | SchedulerRunsSelect<true>;
     seasons: SeasonsSelect<false> | SeasonsSelect<true>;
     'spend-counters': SpendCountersSelect<false> | SpendCountersSelect<true>;
+    'stream-candidates': StreamCandidatesSelect<false> | StreamCandidatesSelect<true>;
+    'stream-channels': StreamChannelsSelect<false> | StreamChannelsSelect<true>;
     'stream-sources': StreamSourcesSelect<false> | StreamSourcesSelect<true>;
     traditions: TraditionsSelect<false> | TraditionsSelect<true>;
     'unattended-windows': UnattendedWindowsSelect<false> | UnattendedWindowsSelect<true>;
@@ -660,6 +664,81 @@ export interface SpendCounter {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "stream-candidates".
+ */
+export interface StreamCandidate {
+  id: number;
+  videoId: string;
+  channelId?: string | null;
+  foundBy?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  liveBroadcastContent?: string | null;
+  scheduledStartTime?: string | null;
+  embeddable?: boolean | null;
+  privacyStatus?: string | null;
+  ytFetchedAt?: string | null;
+  checkedAt?: string | null;
+  eventId?: string | null;
+  sourceId?: string | null;
+  state: string;
+  reason?: string | null;
+  stateChangedAt?: string | null;
+  stateChangedBy?: string | null;
+  evidenceUrl?: string | null;
+  note?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "stream-channels".
+ */
+export interface StreamChannel {
+  id: number;
+  channelId: string;
+  uploadsPlaylistId?: string | null;
+  uploadsFetchedAt?: string | null;
+  name: string;
+  kind: string;
+  zones?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  seasons?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  priority: number;
+  state: string;
+  blacklisted?: boolean | null;
+  blacklistReason?: string | null;
+  blacklistSource?: string | null;
+  proposedBy?: string | null;
+  adminEditedAt?: string | null;
+  lastPlaylistAt?: string | null;
+  lastSearchAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "stream-sources".
  */
 export interface StreamSource {
@@ -866,6 +945,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'spend-counters';
         value: number | SpendCounter;
+      } | null)
+    | ({
+        relationTo: 'stream-candidates';
+        value: number | StreamCandidate;
+      } | null)
+    | ({
+        relationTo: 'stream-channels';
+        value: number | StreamChannel;
       } | null)
     | ({
         relationTo: 'stream-sources';
@@ -1306,6 +1393,55 @@ export interface SpendCountersSelect<T extends boolean = true> {
   alarm50At?: T;
   alarm80At?: T;
   meta?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "stream-candidates_select".
+ */
+export interface StreamCandidatesSelect<T extends boolean = true> {
+  videoId?: T;
+  channelId?: T;
+  foundBy?: T;
+  liveBroadcastContent?: T;
+  scheduledStartTime?: T;
+  embeddable?: T;
+  privacyStatus?: T;
+  ytFetchedAt?: T;
+  checkedAt?: T;
+  eventId?: T;
+  sourceId?: T;
+  state?: T;
+  reason?: T;
+  stateChangedAt?: T;
+  stateChangedBy?: T;
+  evidenceUrl?: T;
+  note?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "stream-channels_select".
+ */
+export interface StreamChannelsSelect<T extends boolean = true> {
+  channelId?: T;
+  uploadsPlaylistId?: T;
+  uploadsFetchedAt?: T;
+  name?: T;
+  kind?: T;
+  zones?: T;
+  seasons?: T;
+  priority?: T;
+  state?: T;
+  blacklisted?: T;
+  blacklistReason?: T;
+  blacklistSource?: T;
+  proposedBy?: T;
+  adminEditedAt?: T;
+  lastPlaylistAt?: T;
+  lastSearchAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }

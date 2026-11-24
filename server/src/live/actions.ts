@@ -15,6 +15,7 @@
  */
 import { LIVE_REASON_MAX, type LiveActionBody } from '@time2fest/contracts';
 import type { Actor, Journal, RevertHandler, StoredJournalEntry } from '../audit/ports';
+import { chainFull } from '../domain/live/candidates';
 import { servedStatus, SOURCE_OVERRIDES, type SourceOverride, type ZoneLive } from '../domain/live/chain';
 import { QUOTA_BUCKETS, type LiveConfig, type QuotaBucket } from '../domain/live/config';
 import { isWindowOpen, windowOf, type LiveEvent } from '../domain/live/moment';
@@ -217,8 +218,12 @@ async function replaceSource(deps: LiveActionsDeps, t: Tx, actor: Actor, eventId
   const source = any ?? null;
   if (source && source.videoId === videoId && source.status === 'possible' && !source.override && !source.dead) return { ok: true, version: state.version, changed: false };
   if (source) {
+    // The edited source becomes active (dead cleared): the other active ones must leave room for it (AC-23).
+    if (source.hidden !== true && source.override !== 'hidden' && chainFull(own.filter((s) => s.sourceId !== sourceId), deps.cfg)) return refuse('invalid', 'chain-full');
     await deps.store.editSource(t, sourceId, { videoId, status: 'possible', override: null, dead: false, deadReason: null, clearYoutube: true, adminEditedAt: now });
   } else {
+    // SPEC-21a AC-23: a new source beyond `maxSourcesPerEvent` active ones is refused, nothing written.
+    if (chainFull(own, deps.cfg)) return refuse('invalid', 'chain-full');
     const order = own.length ? Math.max(...own.map((s) => s.order)) + 1 : 0;
     await deps.store.insertSource(t, { sourceId, eventId, videoId, order, status: 'possible', adminEditedAt: now });
   }

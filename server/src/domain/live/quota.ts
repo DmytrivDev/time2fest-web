@@ -3,8 +3,8 @@
  * configuration are parameters.
  *
  * - The quota day is the calendar date in `dayTimeZone` (America/Los_Angeles: 01.01 starts at 08:00 UTC).
- * - Counters per day: `queries` (units), `search` (calls), `batchGetStats` (units) and `ad-hoc` (units, also charged
- *   to `queries`). A call is charged at least 1, failed or not (AC-31).
+ * - Counters per day: `queries` (units), `search` (calls), `batchGetStats` (units) and `ad-hoc`, `candidates`,
+ *   `playlists` (units, also charged to `queries`; each refused above its own daily ceiling, SPEC-21a [П-3]). A call is charged at least 1, failed or not (AC-31).
  * - Request classes, in queue order: open-window `statuses` → `ad-hoc` → `candidates` → `playlists` → `search`
  *   (→ `off-window`).
  *   While the `queries` remainder is below the reserve only `statuses` run (AC-32).
@@ -22,9 +22,24 @@ import type { LiveConfig, QuotaBucket } from './config';
  */
 export const QUOTA_CLASSES = ['statuses', 'ad-hoc', 'candidates', 'playlists', 'search', 'off-window'] as const;
 export type QuotaClass = (typeof QUOTA_CLASSES)[number];
-/** Counter keys: the three buckets plus the ad-hoc ceiling. */
-export type QuotaCounterKey = QuotaBucket | 'ad-hoc';
-export const QUOTA_COUNTER_KEYS: readonly QuotaCounterKey[] = ['queries', 'search', 'batchGetStats', 'ad-hoc'];
+/** Classes with their own daily ceiling counter, also charged to `queries` (SPEC-21a [П-3]). */
+export const CEILED_CLASSES = ['candidates', 'playlists'] as const;
+export type CeiledClass = (typeof CEILED_CLASSES)[number];
+/** Counter keys: the three buckets plus the ad-hoc ceiling and the SPEC-21a class ceilings. */
+export type QuotaCounterKey = QuotaBucket | 'ad-hoc' | CeiledClass;
+export const QUOTA_COUNTER_KEYS: readonly QuotaCounterKey[] = ['queries', 'search', 'batchGetStats', 'ad-hoc', 'candidates', 'playlists'];
+/**
+ * Per-agent counters of one quota day (SPEC-21a [П-3], S21-03): `agent:<id>` counts the accepted proposals,
+ * `agent:<id>:candidates` / `agent:<id>:playlists` the class units its proposals spent. The quota readers of
+ * `QuotaState` skip them; they are read with `QuotaStore.usedOf`.
+ */
+export type AgentCounterKey = `agent:${string}`;
+export const agentCounterKeys = (agentId: string) =>
+  ({
+    proposals: `agent:${agentId}`,
+    candidates: `agent:${agentId}:candidates`,
+    playlists: `agent:${agentId}:playlists`,
+  }) as const satisfies Record<string, AgentCounterKey>;
 
 export interface QuotaCounter {
   /** Quota day `YYYY-MM-DD` the counter belongs to. */
@@ -46,6 +61,7 @@ export type QuotaRefusal =
   | 'quota-exhausted'
   | 'reserve'
   | 'ad-hoc-ceiling'
+  | 'class-ceiling'
   | 'rate-limited'
   | 'rehearsal-budget'
   | 'blackout';
@@ -125,6 +141,9 @@ export function counterOf(state: QuotaState, key: QuotaCounterKey, now: number, 
 }
 
 const bucketOf = (cls: QuotaClass): QuotaBucket => (cls === 'search' ? 'search' : 'queries');
+const BUCKET_KEYS: Readonly<Record<QuotaBucket, true>> = { queries: true, search: true, batchGetStats: true };
+const isBucket = (key: QuotaCounterKey): key is QuotaBucket => key in BUCKET_KEYS;
+export const isCeiledClass = (cls: QuotaClass): cls is CeiledClass => (CEILED_CLASSES as readonly string[]).includes(cls);
 
 function minuteLimit(bucket: QuotaBucket, cfg: LiveConfig): number {
   const b = cfg.buckets[bucket];
@@ -159,6 +178,7 @@ export function allow(state: QuotaState, cls: QuotaClass, now: number, cfg: Live
   if (cls === 'ad-hoc' && counterOf(state, 'ad-hoc', now, cfg).used + units > cfg.adHocCeiling) {
     return { ok: false, reason: 'ad-hoc-ceiling' };
   }
+  if (isCeiledClass(cls) && counterOf(state, cls, now, cfg).used + units > cfg.classCeilings[cls]) return { ok: false, reason: 'class-ceiling' };
   if (counter.minuteUsed + units > minuteLimit(bucket, cfg)) return { ok: false, reason: 'rate-limited' };
   return { ok: true, bucket, units };
 }
@@ -192,14 +212,14 @@ export function charge(
   const n = Math.max(1, Math.ceil(units));
   const next: QuotaCounter = { ...c, used: c.used + n, minuteUsed: c.minuteUsed + n };
   let alarm: QuotaAlarm | null = null;
-  if (key !== 'ad-hoc' && next.alarm80At == null && next.used >= cfg.alarmRatio * cfg.buckets[key].perDay) {
+  if (isBucket(key) && next.alarm80At == null && next.used >= cfg.alarmRatio * cfg.buckets[key].perDay) {
     next.alarm80At = now;
     alarm = { code: 'live/quota-80', level: 'page', bucket: key, day: c.day };
   }
   return { state: { ...state, [key]: next }, alarm };
 }
 
-/** Charges one class's calls: its bucket, plus the ad-hoc counter for `ad-hoc`. */
+/** Charges one class's calls: its bucket, plus its own counter for `ad-hoc`, `candidates` and `playlists`. */
 export function chargeCalls(
   state: QuotaState,
   cls: QuotaClass,
@@ -209,7 +229,8 @@ export function chargeCalls(
 ): { state: QuotaState; alarm: QuotaAlarm | null } {
   const units = Math.max(1, calls) * unitsPerCall(cls, cfg);
   const charged = charge(state, bucketOf(cls), units, now, cfg);
-  return cls === 'ad-hoc' ? { state: charge(charged.state, 'ad-hoc', units, now, cfg).state, alarm: charged.alarm } : charged;
+  const own: QuotaCounterKey | null = cls === 'ad-hoc' || isCeiledClass(cls) ? cls : null;
+  return own ? { state: charge(charged.state, own, units, now, cfg).state, alarm: charged.alarm } : charged;
 }
 
 /** After `quotaExceeded`: the bucket stops until the next quota day boundary (AC-35). */

@@ -47,7 +47,7 @@ import { clockFor, monotonicClock, processClockCache, realClock } from './clock'
 import { createDivergenceMeter } from './timekeeping/divergence';
 import { createSharedClock, startClockRefresh, type ClockRefresh, type SharedClock } from './timekeeping/shared';
 import { createDispatcher } from './endpoints/pipeline';
-import { alarmStoreOf, catalogStoreOf, eventsOf, publisherOf, unattendedDepsOf } from './endpoints/deps';
+import { alarmStoreOf, catalogStoreOf, eventsOf, liveOf, publisherOf, unattendedDepsOf } from './endpoints/deps';
 import type { AppEnv, Deps, EventPorts, LiveWiring, ModerationDeps, RouteRow, SiteWiring } from './endpoints/types';
 import { createEdgeGate, type EdgeGate } from './platform/edge';
 import { startEventBus, type EventBus } from './events/bus';
@@ -65,6 +65,9 @@ import { parseLiveConfig } from './domain/live/config';
 import { createPayloadLiveFanOutClaim, createPayloadLiveStore, createPayloadQuotaStore, createPgLiveLease } from './adapters/payloadLive';
 import { createYoutubeFakeSource } from './adapters/youtubeFake';
 import { createLivePoller, LIVE_PASS_MS, liveEventsFrom } from './live/poller';
+import type { SourcesDeps } from './live/sources';
+import { createStreamsWatch, type StreamsWatch, type WatchDeps } from './live/watch';
+import { createPayloadStreamsStore } from './adapters/payloadStreams';
 import { currentPatches } from './corrections/service';
 import type { FanOutDeps } from './site/fanout';
 import { LIVE_CACHE_TAG, type LiveFanOutDeps } from './live/fanout';
@@ -110,6 +113,7 @@ const MODERATION_TIMERS_KEY = Symbol.for('t2f.moderationTimers');
 const REBUILD_TICKER_KEY = Symbol.for('t2f.rebuildTicker');
 const LIVE_POLLER_KEY = Symbol.for('t2f.livePoller');
 const LIVE_VIEWERS_KEY = Symbol.for('t2f.liveViewers');
+const STREAMS_WATCH_KEY = Symbol.for('t2f.streamsWatch');
 const OPS_TICKER_KEY = Symbol.for('t2f.opsTicker');
 const BACKGROUND_RETRY_MS = 5_000;
 
@@ -725,6 +729,8 @@ export function startLivePoller(deps: Deps, intervalMs: number = LIVE_PASS_MS): 
     alarm: deps.alarm,
     cfg: live.cfg,
     caller: live.caller,
+    // SPEC-21a AC-10: approved candidates follow their source in the poller's transaction.
+    follow: { streams: createPayloadStreamsStore({ payload: payloadOf(deps), clock: deps.clock }), journal: createPayloadJournal(isRevertible) },
   });
   const ticker = startTicker({
     tick: () => poller.tick(deps.clock.now()),
@@ -738,6 +744,64 @@ export function startLivePoller(deps: Deps, intervalMs: number = LIVE_PASS_MS): 
     async stop() {
       await ticker.stop();
       await poller.release().catch(() => {});
+    },
+  };
+}
+
+/**
+ * The deps of the stream sources services (SPEC-21a S4) over the process deps — the one assembly of `SourcesDeps`
+ * (the revert registry and the sources watch use it): the live and streams stores, the quota, the YouTube source
+ * when one is wired (`LiveWiring.statuses` speaks statuses, channels, playlists and search), a journal marking rows
+ * revertible, the outbox, the alarm and the server clock.
+ */
+export function sourcesDepsOf(deps: Deps): SourcesDeps {
+  const live = liveOf(deps);
+  return {
+    live: live.store,
+    streams: createPayloadStreamsStore({ payload: payloadOf(deps), clock: deps.clock }),
+    quota: live.quota,
+    ...(live.statuses ? { youtube: live.statuses } : {}),
+    events: live.events,
+    journal: createPayloadJournal(isRevertible),
+    publisher: eventsOf(deps).publisher,
+    alarm: deps.alarm,
+    clock: deps.clock,
+    cfg: live.cfg,
+    caller: live.caller,
+  };
+}
+
+/**
+ * The sources watch of the process deps (SPEC-21a [П-4]): the sources deps plus the lease and the YouTube source.
+ * `undefined` without a YouTube source. `overrides` is for tests only (a scoped store, a test clock).
+ */
+export function streamsWatchOf(deps: Deps, overrides: Partial<WatchDeps> = {}): StreamsWatch | undefined {
+  const live = deps.live;
+  if (!live?.statuses) return undefined;
+  return createStreamsWatch({ ...sourcesDepsOf(deps), lease: live.lease, youtube: live.statuses, ...overrides });
+}
+
+/**
+ * The sources watch ticker of one process (SPEC-21a [П-4]): a pass every `watchPassMs`; only the `live-sources` lease
+ * holder works. Not started without a YouTube source. A failing pass raises a log-level alarm (code only).
+ */
+export function startStreamsWatch(deps: Deps, intervalMs?: number): Ticker | undefined {
+  const watch = streamsWatchOf(deps);
+  if (!watch) return undefined;
+  const ticker = startTicker({
+    tick: async () => {
+      await watch.tick();
+    },
+    onError: (err) => {
+      const code = typeof err === 'object' && err !== null ? (err as { code?: unknown }).code : undefined;
+      deps.alarm.raise({ level: 'log', source: 'live', code: 'watch_tick_failed', details: { pgCode: typeof code === 'string' ? code : 'unknown' } });
+    },
+    intervalMs: intervalMs ?? (deps.live as NonNullable<Deps['live']>).cfg.watchPassMs,
+  });
+  return {
+    async stop() {
+      await ticker.stop();
+      await watch.release().catch(() => {});
     },
   };
 }
@@ -870,6 +934,7 @@ export function startProcessBackground(): void {
     g[REBUILD_TICKER_KEY] ??= startRebuildTicker(getDeps());
     g[LIVE_POLLER_KEY] ??= startLivePoller(getDeps());
     g[LIVE_VIEWERS_KEY] ??= startViewersTicker(getDeps());
+    g[STREAMS_WATCH_KEY] ??= startStreamsWatch(getDeps());
     g[OPS_TICKER_KEY] ??= startOpsTickerOf(getDeps());
     if (!g[MODERATION_TIMERS_KEY]) {
       pageMissingAiKeys(getDeps());

@@ -76,3 +76,5 @@ export * from './moderation.schemas';
 export * from './site.schemas';
 
 export * from './live.schemas';
+
+export * from './streams.schemas';

@@ -118,6 +118,40 @@ describe('ad-hoc ceiling (AC-44)', () => {
   });
 });
 
+describe('class ceilings of SPEC-21a (candidates, playlists)', () => {
+  it.each([
+    ['candidates', cfg.classCeilings.candidates],
+    ['playlists', cfg.classCeilings.playlists],
+  ] as const)('%s stop at their daily ceiling with class-ceiling and are charged to queries too', (cls, ceiling) => {
+    let s: QuotaState = {};
+    let n = 0;
+    for (let i = 0; i < ceiling + 200; i++) {
+      if (!allow(s, cls, NOW, cfg, fake).ok) continue;
+      s = chargeCalls(s, cls, 1, NOW + i, cfg).state;
+      n += 1;
+    }
+    expect(n).toBe(ceiling);
+    expect(counterOf(s, 'queries', NOW, cfg).used).toBe(ceiling);
+    expect(counterOf(s, cls, NOW, cfg).used).toBe(ceiling);
+    expect(allow(s, cls, NOW, cfg, fake)).toEqual({ ok: false, reason: 'class-ceiling' });
+    // Another class is untouched, and the next quota day starts afresh.
+    expect(allow(s, cls === 'candidates' ? 'playlists' : 'candidates', NOW, cfg, fake).ok).toBe(true);
+    expect(allow(s, cls, at('2027-01-01T08:00:00Z'), cfg, fake).ok).toBe(true);
+  });
+  it('the refusal order is unchanged: exceeded, exhausted and reserve come before class-ceiling', () => {
+    const full = (key: 'candidates' | 'queries', n: number, over: object = {}): QuotaState => ({ [key]: { ...counterOf({}, key, NOW, cfg), used: n, ...over } });
+    const both = (q: number): QuotaState => ({ ...full('candidates', cfg.classCeilings.candidates), ...full('queries', q) });
+    expect(allow(both(cfg.buckets.queries.perDay - 999), 'candidates', NOW, cfg, fake)).toEqual({ ok: false, reason: 'reserve' });
+    expect(allow(both(cfg.buckets.queries.perDay), 'candidates', NOW, cfg, fake)).toEqual({ ok: false, reason: 'quota-exhausted' });
+    const exceeded = { ...both(0), queries: { ...counterOf({}, 'queries', NOW, cfg), exceededUntil: NOW + 1 } };
+    expect(allow(exceeded, 'candidates', NOW, cfg, fake)).toEqual({ ok: false, reason: 'quota-exceeded' });
+    expect(allow(both(0), 'candidates', NOW, cfg, fake)).toEqual({ ok: false, reason: 'class-ceiling' });
+  });
+  it('class counters raise no alarm of their own', () => {
+    expect(charge({}, 'candidates', cfg.classCeilings.candidates, NOW, cfg).alarm).toBeNull();
+  });
+});
+
 describe('rehearsal with the real adapter (AC-40)', () => {
   const day = at('2026-12-20T12:00:00Z');
   it('the 1 001st unit of the day is refused', () => {

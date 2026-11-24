@@ -5,6 +5,7 @@ import * as migration_20261119_212709_moderation from './20261119_212709_moderat
 import * as migration_20261120_165256_site_state from './20261120_165256_site_state';
 import * as migration_20261123_105845_live from './20261123_105845_live';
 import * as migration_20261124_060324_ops from './20261124_060324_ops';
+import * as migration_20261124_141222_stream_sources from './20261124_141222_stream_sources';
 
 export const migrations = [
   {
@@ -40,6 +41,11 @@ export const migrations = [
   {
     up: migration_20261124_060324_ops.up,
     down: migration_20261124_060324_ops.down,
-    name: '20261124_060324_ops'
+    name: '20261124_060324_ops',
+  },
+  {
+    up: migration_20261124_141222_stream_sources.up,
+    down: migration_20261124_141222_stream_sources.down,
+    name: '20261124_141222_stream_sources'
   },
 ];

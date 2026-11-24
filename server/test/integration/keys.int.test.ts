@@ -3,10 +3,15 @@
  * server's output; a request with the key (a service token through the proxy) → 200; after a
  * revoke the very next request is refused. The journal assertion joins with the journal (W22).
  */
+import { execFileSync } from 'node:child_process';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { sql } from '@payloadcms/db-postgres';
 import { NextRequest } from 'next/server';
 import type { Payload } from 'payload';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { IDENTITY_HEADER } from '../../src/adapters/identityMarker';
+import { pgEnvOf } from '../../src/adapters/pgDump';
 import { getTestSigner } from '../../src/adapters/testSigner';
 import { payloadOf } from '../../src/container';
 import { proxy } from '../../src/proxy';
@@ -47,6 +52,22 @@ async function capture(payload: Payload, fn: () => Promise<void>): Promise<strin
     for (const r of restore) r();
   }
   return seen.join('\n');
+}
+
+const COMPOSE_FILE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../docker-compose.yml');
+
+/** `pg_dump --data-only` of `admins` and `audit_log` (the stack's container), as text. Never printed. */
+function dumpKeyTables(): string {
+  const pg = pgEnvOf(String(process.env.DATABASE_URI));
+  return execFileSync(
+    'docker',
+    [
+      'compose', '-p', 't2f', '-f', COMPOSE_FILE, 'exec', '-T',
+      '-e', 'PGPASSWORD', '-e', 'PGUSER', '-e', 'PGDATABASE', '-e', 'PGHOST=127.0.0.1', '-e', 'PGPORT=5432',
+      'postgres', 'pg_dump', '--data-only', '-t', 'admins', '-t', 'audit_log',
+    ],
+    { env: { ...process.env, ...pg, PGHOST: '127.0.0.1', PGPORT: '5432' }, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], maxBuffer: 64 * 1024 * 1024 },
+  );
 }
 
 /** An agent request as it leaves the proxy: a service token passed the gate and got the marker. */
@@ -133,6 +154,36 @@ describe('agent API keys (AC-15, AC-16, NFR-5)', () => {
     }
     expect(JSON.stringify(rows)).not.toContain(key);
     expect(JSON.stringify(rows)).not.toMatch(/"(apiKey|apiKeyIndex|enableAPIKey|hash|salt)"/);
+  });
+
+  it('NFR-3 (SPEC-21a): only the one-way index is stored; an unrelated update keeps the key; revoke refuses the next request', async () => {
+    const db = (payload.db as unknown as { drizzle: { execute(q: unknown): Promise<{ rows: Record<string, unknown>[] }> } }).drizzle;
+    const columns = async () =>
+      (await db.execute(sql`SELECT "api_key", "api_key_index" FROM "admins" WHERE "id" = ${agentId}`)).rows[0] ?? {};
+    const issued = await rest('POST', `/admins/${agentId}/issue-key`, { headers: owner });
+    expect(issued.status).toBe(200);
+    const key = ((await issued.json()) as { key: string }).key;
+
+    const row = await columns();
+    expect(row.api_key).toBeNull();
+    expect(row.api_key_index).toMatch(/^[0-9a-f]{64}$/);
+    const dump = dumpKeyTables();
+    expect(dump.length).toBeGreaterThan(0);
+    expect(dump.split(key).length - 1).toBe(0);
+
+    const ok = async () => (await rest('GET', '/agent-test-posts', { headers: await throughProxy('/agent-test-posts', key) })).status;
+    expect(await ok()).toBe(200);
+
+    // An unrelated update of the agent record (through the API and server-side) keeps the index and the key working.
+    expect((await rest('PATCH', `/admins/${agentId}`, { headers: owner, body: { email: AGENT } })).status).toBe(200);
+    await payload.update({ collection: 'admins', id: agentId, data: { email: AGENT }, overrideAccess: true, depth: 0 });
+    expect((await columns()).api_key_index).toBe(row.api_key_index);
+    expect((await columns()).api_key).toBeNull();
+    expect(await ok()).toBe(200);
+
+    expect((await rest('POST', `/admins/${agentId}/revoke-key`, { headers: owner })).status).toBe(200);
+    expect((await columns()).api_key_index ?? null).toBeNull();
+    expect(await ok()).toBe(403);
   });
 
   it('only the owner issues, and only for agent records', async () => {

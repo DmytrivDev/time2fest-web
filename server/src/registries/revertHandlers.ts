@@ -12,6 +12,7 @@ import { processDeps } from '../adapters/processDeps';
 import { eventsOf, liveOf, siteOf } from '../endpoints/deps';
 import type { Deps } from '../endpoints/types';
 import { liveRevertHandlers, type LiveActionsDeps } from '../live/actions';
+import { sourcesRevertHandlers, type SourcesDeps } from '../live/sources';
 import { assertRegistry } from '../platform/registry';
 import { siteRevertHandlers, type SiteDeps } from '../site/service';
 
@@ -44,9 +45,26 @@ const [liveHide, liveMain, liveOverride, liveReplace, liveZoneLive] = liveRevert
   },
 ) as [RevertHandler, RevertHandler, RevertHandler, RevertHandler, RevertHandler];
 
+/** The deps of the stream sources services (SPEC-21a S4): the one assembly `sourcesDepsOf` of the composition root. */
+export async function sourcesOf(deps: Deps): Promise<SourcesDeps> {
+  // The root is loaded here: it imports the registries, so a static import would be a cycle.
+  const { sourcesDepsOf } = await import('../container');
+  return sourcesDepsOf(deps);
+}
+
+/** `live.approve`, `streams.blacklist`, `streams.candidate`: the reverting owner. */
+const [liveApprove, streamsBlacklist, streamsCandidate] = sourcesRevertHandlers(
+  async () => sourcesOf(await processDeps()),
+  (tx) => {
+    const req = tx as PayloadRequest;
+    return { ...resolveActor(req.user, req.context), kind: 'owner' };
+  },
+) as [RevertHandler, RevertHandler, RevertHandler];
+
 export const revertHandlerRegistry: readonly RevertHandler[] = [
   collectionUpdate,
   correctionSave,
+  liveApprove,
   liveHide,
   liveMain,
   liveOverride,
@@ -54,6 +72,8 @@ export const revertHandlerRegistry: readonly RevertHandler[] = [
   liveZoneLive,
   siteProduct,
   siteSwitch,
+  streamsBlacklist,
+  streamsCandidate,
   unattendedSetManual,
 ];
 

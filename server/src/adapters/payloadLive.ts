@@ -16,7 +16,7 @@ import type { Payload, PayloadRequest } from 'payload';
 import type { Journal } from '../audit/ports';
 import { SOURCE_OVERRIDES, SOURCE_PLATFORMS, type SourceOverride, type SourcePlatform, type ZoneLive } from '../domain/live/chain';
 import type { QuotaBucket } from '../domain/live/config';
-import { QUOTA_COUNTER_KEYS, type QuotaCounter, type QuotaCounterKey, type QuotaState } from '../domain/live/quota';
+import { QUOTA_COUNTER_KEYS, type AgentCounterKey, type QuotaCounter, type QuotaCounterKey, type QuotaState } from '../domain/live/quota';
 import type { Clock } from '../ports';
 import type {
   ImportedSource,
@@ -272,8 +272,11 @@ export function createPayloadLiveStore(deps: PayloadLiveDeps): LiveStore {
       await conn.execute(sql`
         INSERT INTO "stream_sources" ("source_id", "event_id", "platform", "video_id", "kind", "order", "status", "hidden", "dead", "long_news",
           "admin_edited_at", "updated_at", "created_at")
-        VALUES (${source.sourceId}, ${source.eventId}, 'youtube', ${source.videoId}, 'main', ${source.order}::numeric, ${source.status}, false, false, false,
+        VALUES (${source.sourceId}, ${source.eventId}, 'youtube', ${source.videoId}, ${source.kind ?? 'main'}, ${source.order}::numeric, ${source.status}, false, false, false,
           ${iso(source.adminEditedAt)}::timestamptz, ${at}::timestamptz, ${at}::timestamptz)`);
+      if (source.name !== undefined) await conn.execute(sql`UPDATE "stream_sources" SET "name" = ${source.name} WHERE "source_id" = ${source.sourceId}`);
+      // SPEC-21a [П-5]: an approved candidate's fields, with their fetch time (served without waiting for the poller).
+      if (source.youtube) await conn.execute(sql`UPDATE "stream_sources" SET ${setsOf({ sourceId: source.sourceId, youtube: source.youtube }, at)} WHERE "source_id" = ${source.sourceId}`);
     },
     async setZoneLive(tx, zoneLive) {
       const conn = await sessionOf(tx);
@@ -384,6 +387,14 @@ export function createPayloadQuotaStore(payload: () => Promise<Payload>): QuotaS
         ON CONFLICT ("day", "bucket") DO UPDATE SET "used" = "live_quota"."used" + EXCLUDED."used", "updated_at" = clock_timestamp()
         RETURNING "used"::text AS "used"`);
       return Number(rows[0]?.used) || n;
+    },
+    async usedOf(day, keys: readonly AgentCounterKey[]) {
+      if (keys.length === 0) return [];
+      const { rows } = await (await drizzleOf(payload)).execute(sql`
+        SELECT "bucket", "used"::text AS "used" FROM "live_quota"
+        WHERE "day" = ${day} AND "bucket" IN (${sql.join(keys.map((k) => sql`${k}`), sql`, `)})`);
+      const used = new Map(rows.map((r) => [String(r.bucket), Number(r.used) || 0]));
+      return keys.map((k) => used.get(k) ?? 0);
     },
     async markExceeded(day, bucket: QuotaBucket, until) {
       const { rows } = await (await drizzleOf(payload)).execute(sql`

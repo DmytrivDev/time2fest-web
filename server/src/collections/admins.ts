@@ -10,7 +10,7 @@
 import { Forbidden } from 'payload';
 import type { CollectionConfig, Endpoint, PayloadRequest } from 'payload';
 import { createKeyService, type AgentKeyStore } from '../access/keys';
-import { ACTION_CONTEXT_KEY } from '../audit/journal';
+import { writeAdminKey } from '../adapters/payloadAdminKeys';
 import { isServerCall } from '../access/payloadGuard';
 import { accessFor, ownerOnly, roleOf } from '../access/policies';
 import { sessionCookieSecure } from '../domain/access/config';
@@ -34,15 +34,8 @@ function keyStore(req: PayloadRequest): AgentKeyStore {
     async setKey(id, key) {
       const n = idOf(id);
       if (n === null) return;
-      await req.payload.update({
-        collection: 'admins',
-        id: n,
-        data: key === null ? { enableAPIKey: false, apiKey: null } : { enableAPIKey: true, apiKey: key },
-        req,
-        context: { [ACTION_CONTEXT_KEY]: key === null ? 'key.revoke' : 'key.issue' },
-        overrideAccess: true,
-        depth: 0,
-      });
+      // Key write and clearing of the encrypted copy: `adapters/payloadAdminKeys.ts` (A21-01, S21-06).
+      await writeAdminKey(req, n, key);
     },
   };
 }
