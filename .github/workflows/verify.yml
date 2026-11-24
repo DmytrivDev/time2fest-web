@@ -3,7 +3,19 @@
 # `ops full` (infra/ops) follows the same rule.
 name: verify
 
-on: push
+# Actions minutes are limited (private repo, $0 budget — owner decision 2026-11-24): content-only pushes
+# (country kits, prelaunch texts/scenes/photos, docs) skip CI. The prelaunch publish script runs its tests locally
+# before deploy. A push that touches any code still runs the full check; `workflow_dispatch` runs it by hand.
+on:
+  push:
+    paths-ignore:
+      - 'data/country-kits/**'
+      - 'content/prelaunch/**'
+      - 'data/prelaunch/**'
+      - 'tests/unit/prelaunch/**'
+      - 'docs/**'
+      - '**/*.md'
+  workflow_dispatch:
 
 permissions:
   contents: read
