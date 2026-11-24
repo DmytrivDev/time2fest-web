@@ -5,6 +5,7 @@
  * and `Deps` holds ports only — the raw Payload accessor stays in `container.ts`.
  */
 import type { R2Meter } from '../ops/meter';
+import type { DumpRunner } from '../ops/ports';
 import type { OpsRunner, OpsWiring } from '../ops/runner';
 import type { ApiError } from '@time2fest/contracts';
 import type { ZodType } from 'zod';
@@ -178,6 +179,11 @@ export interface Deps {
   r2Meter?: R2Meter;
   /** The ops jobs over `ops` (SPEC-13b W18), no timer: ticked by `startProcessBackground` and the `ops-tick` door. */
   opsRunner?: OpsRunner;
+  /**
+   * Test seams of the backup job (SPEC-13b [П-8]): the `pg_dump` runner (default: the local binary) and the
+   * multipart part size (default 16 MB). Never set in production code.
+   */
+  backupTuning?: { dump?: DumpRunner; partBytes?: number };
 }
 
 export interface Ctx {

@@ -27,11 +27,11 @@ function toRecord(doc: Record<string, unknown>): AlarmRecord {
 
 export function createPayloadAlarmStore(payload: () => Promise<Payload>, clock: Clock): AlarmStore {
   return {
-    async save({ source, code }) {
+    async save({ source, code, details }) {
       const p = await payload();
       const doc = await p.create({
         collection: ALARMS,
-        data: { source: source.slice(0, MAX_TEXT), code: code.slice(0, MAX_TEXT), level: 'page', raisedAt: iso(clock.now()), acknowledgedAt: null },
+        data: { source: source.slice(0, MAX_TEXT), code: code.slice(0, MAX_TEXT), level: 'page', raisedAt: iso(clock.now()), acknowledgedAt: null, ...(details ? { details } : {}) },
         overrideAccess: true,
         depth: 0,
         context: { [ACTOR_CONTEXT_KEY]: 'system:alarms' },

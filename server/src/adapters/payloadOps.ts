@@ -17,7 +17,7 @@ import type { Payload, PayloadRequest } from 'payload';
 import type { AlarmDetails, LogAlarmRecord, LogAlarmStore } from '../alarms/ports';
 import type { Actor, Journal } from '../audit/ports';
 import { isDependencyFailure } from '../endpoints/pipeline';
-import type { OpsJournal, Outbox, OutboxKind, OutboxRow, OpsLease, OpsLeaseName, WallClock } from '../ops/ports';
+import type { BackupRun, BackupRunStore, BackupStage, OpsJournal, Outbox, OutboxKind, OutboxRow, OpsLease, OpsLeaseName, WallClock } from '../ops/ports';
 import { DependencyUnavailable } from '../ports';
 import { findKind } from '../registries/ops';
 import { createPgScheduler } from './pgScheduler';
@@ -303,12 +303,21 @@ export function createPayloadLogAlarms(payload: () => Promise<Payload>, clock: W
 }
 
 /** Journal lines of the ops jobs (AC-21: a skipped heartbeat or digest slot); target = the outbox slot. */
-export function createPayloadOpsJournal({ payload, journal }: { payload: () => Promise<Payload>; journal: Journal }): OpsJournal {
+export function createPayloadOpsJournal({
+  payload,
+  journal,
+  collection = ALARM_DELIVERIES,
+}: {
+  payload: () => Promise<Payload>;
+  journal: Journal;
+  /** The target collection of the lines (`backup-runs` for the backup job). */
+  collection?: string;
+}): OpsJournal {
   return {
     async line(action, targetId, after, at) {
       await guard(async () => {
         const req = await createLocalReq({ context: CONTEXT }, await payload());
-        await journal.append(req, { actor: ACTOR, action, target: { collection: ALARM_DELIVERIES, id: targetId }, at, before: null, after, revertOf: null });
+        await journal.append(req, { actor: ACTOR, action, target: { collection, id: targetId }, at, before: null, after, revertOf: null });
       });
     },
   };
@@ -350,6 +359,102 @@ export function createPgOpsLease(opts: PgOpsLeaseOptions): OpsLease {
       if (epoch === undefined || ttl === undefined) return;
       await leaseOf(name, ttl).release?.(opts.holderId, epoch);
       epochs.delete(name);
+    },
+  };
+}
+
+const BACKUP_COLUMNS = sql.raw('"key", "kind", "result", "stage", "size", "sha256", "duration_ms", "snapshot_at", "key_id"');
+const BACKUP_STAGES: readonly BackupStage[] = ['config', 'version', 'dump', 'encrypt', 'upload', 'manifest', 'retention'];
+
+function toBackupRun(r: Record<string, unknown>): BackupRun {
+  const stage = BACKUP_STAGES.find((s) => s === r.stage);
+  return {
+    key: String(r.key),
+    kind: r.kind === 'daily' || r.kind === 'hourly' ? r.kind : 'manual',
+    result: r.result === 'ok' ? 'ok' : 'failed',
+    ...(stage ? { stage } : {}),
+    ...(r.size === null || r.size === undefined ? {} : { size: num(r.size) }),
+    ...(typeof r.sha256 === 'string' ? { sha256: r.sha256 } : {}),
+    durationMs: num(r.duration_ms),
+    snapshotAt: tsMs(r.snapshot_at) ?? 0,
+    ...(typeof r.key_id === 'string' ? { keyId: r.key_id } : {}),
+  };
+}
+
+/** The `backup-runs` journal of the backup job (AC-51), raw SQL over Payload's pool. */
+export function createPayloadBackupRuns(payload: () => Promise<Payload>): BackupRunStore {
+  const exec = (q: SqlQuery) => guard(async () => ((await payload()).db as unknown as DrizzleAdapter).drizzle.execute(q));
+  return {
+    async record(run) {
+      await exec(sql`
+        INSERT INTO "backup_runs" (${BACKUP_COLUMNS}, "updated_at", "created_at")
+        VALUES (${run.key}, ${run.kind}, ${run.result}, ${run.stage ?? null}, ${run.size ?? null}, ${run.sha256 ?? null},
+          ${Math.round(run.durationMs)}, ${iso(run.snapshotAt)}::timestamptz, ${run.keyId ?? null}, now(), now())`);
+    },
+    async latest() {
+      const newest = async (onlyOk: boolean) => {
+        const { rows } = await exec(sql`
+          SELECT ${BACKUP_COLUMNS} FROM "backup_runs" ${onlyOk ? sql`WHERE "result" = 'ok'` : sql``}
+          ORDER BY "snapshot_at" DESC NULLS LAST, "id" DESC LIMIT 1`);
+        return rows[0] ? toBackupRun(rows[0]) : null;
+      };
+      const [last, lastOk] = await Promise.all([newest(false), newest(true)]);
+      return { last, lastOk };
+    },
+    async okSince(sinceMs) {
+      const { rows } = await exec(sql`
+        SELECT ${BACKUP_COLUMNS} FROM "backup_runs"
+        WHERE "result" = 'ok' AND "snapshot_at" >= ${iso(sinceMs)}::timestamptz ORDER BY "snapshot_at" ASC, "id" ASC`);
+      return rows.map(toBackupRun);
+    },
+    async scheduledSince(sinceMs) {
+      const { rows } = await exec(sql`
+        SELECT 1 AS "x" FROM "backup_runs"
+        WHERE "kind" IN ('daily', 'hourly') AND "snapshot_at" >= ${iso(sinceMs)}::timestamptz LIMIT 1`);
+      return rows.length > 0;
+    },
+  };
+}
+
+/** Facts of the database for the backup manifest (AC-42, AC-43), over the app's own pool. */
+export interface BackupFacts {
+  /** Major version of the Postgres server (`server_version_num` / 10000). */
+  serverVersion(): Promise<number>;
+  /** Name of the newest applied Payload migration, or null. */
+  lastMigration(): Promise<string | null>;
+  /** Row counts of the key collections (tables) present today. */
+  rowCounts(): Promise<Record<string, number>>;
+}
+
+/** Collections whose row counts go into the manifest; the restore smoke compares them (AC-57). */
+export const BACKUP_COUNTED: Readonly<Record<string, string>> = {
+  admins: 'admins',
+  cities: 'cities',
+  countries: 'countries',
+  events: 'events',
+  seasons: 'seasons',
+  traditions: 'traditions',
+  zones: 'zones',
+};
+
+export function createPayloadBackupFacts(payload: () => Promise<Payload>): BackupFacts {
+  const exec = (q: SqlQuery) => guard(async () => ((await payload()).db as unknown as DrizzleAdapter).drizzle.execute(q));
+  return {
+    async serverVersion() {
+      const { rows } = await exec(sql`SELECT current_setting('server_version_num') AS "v"`);
+      return Math.floor(num(rows[0]?.v) / 10_000);
+    },
+    async lastMigration() {
+      const { rows } = await exec(sql`SELECT "name" FROM "payload_migrations" ORDER BY "id" DESC LIMIT 1`);
+      return rows[0] ? String(rows[0].name) : null;
+    },
+    async rowCounts() {
+      const out: Record<string, number> = {};
+      for (const [slug, table] of Object.entries(BACKUP_COUNTED)) {
+        const { rows } = await exec(sql`SELECT count(*)::int AS "n" FROM ${sql.identifier(table)}`);
+        out[slug] = num(rows[0]?.n);
+      }
+      return out;
     },
   };
 }

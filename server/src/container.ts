@@ -77,7 +77,17 @@ import { loadEnv, type EnvClass, type RawEnv } from './platform/env';
 import { daySalts } from './platform/fingerprint';
 import { createLogger } from './platform/logger';
 import { createDeliveringAlarm } from './alarms/delivery';
-import { createPayloadLogAlarms, createPayloadOpsJournal, createPayloadOutbox, createPgOpsLease } from './adapters/payloadOps';
+import {
+  createPayloadBackupFacts,
+  createPayloadBackupRuns,
+  createPayloadLogAlarms,
+  createPayloadOpsJournal,
+  createPayloadOutbox,
+  createPgOpsLease,
+} from './adapters/payloadOps';
+import { createPgDumpRunner } from './adapters/pgDump';
+import { createBackupJob, type BackupDeps } from './ops/backup';
+import { keyIdOf, parseBackupKey } from './ops/backupFormat';
 import { selectTelegramSink } from './adapters/telegram';
 import { createR2Meter, r2PrefixOf } from './ops/meter';
 import { createOpsRunner, startOpsTicker, type OpsRunner, type OpsRunnerDeps, type OpsWiring } from './ops/runner';
@@ -210,16 +220,53 @@ function createOpsWiring(env: AppEnv, log: Logger, payload: () => Promise<Payloa
 }
 
 /**
+ * The backup job's dependencies (SPEC-13b W25, AC-48): the key from `T2F_BACKUP_KEY` (absent → not configured),
+ * the metered store of the environment's own bucket and prefix (`catalogCopyDepsOf`: the env guards of
+ * `platform/env.ts` already refused a production bucket outside production), the local `pg_dump` (or the test
+ * seam `backupTuning.dump`), `backup-runs`, the journal and the facts of the manifest. Nothing is read here.
+ */
+export function backupDepsOf(deps: Deps): BackupDeps {
+  const payload = payloadOf(deps);
+  const v = deps.env.vars;
+  const rawKey = typeof v.T2F_BACKUP_KEY === 'string' ? v.T2F_BACKUP_KEY : '';
+  const key = rawKey ? parseBackupKey(rawKey) : null;
+  const copy = catalogCopyDepsOf(deps);
+  const facts = createPayloadBackupFacts(payload);
+  const tuning = deps.backupTuning;
+  return {
+    config: {
+      key,
+      keyId: key ? keyIdOf(key) : null,
+      store: copy?.objects ?? null,
+      prefix: copy?.prefix ?? '',
+      endpoint: typeof v.T2F_R2_ENDPOINT === 'string' ? v.T2F_R2_ENDPOINT : null,
+      dump: tuning?.dump ?? createPgDumpRunner({ databaseUri: String(v.DATABASE_URI ?? ''), serverVersion: () => facts.serverVersion() }),
+      commit: typeof v.T2F_COMMIT === 'string' ? v.T2F_COMMIT : null,
+      ...(tuning?.partBytes ? { partBytes: tuning.partBytes } : {}),
+    },
+    cls: deps.env.class,
+    alarm: deps.alarm,
+    log: deps.log,
+    journal: createPayloadOpsJournal({ payload, journal: createPayloadJournal(isRevertible), collection: 'backup-runs' }),
+    runs: createPayloadBackupRuns(payload),
+    facts,
+    clock: realClock,
+  };
+}
+
+/**
  * What the ops runner reads beyond the ops stores (SPEC-13b W18): catalog zones for the celebration window
- * (AC-18, AC-19), open `page` alarms, the last backup (none until S8), spend over 50 % (`[]` until W29) and the
- * journal of skipped slots (AC-21). All lazy: nothing is read while building deps.
+ * (AC-18, AC-19), open `page` alarms, the last successful backup (`backup-runs`, S8), spend over 50 % (`[]` until
+ * W29) and the journal of skipped slots (AC-21); the backup job (S8). All lazy: nothing is read while building deps.
  */
 function opsRunnerDepsOf(deps: Deps, ops: OpsWiring, payload: () => Promise<Payload>): OpsRunnerDeps {
   const str = (v: unknown): string => (typeof v === 'string' ? v : v === null || v === undefined ? '' : String(v));
+  const backupDeps = backupDepsOf(deps);
   return {
     ops,
     alarm: deps.alarm,
     log: deps.log,
+    backup: createBackupJob({ ...backupDeps, lease: ops.lease }),
     sources: {
       async zones() {
         const stored = await catalogStoreOf(deps).read();
@@ -227,7 +274,7 @@ function opsRunnerDepsOf(deps: Deps, ops: OpsWiring, payload: () => Promise<Payl
         return { zones: stored.zones.map((z) => ({ midnightMs: Date.parse(str(z.midnightUtc)) })).filter((z) => Number.isFinite(z.midnightMs)) };
       },
       openPageCount: async () => (await alarmStoreOf(deps).listOpenPage()).length,
-      lastBackupAt: async () => null,
+      lastBackupAt: async () => (await backupDeps.runs.latest()).lastOk?.snapshotAt ?? null,
       spendOver50: async () => [],
       journal: createPayloadOpsJournal({ payload, journal: createPayloadJournal(isRevertible) }),
     },
@@ -322,6 +369,7 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   // Built in every process, started only by `startProcessBackground` (SPEC-07 W28).
   deps.scheduler = overrides.scheduler ?? createProcessScheduler(deps, payload, sharedClock);
   // The ops jobs (SPEC-13b W18): built here without a timer; ticked by `startProcessBackground` and the `ops-tick` door.
+  if (overrides.backupTuning) deps.backupTuning = overrides.backupTuning;
   if (ops && !deps.opsRunner) deps.opsRunner = createOpsRunner(opsRunnerDepsOf(deps, ops, payload));
   // Realtime (SPEC-06): no session yet (C5); the signer only with the token secret (else AC-19 in `test`).
   deps.subjects = overrides.subjects ?? noSessionSubjects;

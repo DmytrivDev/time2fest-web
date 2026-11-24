@@ -119,26 +119,33 @@ export interface OpsJournal {
 /** Stage at which a backup run stopped (AC-42, AC-44). */
 export type BackupStage = 'config' | 'version' | 'dump' | 'encrypt' | 'upload' | 'manifest' | 'retention';
 
-/** One `backup-runs` row (AC-51). */
+/** One `backup-runs` row (AC-51), the fields of the collection. */
 export interface BackupRun {
-  /** Epoch ms. */
-  startedAt: number;
-  finishedAt: number;
+  /** Object key of the dump (`<prefix>backups/db/<yyyymmddThhmmssZ>.dump.enc`), named before the upload starts. */
+  key: string;
+  /** `daily` / `hourly` — a scheduled slot (AC-40); `manual` — `ops backup-now` (AC-52). */
+  kind: 'daily' | 'hourly' | 'manual';
   result: 'failed' | 'ok';
   /** Set when `result` is `failed`. */
   stage?: BackupStage;
-  /** Object key of the dump (without the env prefix's bucket), set on success. */
-  key?: string;
-  sizeBytes?: number;
-  trigger: 'manual' | 'schedule';
+  /** Bytes of the encrypted object, set on success. */
+  size?: number;
+  /** sha256 (hex) of the encrypted object, set on success. */
+  sha256?: string;
+  durationMs: number;
+  /** Epoch ms of the snapshot start (the dump spawn). */
+  snapshotAt: number;
+  keyId?: string;
 }
 
 export interface BackupRunStore {
   record(run: BackupRun): Promise<void>;
-  /** The newest run, and the newest successful one (AC-45, AC-56). */
+  /** The newest run, and the newest successful one, by `snapshotAt` (AC-45, AC-56). */
   latest(): Promise<{ last: BackupRun | null; lastOk: BackupRun | null }>;
-  /** Successful runs finished at or after `sinceMs`, oldest first (loss window, AC-57). */
+  /** Successful runs with `snapshotAt` at or after `sinceMs`, oldest first (loss window, AC-57). */
   okSince(sinceMs: number): Promise<BackupRun[]>;
+  /** A scheduled (`daily` / `hourly`) run, whatever its result, with `snapshotAt` at or after `sinceMs`: the slot is taken (AC-40). */
+  scheduledSince(sinceMs: number): Promise<boolean>;
 }
 
 /** One `restore-runs` row (AC-56, AC-57). */
