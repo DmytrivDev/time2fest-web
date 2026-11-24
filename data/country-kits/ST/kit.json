@@ -1,0 +1,103 @@
+{
+  "code": "ST",
+  "zone": "UTC+0",
+  "zoneId": "utc+0000",
+  "cityId": "sao-tome",
+  "names": {
+    "uk": {
+      "name": "Сан-Томе і Принсіпі",
+      "city": "Сан-Томе",
+      "cityIn": "у Сан-Томе",
+      "countryIn": "у Сан-Томе і Принсіпі",
+      "caps": "САН-ТОМЕ І ПРИНСІПІ"
+    },
+    "en": {
+      "name": "São Tomé and Príncipe",
+      "city": "São Tomé",
+      "cityIn": "in São Tomé",
+      "countryIn": "in São Tomé and Príncipe",
+      "caps": "SÃO TOMÉ AND PRÍNCIPE"
+    },
+    "es": {
+      "name": "Santo Tomé y Príncipe",
+      "city": "Santo Tomé",
+      "cityIn": "en Santo Tomé",
+      "countryIn": "en Santo Tomé y Príncipe",
+      "caps": "SANTO TOMÉ Y PRÍNCIPE"
+    },
+    "fr": {
+      "name": "Sao Tomé-et-Principe",
+      "city": "Sao Tomé",
+      "cityIn": "à Sao Tomé",
+      "countryIn": "à Sao Tomé-et-Principe",
+      "caps": "SAO TOMÉ-ET-PRINCIPE"
+    }
+  },
+  "picto": "M15.6 28 C15.7 20 16.1 13.6 16.9 9.4 C17.5 6 18.7 4.2 20.2 4.2 C21.7 4.2 22.9 6 23.5 9.4 C24.3 13.6 24.6 20 24.7 27.8 M2.8 34 Q3.4 30.2 6.8 30.8 Q9 27.6 12.6 29.2 Q13.8 27.4 15.6 28 Q20.2 26.4 24.7 27.8 Q26.8 26.2 29 28.6 Q31.8 27.4 33.6 30.4 Q36.6 30.6 37.2 34 M2.8 34 H37.2 M8.6 30 Q8 24.4 9.4 20 M9.4 20 Q6.6 18.8 5 21 M9.4 20 Q12 18.4 13.4 20.4 M9.4 20 Q8.4 17.2 6.4 16.8 M9.4 20 Q10.8 17.2 12.6 17",
+  "flagColors": [
+    "#12AD2B",
+    "#FFCE00",
+    "#D21034"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Сан-Томе і Принсіпі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in São Tomé and Príncipe"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Santo Tomé y Príncipe"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Sao Tomé-et-Principe"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

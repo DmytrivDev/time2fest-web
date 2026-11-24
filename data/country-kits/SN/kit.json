@@ -1,0 +1,103 @@
+{
+  "code": "SN",
+  "zone": "UTC+0",
+  "zoneId": "utc+0000",
+  "cityId": "dakar",
+  "names": {
+    "uk": {
+      "name": "Сенегал",
+      "city": "Дакар",
+      "cityIn": "у Дакарі",
+      "countryIn": "у Сенегалі",
+      "caps": "СЕНЕГАЛ"
+    },
+    "en": {
+      "name": "Senegal",
+      "city": "Dakar",
+      "cityIn": "in Dakar",
+      "countryIn": "in Senegal",
+      "caps": "SENEGAL"
+    },
+    "es": {
+      "name": "Senegal",
+      "city": "Dakar",
+      "cityIn": "en Dakar",
+      "countryIn": "en Senegal",
+      "caps": "SENEGAL"
+    },
+    "fr": {
+      "name": "Sénégal",
+      "city": "Dakar",
+      "cityIn": "à Dakar",
+      "countryIn": "au Sénégal",
+      "caps": "SÉNÉGAL"
+    }
+  },
+  "picto": "M3 34 H37 M6.5 34 L9 31 L13 29.6 L22 29.2 L28 28.6 L31 30.4 L33.5 34 M18.6 29.2 L17 15.5 H25 L23.4 29.2 M23.60 12.90 A2.6 2.6 0 1 1 18.40 12.90 A2.6 2.6 0 1 1 23.60 12.90 Z M25 15.8 L30 8.6 M30 8.6 L30.6 5.4 M32.40 3.80 A1.6 1.6 0 1 1 29.20 3.80 A1.6 1.6 0 1 1 32.40 3.80 Z M30.5 6.3 L35.2 4.6 M14 17.2 L18.6 29.4 M14 17.2 L8 30.2 M16.20 15.00 A2.2 2.2 0 1 1 11.80 15.00 A2.2 2.2 0 1 1 16.20 15.00 Z M13.4 18.8 L5.6 20.8",
+  "flagColors": [
+    "#00853F",
+    "#FDEF42",
+    "#E31B23"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Сенегалі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Senegal"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Senegal"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "au Sénégal"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

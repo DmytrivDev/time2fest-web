@@ -1,0 +1,103 @@
+{
+  "code": "SH",
+  "zone": "UTC+0",
+  "zoneId": "utc+0000",
+  "cityId": "st-helena",
+  "names": {
+    "uk": {
+      "name": "Острів Святої Єлени",
+      "city": "Джеймстаун",
+      "cityIn": "у Джеймстауні",
+      "countryIn": "на острові Святої Єлени",
+      "caps": "ОСТРІВ СВЯТОЇ ЄЛЕНИ"
+    },
+    "en": {
+      "name": "Saint Helena",
+      "city": "Jamestown",
+      "cityIn": "in Jamestown",
+      "countryIn": "on St Helena",
+      "caps": "SAINT HELENA"
+    },
+    "es": {
+      "name": "Santa Elena",
+      "city": "Jamestown",
+      "cityIn": "en Jamestown",
+      "countryIn": "en Santa Elena",
+      "caps": "SANTA ELENA"
+    },
+    "fr": {
+      "name": "Sainte-Hélène",
+      "city": "Jamestown",
+      "cityIn": "à Jamestown",
+      "countryIn": "à Sainte-Hélène",
+      "caps": "SAINTE-HÉLÈNE"
+    }
+  },
+  "picto": "M2 34 H37.6 M15 34 L32 7 H37.4 V34 M18.5 34 L35.5 7 M17.2 30.5 L19.8 32.1 M19.2 27.2 L21.8 28.9 M21.3 24.0 L23.8 25.6 M23.3 20.8 L25.9 22.4 M25.4 17.5 L27.9 19.1 M27.4 14.3 L29.9 15.9 M29.4 11.1 L32.0 12.7 M31.3 8.1 L33.9 9.7 M32.4 7 V3.4 H36.4 V7 M2.6 34 V29.6 L4.4 27.6 L6.2 29.6 V34 M6.8 34 V30.6 L8.4 29 L10 30.6 V34 M10.8 34 V26.4 H13.4 V34 M10.8 26.4 L12.1 21.4 L13.4 26.4",
+  "flagColors": [
+    "#FFFFFF",
+    "#D80027",
+    "#5A8AE0"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "на острові Святої Єлени"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "on St Helena"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Santa Elena"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Sainte-Hélène"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

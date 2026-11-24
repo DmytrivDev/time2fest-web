@@ -5750,5 +5750,117 @@
       "description": "Mauritania recibe 2027 a las 00:00 UTC: Nuakchot compra ropa nueva en el mercado de Sebkha, celebra en hoteles y salones y guarda los fuegos para noviembre."
     },
     "kit": "mr"
+  },
+  "FK": {
+    "text": "La medianoche del 31 de diciembre llega a las Islas Falkland en pleno verano austral: el sol se pone pasadas las nueve de la noche y el cielo no llega a ponerse del todo negro antes del amanecer. Las islas son un territorio británico de ultramar reclamado por Argentina. Aquí viven menos de cuatro mil personas, así que las fiestas tienen un aire familiar. El final de diciembre es casi un largo descanso: del 25 al 27 son festivos, las oficinas del gobierno cierran el 30 y el 31, y el 1 de enero vuelve a ser día libre.\n\nStanley, donde vive la mayoría de los isleños, pasa la semana festiva al aire libre. En Nochebuena se cantan villancicos bajo el arco de mandíbulas de ballena junto a la catedral de Cristo; el 26 y el 27 de diciembre el hipódromo del oeste de la ciudad acoge carreras de caballos que se celebran desde hace más de un siglo, y en Año Nuevo quienes han construido su propia balsa compiten en una regata de balsas caseras.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "horseshoe",
+        "title": "Carreras entre fiestas",
+        "text": "El 26 y el 27 de diciembre Stanley se reúne en el hipódromo: las carreras navideñas se celebran desde hace más de un siglo, con gincanas ecuestres entre carrera y carrera."
+      },
+      {
+        "id": "t2",
+        "iconId": "boat",
+        "title": "Regata de balsas caseras",
+        "text": "La regata de Año Nuevo reúne a quienes han construido su propia balsa: inscripción y revisión por la mañana, salida a mediodía."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "Una Nochevieja clara",
+        "text": "El 31 de diciembre el sol se pone hacia las 21:10 y sale antes de las 4:40, así que la noche es corta: ni a medianoche el cielo se pone del todo negro."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en las Islas Falkland: Stanley | Time2Fest",
+      "description": "Las Islas Falkland reciben 2027 a medianoche local (03:00 UTC): noche clara de pleno verano austral, carreras de caballos en Stanley y regata de balsas caseras."
+    },
+    "kit": "fk"
+  },
+  "SH": {
+    "text": "Antes, la medianoche en Santa Elena se celebraba tocando campanillas de mano. Hasta 1941 la isla se regía por la hora solar, así que el Año Nuevo llegaba unos 23 minutos más tarde que en Gran Bretaña. Las fiestas caen en pleno verano austral: entre Navidad y Año Nuevo casi todas las oficinas cierran y los isleños visitan a familiares y amigos, incluidos los que vuelven a casa desde el extranjero. La mayoría de los adornos navideños desaparecen ya el 1 de enero.\n\nHoy la noche es más ruidosa. En Jamestown se baila en The Bridge, junto al paseo marítimo, desde la tarde del 31 de diciembre hasta pasadas las dos, sobre todo con música grabada; algunos años tocan grupos locales y hay fuegos artificiales a medianoche. El 1 de enero es festivo y, a veces, ese mismo día llegan a la isla los veleros de la regata Governor's Cup.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Baile en The Bridge",
+        "text": "Jamestown se reúne junto al mar la tarde del 31 de diciembre y baila hasta las dos; algunos años tocan grupos locales y hay fuegos a medianoche."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Toca una campanilla",
+        "text": "Antes los isleños recibían el Año Nuevo con campanillas de mano. Busca una en casa y tócala en cuanto llegue la medianoche."
+      },
+      {
+        "id": "t3",
+        "iconId": "boat",
+        "title": "Veleros en Año Nuevo",
+        "text": "La regata Governor's Cup va de finales de diciembre a principios de enero, así que a veces los veleros llegan a la isla el mismo 1 de enero."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Santa Elena: Jamestown | Time2Fest",
+      "description": "Santa Elena recibe 2027 a medianoche local (00:00 UTC): baile en The Bridge de Jamestown, noche de verano austral y la vieja costumbre de las campanillas."
+    },
+    "kit": "sh"
+  },
+  "SN": {
+    "text": "Para la mayoría de los senegaleses, el 31 de diciembre no es una fiesta religiosa: alrededor del 95 % de la población es musulmana y, en el calendario islámico, es un día cualquiera. Aun así, la Nochevieja gana adeptos cada año. En diciembre los sastres no paran: los jóvenes encargan para el 31 vestidos de gala, trajes y chaquetas —«La Tabaski y la Korité son la fe; el 31 es solo la moda», ríe una clienta—. En los mercados se agotan los pollos para la mesa de fiesta, las parroquias católicas se reúnen a rezar de noche y el 1 de enero es festivo.\n\nDakar recibe la medianoche sin fuegos artificiales municipales —hace años que no los hay—, pero en los barrios estallan los petardos: los puestos familiares venden «bolas de fuego» y los niños las encienden con sus padres hasta las dos o las tres de la madrugada. Muchas familias recibieron 2024 en la Place de l’Indépendance, engalanada para la ocasión.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Pollo para la fiesta",
+        "text": "Antes de Navidad y Año Nuevo, los mercados de Dakar apenas dan abasto con los pollos: las familias se los llevan para la mesa de fiesta, igual que antes de la Korité."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Petardos hasta las tres",
+        "text": "Como no hay fuegos municipales, los barrios reciben la medianoche con petardos y pequeños fuegos de los puestos familiares, que los niños encienden junto a sus padres."
+      },
+      {
+        "id": "t3",
+        "iconId": "bell",
+        "title": "Oración nocturna",
+        "text": "Los católicos reciben el año en sus parroquias con vigilias de oración y charlas sobre la paz, y el 1 de enero todo el país descansa."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Senegal: Dakar | Time2Fest",
+      "description": "Senegal recibe 2027 a las 00:00 UTC: trajes nuevos de los sastres de Dakar, pollo en la mesa de fiesta, petardos en los barrios y vigilias en las parroquias."
+    },
+    "kit": "sn"
+  },
+  "ST": {
+    "text": "En Santo Tomé y Príncipe el año viejo se lava en el mar. La mañana del 1 de enero gente de todo el país acude a las playas para el tradicional «lavado del año» (lavagem do ano), y así entrar renovada en el nuevo. La víspera es ruidosa: cada año la policía registra muchos petardos y fuegos artificiales en todo el país. El nuevo día trae el mensaje de Año Nuevo del presidente y la noticia del «bebé del año»: en 2023 un niño nació a las 00:05.\n\nLa capital recibió 2026 con un festival en la misma playa frente a la Radio Nacional, adonde llegaron también vecinos de las afueras. Por la mañana la fiesta pasa a Praia da Ilha, junto al Museo Nacional: entre baño y baño se venden frutas, aperitivos y platos de la isla, suena música y los socorristas de la guardia costera vigilan desde el agua.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "wave",
+        "title": "Lavar el año viejo",
+        "text": "Desde las primeras horas del 1 de enero las playas se llenan: gente de todo el país entra en el mar para «lavar» el año viejo y empezar el nuevo renovada."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Petardos a medianoche",
+        "text": "La noche del 1 de enero es ruidosa: en todo el país la gente lanza petardos y fuegos artificiales, y la policía lo recoge cada año en sus balances de la noche."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Fiesta en la playa",
+        "text": "Santo Tomé recibió 2026 con un festival en la playa frente a la Radio Nacional, y por la mañana en Praia da Ilha se venden frutas, aperitivos y platos de la isla con música."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Santo Tomé y Príncipe: Santo Tomé | Time2Fest",
+      "description": "Santo Tomé y Príncipe recibe 2027 a las 00:00 UTC: petardos a medianoche, un festival en la playa de la capital y, el 1 de enero, el baño que lava el año viejo."
+    },
+    "kit": "st"
   }
 }

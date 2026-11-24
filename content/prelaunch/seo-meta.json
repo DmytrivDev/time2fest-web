@@ -3438,6 +3438,78 @@
         "title": "Nouvel An en Mauritanie : Nouakchott | Time2Fest",
         "description": "La Mauritanie entre en 2027 à 0 h UTC : Nouakchott achète une tenue neuve au marché de la Sebkha, fête à l’hôtel ou en salle et garde les feux pour novembre."
       }
+    },
+    "FK": {
+      "uk": {
+        "title": "Фолклендські острови: Новий рік 2027 у Стенлі | Time2Fest",
+        "description": "Фолклендські острови зустрічають 2027 рік опівночі за місцевим часом (03:00 UTC): світла літня ніч, скачки в Стенлі між святами й перегони саморобних плотів."
+      },
+      "en": {
+        "title": "New Year in the Falkland Islands: Stanley | Time2Fest",
+        "description": "The Falkland Islands greet 2027 at local midnight (03:00 UTC): a bright midsummer night, Christmas horse races in Stanley and a race of home-made rafts."
+      },
+      "es": {
+        "title": "Año Nuevo en las Islas Falkland: Stanley | Time2Fest",
+        "description": "Las Islas Falkland reciben 2027 a medianoche local (03:00 UTC): noche clara de pleno verano austral, carreras de caballos en Stanley y regata de balsas caseras."
+      },
+      "fr": {
+        "title": "Nouvel An aux Îles Falkland : Stanley | Time2Fest",
+        "description": "Les Îles Falkland fêtent 2027 à minuit heure locale (03:00 UTC) : nuit claire du plein été austral, courses hippiques à Stanley et course de radeaux maison."
+      }
+    },
+    "SH": {
+      "uk": {
+        "title": "Острів Святої Єлени: Новий рік 2027 у Джеймстауні | Time2Fest",
+        "description": "Острів Святої Єлени зустрічає 2027 рік опівночі за місцевим часом (00:00 UTC): танці на Бриджі в Джеймстауні, південне літо й давній звичай дзвоників."
+      },
+      "en": {
+        "title": "New Year on Saint Helena: Jamestown | Time2Fest",
+        "description": "Saint Helena greets 2027 at local midnight (00:00 UTC): dancing on The Bridge in Jamestown, a southern-summer night and the old custom of ringing handbells."
+      },
+      "es": {
+        "title": "Año Nuevo en Santa Elena: Jamestown | Time2Fest",
+        "description": "Santa Elena recibe 2027 a medianoche local (00:00 UTC): baile en The Bridge de Jamestown, noche de verano austral y la vieja costumbre de las campanillas."
+      },
+      "fr": {
+        "title": "Nouvel An à Sainte-Hélène : Jamestown | Time2Fest",
+        "description": "Sainte-Hélène fête 2027 à minuit heure locale (00:00 UTC) : danse sur The Bridge à Jamestown, nuit d’été austral et vieille coutume des clochettes."
+      }
+    },
+    "SN": {
+      "uk": {
+        "title": "Новий рік у Сенегалі: Дакар | Time2Fest",
+        "description": "Сенегал зустрічає 2027 рік о 00:00 UTC: нові вбрання від кравців на 31-ше, курка на святковий стіл, петарди в кварталах Дакара й нічна молитва в парафіях."
+      },
+      "en": {
+        "title": "New Year in Senegal: Dakar | Time2Fest",
+        "description": "Senegal welcomes 2027 at 00:00 UTC: new outfits from Dakar’s tailors, chicken on the festive table, firecrackers in the streets and night prayer in parishes."
+      },
+      "es": {
+        "title": "Año Nuevo en Senegal: Dakar | Time2Fest",
+        "description": "Senegal recibe 2027 a las 00:00 UTC: trajes nuevos de los sastres de Dakar, pollo en la mesa de fiesta, petardos en los barrios y vigilias en las parroquias."
+      },
+      "fr": {
+        "title": "Nouvel An au Sénégal : Dakar | Time2Fest",
+        "description": "Le Sénégal accueille 2027 à 0 h UTC : tenues neuves des tailleurs de Dakar, poulet sur la table de fête, pétards dans les quartiers et veillées paroissiales."
+      }
+    },
+    "ST": {
+      "uk": {
+        "title": "Новий рік у Сан-Томе і Принсіпі: Сан-Томе | Time2Fest",
+        "description": "Сан-Томе і Принсіпі зустрічає 2027 рік о 00:00 UTC: петарди опівночі, фестиваль на пляжі столиці, а вранці 1 січня — «обмивання року» в морі."
+      },
+      "en": {
+        "title": "New Year in São Tomé and Príncipe: São Tomé | Time2Fest",
+        "description": "São Tomé and Príncipe greets 2027 at 00:00 UTC: firecrackers at midnight, a beach festival in the capital and a sea swim on 1 January to wash the old year away."
+      },
+      "es": {
+        "title": "Año Nuevo en Santo Tomé y Príncipe: Santo Tomé | Time2Fest",
+        "description": "Santo Tomé y Príncipe recibe 2027 a las 00:00 UTC: petardos a medianoche, un festival en la playa de la capital y, el 1 de enero, el baño que lava el año viejo."
+      },
+      "fr": {
+        "title": "Nouvel An à Sao Tomé-et-Principe : Sao Tomé | Time2Fest",
+        "description": "Sao Tomé-et-Principe entre en 2027 à 0 h UTC : pétards à minuit, festival sur la plage de la capitale et, le 1er janvier, bain de mer pour laver l’an passé."
+      }
     }
   }
 }

@@ -5750,5 +5750,117 @@
       "description": "Mauritania greets 2027 at 00:00 UTC: Nouakchott shops for new outfits at the Sebkha market, parties in hotels and halls and saves big fireworks for 28 November."
     },
     "kit": "mr"
+  },
+  "FK": {
+    "text": "Midnight on 31 December in the Falkland Islands falls in the height of the southern summer: the sun sets after nine in the evening, and the sky never turns fully black before dawn. The islands are a British overseas territory claimed by Argentina. Fewer than four thousand people live here, so the holidays feel homely. The end of December is almost one long break: 25–27 December are public holidays, government offices close on 30 and 31 December, and 1 January is a day off again.\n\nStanley, home to most islanders, spends the festive week outdoors. On Christmas Eve carols are sung under the whalebone arch by Christ Church Cathedral, on 26–27 December the racecourse on the west side of town hosts horse races that have run for more than a century, and at New Year those who have built a raft of their own compete in a home-made raft race.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "horseshoe",
+        "title": "Races between the holidays",
+        "text": "On 26 and 27 December Stanley gathers at the racecourse: the Christmas races have run for over a century, with gymkhanas between the heats."
+      },
+      {
+        "id": "t2",
+        "iconId": "boat",
+        "title": "Home-made raft race",
+        "text": "The New Year raft race brings out everyone who has built a raft of their own: registration and inspection in the morning, the start at noon."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "A bright New Year's night",
+        "text": "On 31 December the sun sets around 9:10pm and rises before 4:40am, so the night is short: even at midnight the sky never turns fully black."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in the Falkland Islands: Stanley | Time2Fest",
+      "description": "The Falkland Islands greet 2027 at local midnight (03:00 UTC): a bright midsummer night, Christmas horse races in Stanley and a race of home-made rafts."
+    },
+    "kit": "fk"
+  },
+  "SH": {
+    "text": "Midnight on St Helena was once marked by the ringing of handbells. Until 1941 the island kept solar time, so the New Year arrived here about 23 minutes later than in Britain. The holidays fall in the southern summer: between Christmas and New Year most offices close, and islanders visit family and friends, including Saints who have come home from overseas. Most Christmas decorations come down by 1 January.\n\nThe night is louder now. In Jamestown people dance on The Bridge by the seafront from the evening of 31 December until 2am and later, mostly to recorded music; some years local bands play and fireworks go up at midnight. 1 January is a public holiday, and sometimes that very day the yachts of the Governor's Cup race arrive at the island.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Dancing on The Bridge",
+        "text": "Jamestown gathers by the seafront on the evening of 31 December and dances until 2am; some years local bands play and fireworks go up at midnight."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Ring a bell at midnight",
+        "text": "Islanders once rang in the New Year with handbells. Find a little bell at home and ring it the moment midnight comes."
+      },
+      {
+        "id": "t3",
+        "iconId": "boat",
+        "title": "Yachts on New Year's Day",
+        "text": "The Governor's Cup yacht race runs from late December into early January, so sailing yachts sometimes reach the island on 1 January itself."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 on Saint Helena: Jamestown | Time2Fest",
+      "description": "Saint Helena greets 2027 at local midnight (00:00 UTC): dancing on The Bridge in Jamestown, a southern-summer night and the old custom of ringing handbells."
+    },
+    "kit": "sh"
+  },
+  "SN": {
+    "text": "For most Senegalese, 31 December is not a religious holiday: about 95% of the population is Muslim, and in the Islamic calendar it is an ordinary day. Yet New Year’s Eve grows more popular every year. In December tailors work flat out as young people order evening dresses, suits and jackets for the 31st — “Tabaski and Korité are faith, the 31st is just the trend,” laughs one client. Markets sell out of chickens for the festive table, Catholic parishes gather for night prayer, and 1 January is a public holiday.\n\nDakar sees in midnight without a city fireworks show — there hasn’t been one for years — but firecrackers crackle through the neighbourhoods: family stalls sell “fire balls”, and children set them off with their parents until two or three in the morning. Many families welcomed 2024 on the decorated Place de l’Indépendance.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Chicken for the feast",
+        "text": "Before Christmas and New Year, Dakar’s markets can hardly keep up with the demand for chickens: families snap them up for the festive table, just as they do before Korité."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Firecrackers until 3 a.m.",
+        "text": "With no city fireworks, neighbourhoods greet midnight with firecrackers and small fireworks from family stalls, which children light together with their parents."
+      },
+      {
+        "id": "t3",
+        "iconId": "bell",
+        "title": "Night prayer in parishes",
+        "text": "Catholics see in the year at their parishes with New Year’s Eve vigils of prayer and talks about peace, and on 1 January the whole country has a day off."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Senegal: Dakar | Time2Fest",
+      "description": "Senegal welcomes 2027 at 00:00 UTC: new outfits from Dakar’s tailors, chicken on the festive table, firecrackers in the streets and night prayer in parishes."
+    },
+    "kit": "sn"
+  },
+  "ST": {
+    "text": "In São Tomé and Príncipe the old year is washed away in the sea. On the morning of 1 January people from all over the country head to the beaches for the traditional \"washing of the year\" (lavagem do ano), to step into the new one renewed. The night before is loud: every year the police note plenty of firecrackers and fireworks nationwide. The new day brings the President's New Year address and news of the \"baby of the year\": in 2023 a boy was born at 00:05.\n\nThe capital welcomed 2026 with a festival right on the beach facing the National Radio, drawing people in from the outskirts too. In the morning the party moves to Praia da Ilha by the National Museum, where stalls sell fruit, snacks and island dishes between swims, music plays and coast guard lifeguards keep watch from the water.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "wave",
+        "title": "Wash the old year away",
+        "text": "From the first hours of 1 January the beaches fill up: people from all over the country wade into the sea to \"wash\" the old year away and start the new one renewed."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Firecrackers at midnight",
+        "text": "The night of 1 January is loud: people set off firecrackers and fireworks all over the country, and the police mention it every year in their holiday-night reports."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "A beach party in the capital",
+        "text": "São Tomé met 2026 with a festival on the beach facing the National Radio, and in the morning Praia da Ilha has stalls of fruit, snacks and island dishes to music."
+      }
+    ],
+    "meta": {
+      "title": "New Year in São Tomé and Príncipe: São Tomé | Time2Fest",
+      "description": "São Tomé and Príncipe greets 2027 at 00:00 UTC: firecrackers at midnight, a beach festival in the capital and a sea swim on 1 January to wash the old year away."
+    },
+    "kit": "st"
   }
 }

@@ -5750,5 +5750,117 @@
       "description": "La Mauritanie entre en 2027 à 0 h UTC : Nouakchott achète une tenue neuve au marché de la Sebkha, fête à l’hôtel ou en salle et garde les feux pour novembre."
     },
     "kit": "mr"
+  },
+  "FK": {
+    "text": "Aux Îles Falkland, minuit le 31 décembre tombe en plein été austral : le soleil se couche après 21 heures et le ciel ne devient jamais tout à fait noir avant l’aube. L’archipel est un territoire britannique d’outre-mer revendiqué par l’Argentine. Moins de quatre mille personnes y vivent, et les fêtes gardent un air familial. La fin décembre ressemble à une longue pause : du 25 au 27 décembre, jours fériés ; les 30 et 31, les bureaux du gouvernement ferment ; le 1er janvier est de nouveau chômé.\n\nStanley, où vivent la plupart des insulaires, passe la semaine des fêtes au grand air. La veille de Noël, on chante sous l’arche en mâchoires de baleine près de la cathédrale Christ Church ; les 26 et 27 décembre, l’hippodrome à l’ouest de la ville accueille des courses de chevaux organisées depuis plus d’un siècle ; au Nouvel An, ceux qui ont construit leur propre radeau s’affrontent dans une course de radeaux maison.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "horseshoe",
+        "title": "Courses entre les fêtes",
+        "text": "Les 26 et 27 décembre, Stanley se retrouve à l’hippodrome : les courses de Noël s’y tiennent depuis plus d’un siècle, avec des gymkhanas entre les épreuves."
+      },
+      {
+        "id": "t2",
+        "iconId": "boat",
+        "title": "Course de radeaux maison",
+        "text": "La course de radeaux du Nouvel An réunit ceux qui ont construit leur propre radeau : inscription et contrôle le matin, départ à midi."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "Une nuit du Nouvel An claire",
+        "text": "Le 31 décembre, le soleil se couche vers 21 h 10 et se lève avant 4 h 40 : la nuit est courte, et même à minuit le ciel ne devient jamais tout à fait noir."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 aux Îles Falkland : Stanley | Time2Fest",
+      "description": "Les Îles Falkland fêtent 2027 à minuit heure locale (03:00 UTC) : nuit claire du plein été austral, courses hippiques à Stanley et course de radeaux maison."
+    },
+    "kit": "fk"
+  },
+  "SH": {
+    "text": "Autrefois, à Sainte-Hélène, on saluait minuit en agitant des clochettes. Jusqu’en 1941, l’île vivait à l’heure solaire : le Nouvel An y arrivait environ 23 minutes après la Grande-Bretagne. Les fêtes tombent en plein été austral : entre Noël et le Nouvel An, la plupart des bureaux ferment et les insulaires rendent visite à leurs proches, y compris ceux qui reviennent de l’étranger. La plupart des décorations de Noël disparaissent dès le 1er janvier.\n\nAujourd’hui, la nuit est plus bruyante. À Jamestown, on danse sur The Bridge, près du front de mer, du soir du 31 décembre jusqu’à 2 heures et au-delà, surtout sur de la musique enregistrée ; certaines années, des groupes locaux jouent et un feu d’artifice part à minuit. Le 1er janvier est férié et, parfois, ce jour-là, les voiliers de la course Governor's Cup arrivent sur l’île.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Danse sur The Bridge",
+        "text": "Jamestown se retrouve près du front de mer le soir du 31 décembre et danse jusqu’à 2 heures ; certaines années, des groupes locaux jouent et un feu d’artifice part à minuit."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Sonne une clochette",
+        "text": "Autrefois, les insulaires accueillaient le Nouvel An avec des clochettes. Trouve-en une chez toi et fais-la sonner dès minuit."
+      },
+      {
+        "id": "t3",
+        "iconId": "boat",
+        "title": "Voiliers du jour de l’An",
+        "text": "La course Governor's Cup se court de fin décembre à début janvier : il arrive que des voiliers touchent l’île le 1er janvier même."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 à Sainte-Hélène : Jamestown | Time2Fest",
+      "description": "Sainte-Hélène fête 2027 à minuit heure locale (00:00 UTC) : danse sur The Bridge à Jamestown, nuit d’été austral et vieille coutume des clochettes."
+    },
+    "kit": "sh"
+  },
+  "SN": {
+    "text": "Pour la plupart des Sénégalais, le 31 décembre n’est pas une fête religieuse : environ 95 % de la population est musulmane et, dans le calendrier musulman, c’est un jour ordinaire. Pourtant, le réveillon gagne du terrain chaque année. En décembre, les tailleurs ne chôment pas : les jeunes commandent pour le 31 robes de soirée, tailleurs et vestes — « La Tabaski ou la Korité, c’est la religion, le 31, c’est juste la tendance », rit une cliente. Sur les marchés, les poulets s’arrachent pour la table de fête, les paroisses catholiques se réunissent pour prier dans la nuit, et le 1er janvier est férié.\n\nDakar passe minuit sans feu d’artifice municipal — il n’y en a plus depuis des années —, mais les pétards claquent dans les quartiers : les stands familiaux vendent des « boules de feu », que les enfants allument avec leurs parents jusqu’à deux ou trois heures du matin. Beaucoup de familles ont accueilli 2024 sur la place de l’Indépendance décorée.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Le poulet de fête",
+        "text": "Avant Noël et le Nouvel An, les marchés de Dakar peinent à suivre la demande de poulets : les familles se les arrachent pour la table de fête, comme avant la Korité."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Pétards jusqu’à 3 heures",
+        "text": "Faute de feu d’artifice municipal, les quartiers saluent minuit avec des pétards et de petits feux achetés aux stands familiaux, que les enfants allument avec leurs parents."
+      },
+      {
+        "id": "t3",
+        "iconId": "bell",
+        "title": "Veillée dans les paroisses",
+        "text": "Les catholiques accueillent l’année dans leurs paroisses, lors de veillées de prière et d’échanges sur la paix, et le 1er janvier, tout le pays se repose."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An au Sénégal : Dakar | Time2Fest",
+      "description": "Le Sénégal accueille 2027 à 0 h UTC : tenues neuves des tailleurs de Dakar, poulet sur la table de fête, pétards dans les quartiers et veillées paroissiales."
+    },
+    "kit": "sn"
+  },
+  "ST": {
+    "text": "À Sao Tomé-et-Principe, on lave la vieille année dans la mer. Le matin du 1er janvier, des gens de tout le pays gagnent les plages pour le traditionnel « lavage de l’année » (lavagem do ano), afin d’entrer renouvelés dans la nouvelle. La veille est bruyante : chaque année, la police relève pétards et feux d’artifice en nombre dans tout le pays. Le jour de l’an apporte le message du président et la nouvelle du « bébé de l’année » : en 2023, un garçon est né à 0 h 05.\n\nLa capitale a accueilli 2026 avec un festival sur la plage face à la Radio nationale, où affluaient aussi les habitants de la périphérie. Le matin, la fête passe à Praia da Ilha, près du Musée national : entre deux baignades, on y vend fruits, en-cas et plats de l’île, la musique joue et les sauveteurs des garde-côtes veillent depuis l’eau.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "wave",
+        "title": "Laver la vieille année",
+        "text": "Dès les premières heures du 1er janvier, les plages se remplissent : des gens de tout le pays entrent dans la mer pour « laver » la vieille année et commencer la nouvelle renouvelés."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Pétards à minuit",
+        "text": "La nuit du 1er janvier est bruyante : partout dans le pays, on lance pétards et feux d’artifice, et la police le note chaque année dans son bilan de la nuit."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Fête sur la plage",
+        "text": "Sao Tomé a accueilli 2026 par un festival sur la plage face à la Radio nationale ; le matin, à Praia da Ilha, on vend fruits, en-cas et plats de l’île en musique."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An à Sao Tomé-et-Principe : Sao Tomé | Time2Fest",
+      "description": "Sao Tomé-et-Principe entre en 2027 à 0 h UTC : pétards à minuit, festival sur la plage de la capitale et, le 1er janvier, bain de mer pour laver l’an passé."
+    },
+    "kit": "st"
   }
 }

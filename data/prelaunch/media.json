@@ -3501,6 +3501,70 @@
         "x": 50,
         "y": 60
       }
+    },
+    "country:FK": {
+      "src": "/media/photos/stanley.webp",
+      "alt": {
+        "uk": "Собор Христа в Стенлі: цегляна вежа з червоним шатровим дахом і арка з китових щелеп на газоні",
+        "en": "Christ Church Cathedral in Stanley: a brick tower with a red pyramid roof and the whalebone arch on the lawn",
+        "es": "La catedral de Christ Church en Stanley: torre de ladrillo con tejado rojo piramidal y el arco de mandíbulas de ballena en el césped",
+        "fr": "La cathédrale Christ Church à Stanley : tour de brique au toit rouge pyramidal et arche en mâchoires de baleine sur la pelouse"
+      },
+      "author": "Stefan Brending (2eight)",
+      "license": "CC BY-SA 3.0 DE",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:2024_Stanley_-_Falkland_Inseln_-_Christ_Church_Cathedral_-_by_2eight_-_7DS7987.jpg",
+      "position": {
+        "x": 72,
+        "y": 45
+      }
+    },
+    "country:SH": {
+      "src": "/media/photos/st-helena.webp",
+      "alt": {
+        "uk": "Сходи Якова вночі: освітлені вогнями сходи спускаються схилом Ладдер-Гілл до вогнів Джеймстауна в долині",
+        "en": "Jacob’s Ladder at night: the lit stairway runs down Ladder Hill to the lights of Jamestown in the valley",
+        "es": "La Escalera de Jacob de noche: la escalinata iluminada baja por Ladder Hill hasta las luces de Jamestown en el valle",
+        "fr": "L’échelle de Jacob la nuit : l’escalier éclairé descend Ladder Hill vers les lumières de Jamestown dans la vallée"
+      },
+      "author": "Kevstan",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Looking_down_Jacob%27s_Ladder_at_Jamestown_at_night.jpg",
+      "position": {
+        "x": 62,
+        "y": 55
+      }
+    },
+    "country:SN": {
+      "src": "/media/photos/dakar.webp",
+      "alt": {
+        "uk": "Нічний Дакар з пагорбів Мамель: вогні кварталів до самого обрію, праворуч на пагорбі — Монумент Африканського Відродження в підсвітці",
+        "en": "Dakar at night from the Mamelles hills: district lights to the horizon, the lit African Renaissance Monument on the hill to the right",
+        "es": "Dakar de noche desde las colinas de Mamelles: luces de los barrios hasta el horizonte y, a la derecha, el Monumento al Renacimiento Africano iluminado",
+        "fr": "Dakar la nuit depuis les Mamelles : lumières des quartiers jusqu’à l’horizon, à droite le monument de la Renaissance africaine illuminé"
+      },
+      "author": "Ibn Koama",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Vue_de_nuit-_ville_de_Dakar.jpg",
+      "position": {
+        "x": 62,
+        "y": 72
+      }
+    },
+    "country:ST": {
+      "src": "/media/photos/sao-tome.webp",
+      "alt": {
+        "uk": "Собор Се в Сан-Томе ввечері: дві дзвіниці з хрестами, пальми й ажурна огорожа набережної",
+        "en": "The Sé Cathedral in São Tomé in the evening: two bell towers with crosses, palm trees and the openwork railing of the waterfront",
+        "es": "La catedral de la Sé en Santo Tomé al anochecer: dos campanarios con cruces, palmeras y la verja calada del paseo marítimo",
+        "fr": "La cathédrale de la Sé à São Tomé le soir : deux clochers surmontés de croix, palmiers et grille ajourée du front de mer"
+      },
+      "author": "Chuck Moravec",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Sao_Tome_Cathedral_7_(16223085806).jpg",
+      "position": {
+        "x": 45,
+        "y": 45
+      }
     }
   }
 }
