@@ -18,6 +18,8 @@ import type { LiveConfig } from './config';
 /** The fields of `videos.list` the poller asks for (no titles, no statistics: AC-75). */
 export interface YoutubeVideoState {
   videoId: string;
+  /** SPEC-21a: the channel of the video (candidate rules); never stored on a source. */
+  channelId?: string;
   liveBroadcastContent?: string | null;
   privacyStatus?: string | null;
   embeddable?: boolean | null;

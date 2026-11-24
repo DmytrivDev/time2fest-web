@@ -2,13 +2,15 @@
  * `POST /api/_test/live` (SPEC-12 AC-72, W38): the live-air controls of the tests. Part of the doors module, so it
  * exists only in the `test` class with `T2F_TEST_DOORS=1`. Body `LiveDoorBodySchema` (discriminator `door`):
  * - `video-status` — sets one video's state in the YouTube fake (`/_control/videos` of `T2F_YOUTUBE_BASE_URL`);
- * - `quota` — the `queries` bucket of the current quota day is `used` (and stopped until the next day boundary when
- *   `exceeded`); the quota counters are replaced, not added to;
+ * - `quota` — the counter `bucket` (default `queries`; also `search`, `candidates`, `playlists`) of the current quota day
+ *   is `used` (and the `queries` / `search` bucket stopped until the next day boundary when `exceeded`); the quota
+ *   counters are replaced, not added to;
+ * - `channels` / `search-results` (SPEC-21a) — forward to the fake's `/_control/channels` and `/_control/search`;
  * - `viewers` — fixture entries that replace presence in the viewers aggregator of THIS process: `countries` each get
  *   `viewersMinPerCountry` entries, the rest of `people` are counted without a country (so the summary shows exactly
  *   `people` and the listed countries that have a catalog row);
  * - `hide` — the owner's hide action (journal row, version bump, `live.changed`), reason «test door»;
- * - `reset-live` — the fake emptied, the quota counters and stream sources emptied, the seed's stream sources
+ * - `reset-live` — the fake emptied, the quota counters, stream sources, candidates and channels emptied, the seed's stream sources
  *   re-applied, the viewer fixture dropped.
  */
 import { LiveDoorBodySchema } from '@time2fest/contracts/schemas';
@@ -30,7 +32,7 @@ const DOOR_REASON = 'test door';
 /** The hide door acts as the owner would (AC-51), named as the test door in the journal. */
 const DOOR_OWNER: Actor = Object.freeze({ ...TEST_DOOR_ACTOR, kind: 'owner' });
 const STREAM_SOURCES_ROW = 'live-1-stream-sources';
-const LIVE_COLLECTIONS = ['live-quota', 'stream-sources'] as const;
+const LIVE_COLLECTIONS = ['live-quota', 'stream-sources', 'stream-candidates', 'stream-channels'] as const;
 
 /** The fake's `/_control/videos` row of a contract state. */
 const FAKE_STATE: Record<LiveVideoState, { state: string; embeddable?: boolean }> = {
@@ -83,9 +85,14 @@ export const liveDoor: DoorRow = {
       case 'quota': {
         const now = ctx.deps.clock.now();
         const day = quotaDay(now, live.cfg.dayTimeZone);
+        const bucket = body.bucket ?? 'queries';
+        // A class ceiling (`candidates`, `playlists`) has no exceeded stop, only `used` against its ceiling.
+        if (body.exceeded === true && bucket !== 'queries' && bucket !== 'search') return failure('validation', { reason: 'exceeded-unsupported' });
         await seed.clear('live-quota');
-        if (body.used > 0) await live.quota.charge(day, 'queries', body.used);
-        if (body.exceeded === true) await live.quota.markExceeded(day, 'queries', nextDayBoundary(now, live.cfg.dayTimeZone));
+        if (body.used > 0) await live.quota.charge(day, bucket, body.used);
+        if (body.exceeded === true && (bucket === 'queries' || bucket === 'search')) {
+          await live.quota.markExceeded(day, bucket, nextDayBoundary(now, live.cfg.dayTimeZone));
+        }
         return { ok: true, value: { day } };
       }
       case 'viewers': {
@@ -117,10 +124,14 @@ export const liveDoor: DoorRow = {
         live.viewers?.aggregator.setFixture?.(null);
         return { ok: true, value: {} };
       }
-      // SPEC-21a variants: wired in phase S3 (W15).
-      case 'channels':
-      case 'search-results':
-        return failure('unavailable', { reason: 'not-implemented' });
+      case 'channels': {
+        const refused = await controlFake(ctx, '/_control/channels', { channels: body.channels });
+        return refused ?? { ok: true, value: {} };
+      }
+      case 'search-results': {
+        const refused = await controlFake(ctx, '/_control/search', { channelId: body.channelId, ids: body.ids });
+        return refused ?? { ok: true, value: {} };
+      }
     }
   },
 };

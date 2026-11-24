@@ -40,6 +40,10 @@ describe('live env', () => {
     expect(() => fetch('https://www.googleapis.com/youtube/v3/videos')).toThrow(/guard/);
   });
 
+  it.each(['channels', 'playlistItems', 'search'])('the test guard refuses the SPEC-21a %s request', (method) => {
+    expect(() => fetch(`https://www.googleapis.com/youtube/v3/${method}`)).toThrow(/guard/);
+  });
+
   it('CI workflow verify.yml has no YouTube variable', () => {
     const text = readFileSync(new URL('../../../.github/workflows/verify.yml', import.meta.url), 'utf8');
     expect(text).not.toMatch(/YOUTUBE/i);

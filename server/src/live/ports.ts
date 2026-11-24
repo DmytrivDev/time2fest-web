@@ -2,7 +2,7 @@
  * Ports of the live-air capability (SPEC-12), ring 2. They name the conversation, never a vendor type.
  * `PresenceSource` is the realtime presence read (S9): only each entry's `chan_info`, never a client id.
  */
-import type { StreamStatus } from '@time2fest/contracts';
+import type { CandidateReason, CandidateState, FoundBy, StreamStatus } from '@time2fest/contracts';
 import type { SourceOverride, ZoneLive, StoredSource } from '../domain/live/chain';
 import type { QuotaBucket } from '../domain/live/config';
 import type { LiveEvent } from '../domain/live/moment';
@@ -22,9 +22,25 @@ export interface VideoStatusSource {
   list(ids: readonly string[]): Promise<VideoStatusResult>;
 }
 
-/** A search call exists only to be counted (the poller never uses its result). */
+/** `search.list` of one channel's upcoming broadcasts (SPEC-21a): `eventType=upcoming`, `type=video`, ids only. */
+export type SearchResult = { ids: string[] } | { error: VideoStatusError };
+
 export interface SearchSource {
-  search(): Promise<{ ok: true } | { error: VideoStatusError }>;
+  search(query: { channelId: string }): Promise<SearchResult>;
+}
+
+/** `channels.list` of one batch of channel ids; a channel that is gone or unknown is absent from `channels`. */
+export type ChannelsResult = { channels: { id: string; uploadsPlaylistId: string }[] } | { error: VideoStatusError };
+
+export interface ChannelSource {
+  channels(ids: readonly string[]): Promise<ChannelsResult>;
+}
+
+/** `playlistItems.list` first page of an uploads playlist: video ids, newest first. */
+export type PlaylistPageResult = { ok: true; videoIds: string[] } | { ok: false; reason: 'not-found' | VideoStatusError };
+
+export interface PlaylistSource {
+  firstPage(playlistId: string): Promise<PlaylistPageResult>;
 }
 
 /**
@@ -49,7 +65,7 @@ export interface LiveSource extends StoredSource {
 }
 
 /** The YouTube fields of one source as fetched (AC-73: each carries `ytFetchedAt`). */
-export type YoutubeFields = Omit<YoutubeVideoState, 'videoId'>;
+export type YoutubeFields = Omit<YoutubeVideoState, 'videoId' | 'channelId'>;
 
 /** The result of one check (or of the retention clearing) written onto one source. */
 export interface SourceCheck {
@@ -93,6 +109,11 @@ export interface NewSource {
   order: number;
   status: string;
   adminEditedAt: number;
+  /** SPEC-21a [П-5]: the YouTube fields of an approved candidate, written with `ytFetchedAt`. */
+  youtube?: { fields: YoutubeFields; fetchedAt: number };
+  /** Name and kind of the new source (an approved candidate takes them from its channel). */
+  name?: string;
+  kind?: string;
 }
 
 export interface LiveStateRecord {
@@ -174,11 +195,60 @@ export interface LiveEventSource {
 /** The presence of one channel (SPEC-12 AC-61): `unavailable` when the transport cannot answer now. */
 export type PresenceSource = CentrifugoPresenceApi;
 
-export type LiveLeaseName = 'live-poller' | 'live-viewers';
+export type LiveLeaseName = 'live-poller' | 'live-viewers' | 'live-sources';
 
 /** One holder per lease name across every instance (Postgres lease rows, [П-5]). */
 export interface LiveLease {
   /** Takes or renews the lease for `ttlMs`; false while another instance holds it. */
   acquire(name: LiveLeaseName, ttlMs: number): Promise<boolean>;
   release(name: LiveLeaseName): Promise<void>;
+}
+
+/** A `stream-candidates` row as the sources services read it (times as epoch ms). */
+export interface StoredCandidate {
+  videoId: string;
+  channelId: string | null;
+  foundBy: FoundBy[];
+  state: CandidateState;
+  reason: CandidateReason | null;
+  eventId: string | null;
+  sourceId: string | null;
+  liveBroadcastContent: string | null;
+  scheduledStartTime: number | null;
+  embeddable: boolean | null;
+  privacyStatus: string | null;
+  ytFetchedAt: number | null;
+  checkedAt: number | null;
+  stateChangedAt: number | null;
+  stateChangedBy: string | null;
+  note: string | null;
+}
+
+/** A `stream-channels` row as the sources services read it (times as epoch ms). */
+export interface StoredStreamChannel {
+  channelId: string;
+  uploadsPlaylistId: string | null;
+  uploadsFetchedAt: number | null;
+  name: string;
+  kind: string;
+  priority: number;
+  state: string;
+  blacklisted: boolean;
+  lastPlaylistAt: number | null;
+  lastSearchAt: number | null;
+}
+
+/**
+ * The candidates and channels conversation of the sources services (SPEC-21a, used from S4 on). Writes join the
+ * caller's `tx`; the shape is refined by S4/S5 when the services need more.
+ */
+export interface StreamsStore {
+  candidates(filter?: { videoIds?: readonly string[]; states?: readonly CandidateState[]; eventId?: string; channelId?: string }, tx?: Tx): Promise<StoredCandidate[]>;
+  channels(filter?: { channelIds?: readonly string[]; state?: string }, tx?: Tx): Promise<StoredStreamChannel[]>;
+  /** Inserts or updates one candidate in `tx`, stamping `stateChangedAt/By` when the state changes. */
+  saveCandidate(tx: Tx, candidate: Partial<StoredCandidate> & Pick<StoredCandidate, 'videoId'>, by: string): Promise<void>;
+  /** Writes channel fields (uploads playlist, last fetch times, state) in `tx`. */
+  saveChannel(tx: Tx, channel: Partial<StoredStreamChannel> & Pick<StoredStreamChannel, 'channelId'>): Promise<void>;
+  /** The number of channels in state `watched`. */
+  watchedCount(tx?: Tx): Promise<number>;
 }
