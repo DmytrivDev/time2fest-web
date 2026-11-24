@@ -20,23 +20,14 @@
  * `retryAfterMs`, state unchanged (AC-37). Refusal codes as the owner's surface (`streamsFail`).
  * Logs carry nothing of the request (no key, no ids).
  */
-import {
-  AGENT_CANDIDATES_PAGE_MAX,
-  type AgentCandidate,
-  type AgentCandidatesResponse,
-  type AgentChannelsResponse,
-  type AgentProposeResult,
-  type ChannelKind,
-  type ChannelPriority,
-} from '@time2fest/contracts';
+import type { AgentProposeResult } from '@time2fest/contracts';
 import { AgentCandidatesQuerySchema, AgentProposeBodySchema } from '@time2fest/contracts/schemas';
 import type { Endpoint, PayloadRequest } from 'payload';
-import { streamsFail } from '../admin/streamsEndpoints';
-import { isStreamAgent, jsonBodyOf, NO_STORE } from '../admin/cmsHttp';
+import { isStreamAgent, jsonBodyOf, NO_STORE, streamsFail } from '../admin/cmsHttp';
 import { resolveActor } from '../audit/journal';
 import type { Deps } from '../endpoints/types';
-import type { StoredCandidate } from '../live/ports';
 import { proposeAsAgent, type SourcesDeps } from '../live/sources';
+import { agentCandidates, agentChannels } from '../live/streamsView';
 import { checkLimit, type RateLimitRow } from '../platform/rateLimit';
 import { rateLimitRegistry } from '../registries/rateLimits';
 import { sourcesOf } from '../registries/revertHandlers';
@@ -67,23 +58,6 @@ async function minuteLimit(deps: Deps, rowKey: string, req: PayloadRequest): Pro
   return streamsFail('unavailable');
 }
 
-const iso = (ms: number | null) => (ms == null ? undefined : new Date(ms).toISOString());
-
-function agentCandidate(c: StoredCandidate): AgentCandidate {
-  const scheduled = iso(c.scheduledStartTime);
-  const checked = iso(c.checkedAt);
-  return {
-    videoId: c.videoId,
-    ...(c.channelId ? { channelId: c.channelId } : {}),
-    foundBy: [...c.foundBy],
-    state: c.state,
-    ...(c.eventId ? { eventId: c.eventId } : {}),
-    ...(c.reason ? { reason: c.reason } : {}),
-    ...(scheduled ? { scheduledStartTime: scheduled } : {}),
-    ...(checked ? { checkedAt: checked } : {}),
-  };
-}
-
 function channelsEndpoint(resolve: () => Promise<Deps>, sourcesFor: SourcesFor): Endpoint {
   return {
     path: '/stream-agent/channels',
@@ -94,22 +68,7 @@ function channelsEndpoint(resolve: () => Promise<Deps>, sourcesFor: SourcesFor):
         const deps = await resolve();
         const limited = await minuteLimit(deps, READ_ROW, req);
         if (limited) return limited;
-        const channels = await (await sourcesFor(deps)).streams.channels();
-        const value: AgentChannelsResponse = {
-          channels: channels
-            .filter((c) => !c.blacklisted)
-            .sort((a, b) => a.priority - b.priority || (a.channelId < b.channelId ? -1 : 1))
-            .map((c) => ({
-              channelId: c.channelId,
-              name: c.name,
-              type: c.kind as ChannelKind,
-              zones: [...c.zones],
-              seasons: [...c.seasons],
-              priority: c.priority as ChannelPriority,
-              state: c.state,
-            })),
-          blacklist: channels.filter((c) => c.blacklisted).map((c) => c.channelId).sort(),
-        };
+        const value = await agentChannels(await sourcesFor(deps));
         return Response.json({ ok: true, value }, { headers: NO_STORE });
       } catch {
         return streamsFail('unavailable');
@@ -130,19 +89,9 @@ function candidatesReadEndpoint(resolve: () => Promise<Deps>, sourcesFor: Source
         if (limited) return limited;
         const search = req.searchParams ?? new URL(req.url ?? 'http://local/').searchParams;
         const params = AgentCandidatesQuerySchema.safeParse(Object.fromEntries(search));
-        // The owner view's bound (S21-07); the store orders and cuts the page, one row more tells whether more remain.
+        // The owner view's bound (S21-07); `live/streamsView.ts` reads one page from the store.
         if (!params.success || (params.data.cursor !== undefined && !/^\d{1,6}$/.test(params.data.cursor))) return streamsFail('invalid');
-        const { state, eventId, cursor } = params.data;
-        const offset = cursor ? Number(cursor) : 0;
-        const rows: StoredCandidate[] = await (await sourcesFor(deps)).streams.candidates({
-          ...(state ? { states: [state] } : {}),
-          ...(eventId ? { eventId } : {}),
-          page: { offset, limit: AGENT_CANDIDATES_PAGE_MAX + 1 },
-        });
-        const value: AgentCandidatesResponse = {
-          items: rows.slice(0, AGENT_CANDIDATES_PAGE_MAX).map(agentCandidate),
-          ...(rows.length > AGENT_CANDIDATES_PAGE_MAX ? { next: String(offset + AGENT_CANDIDATES_PAGE_MAX) } : {}),
-        };
+        const value = await agentCandidates(await sourcesFor(deps), params.data);
         return Response.json({ ok: true, value }, { headers: NO_STORE });
       } catch {
         return streamsFail('unavailable');

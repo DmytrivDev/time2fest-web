@@ -148,6 +148,80 @@ export interface StreamsViewQuery {
   eventId?: string;
 }
 
+// ---- `GET /cms-api/streams/view` value (AC-20): the slice «Джерела» reads it (owner only) ----
+
+export interface StreamsViewChannel {
+  channelId: string;
+  name: string;
+  kind: string;
+  zones: string[];
+  seasons: string[];
+  priority: number;
+  state: string;
+  blacklisted: boolean;
+  blacklistReason: string | null;
+  blacklistSource: string | null;
+  proposedBy: string | null;
+  uploadsPlaylistId: string | null;
+  uploadsFetchedAt: string | null;
+  lastPlaylistAt: string | null;
+  lastSearchAt: string | null;
+}
+
+export interface StreamsViewCandidate {
+  videoId: string;
+  channelId: string | null;
+  channelName: string | null;
+  foundBy: FoundBy[];
+  state: CandidateState;
+  reason: CandidateReason | null;
+  eventId: string | null;
+  sourceId: string | null;
+  scheduledStartTime: string | null;
+  checkedAt: string | null;
+  stateChangedAt: string | null;
+  evidenceUrl: string | null;
+  note: string | null;
+  /** The event the approval form preselects ([А8], AC-15); `null` = the owner picks. */
+  defaultEventId: string | null;
+  /** Approved (or active) while its channel is blacklisted now (AC-4): kept in the chain, shown with a marker. */
+  fromBlacklisted: boolean;
+}
+
+export interface StreamsViewQuota {
+  cls: 'candidates' | 'playlists' | 'search';
+  used: number;
+  limit: number;
+  percent: number;
+  /** The next quota-day boundary, UTC ISO. */
+  resetAt: string;
+}
+
+/**
+ * One admin record of role `stream-agent` and whether it holds an active API key. Never the key itself: the key is
+ * shown once, in the answer of `POST /cms-api/admins/:id/issue-key`.
+ */
+export interface StreamsAgentKey {
+  adminId: string;
+  email: string;
+  active: boolean;
+  /** When the active key was issued (the journal row `key.issue`), UTC ISO; `null` without a key or row. */
+  issuedAt: string | null;
+}
+
+export interface StreamsViewValue {
+  now: string;
+  channels: StreamsViewChannel[];
+  candidates: StreamsViewCandidate[];
+  /** The cursor of the next page of candidates (same filters), when there is one. */
+  next?: string;
+  /** The season's events (not hidden), by moment: the approval picks any of them. */
+  events: { eventId: string; zoneId: string; moment: string }[];
+  quota: StreamsViewQuota[];
+  /** The `stream-agent` admins (by id) and their key status; empty = none created yet. */
+  agentKeys: StreamsAgentKey[];
+}
+
 // ---- Input file `data/stream-channels.json` (`import channels`, AC-39) ----
 
 export interface StreamChannelsFileChannel {

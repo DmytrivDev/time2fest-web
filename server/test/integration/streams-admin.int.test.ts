@@ -245,4 +245,28 @@ describe('owner stream sources endpoints', { timeout: 120_000 }, () => {
     const badQuery = await rest('GET', '/streams/view?state=nope', { headers: owner });
     expect(badQuery.status).toBe(400);
   });
+
+  it('agent key section: the view lists the stream-agent record with key status and issue time, never the key; revoke clears it', async () => {
+    type AgentKeyRow = { adminId: string; email: string; active: boolean; issuedAt: string | null };
+    const keysOf = async () => {
+      const res = await rest('GET', '/streams/view', { headers: owner });
+      const text = await res.text();
+      return { text, keys: ((JSON.parse(text) as Json).value?.agentKeys ?? []) as AgentKeyRow[] };
+    };
+    const id = String((await payload.find({ collection: 'admins', where: { email: { equals: STREAM } }, overrideAccess: true, depth: 0 })).docs[0]?.id);
+    const issued = await rest('POST', `/admins/${id}/issue-key`, { headers: owner });
+    expect(issued.status).toBe(200);
+    const key = ((await issued.json()) as { key: string }).key;
+    stream = { ...apiKeyHeader(key), ...serviceMark() };
+    const after = await keysOf();
+    expect(after.keys.find((k) => k.adminId === id)).toMatchObject({ email: STREAM, active: true });
+    expect(Date.parse(after.keys.find((k) => k.adminId === id)?.issuedAt ?? '')).toBeGreaterThan(Date.now() - 60_000);
+    expect(after.keys.some((k) => k.email === CONTENT || k.email === OWNER)).toBe(false);
+    expect(after.text).not.toContain(key);
+    expect(after.text).not.toMatch(/apiKey|apiKeyIndex|enableAPIKey/);
+
+    expect((await rest('POST', `/admins/${id}/revoke-key`, { headers: owner })).status).toBe(200);
+    expect((await keysOf()).keys.find((k) => k.adminId === id)).toMatchObject({ active: false, issuedAt: null });
+    expect((await rest('GET', '/streams/view', { headers: stream })).status).toBe(403);
+  });
 });

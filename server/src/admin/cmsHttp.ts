@@ -8,6 +8,7 @@ import type { PayloadRequest } from 'payload';
 import type { ZodType } from 'zod';
 import { hasJsonContentType, passedGate } from '../access/payloadGuard';
 import { roleOf } from '../access/policies';
+import type { SourcesRefusal } from '../live/sources';
 
 export const NO_STORE = { 'cache-control': 'no-store' };
 export const MAX_BODY_BYTES = 1024;
@@ -16,6 +17,21 @@ export type Code = 'forbidden' | 'validation' | 'not-found' | 'unavailable';
 const STATUS: Record<Code, number> = { forbidden: 403, validation: 400, 'not-found': 404, unavailable: 503 };
 export const fail = (code: Code, reason?: string) =>
   Response.json({ ok: false, error: reason ? { code, reason } : { code } }, { status: STATUS[code], headers: NO_STORE });
+
+/** The codes of the stream sources surfaces (SPEC-21a: `invalid`, not the `validation` of SPEC-12). */
+export type StreamsCode = SourcesRefusal;
+const STREAMS_STATUS: Record<StreamsCode, number> = {
+  invalid: 400,
+  forbidden: 403,
+  'not-found': 404,
+  'invalid-state': 409,
+  'chain-full': 409,
+  limit: 429,
+  unavailable: 503,
+};
+/** The refusal of the owner's `/cms-api/streams/*` and the agent's `/cms-api/stream-agent/*` (A21-05). */
+export const streamsFail = (code: StreamsCode, reason?: string) =>
+  Response.json({ ok: false, error: reason ? { code, reason } : { code } }, { status: STREAMS_STATUS[code], headers: NO_STORE });
 
 /** Owner who passed the Access gate (or a server-side call carrying an owner user). */
 export const isOwner = (req: PayloadRequest) => passedGate(req) && roleOf(req.user) === 'owner';

@@ -4,6 +4,9 @@
  * reject with a reason, requeue; the quota line; the forms "додати канал" and "додати за videoId чи channelId".
  * Forms are uncontrolled: a submit reads its fields and hands one `StreamsActionBody` to `onAction`. Agent `note` and
  * every name are rendered as text; the evidence link only when it is `https:`; YouTube links never pass a referrer.
+ * Section «Ключ агента пошуку» (owner only, like the whole slice): per `stream-agent` record whether a key is active
+ * and since when, «Видати новий ключ» and «Відкликати ключ» behind a confirm step; a freshly issued key is shown once
+ * from the slice's memory (`issuedKey`), never from the view.
  */
 import {
   CANDIDATE_STATES,
@@ -16,10 +19,13 @@ import {
   type ChannelKind,
   type ChannelPriority,
   type StreamsActionBody,
+  type StreamsAgentKey,
+  type StreamsViewCandidate,
+  type StreamsViewChannel,
+  type StreamsViewValue,
 } from '@time2fest/contracts';
 import type { FormEvent } from 'react';
 import { STREAMS_TEXT as T } from './messages';
-import type { StreamsViewCandidate, StreamsViewChannel, StreamsViewValue } from './streamsEndpoints';
 
 export type { StreamsViewValue };
 
@@ -29,7 +35,81 @@ export interface StreamsFilter {
   cursor?: string;
 }
 
-export interface StreamsViewProps {
+/** The key section's steps: ask (opens the confirm step), confirm, cancel, hide the shown key. */
+export type AgentKeyStep = { step: 'ask'; op: 'issue' | 'revoke'; adminId: string } | { step: 'confirm' } | { step: 'cancel' } | { step: 'hide' };
+
+export interface AgentKeyUi {
+  /** The pending confirm step, if any. */
+  confirming?: { op: 'issue' | 'revoke'; adminId: string } | null;
+  /** The key just issued (slice memory only), shown once. */
+  issuedKey?: { adminId: string; key: string } | null;
+  onKey?: (step: AgentKeyStep) => void;
+}
+
+/** Section «Ключ агента пошуку»: status per `stream-agent` record, issue / revoke with a confirm step. */
+export function AgentKeySection({ agents, confirming = null, issuedKey = null, onKey }: AgentKeyUi & { agents: StreamsAgentKey[] }) {
+  const K = T.agentKey;
+  return (
+    <section data-testid="streams-agent-key">
+      <h3>{K.title}</h3>
+      {agents.length === 0 ? <p data-testid="streams-agent-key-none">{K.none}</p> : null}
+      {agents.map((a) => {
+        const asking = confirming?.adminId === a.adminId ? confirming.op : null;
+        return (
+          <div key={a.adminId} data-testid={`streams-agent-key-${a.adminId}`}>
+            <p>
+              <strong>{a.email}</strong>
+              {' · '}
+              <span data-testid={`streams-agent-key-status-${a.adminId}`}>
+                {a.active ? `${K.active}${a.issuedAt ? ` · ${K.issuedAt}: ${a.issuedAt}` : ''}` : K.inactive}
+              </span>
+            </p>
+            {asking ? (
+              <p role="alertdialog" data-testid={`streams-agent-key-confirm-${a.adminId}`}>
+                {asking === 'revoke' ? K.confirmRevoke : a.active ? K.confirmReplace : K.confirmIssue}{' '}
+                <button type="button" data-testid={`streams-agent-key-yes-${a.adminId}`} onClick={() => onKey?.({ step: 'confirm' })}>
+                  {K.confirm}
+                </button>{' '}
+                <button type="button" onClick={() => onKey?.({ step: 'cancel' })}>
+                  {K.cancel}
+                </button>
+              </p>
+            ) : (
+              <p>
+                <button
+                  type="button"
+                  data-testid={`streams-agent-key-issue-${a.adminId}`}
+                  onClick={() => onKey?.({ step: 'ask', op: 'issue', adminId: a.adminId })}
+                >
+                  {K.issue}
+                </button>
+                {a.active ? (
+                  <>
+                    {' '}
+                    <button type="button" data-testid={`streams-agent-key-revoke-${a.adminId}`} onClick={() => onKey?.({ step: 'ask', op: 'revoke', adminId: a.adminId })}>
+                      {K.revoke}
+                    </button>
+                  </>
+                ) : null}
+              </p>
+            )}
+            {issuedKey?.adminId === a.adminId ? (
+              <div data-testid={`streams-agent-key-shown-${a.adminId}`}>
+                <p>{K.shownOnce}</p>
+                <input type="text" readOnly value={issuedKey.key} aria-label={K.title} autoComplete="off" spellCheck={false} onFocus={(e) => e.currentTarget.select()} />{' '}
+                <button type="button" onClick={() => onKey?.({ step: 'hide' })}>
+                  {K.hide}
+                </button>
+              </div>
+            ) : null}
+          </div>
+        );
+      })}
+    </section>
+  );
+}
+
+export interface StreamsViewProps extends AgentKeyUi {
   view: StreamsViewValue;
   filter?: StreamsFilter;
   message?: string;
@@ -61,7 +141,7 @@ const zonesOf = (raw: string) =>
     .map((z) => z.trim())
     .filter((z) => z.length > 0);
 
-export function StreamsView({ view, filter = {}, message, onFilter, onAction, onRefuse }: StreamsViewProps) {
+export function StreamsView({ view, filter = {}, message, onFilter, onAction, onRefuse, confirming, issuedKey, onKey }: StreamsViewProps) {
   const submit = (build: (e: FormEvent<HTMLFormElement>) => StreamsActionBody | string) => (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const body = build(e);
@@ -243,6 +323,7 @@ export function StreamsView({ view, filter = {}, message, onFilter, onAction, on
 
   return (
     <div data-testid="streams-slice">
+      <AgentKeySection agents={view.agentKeys ?? []} confirming={confirming ?? null} issuedKey={issuedKey ?? null} onKey={onKey} />
       <section data-testid="streams-quota">
         <h3>{T.quota}</h3>
         <ul>

@@ -70,6 +70,10 @@ const view = {
     { cls: 'playlists', used: 0, limit: 1000, percent: 0, resetAt: '2027-01-01T07:00:00.000Z' },
     { cls: 'search', used: 2, limit: 100, percent: 2, resetAt: '2027-01-01T07:00:00.000Z' },
   ],
+  agentKeys: [
+    { adminId: '7', email: 'finder@example.com', active: true, issuedAt: '2026-12-30T10:00:00.000Z' },
+    { adminId: '8', email: 'spare@example.com', active: false, issuedAt: null },
+  ],
 } as unknown as StreamsViewValue;
 
 const html = () => renderToStaticMarkup(createElement(StreamsView, { view, filter: { state: 'proposed' } }));
@@ -141,6 +145,43 @@ describe('StreamsView', () => {
     expect(out.match(/data-testid="streams-quota-/g)).toHaveLength(3);
     expect(out).toContain('Перевірка кандидатів: 30 / 300 (10%)');
     expect(out).toContain('Пошук: 2 / 100 (2%)');
+  });
+
+  it('agent key section: status per stream-agent record without any key value, issue and revoke buttons', () => {
+    const out = html();
+    const section = out.slice(out.indexOf('data-testid="streams-agent-key"'), out.indexOf('data-testid="streams-quota"'));
+    expect(section).toContain('Ключ агента пошуку');
+    expect(section).toContain('finder@example.com');
+    expect(section).toContain('Ключ активний · видано (UTC): 2026-12-30T10:00:00.000Z');
+    expect(section).toContain('data-testid="streams-agent-key-issue-7"');
+    expect(section).toContain('data-testid="streams-agent-key-revoke-7"');
+    expect(section).toContain('Ключа немає');
+    expect(section).toContain('data-testid="streams-agent-key-issue-8"');
+    expect(section).not.toContain('data-testid="streams-agent-key-revoke-8"');
+    expect(section).not.toContain('streams-agent-key-shown-');
+    expect(section).not.toContain('<input');
+  });
+
+  it('agent key section: a confirm step before revoke and before replacing a key; the hint when no agent exists', () => {
+    const revoke = renderToStaticMarkup(createElement(StreamsView, { view, confirming: { op: 'revoke', adminId: '7' } }));
+    expect(revoke).toContain('Відкликати ключ? Агент утратить доступ');
+    expect(revoke).toContain('data-testid="streams-agent-key-yes-7"');
+    expect(revoke).not.toContain('data-testid="streams-agent-key-revoke-7"');
+    const replace = renderToStaticMarkup(createElement(StreamsView, { view, confirming: { op: 'issue', adminId: '7' } }));
+    expect(replace).toContain('Новий ключ замінить чинний');
+    const none = renderToStaticMarkup(createElement(StreamsView, { view: { ...view, agentKeys: [] } }));
+    expect(none).toContain('data-testid="streams-agent-key-none"');
+    expect(none).toContain('роль «stream-agent»');
+  });
+
+  it('agent key section: an issued key is shown once from the slice memory, only for its record, with the copy hint', () => {
+    const KEY = 'k'.repeat(40);
+    const out = renderToStaticMarkup(createElement(StreamsView, { view, issuedKey: { adminId: '7', key: KEY } }));
+    const shown = out.slice(out.indexOf('data-testid="streams-agent-key-shown-7"'), out.indexOf('data-testid="streams-agent-key-8"'));
+    expect(shown).toContain(`value="${KEY}"`);
+    expect(shown).toContain('лише один раз');
+    expect(out.split(KEY).length - 1).toBe(1);
+    expect(html()).not.toContain(KEY);
   });
 
   it('lists the slot 17-streams «Джерела» between the live air and the unattended mode in every class', () => {

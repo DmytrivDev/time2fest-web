@@ -5,7 +5,9 @@
  * - `GET /cms-api/streams/view?state=&eventId=&cursor=` → `{ ok, value: StreamsViewValue }`: every channel with its
  *   fields, one page (≤ `AGENT_CANDIDATES_PAGE_MAX`) of the candidate queue with the filters, each with its default
  *   event ([А8]) and the derived marker "approved from a channel now blacklisted" (AC-4), the season's events to pick
- *   from, the spend of `candidates`, `playlists` and the search bucket for the current quota day.
+ *   from, the spend of `candidates`, `playlists` and the search bucket for the current quota day, and the
+ *   `stream-agent` admins with their key status (`agentKeys`: enabled and issued-at, never the key). The value is
+ *   assembled by `live/streamsView.ts` (A21-05); the key itself is issued and revoked by the `admins` endpoints.
  * - `POST /cms-api/streams/<action>` for the actions of `STREAMS_ACTIONS` with `StreamsActionBody` (strict; its
  *   `action` must be the path's) → `{ ok, value }` (the outcome of the service).
  * Both: behind the Access gate and the `owner` role, else 403 `forbidden` with nothing read or changed (agent keys
@@ -14,23 +16,12 @@
  * `invalid-state` / `chain-full` 409, `limit` 429, `unavailable` 503. The view maps the rows field by field (never
  * a raw collection document). The service writes one journal row per change in the same transaction (NFR-6).
  */
-import {
-  AGENT_CANDIDATES_PAGE_MAX,
-  STREAMS_ACTIONS,
-  type CandidateReason,
-  type CandidateState,
-  type FoundBy,
-  type StreamsAction,
-  type StreamsActionBody,
-} from '@time2fest/contracts';
+import { STREAMS_ACTIONS, type StreamsAction, type StreamsActionBody, type StreamsAgentKey } from '@time2fest/contracts';
 import { StreamsActionBodySchema, StreamsViewQuerySchema } from '@time2fest/contracts/schemas';
 import type { Endpoint, PayloadRequest } from 'payload';
 import { z } from 'zod';
 import { resolveActor } from '../audit/journal';
-import { defaultEvent } from '../domain/live/candidates';
-import { counterOf, nextDayBoundary, quotaDay } from '../domain/live/quota';
 import type { Deps } from '../endpoints/types';
-import type { StoredCandidate } from '../live/ports';
 import {
   addCandidates,
   addChannel,
@@ -41,173 +32,60 @@ import {
   requeueCandidate,
   setBlacklist,
   type SourcesDeps,
-  type SourcesRefusal,
   type SourcesResult,
 } from '../live/sources';
+import { streamsView } from '../live/streamsView';
 import { sourcesOf } from '../registries/revertHandlers';
-import { isOwner, jsonBodyOf, NO_STORE } from './cmsHttp';
-
-const PERCENT = 100;
-
-type StreamsCode = SourcesRefusal;
-const STATUS: Record<StreamsCode, number> = {
-  invalid: 400,
-  forbidden: 403,
-  'not-found': 404,
-  'invalid-state': 409,
-  'chain-full': 409,
-  limit: 429,
-  unavailable: 503,
-};
-
-/** The refusal of this surface: the codes of the spec's contract (`invalid`, not the `validation` of SPEC-12). */
-export const streamsFail = (code: StreamsCode, reason?: string) =>
-  Response.json({ ok: false, error: reason ? { code, reason } : { code } }, { status: STATUS[code], headers: NO_STORE });
+import { isOwner, jsonBodyOf, NO_STORE, streamsFail } from './cmsHttp';
 
 /** The owner from the request, as the journal names them. */
 const ownerActor = (req: PayloadRequest) => ({ ...resolveActor(req.user, req.context), kind: 'owner' as const });
 
-const iso = (ms: number | null) => (ms == null ? null : new Date(ms).toISOString());
-
-export interface StreamsViewChannel {
-  channelId: string;
-  name: string;
-  kind: string;
-  zones: string[];
-  seasons: string[];
-  priority: number;
-  state: string;
-  blacklisted: boolean;
-  blacklistReason: string | null;
-  blacklistSource: string | null;
-  proposedBy: string | null;
-  uploadsPlaylistId: string | null;
-  uploadsFetchedAt: string | null;
-  lastPlaylistAt: string | null;
-  lastSearchAt: string | null;
-}
-
-export interface StreamsViewCandidate {
-  videoId: string;
-  channelId: string | null;
-  channelName: string | null;
-  foundBy: FoundBy[];
-  state: CandidateState;
-  reason: CandidateReason | null;
-  eventId: string | null;
-  sourceId: string | null;
-  scheduledStartTime: string | null;
-  checkedAt: string | null;
-  stateChangedAt: string | null;
-  evidenceUrl: string | null;
-  note: string | null;
-  /** The event the approval form preselects ([А8], AC-15); `null` = the owner picks. */
-  defaultEventId: string | null;
-  /** Approved (or active) while its channel is blacklisted now (AC-4): kept in the chain, shown with a marker. */
-  fromBlacklisted: boolean;
-}
-
-export interface StreamsViewQuota {
-  cls: 'candidates' | 'playlists' | 'search';
-  used: number;
-  limit: number;
-  percent: number;
-  /** The next quota-day boundary, UTC ISO. */
-  resetAt: string;
-}
-
-export interface StreamsViewValue {
-  now: string;
-  channels: StreamsViewChannel[];
-  candidates: StreamsViewCandidate[];
-  /** The cursor of the next page of candidates (same filters), when there is one. */
-  next?: string;
-  /** The season's events (not hidden), by moment: the approval picks any of them. */
-  events: { eventId: string; zoneId: string; moment: string }[];
-  quota: StreamsViewQuota[];
-}
-
 /** The view query: the contract filters plus the page cursor (an offset). */
 const ViewQuerySchema = StreamsViewQuerySchema.extend({ cursor: z.string().regex(/^\d{1,6}$/).optional() }).strict();
-export type StreamsViewParams = z.infer<typeof ViewQuerySchema>;
 
-const BLACKLIST_KEPT: readonly CandidateState[] = ['approved', 'active'];
+/** At most this many `stream-agent` records are listed (the owner keeps one or two). */
+const AGENT_ADMINS_MAX = 10;
 
-/** Newest decision first, then by videoId (a stable page order). */
-const byRecent = (a: StoredCandidate, b: StoredCandidate) =>
-  (b.stateChangedAt ?? 0) - (a.stateChangedAt ?? 0) || (a.videoId < b.videoId ? -1 : a.videoId > b.videoId ? 1 : 0);
-
-/** What the slice «Джерела» shows (AC-20). Reads only; sequential (the reads may share one database session). */
-export async function streamsView(deps: Pick<SourcesDeps, 'streams' | 'events' | 'quota' | 'clock' | 'cfg'>, params: StreamsViewParams): Promise<StreamsViewValue> {
-  const { cfg } = deps;
-  const now = deps.clock.now();
-  const channels = await deps.streams.channels();
-  const all = await deps.streams.candidates({ ...(params.state ? { states: [params.state] } : {}), ...(params.eventId ? { eventId: params.eventId } : {}) });
-  const events = (await deps.events.events()).filter((e) => !e.hidden);
-  const counters = await deps.quota.read(quotaDay(now, cfg.dayTimeZone));
-  const byId = new Map(channels.map((c) => [c.channelId, c]));
-  const offset = params.cursor ? Number(params.cursor) : 0;
-  const sorted = [...all].sort(byRecent);
-  const page = sorted.slice(offset, offset + AGENT_CANDIDATES_PAGE_MAX);
-  const resetAt = new Date(nextDayBoundary(now, cfg.dayTimeZone)).toISOString();
-  const spend = (cls: StreamsViewQuota['cls'], used: number, limit: number): StreamsViewQuota => ({
-    cls,
-    used,
-    limit,
-    percent: limit > 0 ? Math.floor((used / limit) * PERCENT) : 0,
-    resetAt,
+/**
+ * The `stream-agent` admins and their key status (section «Ключ агента пошуку»): whether the key is enabled and when
+ * the active key was issued (the newest `key.issue` journal row of the record). Reads `enableAPIKey` only: never the
+ * key, its encrypted copy or its index.
+ */
+export async function agentKeysOf(req: PayloadRequest): Promise<StreamsAgentKey[]> {
+  const found = await req.payload.find({
+    collection: 'admins',
+    where: { role: { equals: 'stream-agent' } },
+    sort: 'id',
+    limit: AGENT_ADMINS_MAX,
+    select: { email: true, enableAPIKey: true },
+    overrideAccess: true,
+    depth: 0,
+    req,
   });
-  return {
-    now: new Date(now).toISOString(),
-    channels: channels
-      .map((c) => ({
-        channelId: c.channelId,
-        name: c.name,
-        kind: c.kind,
-        zones: [...c.zones],
-        seasons: [...c.seasons],
-        priority: c.priority,
-        state: c.state,
-        blacklisted: c.blacklisted,
-        blacklistReason: c.blacklistReason,
-        blacklistSource: c.blacklistSource,
-        proposedBy: c.proposedBy,
-        uploadsPlaylistId: c.uploadsPlaylistId,
-        uploadsFetchedAt: iso(c.uploadsFetchedAt),
-        lastPlaylistAt: iso(c.lastPlaylistAt),
-        lastSearchAt: iso(c.lastSearchAt),
-      }))
-      .sort((a, b) => a.priority - b.priority || (a.name < b.name ? -1 : a.name > b.name ? 1 : 0)),
-    candidates: page.map((c) => {
-      const channel = c.channelId ? byId.get(c.channelId) : undefined;
-      return {
-        videoId: c.videoId,
-        channelId: c.channelId,
-        channelName: channel?.name ?? null,
-        foundBy: [...c.foundBy],
-        state: c.state,
-        reason: c.reason,
-        eventId: c.eventId,
-        sourceId: c.sourceId,
-        scheduledStartTime: iso(c.scheduledStartTime),
-        checkedAt: iso(c.checkedAt),
-        stateChangedAt: iso(c.stateChangedAt),
-        evidenceUrl: c.evidenceUrl,
-        note: c.note,
-        defaultEventId: defaultEvent(c.scheduledStartTime, channel?.zones ?? [], events, cfg),
-        fromBlacklisted: channel?.blacklisted === true && BLACKLIST_KEPT.includes(c.state),
-      };
-    }),
-    ...(offset + AGENT_CANDIDATES_PAGE_MAX < sorted.length ? { next: String(offset + AGENT_CANDIDATES_PAGE_MAX) } : {}),
-    events: [...events]
-      .sort((a, b) => a.moment - b.moment || (a.eventId < b.eventId ? -1 : 1))
-      .map((e) => ({ eventId: e.eventId, zoneId: e.zoneId, moment: new Date(e.moment).toISOString() })),
-    quota: [
-      spend('candidates', counterOf(counters, 'candidates', now, cfg).used, cfg.classCeilings.candidates),
-      spend('playlists', counterOf(counters, 'playlists', now, cfg).used, cfg.classCeilings.playlists),
-      spend('search', counterOf(counters, 'search', now, cfg).used, cfg.buckets.search.perDay),
-    ],
-  };
+  const keys: StreamsAgentKey[] = [];
+  for (const doc of found.docs as unknown as { id: number | string; email?: string; enableAPIKey?: boolean | null }[]) {
+    const adminId = String(doc.id);
+    const active = doc.enableAPIKey === true;
+    let issuedAt: string | null = null;
+    if (active) {
+      const row = (
+        await req.payload.find({
+          collection: 'audit-log',
+          where: { and: [{ action: { equals: 'key.issue' } }, { 'target.collection': { equals: 'admins' } }, { 'target.ref': { equals: adminId } }] },
+          sort: '-id',
+          limit: 1,
+          select: { at: true },
+          overrideAccess: true,
+          depth: 0,
+          req,
+        })
+      ).docs[0] as { at?: string | null } | undefined;
+      issuedAt = row?.at ? new Date(row.at).toISOString() : null;
+    }
+    keys.push({ adminId, email: String(doc.email ?? ''), active, issuedAt });
+  }
+  return keys;
 }
 
 /** One owner action through the sources services (each writes its own transaction and journal row). */
@@ -255,7 +133,8 @@ function viewEndpoint(resolve: () => Promise<Deps>, sourcesFor: SourcesFor): End
       const params = ViewQuerySchema.safeParse(Object.fromEntries(search));
       if (!params.success) return streamsFail('invalid');
       try {
-        const value = await streamsView(await sourcesFor(await resolve()), params.data);
+        const deps = await sourcesFor(await resolve());
+        const value = await streamsView(deps, params.data, await agentKeysOf(req));
         return Response.json({ ok: true, value }, { headers: NO_STORE });
       } catch {
         return streamsFail('unavailable');
