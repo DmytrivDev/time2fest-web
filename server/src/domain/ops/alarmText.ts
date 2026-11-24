@@ -8,6 +8,7 @@
 import type { AlarmDetails } from '../../alarms/ports';
 import type { EnvClass } from '../../platform/env';
 import type { OpsAlarmRow, OpsDomainRow } from '../../registries/ops';
+import { isSafeCode } from './alarmDetails';
 
 /** Найдовше повідомлення (AC-10). */
 export const ALARM_TEXT_MAX_CHARS = 1_000;
@@ -114,16 +115,17 @@ export interface AlarmTextInput {
   raisedAt: number;
   /** Повтори попереднього повідомлення цього виду (AC-6); 0 — рядка немає. */
   repeatCount?: number;
+  /** Значення секретних змінних середовища: код незареєстрованого виду з будь-яким із них не показується (S-8). */
+  secretValues?: readonly string[];
 }
-
-const KIND_CODE = /^[A-Za-z0-9_.:\-/]{1,64}$/;
 
 /** Текст повідомлення тривоги (AC-10). */
 export function buildAlarmText(input: AlarmTextInput): string {
   const { row, kind, cls, details, raisedAt } = input;
   const repeats = Math.max(0, Math.floor(input.repeatCount ?? 0));
   const kindName = `${kind.source}/${kind.code}`;
-  const safeKind = KIND_CODE.test(kindName) ? kindName : 'код не показано';
+  // Незареєстрований вид: `source/code` — та сама перевірка, що й для деталей (email, IP, токен, URL, секрети; S-8).
+  const safeKind = isSafeCode(kindName, input.secretValues ?? []) ? kindName : 'код не показано';
   const head = [
     `ТРИВОГА · середовище: ${CLASS_TITLE[cls]}`,
     `Домен: ${row ? row.domain.title : UNKNOWN_DOMAIN_TITLE}`,

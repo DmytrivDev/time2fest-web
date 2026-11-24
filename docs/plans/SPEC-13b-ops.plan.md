@@ -350,7 +350,7 @@ Skills by `D:/Work/Pets/Time2Fest/docs/backend/sdd-routing.md` §1: **onion** = 
 
 ### W20 — Backup format and Redis filter (S7)
 - **Serves:** AC-41, AC-49, AC-55 (decrypt half).
-- **Do:** `ops/backupFormat.ts`: `encryptStream(key32, keyId)` / `decryptStream(key32, expectedKeyId)` Transforms of format `T2FB1`: header = magic `T2FB1` + version byte + key id (first 8 hex of sha256(key)); chunks ≤64 KiB plaintext, each `[len u32][nonce 12][ciphertext][tag 16]`, nonce random per chunk, AAD = `u64 chunkIndex || u8 last`; decrypt fails on bad header, wrong key id, auth failure, a missing final chunk, data after final, reordering; `keyIdOf(key)`. `domain/ops/redisFilter.ts` `redisCopyFilter(key)` → false for `/edge:salt:/`.
+- **Do:** `ops/backupFormat.ts`: `encryptStream(key32, keyId)` / `decryptStream(key32, expectedKeyId)` Transforms of format `T2FB1`: header (30 bytes, version 0x02 after review S-4) = magic `T2FB1` + version byte + key id (first 8 hex of sha256(key)) + 16-byte random file id; chunks ≤64 KiB plaintext, each `[len u32][nonce 12][ciphertext][tag 16]`, nonce random per chunk, AAD = `header || u64 chunkIndex || u8 last`; decrypt fails on bad header, wrong key id, auth failure, a missing final chunk, data after final, reordering; `keyIdOf(key)`. `domain/ops/redisFilter.ts` `redisCopyFilter(key)` → false for `/edge:salt:/`.
 - **Files:** `server/src/ops/backupFormat.ts`, `server/src/domain/ops/redisFilter.ts`.
 - **Done means:** server `tsc` green; W23 proves.
 - **Verify:** server files.

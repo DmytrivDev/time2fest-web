@@ -25,7 +25,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { Readable } from 'node:stream';
 import pg from 'pg';
-import { pgEnvOf, type DumpCommand } from '../adapters/pgDump';
+import { childEnvOf, pgEnvOf, type DumpCommand } from '../adapters/pgDump';
 import { createS3ObjectStore } from '../adapters/s3';
 import type { ObjectStore } from '../catalog/ports';
 import { monthPeriod } from '../domain/ops/spend';
@@ -326,7 +326,7 @@ export async function opsPortsOf(deps: Deps): Promise<OpsCliPorts> {
 /** Runs `pg_restore` per `spec` with `input` on stdin; non-zero exit → rejects (code only; stderr counted, never logged). */
 export function runRestoreSpec(spec: DumpCommand, input: Readable, onChild?: (kill: (() => void) | null) => void): Promise<void> {
   return new Promise((resolve, reject) => {
-    const child = spawn(spec.cmd, spec.args, { env: { ...process.env, ...spec.env }, stdio: ['pipe', 'ignore', 'pipe'], windowsHide: true });
+    const child = spawn(spec.cmd, spec.args, { env: childEnvOf(spec.env), stdio: ['pipe', 'ignore', 'pipe'], windowsHide: true });
     onChild?.(() => child.kill());
     let stderrBytes = 0;
     let inputError: unknown;

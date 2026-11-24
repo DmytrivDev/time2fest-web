@@ -17,10 +17,10 @@ import type { Payload, PayloadRequest } from 'payload';
 import type { AlarmDetails, LogAlarmRecord, LogAlarmStore } from '../alarms/ports';
 import type { Actor, Journal } from '../audit/ports';
 import { isDependencyFailure } from '../endpoints/pipeline';
-import type { BackupRun, BackupRunStore, BackupStage, OpsJournal, RestoreRun, RestoreRunStore, SpendCounter, SpendCounterDelta, SpendCounterStore, Outbox, OutboxKind, OutboxRow, OpsLease, OpsLeaseName, WallClock } from '../ops/ports';
+import type { BackupRun, BackupRunStore, BackupStage, OpsJournal, RestoreRun, RestoreRunStore, SpendCounter, SpendCounterDelta, SpendCounterStore, OpsSpendSettings, Outbox, OutboxKind, OutboxRow, OpsLease, OpsLeaseName, WallClock } from '../ops/ports';
 import { DependencyUnavailable } from '../ports';
 import { findKind } from '../registries/ops';
-import { createPgScheduler } from './pgScheduler';
+import { createPgNamedLease } from './pgScheduler';
 
 type SqlQuery = ReturnType<typeof sql>;
 interface Exec {
@@ -331,36 +331,9 @@ export interface PgOpsLeaseOptions {
   holderId: string;
 }
 
-/** The ops leases over the scheduler lease table ([П-2], copy of `createPgLiveLease`): one row per name. */
+/** The ops leases over the scheduler lease table ([П-2], the shared `createPgNamedLease`): one row per name. */
 export function createPgOpsLease(opts: PgOpsLeaseOptions): OpsLease {
-  const stores = new Map<string, ReturnType<typeof createPgScheduler>['lease']>();
-  const epochs = new Map<OpsLeaseName, number>();
-  const lastTtl = new Map<OpsLeaseName, number>();
-  const leaseOf = (name: OpsLeaseName, ttlMs: number) => {
-    const key = `${name}:${ttlMs}`;
-    let lease = stores.get(key);
-    if (!lease) {
-      lease = createPgScheduler({ payload: opts.payload, journal: opts.journal, name, termMs: ttlMs }).lease;
-      stores.set(key, lease);
-    }
-    return lease;
-  };
-  return {
-    async acquire(name, ttlMs) {
-      const grant = await leaseOf(name, ttlMs).acquireOrRenew(opts.holderId);
-      lastTtl.set(name, ttlMs);
-      if (grant.held) epochs.set(name, grant.epoch);
-      else epochs.delete(name);
-      return grant.held;
-    },
-    async release(name) {
-      const epoch = epochs.get(name);
-      const ttl = lastTtl.get(name);
-      if (epoch === undefined || ttl === undefined) return;
-      await leaseOf(name, ttl).release?.(opts.holderId, epoch);
-      epochs.delete(name);
-    },
-  };
+  return createPgNamedLease<OpsLeaseName>(opts);
 }
 
 const BACKUP_COLUMNS = sql.raw('"key", "kind", "result", "stage", "size", "sha256", "duration_ms", "snapshot_at", "key_id"');
@@ -524,19 +497,6 @@ export function createPayloadSpendCounters(payload: () => Promise<Payload>): Spe
       return rows.length === 1;
     },
   };
-}
-
-/** The parameters of the spend rows from the `ops-settings` global (AC-66), with the registry defaults. */
-export interface OpsSpendSettings {
-  serverCeilingUsd: number;
-  cloudflareCeilingUsd: number;
-  mailCeilingUsd: number;
-  priceStoragePerGbUsd: number;
-  priceClassAPerMillionUsd: number;
-  priceClassBPerMillionUsd: number;
-  freeClassA: number;
-  freeClassB: number;
-  freeStorageGb: number;
 }
 
 export const DEFAULT_OPS_SPEND_SETTINGS: OpsSpendSettings = {

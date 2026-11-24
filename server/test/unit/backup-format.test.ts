@@ -22,7 +22,7 @@ const KEY = parseBackupKey(KEY_B64);
 const ID = keyIdOf(KEY);
 const OTHER = Buffer.alloc(32, 7);
 
-const HEADER = 14;
+const HEADER = 30;
 const FRAME = 4 + 12 + 16;
 
 async function collect(src: Readable, through: Transform): Promise<Buffer> {
@@ -74,8 +74,9 @@ describe('backup format T2FB1', () => {
       const plain = Buffer.concat([Buffer.from('PGDMP'), randomBytes(size)]).subarray(0, size);
       const data = await enc(plain);
       expect(data.subarray(0, 5).toString('ascii')).toBe('T2FB1');
-      expect(data[5]).toBe(1);
+      expect(data[5]).toBe(2);
       expect(data.subarray(6, 14).toString('ascii')).toBe(ID);
+      expect(data.length).toBeGreaterThanOrEqual(HEADER);
       expect(data.includes(Buffer.from('PGDMP'))).toBe(false);
       expect((await dec(data)).equals(plain)).toBe(true);
     }
@@ -109,12 +110,34 @@ describe('backup format T2FB1', () => {
     expect(await code(dec(data, OTHER, ID))).toBe('key-mismatch');
     expect(await code(dec(data, KEY, 'deadbeef'))).toBe('key-mismatch');
     expect(await code(dec(Buffer.concat([Buffer.from('PGDMP'), randomBytes(100)])))).toBe('bad-header');
-    const v2 = Buffer.from(data);
-    v2[5] = 2;
-    expect(await code(dec(v2))).toBe('bad-header');
+    // Версія 0x01 (AAD без заголовка) відкинута; невідома 0x03 — теж.
+    for (const version of [1, 3]) {
+      const other = Buffer.from(data);
+      other[5] = version;
+      expect(await code(dec(other))).toBe('bad-header');
+    }
     // Заголовок підмінено на id чужого ключа, частини — від нашого: id не збігається з ключем.
-    const swapped = Buffer.concat([Buffer.from('T2FB1'), Buffer.from([1]), Buffer.from(keyIdOf(OTHER)), data.subarray(HEADER)]);
+    const swapped = Buffer.concat([Buffer.from('T2FB1'), Buffer.from([2]), Buffer.from(keyIdOf(OTHER)), data.subarray(14)]);
     expect(await code(dec(swapped, OTHER, keyIdOf(OTHER)))).toBe('auth-failed');
+  });
+
+  it('binds the header into every chunk (S-4): two files, same key — a changed file id or spliced chunks fail', async () => {
+    const plain = randomBytes(3 * BACKUP_CHUNK_BYTES + 100);
+    const a = await enc(plain);
+    const b = await enc(plain);
+    // Кожен файл — свій випадковий id файлу.
+    expect(a.subarray(14, HEADER).equals(b.subarray(14, HEADER))).toBe(false);
+    const fa = frames(a);
+    const fb = frames(b);
+    // Частини 0..1 з A, 2..3 з B під заголовком A (і навпаки) — тег не сходиться.
+    expect(await code(dec(Buffer.concat([a.subarray(0, HEADER), fa[0]!, fa[1]!, fb[2]!, fb[3]!])))).toBe('auth-failed');
+    expect(await code(dec(Buffer.concat([b.subarray(0, HEADER), fa[0]!, fb[1]!, fb[2]!, fb[3]!])))).toBe('auth-failed');
+    // Заголовок B над частинами A цілком.
+    expect(await code(dec(Buffer.concat([b.subarray(0, HEADER), a.subarray(HEADER)])))).toBe('auth-failed');
+    // Один перевернутий біт в id файлу ламає першу ж частину.
+    const flippedId = Buffer.from(a);
+    flippedId[20] = flippedId[20]! ^ 0x01;
+    expect(await code(dec(flippedId))).toBe('auth-failed');
   });
 
   it('200 MB streamed round trip equals by sha256, memory stays bounded', { timeout: 120_000 }, async () => {

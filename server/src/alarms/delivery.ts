@@ -135,6 +135,7 @@ export function createDeliveringAlarm(deps: DeliveringAlarmDeps): Alarm {
       ...(item.details ? { details: item.details } : {}),
       raisedAt: item.at,
       repeatCount,
+      secretValues: deps.secretValues,
     });
   }
 

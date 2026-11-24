@@ -216,3 +216,16 @@ export interface DumpRunner {
   /** The custom-format dump as a stream; errors surface as stream errors. */
   dump(): Readable;
 }
+
+/** The parameters of the spend rows from the `ops-settings` global (AC-66), with the registry defaults. */
+export interface OpsSpendSettings {
+  serverCeilingUsd: number;
+  cloudflareCeilingUsd: number;
+  mailCeilingUsd: number;
+  priceStoragePerGbUsd: number;
+  priceClassAPerMillionUsd: number;
+  priceClassBPerMillionUsd: number;
+  freeClassA: number;
+  freeClassB: number;
+  freeStorageGb: number;
+}

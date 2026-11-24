@@ -7,13 +7,12 @@
  * 50 % (`log`) / 80 % (`page`) рахує той, хто взяв оренду `ops-spend`, і лише той, хто виграв `claimLevel`,
  * піднімає тривогу `spend/<рядок>-50|80` — раз на період на весь кластер (AC-62).
  */
-import type { OpsSpendSettings } from '../adapters/payloadOps';
 import { bytesToGb, cloudflareCost, levelsReached, mailRow, monthPeriod, percent, serverCost, type SpendLevel } from '../domain/ops/spend';
 import type { Alarm } from '../ports';
 import { spendRegistry } from '../registries/spend';
 import type { SpendOver50 } from './digest';
 import type { R2Meter } from './meter';
-import type { OpsLease, SpendCounterStore } from './ports';
+import type { OpsLease, OpsSpendSettings, SpendCounterStore } from './ports';
 
 export const SPEND_EVERY_MS = 60_000;
 const LEASE_TTL_MS = 90_000;

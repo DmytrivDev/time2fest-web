@@ -15,6 +15,10 @@ import type { RestoreRunner } from '../../src/ops/restorePull';
 const COMPOSE_FILE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../docker-compose.yml');
 const REQUIRED_MAJOR = 17;
 
+function parentEnv(): Record<string, string> {
+  return Object.fromEntries(Object.entries(process.env).filter((e): e is [string, string] => typeof e[1] === 'string'));
+}
+
 function dockerSpec(databaseUri: string, args: readonly string[]) {
   const pg = pgEnvOf(databaseUri);
   return {
@@ -24,7 +28,9 @@ function dockerSpec(databaseUri: string, args: readonly string[]) {
       '-e', 'PGPASSWORD', '-e', 'PGUSER', '-e', 'PGDATABASE', '-e', 'PGHOST=127.0.0.1', '-e', 'PGPORT=5432',
       'postgres', 'pg_dump', ...args,
     ],
-    env: { ...pg, PGHOST: '127.0.0.1', PGPORT: '5432' },
+    // The production adapters pass a minimal env (S-3); the `docker` CLI here also needs its own config
+    // variables (USERPROFILE, DOCKER_HOST, …), so this test-only spec hands it the parent env explicitly.
+    env: { ...parentEnv(), ...pg, PGHOST: '127.0.0.1', PGPORT: '5432' },
   };
 }
 

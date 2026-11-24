@@ -19,7 +19,7 @@ import { Transform, type Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import type { ObjectStore } from '../catalog/ports';
 import { backupsPrefixOf, type BackupManifest } from './backup';
-import { BACKUP_MAGIC, BackupFormatError, decryptStream, keyIdOf } from './backupFormat';
+import { BACKUP_HEADER_BYTES, BACKUP_MAGIC, BackupFormatError, decryptStream, headerKeyIdOf, keyIdOf } from './backupFormat';
 
 export type VerifyReason = 'size' | 'sha256' | 'key-id' | 'auth';
 
@@ -73,7 +73,7 @@ const MANIFEST_SUFFIX = '.manifest.json';
 const DUMP_SUFFIX = '.dump.enc';
 const HEX64 = /^[0-9a-f]{64}$/;
 const KEY_ID = /^[0-9a-f]{8}$/;
-const HEADER_LEN = BACKUP_MAGIC.length + 1 + 8;
+const HEADER_LEN = BACKUP_HEADER_BYTES;
 
 /**
  * The manifest key of `ref` under the backups prefix: `latest`, a stamp `yyyymmddThhmmssZ`, or a full dump /
@@ -169,7 +169,7 @@ export async function verifyDownloaded(file: string, manifest: BackupManifest, k
   } finally {
     await fh.close();
   }
-  const headerId = header.subarray(BACKUP_MAGIC.length + 1).toString('ascii');
+  const headerId = headerKeyIdOf(header);
   if (headerId !== manifest.keyId || keyIdOf(key) !== manifest.keyId) return { ok: false, reason: 'key-id' };
   return { ok: true };
 }

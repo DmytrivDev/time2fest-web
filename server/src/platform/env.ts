@@ -136,6 +136,11 @@ function loopbackUrl(value: unknown): URL | undefined {
   }
 }
 
+/** True when the value is a URL on a loopback host (SPEC-13b: the fake Telegram base in `test`). */
+export function isLoopbackUrl(value: unknown): boolean {
+  return loopbackUrl(value) !== undefined;
+}
+
 /**
  * Positive allowlist of the `test` class (it may only touch this machine's worktree resources):
  * database on loopback named `t2f_…`, Redis on loopback, a `t2f:<slug>:` key prefix.

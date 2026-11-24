@@ -21,6 +21,7 @@ import type { EnvClass } from '../../src/platform/env';
 import { loadEnv } from '../../src/platform/env';
 import type { AlarmInput } from '../../src/ports';
 import { envRegistry } from '../../src/registries/env';
+import { childEnvOf, pgEnvOf } from '../../src/adapters/pgDump';
 
 const HOUR = 3_600_000;
 const DAY = 24 * HOUR;
@@ -323,5 +324,31 @@ describe('loss window (AC-57)', () => {
     expect(lossWindow([at(30), at(20), at(19), at(15), at(14), at(1)], now)).toBe(13 * HOUR);
     expect(lossWindow([at(1)], now)).toBeNull();
     expect(lossWindow([at(25), at(1)], now)).toBeNull();
+  });
+});
+
+describe('pg_dump / pg_restore child environment (security S-3)', () => {
+  it('passes only allow-listed parent variables plus the PG* connection, never server secrets', () => {
+    const parent = {
+      PATH: '/usr/bin',
+      LANG: 'C.UTF-8',
+      TZ: 'UTC',
+      T2F_BACKUP_KEY: 'k'.repeat(44),
+      T2F_TELEGRAM_BOT_TOKEN: 'tok',
+      PAYLOAD_SECRET: 'sec',
+      R2_SECRET_ACCESS_KEY: 'r2',
+      DATABASE_URI: 'postgres://u:p@h/db', // check-secrets: allow test fixture (S-3)
+    };
+    const env = childEnvOf(pgEnvOf('postgres://user:pa%40ss@127.0.0.1:5433/t2f_x'), parent); // check-secrets: allow test fixture (S-3)
+    expect(env).toEqual({
+      PATH: '/usr/bin',
+      LANG: 'C.UTF-8',
+      TZ: 'UTC',
+      PGHOST: '127.0.0.1',
+      PGPORT: '5433',
+      PGDATABASE: 't2f_x',
+      PGUSER: 'user',
+      PGPASSWORD: 'pa@ss',
+    });
   });
 });

@@ -8,10 +8,12 @@
 // postgres/redis → `ops restore-pull` (завантаження в теку цілі, sha256 і id ключа ДО `pg_restore`, розшифрування
 // потоком; AC-55, AC-59) → сервер коміту → перевірки (міграції, здоров’я, кількість рядків = маніфест, каталог; AC-57) →
 // звіт (тривалість, вікно втрати) → `ops restore-record` на вузлі джерела (AC-56). Тека тимчасових файлів
-// прибирається в `finally` і на SIGINT/SIGTERM; стек — `down -v` саме цього проєкту (крім `--keep`).
+// прибирається в `finally` і на SIGINT/SIGTERM; стек — `down -v` саме цього проєкту (крім `--keep`) — і в `finally`,
+// і синхронно в обробнику сигналу перед виходом (безпека S-6: копія з особистими даними не лишається піднятою).
 // Один формат `T2FB1` і один клієнт S3 — у сервері: тут жодної криптографії й жодного SigV4 (нуль залежностей).
 // Ключі R2 і ключ копії йдуть у разовий контейнер лише середовищем процесу (`-e NAME` без значення), не argv.
 // Коди: 0 — відновлено й перевірено; 2 — відмова до завантаження; 1 — збій кроку чи перевірки.
+import { spawnSync } from 'node:child_process';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -153,6 +155,35 @@ export function projectNameOf(now) {
 const minutes = (ms) => (ms === null ? 'n/a — одна копія за 24 год' : `${Math.round(ms / 60_000)} хв`);
 
 /**
+ * Прибирання стека на SIGINT/SIGTERM (безпека S-6): синхронний `down -v --remove-orphans` ЛИШЕ проєкту цього
+ * запуску (`t2f-restore-<utc>`), якщо його вже створено і не задано `--keep`. Повертає рядки для `err`.
+ * @param {{ created: boolean, keep: boolean, project: string, composeFile: string, env: NodeJS.ProcessEnv,
+ *   spawn?: (cmd: string, args: string[], o: { env: NodeJS.ProcessEnv, stdio: 'ignore', timeout: number, windowsHide: boolean }) => { status: number | null } }} o
+ * @returns {string[]}
+ */
+export function signalTeardown(o) {
+  const hint = `docker compose -p ${o.project} -f ${o.composeFile} down -v`;
+  if (!o.created) return ['restore: перервано; тимчасові файли прибрано; стек не створювався'];
+  if (o.keep) return [`restore: перервано; стек лишено (--keep); прибрати: ${hint}`];
+  if (!RE_PROJECT.test(o.project)) return [`restore: перервано; стек не прибрано (недопустима назва); ${hint}`];
+  const spawn = o.spawn ?? spawnSync;
+  let status = null;
+  try {
+    status = spawn('docker', ['compose', '-p', o.project, '-f', o.composeFile, 'down', '-v', '--remove-orphans'], {
+      env: o.env,
+      stdio: 'ignore',
+      timeout: UP_MS,
+      windowsHide: true,
+    }).status;
+  } catch {
+    status = null;
+  }
+  return status === 0
+    ? [`restore: перервано; тимчасові файли прибрано; стек ${o.project} прибрано`]
+    : [`restore: перервано; стек ${o.project} не прибрано (код ${String(status)}); ${hint}`];
+}
+
+/**
  * `ops restore`.
  * @param {import('../ops.mjs').OpsContext} ctx
  * @returns {Promise<number>}
@@ -242,7 +273,7 @@ export async function runRestore(ctx) {
   };
   const onSignal = () => {
     cleanupTemp();
-    err(`restore: перервано; тимчасові файли прибрано; стек лишився: docker compose -p ${project} -f ${composeFile} down -v`);
+    for (const line of signalTeardown({ created, keep, project, composeFile, env: composeEnv })) err(line);
     process.exit(130);
   };
   process.once('SIGINT', onSignal);

@@ -14,7 +14,7 @@
 import type { AlarmDeliveryOutcome, AlarmMessage, AlarmSink } from '../alarms/ports';
 import { RETRY_AFTER_CAP_S } from '../domain/ops/delivery';
 import { telegramRoute, type TelegramDisabled } from '../domain/ops/route';
-import type { EnvClass } from '../platform/env';
+import { isLoopbackUrl, type EnvClass } from '../platform/env';
 import type { Logger } from '../ports';
 
 export const TELEGRAM_TIMEOUT_MS = 10_000;
@@ -122,7 +122,7 @@ export function selectTelegramSink(
   env: Readonly<Record<string, unknown>>,
   deps: SelectTelegramSinkDeps,
 ): TelegramSelection {
-  const route = telegramRoute(cls, env);
+  const route = telegramRoute(cls, env, isLoopbackUrl);
   if (route.warn === 'owner-chat-ignored') {
     deps.log.warn({ event: 'ops/telegram-owner-chat-ignored', class: cls, variable: 'T2F_TELEGRAM_CHAT_ID' });
   }

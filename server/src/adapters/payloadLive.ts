@@ -34,7 +34,7 @@ import type {
   SourceEdit,
   Tx,
 } from '../live/ports';
-import { createPgScheduler } from './pgScheduler';
+import { createPgNamedLease } from './pgScheduler';
 
 const CONTEXT = { t2fTrusted: true, t2fInternal: true };
 const LOCK_KEY = 't2f:live-state';
@@ -416,32 +416,5 @@ export interface PgLiveLeaseOptions {
 
 /** The live leases over the scheduler lease table: one row per name, the term set by `acquire`. */
 export function createPgLiveLease(opts: PgLiveLeaseOptions): LiveLease {
-  const stores = new Map<string, ReturnType<typeof createPgScheduler>['lease']>();
-  const epochs = new Map<LiveLeaseName, number>();
-  const leaseOf = (name: LiveLeaseName, ttlMs: number) => {
-    const key = `${name}:${ttlMs}`;
-    let lease = stores.get(key);
-    if (!lease) {
-      lease = createPgScheduler({ payload: opts.payload, journal: opts.journal, name, termMs: ttlMs }).lease;
-      stores.set(key, lease);
-    }
-    return lease;
-  };
-  const lastTtl = new Map<LiveLeaseName, number>();
-  return {
-    async acquire(name, ttlMs) {
-      const grant = await leaseOf(name, ttlMs).acquireOrRenew(opts.holderId);
-      lastTtl.set(name, ttlMs);
-      if (grant.held) epochs.set(name, grant.epoch);
-      else epochs.delete(name);
-      return grant.held;
-    },
-    async release(name) {
-      const epoch = epochs.get(name);
-      const ttl = lastTtl.get(name);
-      if (epoch === undefined || ttl === undefined) return;
-      await leaseOf(name, ttl).release?.(opts.holderId, epoch);
-      epochs.delete(name);
-    },
-  };
+  return createPgNamedLease<LiveLeaseName>(opts);
 }

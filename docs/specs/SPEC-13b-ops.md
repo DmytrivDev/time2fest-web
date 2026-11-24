@@ -509,7 +509,7 @@ sequenceDiagram
 
 **Об'єкти R2:** `<T2F_R2_PREFIX>backups/db/<ts>.dump.enc`, `<ts>.manifest.json`.
 
-**Формат копії `T2FB1`:** заголовок (магія, версія, id ключа = перші 8 hex sha256 ключа), частини ≤64 КіБ з nonce 12 байт і тегом 16 байт; AAD = номер частини + прапор «остання».
+**Формат копії `T2FB1`:** заголовок (магія, версія, id ключа = перші 8 hex sha256 ключа, випадковий id файлу 16 байт; версія 2 після рецензії S-4), частини ≤64 КіБ з nonce 12 байт і тегом 16 байт; AAD = заголовок + номер частини + прапор «остання» (частини двох копій одним ключем не змішати).
 
 **Команди:** `pnpm --dir server ops status|backup-now|restore-record|spend-record`; `pnpm backup:env -- --env <env> --now`; `pnpm restore:env -- --env <env> --from <key|latest> --target local`.
 

@@ -21,6 +21,7 @@ import {
   type DeliveredOfKind,
 } from '../../src/domain/ops/delivery';
 import { telegramRoute } from '../../src/domain/ops/route';
+import { isLoopbackUrl, type EnvClass } from '../../src/platform/env';
 import { findKind, opsRegistry } from '../../src/registries/ops';
 
 const TEST_TOKEN = 'test-telegram-token-not-real'; // check-secrets: allow test fake
@@ -215,6 +216,20 @@ describe('alarm text (AC-10)', () => {
     expect(text.endsWith('Підтвердити: адмінка → Моніторинг')).toBe(true);
   });
 
+  it('unregistered kind with an unsafe source/code → placeholder, never the raw value (S-8)', () => {
+    const secret = 'sentinel-secret-value-123'; // check-secrets: allow test sentinel (S-8)
+    for (const kind of [
+      { source: 'x', code: '1.2.3.4' },
+      { source: 'x', code: 'user@example.com' },
+      { source: 'x', code: '123456789:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' },
+      { source: 'x', code: `k-${secret}` },
+    ]) {
+      const text = buildAlarmText({ row: undefined, kind, cls: 'test', raisedAt: RAISED, secretValues: [secret] });
+      expect(text).toContain('незареєстрований вид тривоги код не показано.');
+      expect(text).not.toContain(kind.code);
+    }
+  });
+
   it('long details are cut to 1 000 characters; fixed parts and the hint stay', () => {
     const row = rowOf('scheduler', 'lag');
     const details: AlarmDetails = Object.fromEntries(Array.from({ length: 60 }, (_, i) => [`key${String.fromCharCode(65 + (i % 26))}${i}`, 'v'.repeat(64)]));
@@ -302,6 +317,7 @@ describe('redaction (AC-11)', () => {
 
 describe('route by class (AC-13, AC-14)', () => {
   const FAKE = 'http://127.0.0.1:45123';
+  const route = (cls: EnvClass, env: Record<string, unknown>) => telegramRoute(cls, env, isLoopbackUrl);
   const full = {
     T2F_TELEGRAM_BOT_TOKEN: TEST_TOKEN,
     T2F_TELEGRAM_CHAT_ID: '-100111',
@@ -309,29 +325,29 @@ describe('route by class (AC-13, AC-14)', () => {
   };
 
   it('production → owner chat only', () => {
-    expect(telegramRoute('production', full)).toEqual({ chatId: '-100111', apiBase: 'https://api.telegram.org' });
-    expect(telegramRoute('production', { ...full, T2F_TELEGRAM_CHAT_ID: undefined })).toEqual({ disabled: 'not-configured', missing: ['T2F_TELEGRAM_CHAT_ID'] });
-    expect(telegramRoute('production', { ...full, T2F_TELEGRAM_API_BASE: 'http://telegram.example' })).toEqual({ disabled: 'insecure-base' });
+    expect(route('production', full)).toEqual({ chatId: '-100111', apiBase: 'https://api.telegram.org' });
+    expect(route('production', { ...full, T2F_TELEGRAM_CHAT_ID: undefined })).toEqual({ disabled: 'not-configured', missing: ['T2F_TELEGRAM_CHAT_ID'] });
+    expect(route('production', { ...full, T2F_TELEGRAM_API_BASE: 'http://telegram.example' })).toEqual({ disabled: 'insecure-base' });
   });
 
   it('rehearsal → test chat; a set owner chat is ignored with one warning', () => {
-    expect(telegramRoute('rehearsal', full)).toEqual({ chatId: '-100222', apiBase: 'https://api.telegram.org', warn: 'owner-chat-ignored' });
-    expect(telegramRoute('rehearsal', { ...full, T2F_TELEGRAM_CHAT_ID: undefined })).toEqual({ chatId: '-100222', apiBase: 'https://api.telegram.org' });
-    expect(telegramRoute('rehearsal', { T2F_TELEGRAM_BOT_TOKEN: TEST_TOKEN, T2F_TELEGRAM_CHAT_ID: '-100111' })).toEqual({
+    expect(route('rehearsal', full)).toEqual({ chatId: '-100222', apiBase: 'https://api.telegram.org', warn: 'owner-chat-ignored' });
+    expect(route('rehearsal', { ...full, T2F_TELEGRAM_CHAT_ID: undefined })).toEqual({ chatId: '-100222', apiBase: 'https://api.telegram.org' });
+    expect(route('rehearsal', { T2F_TELEGRAM_BOT_TOKEN: TEST_TOKEN, T2F_TELEGRAM_CHAT_ID: '-100111' })).toEqual({
       disabled: 'not-configured',
       missing: ['T2F_TELEGRAM_TEST_CHAT_ID'],
       warn: 'owner-chat-ignored',
     });
-    expect(telegramRoute('rehearsal', {})).toEqual({ disabled: 'not-configured', missing: ['T2F_TELEGRAM_BOT_TOKEN', 'T2F_TELEGRAM_TEST_CHAT_ID'] });
+    expect(route('rehearsal', {})).toEqual({ disabled: 'not-configured', missing: ['T2F_TELEGRAM_BOT_TOKEN', 'T2F_TELEGRAM_TEST_CHAT_ID'] });
   });
 
   it('test → loopback fake only; non-loopback or missing base → disabled', () => {
     const noOwner = { T2F_TELEGRAM_BOT_TOKEN: TEST_TOKEN, T2F_TELEGRAM_TEST_CHAT_ID: '-100222' };
-    expect(telegramRoute('test', { ...noOwner, T2F_TELEGRAM_API_BASE: FAKE })).toEqual({ chatId: '-100222', apiBase: FAKE });
-    expect(telegramRoute('test', { ...noOwner, T2F_TELEGRAM_API_BASE: 'https://api.telegram.org' })).toEqual({ disabled: 'non-loopback' });
-    expect(telegramRoute('test', noOwner)).toEqual({ disabled: 'non-loopback', missing: ['T2F_TELEGRAM_API_BASE'] });
-    expect(telegramRoute('test', { ...full, T2F_TELEGRAM_API_BASE: FAKE })).toEqual({ chatId: '-100222', apiBase: FAKE, warn: 'owner-chat-ignored' });
-    expect(telegramRoute('test', { T2F_TELEGRAM_API_BASE: FAKE })).toEqual({
+    expect(route('test', { ...noOwner, T2F_TELEGRAM_API_BASE: FAKE })).toEqual({ chatId: '-100222', apiBase: FAKE });
+    expect(route('test', { ...noOwner, T2F_TELEGRAM_API_BASE: 'https://api.telegram.org' })).toEqual({ disabled: 'non-loopback' });
+    expect(route('test', noOwner)).toEqual({ disabled: 'non-loopback', missing: ['T2F_TELEGRAM_API_BASE'] });
+    expect(route('test', { ...full, T2F_TELEGRAM_API_BASE: FAKE })).toEqual({ chatId: '-100222', apiBase: FAKE, warn: 'owner-chat-ignored' });
+    expect(route('test', { T2F_TELEGRAM_API_BASE: FAKE })).toEqual({
       disabled: 'not-configured',
       missing: ['T2F_TELEGRAM_BOT_TOKEN', 'T2F_TELEGRAM_TEST_CHAT_ID'],
     });
@@ -339,7 +355,26 @@ describe('route by class (AC-13, AC-14)', () => {
 
   it('never returns the token', () => {
     for (const cls of ['test', 'rehearsal', 'production'] as const) {
-      expect(JSON.stringify(telegramRoute(cls, { ...full, T2F_TELEGRAM_API_BASE: FAKE }))).not.toContain(TEST_TOKEN);
+      expect(JSON.stringify(route(cls, { ...full, T2F_TELEGRAM_API_BASE: FAKE }))).not.toContain(TEST_TOKEN);
+    }
+  });
+  it('outside test only the exact api.telegram.org origin is accepted (S-2)', () => {
+    for (const cls of ['rehearsal', 'production'] as const) {
+      const env = { ...full };
+      expect(route(cls, { ...env, T2F_TELEGRAM_API_BASE: 'https://api.telegram.org' })).toMatchObject({ apiBase: 'https://api.telegram.org' });
+      expect(route(cls, { ...env, T2F_TELEGRAM_API_BASE: 'https://api.telegram.org/' })).toMatchObject({ apiBase: 'https://api.telegram.org' });
+      for (const bad of [
+        'https://evil.example',
+        'https://api.telegram.org.evil.example',
+        'https://api.telegram.org:8443',
+        'https://user:pw@api.telegram.org',
+        'https://api.telegram.org/proxy',
+        'https://api.telegram.org/?x=1',
+      ]) {
+        expect(route(cls, { ...env, T2F_TELEGRAM_API_BASE: bad })).toMatchObject({ disabled: 'foreign-base' });
+      }
+      expect(route(cls, { ...env, T2F_TELEGRAM_API_BASE: 'http://api.telegram.org' })).toMatchObject({ disabled: 'insecure-base' });
+      expect(route(cls, { ...env, T2F_TELEGRAM_API_BASE: 'not a url' })).toMatchObject({ disabled: 'insecure-base' });
     }
   });
 });

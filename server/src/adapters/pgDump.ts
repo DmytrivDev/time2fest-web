@@ -37,6 +37,27 @@ export function pgEnvOf(databaseUri: string): Record<string, string> {
   return env;
 }
 
+/**
+ * Variables a `pg_dump`/`pg_restore` child inherits from the parent (security S-3): only what finding the
+ * binary, the locale, the time zone and temp files need. Never the whole `process.env` — the server's env holds
+ * `T2F_BACKUP_KEY`, the Telegram token, R2 keys and `PAYLOAD_SECRET`. Connection goes in via `spec.env` only.
+ */
+export const CHILD_ENV_ALLOWLIST: readonly string[] = ['PATH', 'PATHEXT', 'SystemRoot', 'HOME', 'LANG', 'LC_ALL', 'TZ', 'TMPDIR', 'TEMP', 'TMP'];
+
+/** Minimal child environment: the allow-listed parent variables plus the spec's own (`PG*` connection). */
+export function childEnvOf(
+  extra: Readonly<Record<string, string>>,
+  parent: Readonly<Record<string, string | undefined>> = process.env,
+): NodeJS.ProcessEnv {
+  const env: Record<string, string> = {};
+  for (const name of CHILD_ENV_ALLOWLIST) {
+    const value = parent[name];
+    if (typeof value === 'string') env[name] = value;
+  }
+  // `NodeJS.ProcessEnv` declares `NODE_ENV` required (app typing); the child does not need it.
+  return { ...env, ...extra } as NodeJS.ProcessEnv;
+}
+
 /** Major version from `pg_dump (PostgreSQL) 17.2` / `pg_dump (PostgreSQL) 17.12 (Debian …)`; NaN when unknown. */
 export function parsePgDumpVersion(out: string): number {
   const m = /\(PostgreSQL\)\s+(\d+)(?:\.\d+)?/.exec(out);
@@ -49,7 +70,7 @@ export const PG_DUMP_ARGS: readonly string[] = ['--format=custom', '--no-owner']
 /** Runs `spec` and answers its stdout (the version probe); a non-zero exit rejects with the code only. */
 export function runForOutput(spec: DumpCommand, timeoutMs = 30_000): Promise<string> {
   return new Promise((resolve, reject) => {
-    const child = spawn(spec.cmd, spec.args, { env: { ...process.env, ...spec.env }, stdio: ['ignore', 'pipe', 'ignore'], windowsHide: true });
+    const child = spawn(spec.cmd, spec.args, { env: childEnvOf(spec.env), stdio: ['ignore', 'pipe', 'ignore'], windowsHide: true });
     let out = '';
     const timer = setTimeout(() => child.kill(), timeoutMs);
     child.stdout.setEncoding('utf8').on('data', (d: string) => (out += d));
@@ -68,7 +89,7 @@ export function runForOutput(spec: DumpCommand, timeoutMs = 30_000): Promise<str
 /** Streams the stdout of `spec`; ends after exit 0, else errors (code only). Destroying the result kills the child. */
 export function streamOf(spec: DumpCommand): Readable {
   const out = new PassThrough();
-  const child = spawn(spec.cmd, spec.args, { env: { ...process.env, ...spec.env }, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
+  const child = spawn(spec.cmd, spec.args, { env: childEnvOf(spec.env), stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
   let stderrBytes = 0;
   // Drained (never logged: libpq messages may name the host or user), so a chatty child never blocks.
   child.stderr.on('data', (d: Buffer) => (stderrBytes += d.length));

@@ -38,7 +38,7 @@ import { ANTHROPIC_MODERATION_MAX_TOKENS, ANTHROPIC_TRANSLATION_MAX_TOKENS, crea
 import { createDeepseekProvider } from './adapters/aiDeepseek';
 import { createPayloadModerationSettings } from './adapters/payloadModerationSettings';
 import { createPgAiSpend } from './adapters/pgAiSpend';
-import { aiPricesFrom, MICROS_PER_USD } from './domain/moderation/spend';
+import { aiPricesFrom } from './domain/moderation/spend';
 import { createProviderLayer, perProcessRpm } from './moderation/providers';
 import { createSpendCounter, type SpendCounter } from './moderation/spend';
 import { createTranslationService } from './moderation/translate';
@@ -77,27 +77,12 @@ import { loadEnv, type EnvClass, type RawEnv } from './platform/env';
 import { daySalts } from './platform/fingerprint';
 import { createLogger } from './platform/logger';
 import { createDeliveringAlarm } from './alarms/delivery';
-import {
-  createPayloadBackupFacts,
-  createPayloadBackupRuns,
-  createPayloadBackupStorage,
-  createPayloadOpsSpendSettings,
-  createPayloadSpendCounters,
-  createPayloadLogAlarms,
-  createPayloadOpsJournal,
-  createPayloadOutbox,
-  createPgOpsLease,
-} from './adapters/payloadOps';
-import { createPgDumpRunner } from './adapters/pgDump';
-import { createBackupJob, type BackupDeps } from './ops/backup';
-import { keyIdOf, parseBackupKey } from './ops/backupFormat';
-import { selectTelegramSink } from './adapters/telegram';
+import type { BackupDeps } from './ops/backup';
 import { createR2Meter, r2PrefixOf } from './ops/meter';
-import { createSpendJob, type SpendJob } from './ops/spend';
-import { counterOf, quotaDay } from './domain/live/quota';
-import { periodsAt } from './domain/moderation/spend';
-import { createOpsRunner, startOpsTicker, type OpsRunner, type OpsRunnerDeps, type OpsWiring } from './ops/runner';
-import type { Alarm, LockState, Logger, SeedStore } from './ports';
+import type { SpendJob } from './ops/spend';
+import { createOpsRunner, startOpsTicker, type OpsRunner, type OpsWiring } from './ops/runner';
+import { buildBackupDeps, buildSpendJob, createOpsWiring, opsRunnerDepsOf } from './opsWiring';
+import type { Alarm, LockState, SeedStore } from './ports';
 import { envRegistry } from './registries/env';
 import { channelClassesFor } from './registries/channels';
 import { middlewareRegistry } from './registries/middleware';
@@ -205,119 +190,16 @@ const unrefTimers: Scheduler = {
 };
 
 /**
- * The ops stores and the Telegram sink (SPEC-13b W14): sink chosen by class (AC-13), `null` when not configured
- * (AC-14: the status is kept for the overview; the alarm `ops/telegram-not-configured` is raised once by
- * `startOpsTicker`, never by building deps).
- */
-function createOpsWiring(env: AppEnv, log: Logger, payload: () => Promise<Payload>): OpsWiring {
-  const selected = selectTelegramSink(env.class, env.vars, { log });
-  const journal = createPayloadJournal(isRevertible);
-  return {
-    telegram:
-      selected.sink !== null
-        ? { status: 'configured', sink: selected.sink, chatId: selected.chatId }
-        : { status: 'not-configured', sink: null, chatId: null, ...(selected.missing ? { missing: selected.missing } : {}) },
-    outbox: createPayloadOutbox({ payload, journal }),
-    logAlarms: createPayloadLogAlarms(payload, realClock),
-    lease: createPgOpsLease({ payload, journal, holderId: `${hostname()}:${process.pid}:${randomBytes(4).toString('hex')}` }),
-    clock: realClock,
-    cls: env.class,
-  };
-}
-
-/**
- * The backup job's dependencies (SPEC-13b W25, AC-48): the key from `T2F_BACKUP_KEY` (absent → not configured),
- * the metered store of the environment's own bucket and prefix (`catalogCopyDepsOf`: the env guards of
- * `platform/env.ts` already refused a production bucket outside production), the local `pg_dump` (or the test
- * seam `backupTuning.dump`), `backup-runs`, the journal and the facts of the manifest. Nothing is read here.
+ * The backup job's dependencies (SPEC-13b W25, AC-48); built in `opsWiring.ts` (A-4) from this deps object's
+ * Payload accessor and the catalog copy deps (the environment's own bucket and prefix).
  */
 export function backupDepsOf(deps: Deps): BackupDeps {
-  const payload = payloadOf(deps);
-  const v = deps.env.vars;
-  const rawKey = typeof v.T2F_BACKUP_KEY === 'string' ? v.T2F_BACKUP_KEY : '';
-  const key = rawKey ? parseBackupKey(rawKey) : null;
-  const copy = catalogCopyDepsOf(deps);
-  const facts = createPayloadBackupFacts(payload);
-  const tuning = deps.backupTuning;
-  return {
-    config: {
-      key,
-      keyId: key ? keyIdOf(key) : null,
-      store: copy?.objects ?? null,
-      prefix: copy?.prefix ?? '',
-      endpoint: typeof v.T2F_R2_ENDPOINT === 'string' ? v.T2F_R2_ENDPOINT : null,
-      dump: tuning?.dump ?? createPgDumpRunner({ databaseUri: String(v.DATABASE_URI ?? ''), serverVersion: () => facts.serverVersion() }),
-      commit: typeof v.T2F_COMMIT === 'string' ? v.T2F_COMMIT : null,
-      ...(tuning?.partBytes ? { partBytes: tuning.partBytes } : {}),
-    },
-    cls: deps.env.class,
-    alarm: deps.alarm,
-    log: deps.log,
-    journal: createPayloadOpsJournal({ payload, journal: createPayloadJournal(isRevertible), collection: 'backup-runs' }),
-    runs: createPayloadBackupRuns(payload),
-    facts,
-    clock: realClock,
-  };
+  return buildBackupDeps(deps, payloadOf(deps), catalogCopyDepsOf(deps));
 }
 
-/**
- * The spend counters job of this process (SPEC-13b S9): `ai` and `youtube` read the SPEC-09 / SPEC-12 sources, `server` and
- * `cloudflare` the `spend-counters` store and `ops-settings`. The runner ticks it; the monitoring overview and the `ops`
- * commands (`recordServerHours`) use the same instance shape.
- */
+/** The spend counters job of this process (SPEC-13b S9); built in `opsWiring.ts` (A-4). */
 export function spendJobOf(deps: Deps, ops: OpsWiring, payload: () => Promise<Payload>): SpendJob {
-  return createSpendJob({
-    counters: createPayloadSpendCounters(payload),
-    settings: createPayloadOpsSpendSettings(payload),
-    lease: ops.lease,
-    alarm: deps.alarm,
-    ...(deps.r2Meter ? { meter: deps.r2Meter } : {}),
-    ai: async (now) => {
-      const m = deps.moderation;
-      if (!m) return null;
-      const p = periodsAt(now);
-      const keys = p.night ? [p.night, p.month] : [p.month];
-      const [totals, settings] = await Promise.all([createPgAiSpend(payload).read(keys), m.settings.read()]);
-      // The bucket nearest to its ceiling (SPEC-09 judges night and month separately).
-      const rows = keys.map((k) => ({ usd: (totals.get(k) ?? 0) / MICROS_PER_USD, ceilingUsd: k.startsWith('night:') ? settings.nightCeilingUsd : settings.monthCeilingUsd }));
-      return rows.reduce((a, b) => (b.usd / (b.ceilingUsd || 1) > a.usd / (a.ceilingUsd || 1) ? b : a));
-    },
-    youtube: async (now) => {
-      const live = deps.live;
-      if (!live) return null;
-      const state = await live.quota.read(quotaDay(now, live.cfg.dayTimeZone));
-      return { used: counterOf(state, 'queries', now, live.cfg).used, limit: live.cfg.buckets.queries.perDay };
-    },
-    backupStorageBytes: () => createPayloadBackupStorage(payload).bytes(),
-  });
-}
-
-/**
- * What the ops runner reads beyond the ops stores (SPEC-13b W18): catalog zones for the celebration window
- * (AC-18, AC-19), open `page` alarms, the last successful backup (`backup-runs`, S8), spend over 50 % (S9) and the journal of skipped slots (AC-21); the backup job (S8). All lazy: nothing is read while building deps.
- */
-function opsRunnerDepsOf(deps: Deps, ops: OpsWiring, payload: () => Promise<Payload>): OpsRunnerDeps {
-  const str = (v: unknown): string => (typeof v === 'string' ? v : v === null || v === undefined ? '' : String(v));
-  const backupDeps = backupDepsOf(deps);
-  const spend = spendJobOf(deps, ops, payload);
-  return {
-    ops,
-    alarm: deps.alarm,
-    log: deps.log,
-    backup: createBackupJob({ ...backupDeps, lease: ops.lease }),
-    spend,
-    sources: {
-      async zones() {
-        const stored = await catalogStoreOf(deps).read();
-        if (!stored.season) return null;
-        return { zones: stored.zones.map((z) => ({ midnightMs: Date.parse(str(z.midnightUtc)) })).filter((z) => Number.isFinite(z.midnightMs)) };
-      },
-      openPageCount: async () => (await alarmStoreOf(deps).listOpenPage()).length,
-      lastBackupAt: async () => (await backupDeps.runs.latest()).lastOk?.snapshotAt ?? null,
-      spendOver50: (now) => spend.over50(now),
-      journal: createPayloadOpsJournal({ payload, journal: createPayloadJournal(isRevertible) }),
-    },
-  };
+  return buildSpendJob(deps, ops, payload);
 }
 
 /** Builds the dependencies from a raw environment. Throws, naming variables only, when it is invalid. */
@@ -409,7 +291,7 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   deps.scheduler = overrides.scheduler ?? createProcessScheduler(deps, payload, sharedClock);
   // The ops jobs (SPEC-13b W18): built here without a timer; ticked by `startProcessBackground` and the `ops-tick` door.
   if (overrides.backupTuning) deps.backupTuning = overrides.backupTuning;
-  if (ops && !deps.opsRunner) deps.opsRunner = createOpsRunner(opsRunnerDepsOf(deps, ops, payload));
+  if (ops && !deps.opsRunner) deps.opsRunner = createOpsRunner(opsRunnerDepsOf(deps, ops, payload, backupDepsOf(deps)));
   // Realtime (SPEC-06): no session yet (C5); the signer only with the token secret (else AC-19 in `test`).
   deps.subjects = overrides.subjects ?? noSessionSubjects;
   // Text moderation and AI (SPEC-09): built here, timers started only by `startProcessBackground`.

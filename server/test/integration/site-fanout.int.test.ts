@@ -77,6 +77,20 @@ async function until(pred: () => boolean, ms: number, what: string): Promise<voi
 }
 const linesOf = (event: string, version: number) => lines.filter((l) => l.fields.event === event && l.fields.version === version);
 
+/** `log-alarms` rows of `code` for `version` (AC-29), polled until at least one appears or `ms` passes. */
+async function logAlarmRows(code: string, version: number, ms = 5_000): Promise<{ id: string | number }[]> {
+  const end = Date.now() + ms;
+  for (;;) {
+    const docs = (await payload.find({ collection: 'log-alarms', where: { code: { equals: code } }, overrideAccess: true, depth: 0, limit: 200 })).docs as unknown as {
+      id: string | number;
+      details?: { version?: number } | null;
+    }[];
+    const mine = docs.filter((d) => d.details?.version === version);
+    if (mine.length > 0 || Date.now() > end) return mine;
+    await new Promise((r) => setTimeout(r, 100));
+  }
+}
+
 /** Records every publish, then forwards it to `inner` (the real Centrifugo publisher, or a closed one). */
 function recording(inner: ChannelPublisher | undefined): ChannelPublisher {
   return {
@@ -280,12 +294,19 @@ describe('site fan-out after commit', { timeout: 60_000 }, () => {
 
   it('AC-7: Centrifugo unreachable → the change stays, a read returns the new version, exactly one site/publish-failed', async () => {
     const closed = testDeps({ log: capture }, { T2F_CENTRIFUGO_URL: `http://127.0.0.1:${await closedPort()}`, T2F_CENTRIFUGO_API_KEY: randomBytes(24).toString('hex') });
-    fan = fanWith({ publisher: publisherOf(closed) });
+    fan = fanWith({ publisher: publisherOf(closed), alarm: { raise: (a) => (alarms.push(a), deps.alarm.raise(a)) } });
     const { version } = await flipChat();
     await until(() => linesOf(PUBLISH_FAILED, version).length > 0, 10_000, 'site/publish-failed');
     await settleFanOuts();
     expect(linesOf(PUBLISH_FAILED, version)).toHaveLength(1);
     expect(linesOf(PUBLISH_FAILED, version)[0]?.level).toBe('warn');
+    // AC-29: the same failure is also ONE `log` alarm → one `log-alarms` row of the version.
+    const raisedPublish = alarms.filter((a) => a.code === PUBLISH_FAILED && a.details?.version === version);
+    expect(raisedPublish).toHaveLength(1);
+    expect(raisedPublish[0]?.level).toBe('log');
+    const rows = await logAlarmRows(PUBLISH_FAILED, version);
+    expect(rows).toHaveLength(1);
+    for (const r of rows) await payload.delete({ collection: 'log-alarms', id: r.id, overrideAccess: true });
     const snapshot = await readSnapshot(core.snapshot);
     expect(snapshot.ok && snapshot.state.version).toBe(version);
   });

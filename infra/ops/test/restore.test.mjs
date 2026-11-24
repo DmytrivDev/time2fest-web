@@ -7,7 +7,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { main } from '../ops.mjs';
-import { lossWindowMs, migrationStatus, PROJECT_PREFIX, projectNameOf, rowCountMismatches, rowCountSql } from '../lib/restore.mjs';
+import { lossWindowMs, migrationStatus, PROJECT_PREFIX, projectNameOf, rowCountMismatches, rowCountSql, signalTeardown } from '../lib/restore.mjs';
 import { createFakeExec } from './support/fakeExec.mjs';
 import { FAKE_TARGET } from './support/fakeTarget.mjs';
 
@@ -253,5 +253,42 @@ describe('restore helpers', () => {
 
   it('the project name is the restore prefix + UTC stamp', () => {
     expect(projectNameOf(NOW)).toBe('t2f-restore-20261124t120000z');
+  });
+});
+
+describe('restore on SIGINT/SIGTERM (security S-6)', () => {
+  const project = 't2f-restore-20261124t120000z';
+  const composeFile = '/repo/infra/ops/node/compose.restore.yml';
+  /** @param {number | null} status */
+  const spy = (status) => {
+    /** @type {{ cmd: string, args: string[] }[]} */
+    const calls = [];
+    const spawn = (/** @type {string} */ cmd, /** @type {string[]} */ args) => (calls.push({ cmd, args }), { status });
+    return { calls, spawn };
+  };
+
+  it('a created stack → synchronous down -v of the run project only', () => {
+    const s = spy(0);
+    const lines = signalTeardown({ created: true, keep: false, project, composeFile, env: {}, spawn: s.spawn });
+    expect(s.calls).toEqual([{ cmd: 'docker', args: ['compose', '-p', project, '-f', composeFile, 'down', '-v', '--remove-orphans'] }]);
+    expect(lines.join('\n')).toContain(`стек ${project} прибрано`);
+  });
+
+  it('--keep, a stack never created, or a foreign project name → no docker call', () => {
+    for (const o of [
+      { created: true, keep: true, project },
+      { created: false, keep: false, project },
+      { created: true, keep: false, project: 't2f' },
+    ]) {
+      const s = spy(0);
+      signalTeardown({ ...o, composeFile, env: {}, spawn: s.spawn });
+      expect(s.calls).toEqual([]);
+    }
+  });
+
+  it('a failed down → prints the manual command', () => {
+    const s = spy(1);
+    const lines = signalTeardown({ created: true, keep: false, project, composeFile, env: {}, spawn: s.spawn });
+    expect(lines.join('\n')).toContain(`docker compose -p ${project} -f ${composeFile} down -v`);
   });
 });
