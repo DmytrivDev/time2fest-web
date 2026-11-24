@@ -3636,6 +3636,78 @@
         "title": "Nouvel An au Sahara occidental : Laâyoune | Time2Fest",
         "description": "Trois verres de thé, du couscous et une nuit douce sans neige : le Sahara occidental fête 2027 à minuit heure locale à Laâyoune, sur la Saguia el-Hamra."
       }
+    },
+    "AI": {
+      "uk": {
+        "title": "Ангілья: Новий рік 2027 у Веллі | Time2Fest",
+        "description": "Ангілья зустрічає 2027 рік опівночі за місцевим часом (04:00 UTC): салют над пляжами від Шол-Бей до Сенді-Граунду й нічна служба Watch Night."
+      },
+      "en": {
+        "title": "New Year in Anguilla: The Valley | Time2Fest",
+        "description": "Anguilla greets 2027 at local midnight (04:00 UTC): fireworks over the beaches from Shoal Bay East to Sandy Ground and the Watch Night church service."
+      },
+      "es": {
+        "title": "Año Nuevo en Anguila: The Valley | Time2Fest",
+        "description": "Anguila recibe 2027 a medianoche local (04:00 UTC): fuegos artificiales sobre las playas, de Shoal Bay East a Sandy Ground, y el servicio de Watch Night."
+      },
+      "fr": {
+        "title": "Nouvel An à Anguilla : The Valley | Time2Fest",
+        "description": "Anguilla fête 2027 à minuit heure locale (04:00 UTC) : feux d’artifice sur les plages, de Shoal Bay East à Sandy Ground, et office de Watch Night."
+      }
+    },
+    "AW": {
+      "uk": {
+        "title": "Аруба: Новий рік 2027 в Оранєстаді | Time2Fest",
+        "description": "Аруба зустрічає 2027 рік опівночі за місцевим часом (04:00 UTC): пагари проти злих духів, пісні данде від дому до дому й салют над усім островом."
+      },
+      "en": {
+        "title": "New Year in Aruba: Oranjestad | Time2Fest",
+        "description": "Aruba welcomes 2027 at local midnight (04:00 UTC): pagara firecracker ribbons against bad spirits, dande songs door to door and fireworks over the island."
+      },
+      "es": {
+        "title": "Año Nuevo en Aruba: Oranjestad | Time2Fest",
+        "description": "Aruba recibe 2027 a medianoche local (04:00 UTC): pagaras contra los malos espíritus, cantos de dande de casa en casa y fuegos sobre toda la isla."
+      },
+      "fr": {
+        "title": "Nouvel An à Aruba : Oranjestad | Time2Fest",
+        "description": "Aruba fête 2027 à minuit heure locale (04:00 UTC) : pagaras contre les mauvais esprits, chants de dande de porte en porte et feux d’artifice sur l’île."
+      }
+    },
+    "PM": {
+      "uk": {
+        "title": "Сен-П’єр і Мікелон: Новий рік 2027 у Мікелоні | Time2Fest",
+        "description": "Сен-П’єр і Мікелон зустрічають 2027 рік о 03:00 UTC, на пів години раніше за Ньюфаундленд: réveillon з шампанським, поцілунок під омелою, сніг."
+      },
+      "en": {
+        "title": "New Year in Saint Pierre and Miquelon | Time2Fest",
+        "description": "Saint Pierre and Miquelon greet 2027 at 03:00 UTC, half an hour before Newfoundland: a French réveillon with champagne, a kiss under the mistletoe, snow."
+      },
+      "es": {
+        "title": "Año Nuevo en San Pedro y Miquelón | Time2Fest",
+        "description": "San Pedro y Miquelón recibe 2027 a las 03:00 UTC, media hora antes que Terranova: réveillon francés con champán, beso bajo el muérdago y nieve en el puerto."
+      },
+      "fr": {
+        "title": "Nouvel An à Saint-Pierre-et-Miquelon | Time2Fest",
+        "description": "Saint-Pierre-et-Miquelon fête 2027 à 03:00 UTC, une demi-heure avant Terre-Neuve : réveillon au champagne, baiser sous le gui et neige sur les toits colorés."
+      }
+    },
+    "SR": {
+      "uk": {
+        "title": "Суринам: Новий рік 2027 у Парамарибо | Time2Fest",
+        "description": "Суринам зустрічає 2027 рік опівночі за місцевим часом (03:00 UTC): Owru Yari з червоними пагарами, квіткова купіль swit watra і денний фестиваль у Парамарибо."
+      },
+      "en": {
+        "title": "New Year in Suriname: Paramaribo | Time2Fest",
+        "description": "Suriname welcomes 2027 at local midnight (03:00 UTC): Owru Yari with red pagara firecracker ribbons, a swit watra flower bath and a daytime fest in Paramaribo."
+      },
+      "es": {
+        "title": "Año Nuevo en Surinam: Paramaribo | Time2Fest",
+        "description": "Surinam recibe 2027 a medianoche local (03:00 UTC): Owru Yari con cintas rojas de pagara, baño de flores swit watra y una fiesta callejera de día en Paramaribo."
+      },
+      "fr": {
+        "title": "Nouvel An au Suriname : Paramaribo | Time2Fest",
+        "description": "Le Suriname fête 2027 à minuit heure locale (03:00 UTC) : Owru Yari aux rubans rouges de pagara, bain de fleurs swit watra et fête de rue le jour à Paramaribo."
+      }
     }
   }
 }

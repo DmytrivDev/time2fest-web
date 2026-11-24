@@ -6058,5 +6058,117 @@
       "description": "Tres vasos de té, cuscús y una noche templada sin nieve: el Sáhara Occidental recibe 2027 a medianoche local en El Aaiún, junto a la Saguía el Hamra."
     },
     "kit": "eh"
+  },
+  "AI": {
+    "text": "En Anguila los fuegos de medianoche no se lanzan sobre una plaza, sino sobre las playas. Iluminan bahías de toda la isla, desde Shoal Bay East hasta Meads Bay y Maundays Bay en el oeste, y en Sandy Ground es la propia comunidad la que prepara su espectáculo, con una fiesta en la arena que dura hasta el amanecer. Los restaurantes empiezan pronto las cenas de fiesta para que todos lleguen al mar antes de medianoche. A veces un aguacero tropical estorba los fuegos, pero la fiesta sigue.\n\nEn The Valley, la capital de la isla, la comunidad de South Valley lanza sus propios fuegos junto a la escuela primaria. Y a las diez y media de la noche las congregaciones metodistas se reúnen para el tradicional servicio de Watch Night: despiden el año viejo y reciben el nuevo rezando.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Fuegos sobre las playas",
+        "text": "A medianoche los fuegos se elevan sobre las bahías de toda la isla, de Shoal Bay East a Maundays Bay, y la gente recibe el año en la arena."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Servicio de Watch Night",
+        "text": "A las 22:30 del 31 de diciembre las congregaciones metodistas se reúnen para despedir el año viejo y recibir el nuevo rezando."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Fiesta en Sandy Ground",
+        "text": "La comunidad de Sandy Ground prepara sus propios fuegos, y en la playa, junto a los chiringuitos, se baila hasta la mañana."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Anguila: The Valley | Time2Fest",
+      "description": "Anguila recibe 2027 a medianoche local (04:00 UTC): fuegos artificiales sobre las playas, de Shoal Bay East a Sandy Ground, y el servicio de Watch Night."
+    },
+    "kit": "ai"
+  },
+  "AW": {
+    "text": "La pagara, una larga cinta de petardos, ya truena en Aruba de día el 31 de diciembre: familias y tiendas la encienden para ahuyentar a los malos espíritus y dejar atrás el año viejo. Cuanto mejor le fue el año a una empresa, más larga es su pagara, y algunas arden hasta media hora. Mientras tanto, los grupos de dande van de casa en casa: un cantante, el tambor tambu, el wiri y la raspa, el estribillo «ai nobe», «año nuevo», y los anfitriones echan dinero en el sombrero. La gente se arregla incluso en casa y sigue la cuenta atrás por la radio. A medianoche los fuegos artificiales suben sobre toda la isla, de Noord a San Nicolás.\n\nOranjestad no descansa mucho: a principios de enero, al caer la noche, un desfile de antorchas recorre las calles de la capital y abre la temporada de carnaval.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Pagara contra los malos espíritus",
+        "text": "Familias y empresas encienden largas cintas de petardos para ahuyentar lo malo y dejar sitio a la buena suerte. El encendido se anuncia con antelación para que todos vengan a verlo."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Dande de puerta en puerta",
+        "text": "Grupos con tambu, wiri y raspa visitan a parientes y amigos, cantan deseos de felicidad y prosperidad, y los anfitriones corean el estribillo «ai nobe»."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Ayaca en la mesa de fiesta",
+        "text": "En Navidad y Año Nuevo se preparan ayacas: masa fina de maíz con pollo y cerdo guisados, envuelta en hoja de plátano y hervida."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Aruba: Oranjestad | Time2Fest",
+      "description": "Aruba recibe 2027 a medianoche local (04:00 UTC): pagaras contra los malos espíritus, cantos de dande de casa en casa y fuegos sobre toda la isla."
+    },
+    "kit": "aw"
+  },
+  "PM": {
+    "text": "El Año Nuevo llega a San Pedro y Miquelón a las 03:00 UTC, media hora antes que a la vecina Terranova canadiense. Las islas, frente a su costa sur, pertenecen a Francia y la mayoría de sus habitantes desciende de pescadores bretones, vascos y normandos, así que la noche se vive a la francesa: cena de réveillon con champán y foie gras y, a medianoche, «Bonne année!» y un beso bajo el muérdago. El sol se pone hacia las cinco y la nieve en estas fechas no es ninguna rareza.\n\nMiquelón es el único pueblo de su isla, con menos de seiscientos habitantes. La temporada festiva del archipiélago empieza ya en noviembre: Saint-Pierre recibe a Papá Noel en la plaza Joffre y Miquelón organiza un mercado navideño. Las fiestas terminan en la Epifanía con la galette des Rois.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "mistletoe",
+        "title": "Réveillon y muérdago",
+        "text": "El 31 de diciembre familias y amigos se sientan a una cena festiva con champán y foie gras, y a medianoche se desean «Bonne année!» con un beso bajo el muérdago."
+      },
+      {
+        "id": "t2",
+        "iconId": "tree",
+        "title": "Papá Noel y mercadillo",
+        "text": "La temporada festiva se abre en noviembre: en Saint-Pierre pequeños y mayores reciben a Papá Noel y sus elfos en la plaza Joffre, y Miquelón se reúne en un mercado navideño."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Galette des Rois",
+        "text": "Las fiestas terminan en la Epifanía: se reparte la galette, y quien encuentra el haba escondida es «rey» o «reina» de la velada."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en San Pedro y Miquelón | Time2Fest",
+      "description": "San Pedro y Miquelón recibe 2027 a las 03:00 UTC, media hora antes que Terranova: réveillon francés con champán, beso bajo el muérdago y nieve en el puerto."
+    },
+    "kit": "pm"
+  },
+  "SR": {
+    "text": "El Owru Yari, el «año viejo», se despide en Surinam durante varias semanas: desde 1997 los actos de finales de diciembre y los primeros días de enero se reúnen en el festival Surifesta, con bares en la calle, conciertos y carreras. El sonido de la fiesta es la pagara, una larga cinta roja de petardos que se enciende a medianoche. Antes, muchas familias toman un swit watra, un baño con pétalos de rosa y jazmín y una oración, se ponen ropa nueva y limpia y esperan a que la pagara cierre el año.\n\nParamaribo empieza a celebrar de día. El 31 de diciembre el centro se cierra al tráfico y de diez de la mañana a seis de la tarde el Owru Yari Fest llena Keizerstraat, Maagdenstraat y las calles vecinas: en 2025 los organizadores esperaban más de 60 000 visitantes y prepararon más de 800 metros de pagara para el relevo.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Pagara a medianoche",
+        "text": "A medianoche truenan pagaras por todo el país: largas cintas de petardos rojos. Así cierran los surinameses el año viejo y, tras una oración, se desean lo mejor."
+      },
+      {
+        "id": "t2",
+        "iconId": "flower",
+        "title": "Baño de flores swit watra",
+        "text": "A fin de año mucha gente se baña con rosas, jazmín y flores de fayalobi, reza por fuerza y prosperidad y después se viste con ropa nueva."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "Carrera sobre el puente",
+        "text": "El primer domingo del año nuevo los corredores salen a la Bigi Broki Waka, una carrera sobre el puente Jules Wijdenbosch uno de los eventos de Surifesta."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Surinam: Paramaribo | Time2Fest",
+      "description": "Surinam recibe 2027 a medianoche local (03:00 UTC): Owru Yari con cintas rojas de pagara, baño de flores swit watra y una fiesta callejera de día en Paramaribo."
+    },
+    "kit": "sr"
   }
 }

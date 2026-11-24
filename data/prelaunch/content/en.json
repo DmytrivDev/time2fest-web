@@ -6058,5 +6058,117 @@
       "description": "Three glasses of tea, couscous and a mild night without snow: Western Sahara meets 2027 at local midnight in Laayoune, above the Saguia el-Hamra riverbed."
     },
     "kit": "eh"
+  },
+  "AI": {
+    "text": "On Anguilla the midnight fireworks go up not over a square but over the beaches. Displays light up bays all around the island, from Shoal Bay East to Meads Bay and Maundays Bay in the west, while at Sandy Ground the community puts on its own show and a beach party with music goes on until morning. Restaurants start their festive dinners early so everyone can reach the sea by midnight. Sometimes a tropical downpour gets in the way of the fireworks, but the celebration carries on.\n\nIn The Valley, the island's capital, the South Valley community sets off its own display at the primary school. And at half past ten Methodist congregations gather for the traditional Watch Night Service, saying farewell to the old year and welcoming the new one in prayer.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Fireworks over the beaches",
+        "text": "At midnight fireworks rise over bays all around the island, from Shoal Bay East to Maundays Bay, and people greet the year right on the sand."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Watch Night Service",
+        "text": "At 10:30 pm on 31 December Methodist congregations gather to say farewell to the old year and welcome the new one in prayer."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Party at Sandy Ground",
+        "text": "The Sandy Ground community puts on its own fireworks, and on the beach by the beach bars people dance to music until morning."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Anguilla: The Valley | Time2Fest",
+      "description": "Anguilla greets 2027 at local midnight (04:00 UTC): fireworks over the beaches from Shoal Bay East to Sandy Ground and the Watch Night church service."
+    },
+    "kit": "ai"
+  },
+  "AW": {
+    "text": "The pagara, a long ribbon of firecrackers, crackles across Aruba already in the daytime on 31 December: families and shops light it to chase away bad spirits and leave the old year behind. The better a company's year, the longer its pagara, and some burn for up to half an hour. Meanwhile dande groups go from house to house: a singer, a tambu drum, a wiri and a raspa, the chorus “ai nobe” — “new year” — and hosts drop money into the hat. People dress up even at home and follow the countdown on the radio. At midnight fireworks rise over the whole island, from Noord to San Nicolas.\n\nOranjestad does not rest for long: in early January, as night falls, a torch parade winds through the capital's streets and opens the carnival season.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "A pagara against bad spirits",
+        "text": "Families and companies light long ribbons of firecrackers to drive away the bad and make room for good fortune. Lightings are planned in advance so that everyone can come and watch."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Dande from door to door",
+        "text": "Groups with a tambu, a wiri and a raspa visit relatives and friends, singing wishes of happiness and prosperity while the hosts join in the “ai nobe” chorus."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Ayaca on the holiday table",
+        "text": "For Christmas and New Year families make ayaca: thin corn dough with stewed chicken and pork, wrapped in a banana leaf and boiled."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Aruba: Oranjestad | Time2Fest",
+      "description": "Aruba welcomes 2027 at local midnight (04:00 UTC): pagara firecracker ribbons against bad spirits, dande songs door to door and fireworks over the island."
+    },
+    "kit": "aw"
+  },
+  "PM": {
+    "text": "New Year reaches Saint Pierre and Miquelon at 03:00 UTC — half an hour before neighbouring Newfoundland in Canada. The islands off its south coast belong to France, and most islanders descend from Breton, Basque and Norman fishermen, so the night is spent the French way: a festive réveillon dinner with champagne and foie gras, then «Bonne année!» and a kiss under the mistletoe at midnight. The sun sets around five, and snow at this time of year is nothing unusual.\n\nMiquelon is the only village on its island, home to fewer than six hundred people. The archipelago's festive season starts back in November: Saint-Pierre welcomes Father Christmas in Square Joffre, and Miquelon holds a Christmas market. The holidays end at Epiphany with the galette des Rois.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "mistletoe",
+        "title": "Réveillon and mistletoe",
+        "text": "On 31 December families and friends sit down to a festive dinner with champagne and foie gras, and at midnight wish each other «Bonne année!» with a kiss under the mistletoe."
+      },
+      {
+        "id": "t2",
+        "iconId": "tree",
+        "title": "Father Christmas and a fair",
+        "text": "The festive season opens in November: in Saint-Pierre children and adults greet Father Christmas and his elves in Square Joffre, and Miquelon gathers for a Christmas market."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Galette des Rois",
+        "text": "The holidays end at Epiphany: a galette is shared, and whoever finds the hidden bean becomes «king» or «queen» for the evening."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Saint Pierre and Miquelon | Time2Fest",
+      "description": "Saint Pierre and Miquelon greet 2027 at 03:00 UTC, half an hour before Newfoundland: a French réveillon with champagne, a kiss under the mistletoe, snow."
+    },
+    "kit": "pm"
+  },
+  "SR": {
+    "text": "Owru Yari, the “old year”, is seen off in Suriname over several weeks: since 1997 the events of late December and the first days of January have been bundled into the Surifesta festival — street bars, concerts, races. The sound of the holiday is the pagara, a long red ribbon of firecrackers lit at midnight. Before that many families take a swit watra, a bath with rose and jasmine petals and a prayer, put on clean new clothes and wait for the pagara to close the year.\n\nParamaribo starts celebrating in daylight. On 31 December the city centre goes car-free, and from ten in the morning until six in the evening Owru Yari Fest fills Keizerstraat, Maagdenstraat and the streets around them: in 2025 the organisers expected more than 60,000 visitors and prepared over 800 metres of pagara for the relay.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Pagara at midnight",
+        "text": "At midnight pagaras crackle all over the country — long ribbons of red firecrackers. That is how Surinamese close the old year, exchanging wishes after a prayer."
+      },
+      {
+        "id": "t2",
+        "iconId": "flower",
+        "title": "A swit watra flower bath",
+        "text": "At the end of the year many people bathe in water with roses, jasmine and fayalobi flowers, pray for strength and prosperity, then dress in new clothes."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "A run over the bridge",
+        "text": "On the first Sunday of the new year runners take part in Bigi Broki Waka, a race across the Jules Wijdenbosch Bridge one of the Surifesta events."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Suriname: Paramaribo | Time2Fest",
+      "description": "Suriname welcomes 2027 at local midnight (03:00 UTC): Owru Yari with red pagara firecracker ribbons, a swit watra flower bath and a daytime fest in Paramaribo."
+    },
+    "kit": "sr"
   }
 }

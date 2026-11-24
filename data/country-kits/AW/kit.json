@@ -1,0 +1,104 @@
+{
+  "code": "AW",
+  "zone": "UTC-4",
+  "zoneId": "utc-0400",
+  "cityId": "oranjestad",
+  "names": {
+    "uk": {
+      "name": "Аруба",
+      "city": "Оранєстад",
+      "cityIn": "в Оранєстаді",
+      "countryIn": "на Арубі",
+      "caps": "АРУБА"
+    },
+    "en": {
+      "name": "Aruba",
+      "city": "Oranjestad",
+      "cityIn": "in Oranjestad",
+      "countryIn": "in Aruba",
+      "caps": "ARUBA"
+    },
+    "es": {
+      "name": "Aruba",
+      "city": "Oranjestad",
+      "cityIn": "en Oranjestad",
+      "countryIn": "en Aruba",
+      "caps": "ARUBA"
+    },
+    "fr": {
+      "name": "Aruba",
+      "city": "Oranjestad",
+      "cityIn": "à Oranjestad",
+      "countryIn": "à Aruba",
+      "caps": "ARUBA"
+    }
+  },
+  "picto": "M3 35 H38 M30 35 Q29 27 24 22 M35 35 Q34.5 26 28.4 20.6 M30 35 L26 36.8 M35 35 L38.4 36.6 M24 22 Q16 18.6 5.4 17.4 M28.4 20.6 Q22.6 15.2 13.6 13.8 M26.2 21.2 Q23 17.4 20.4 15.4 M31 20.2 L31.6 12.4 Q30 6.8 26 11 Q23 5.8 19.4 11.4 Q16 7 12.6 13 Q8.8 10 6.2 15.4 L1.6 18.6 Q6 19.4 10 18.8 Q16 19.8 22 19.6 Q27 20.6 31 20.2 Z",
+  "flagColors": [
+    "#418FDE",
+    "#FBE122",
+    "#EF3340",
+    "#FFFFFF"
+  ],
+  "palette": 5,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "на Арубі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Aruba"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Aruba"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Aruba"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

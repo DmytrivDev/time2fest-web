@@ -1,0 +1,103 @@
+{
+  "code": "PM",
+  "zone": "UTC-3",
+  "zoneId": "utc-0300",
+  "cityId": "miquelon",
+  "names": {
+    "uk": {
+      "name": "Сен-П’єр і Мікелон",
+      "city": "Мікелон",
+      "cityIn": "у Мікелоні",
+      "countryIn": "на Сен-П’єрі й Мікелоні",
+      "caps": "СЕН-П’ЄР І МІКЕЛОН"
+    },
+    "en": {
+      "name": "Saint Pierre and Miquelon",
+      "city": "Miquelon",
+      "cityIn": "in Miquelon",
+      "countryIn": "in Saint Pierre and Miquelon",
+      "caps": "SAINT PIERRE AND MIQUELON"
+    },
+    "es": {
+      "name": "San Pedro y Miquelón",
+      "city": "Miquelón",
+      "cityIn": "en Miquelón",
+      "countryIn": "en San Pedro y Miquelón",
+      "caps": "SAN PEDRO Y MIQUELÓN"
+    },
+    "fr": {
+      "name": "Saint-Pierre-et-Miquelon",
+      "city": "Miquelon",
+      "cityIn": "à Miquelon",
+      "countryIn": "à Saint-Pierre-et-Miquelon",
+      "caps": "SAINT-PIERRE-ET-MIQUELON"
+    }
+  },
+  "picto": "M4 34 H36 M10 34 V31 H30 V34 M15 31 L16 12 H24 L25 31 M15.5 24.5 H24.5 M15.9 19 H24.1 M18.6 31 V27.6 Q20 26.2 21.4 27.6 V31 M13 12 H27 V10 H13 Z M16.5 10 V5.5 H23.5 V10 M16 5.5 Q20 1.6 24 5.5 M20 3.6 V1 M7 37.6 Q9.5 36.4 12 37.6 Q14.5 38.8 17 37.6 M23 37.6 Q25.5 36.4 28 37.6 Q30.5 38.8 33 37.6",
+  "flagColors": [
+    "#0055A4",
+    "#FFFFFF",
+    "#EF4135"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "на Сен-П’єрі й Мікелоні"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Saint Pierre and Miquelon"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en San Pedro y Miquelón"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Saint-Pierre-et-Miquelon"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

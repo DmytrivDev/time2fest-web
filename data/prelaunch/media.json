@@ -3677,6 +3677,70 @@
         "x": 46,
         "y": 42
       }
+    },
+    "country:AI": {
+      "src": "/media/photos/the-valley.webp",
+      "alt": {
+        "uk": "Сутінки над затокою Мандейс-Бей на південно-західному березі Ангільї: пальми й вигнутий пляж",
+        "en": "Dusk over Maundays Bay on Anguilla’s south-west coast: palm trees and a curving beach",
+        "es": "Atardecer sobre Maundays Bay, en la costa suroeste de Anguila: palmeras y una playa curva",
+        "fr": "Crépuscule sur Maundays Bay, sur la côte sud-ouest d’Anguilla : palmiers et plage en arc"
+      },
+      "author": "tiarescott",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://www.flickr.com/photos/80403443@N00/33501176",
+      "position": {
+        "x": 55,
+        "y": 60
+      }
+    },
+    "country:AW": {
+      "src": "/media/photos/oranjestad.webp",
+      "alt": {
+        "uk": "Нічна гавань Оранєстада: маленький пляж Ранчо біля Схунергавена, вогні набережної відбиваються у воді",
+        "en": "Oranjestad harbour at night: the small Rancho beach by Schoenerhaven, waterfront lights reflected in the water",
+        "es": "El puerto de Oranjestad de noche: la pequeña playa de Rancho junto a Schoenerhaven, con las luces del paseo reflejadas en el agua",
+        "fr": "Le port d’Oranjestad la nuit : la petite plage de Rancho près de Schoenerhaven, lumières du front de mer reflétées dans l’eau"
+      },
+      "author": "Gin",
+      "license": "CC0 1.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Playa_chicito_di_Rancho_anochi%2C_Schoenerhaven%2C_Oranjestad_Aruba_01.jpg",
+      "position": {
+        "x": 45,
+        "y": 40
+      }
+    },
+    "country:PM": {
+      "src": "/media/photos/saint-pierre.webp",
+      "alt": {
+        "uk": "Маяк Пуент-о-Канон у гавані Сен-П’єра на заході сонця: біла вежа з червоним поясом, кам’яний мол і помаранчеве небо",
+        "en": "The Pointe aux Canons lighthouse in Saint-Pierre harbour at sunset: a white tower with a red band, a stone jetty and an orange sky",
+        "es": "El faro de la Pointe aux Canons en el puerto de Saint-Pierre al atardecer: torre blanca con franja roja, espigón de piedra y cielo anaranjado",
+        "fr": "Le phare de la pointe aux Canons dans le port de Saint-Pierre au coucher du soleil : tour blanche à bande rouge, jetée de pierre et ciel orangé"
+      },
+      "author": "Marie Cuvelier",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Le_phare_de_la_pointe_aux_Canons,_Saint_Pierre_(Saint-Pierre_et_Miquelon).jpg",
+      "position": {
+        "x": 66,
+        "y": 40
+      }
+    },
+    "country:SR": {
+      "src": "/media/photos/paramaribo.webp",
+      "alt": {
+        "uk": "Президентський палац у Парамарибо вночі під час свят, підсвічений кольорами прапора Суринаму",
+        "en": "The Presidential Palace in Paramaribo at night during the holidays, lit in the colours of Suriname’s flag",
+        "es": "El Palacio Presidencial de Paramaribo de noche durante las fiestas, iluminado con los colores de la bandera de Surinam",
+        "fr": "Le palais présidentiel de Paramaribo la nuit pendant les fêtes, éclairé aux couleurs du drapeau du Suriname"
+      },
+      "author": "Rosandacourtar",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Paramaribo_Presidentieel_Paleis_in_de_kleuren_van_de_vlag.jpg",
+      "position": {
+        "x": 62,
+        "y": 62
+      }
     }
   }
 }

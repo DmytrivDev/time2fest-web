@@ -129,7 +129,8 @@ export type IconName =
   | 'tradition-ladle'
   | 'tradition-letter'
   | 'tradition-coin'
-  | 'tradition-mask';
+  | 'tradition-mask'
+  | 'tradition-mistletoe';
 
 export type IconSize = 9 | 12 | 14 | 15 | 16 | 18 | 20 | 22 | 24 | 26 | 32;
 
@@ -792,6 +793,15 @@ const PATHS: Record<IconName, ReactNode> = {
     <>
       <path d="M3 8.5c3-1.6 6-1.6 9 0 3-1.6 6-1.6 9 0-.3 5.2-2.5 8.5-5 8.5-2 0-3-2.2-4-2.2s-2 2.2-4 2.2c-2.5 0-4.7-3.3-5-8.5z" />
       <path d="M6.5 11.5h3M14.5 11.5h3" />
+    </>
+  ),
+  'tradition-mistletoe': (
+    <>
+      <path d="M12 3v7" />
+      <path d="M12 10c-4-1-6-4-6-6 3 0 5 2 6 6zM12 10c4-1 6-4 6-6-3 0-5 2-6 6z" />
+      <circle cx="10" cy="15" r="2" />
+      <circle cx="14" cy="15" r="2" />
+      <circle cx="12" cy="19" r="2" />
     </>
   ),
 };

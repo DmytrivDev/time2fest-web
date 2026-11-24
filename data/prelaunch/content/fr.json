@@ -6058,5 +6058,117 @@
       "description": "Trois verres de thé, du couscous et une nuit douce sans neige : le Sahara occidental fête 2027 à minuit heure locale à Laâyoune, sur la Saguia el-Hamra."
     },
     "kit": "eh"
+  },
+  "AI": {
+    "text": "À Anguilla, le feu d’artifice de minuit ne s’élève pas au-dessus d’une place, mais au-dessus des plages. Les baies de toute l’île s’illuminent, de Shoal Bay East à Meads Bay et Maundays Bay à l’ouest, et à Sandy Ground c’est la communauté elle-même qui prépare son spectacle, avec une fête sur le sable jusqu’au matin. Les restaurants commencent tôt les dîners de fête pour que chacun rejoigne la mer avant minuit. Il arrive qu’une averse tropicale gêne le feu d’artifice, mais la fête continue.\n\nÀ The Valley, la capitale, la communauté de South Valley tire son propre feu près de l’école primaire. Et à 22 h 30, les paroisses méthodistes se réunissent pour le traditionnel office de Watch Night : on dit adieu à l’année qui s’achève et on accueille la nouvelle dans la prière.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Feux au-dessus des plages",
+        "text": "À minuit, les feux s’élèvent au-dessus des baies de toute l’île, de Shoal Bay East à Maundays Bay, et l’on accueille l’année sur le sable."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Office de Watch Night",
+        "text": "Le 31 décembre à 22 h 30, les paroisses méthodistes se réunissent pour dire adieu à l’année et accueillir la nouvelle dans la prière."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Fête à Sandy Ground",
+        "text": "La communauté de Sandy Ground tire son propre feu d’artifice, et sur la plage, près des bars, on danse jusqu’au matin."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 à Anguilla : The Valley | Time2Fest",
+      "description": "Anguilla fête 2027 à minuit heure locale (04:00 UTC) : feux d’artifice sur les plages, de Shoal Bay East à Sandy Ground, et office de Watch Night."
+    },
+    "kit": "ai"
+  },
+  "AW": {
+    "text": "La pagara, un long ruban de pétards, crépite à Aruba dès la journée du 31 décembre : familles et commerces l’allument pour chasser les mauvais esprits et laisser la vieille année derrière eux. Plus l’année d’une entreprise a été bonne, plus sa pagara est longue, et certaines brûlent jusqu’à une demi-heure. Pendant ce temps, les groupes de dande vont de maison en maison : un chanteur, le tambour tambu, le wiri et la raspa, le refrain « ai nobe », « nouvel an », et les hôtes glissent de l’argent dans le chapeau. On s’habille avec soin même à la maison et l’on suit le compte à rebours à la radio. À minuit, les feux d’artifice s’élèvent sur toute l’île, de Noord à San Nicolas.\n\nOranjestad ne se repose pas longtemps : début janvier, à la tombée de la nuit, un défilé aux flambeaux parcourt les rues de la capitale et ouvre la saison du carnaval.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Une pagara contre les esprits",
+        "text": "Familles et entreprises allument de longs rubans de pétards pour chasser le mauvais et faire place à la chance. L’allumage est prévu à l’avance pour que tout le monde vienne regarder."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Le dande de porte en porte",
+        "text": "Des groupes avec tambu, wiri et raspa rendent visite aux proches et aux amis, chantent des vœux de bonheur et de prospérité, et les hôtes reprennent le refrain « ai nobe »."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "L’ayaca sur la table de fête",
+        "text": "À Noël et au Nouvel An, on prépare l’ayaca : une fine pâte de maïs garnie de poulet et de porc mijotés, enveloppée dans une feuille de bananier et bouillie."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 à Aruba : Oranjestad | Time2Fest",
+      "description": "Aruba fête 2027 à minuit heure locale (04:00 UTC) : pagaras contre les mauvais esprits, chants de dande de porte en porte et feux d’artifice sur l’île."
+    },
+    "kit": "aw"
+  },
+  "PM": {
+    "text": "Le Nouvel An arrive à Saint-Pierre-et-Miquelon à 03:00 UTC, une demi-heure avant la Terre-Neuve canadienne voisine. Ces îles au large de sa côte sud sont françaises, et la plupart des habitants descendent de pêcheurs bretons, basques et normands : la nuit se passe donc à la française, avec le réveillon, le champagne et le foie gras, puis « Bonne année ! » et un baiser sous le gui à minuit. Le soleil se couche vers cinq heures, et la neige n’a rien d’exceptionnel en cette saison.\n\nMiquelon est le seul village de son île, avec moins de six cents habitants. La saison des fêtes commence dès novembre : Saint-Pierre accueille le père Noël au square Joffre, et Miquelon organise un marché de Noël. Les fêtes se terminent à l’Épiphanie avec la galette des Rois.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "mistletoe",
+        "title": "Réveillon et gui",
+        "text": "Le 31 décembre, familles et amis se retrouvent autour d’un dîner de fête avec champagne et foie gras, puis se souhaitent « Bonne année ! » à minuit en s’embrassant sous le gui."
+      },
+      {
+        "id": "t2",
+        "iconId": "tree",
+        "title": "Père Noël et marché",
+        "text": "La saison des fêtes s’ouvre en novembre : à Saint-Pierre, petits et grands accueillent le père Noël et ses lutins au square Joffre, et Miquelon se retrouve au marché de Noël."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Galette des Rois",
+        "text": "Les fêtes se terminent à l’Épiphanie : on partage la galette, et celui ou celle qui trouve la fève devient roi ou reine de la soirée."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 à Saint-Pierre-et-Miquelon | Time2Fest",
+      "description": "Saint-Pierre-et-Miquelon fête 2027 à 03:00 UTC, une demi-heure avant Terre-Neuve : réveillon au champagne, baiser sous le gui et neige sur les toits colorés."
+    },
+    "kit": "pm"
+  },
+  "SR": {
+    "text": "L’Owru Yari, la « vieille année », se fête au Suriname pendant plusieurs semaines : depuis 1997, les événements de fin décembre et des premiers jours de janvier sont réunis dans le festival Surifesta, avec bars de rue, concerts et courses. Le son de la fête, c’est la pagara, un long ruban rouge de pétards allumé à minuit. Avant cela, beaucoup de familles prennent un swit watra, un bain aux pétales de rose et de jasmin accompagné d’une prière, enfilent des vêtements neufs et propres et attendent que la pagara clôture l’année.\n\nParamaribo commence la fête en plein jour. Le 31 décembre, le centre-ville devient piéton et, de dix heures à dix-huit heures, l’Owru Yari Fest anime Keizerstraat, Maagdenstraat et les rues voisines : en 2025, les organisateurs attendaient plus de 60 000 visiteurs et avaient préparé plus de 800 mètres de pagara pour le relais.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "La pagara à minuit",
+        "text": "À minuit, les pagaras crépitent dans tout le pays : de longs rubans de pétards rouges. C’est ainsi que les Surinamais clôturent l’année, puis échangent leurs vœux après une prière."
+      },
+      {
+        "id": "t2",
+        "iconId": "flower",
+        "title": "Bain de fleurs swit watra",
+        "text": "En fin d’année, beaucoup se baignent dans une eau aux roses, au jasmin et aux fleurs de fayalobi, prient pour la force et la prospérité, puis s’habillent de neuf."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "Course sur le pont",
+        "text": "Le premier dimanche de la nouvelle année, les coureurs participent à la Bigi Broki Waka, une course sur le pont Jules-Wijdenbosch l’un des événements de Surifesta."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Suriname : Paramaribo | Time2Fest",
+      "description": "Le Suriname fête 2027 à minuit heure locale (03:00 UTC) : Owru Yari aux rubans rouges de pagara, bain de fleurs swit watra et fête de rue le jour à Paramaribo."
+    },
+    "kit": "sr"
   }
 }

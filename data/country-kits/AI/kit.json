@@ -1,0 +1,103 @@
+{
+  "code": "AI",
+  "zone": "UTC-4",
+  "zoneId": "utc-0400",
+  "cityId": "the-valley",
+  "names": {
+    "uk": {
+      "name": "Ангілья",
+      "city": "Веллі",
+      "cityIn": "у Веллі",
+      "countryIn": "на Ангільї",
+      "caps": "АНГІЛЬЯ"
+    },
+    "en": {
+      "name": "Anguilla",
+      "city": "The Valley",
+      "cityIn": "in The Valley",
+      "countryIn": "in Anguilla",
+      "caps": "ANGUILLA"
+    },
+    "es": {
+      "name": "Anguila",
+      "city": "The Valley",
+      "cityIn": "en The Valley",
+      "countryIn": "en Anguila",
+      "caps": "ANGUILA"
+    },
+    "fr": {
+      "name": "Anguilla",
+      "city": "The Valley",
+      "cityIn": "à The Valley",
+      "countryIn": "à Anguilla",
+      "caps": "ANGUILLA"
+    }
+  },
+  "picto": "M3 34.5 Q10 30 19 33 Q23 34.4 26 34.5 M26 34.5 H37.5 M11.5 32 Q12 21 18.5 11 M18.5 11 Q12.5 6.5 6.5 10.5 M18.5 11 Q13.5 11 10.5 17 M18.5 11 Q24.5 5.5 30 8.5 M18.5 11 Q24 12 26 17.5 M18.5 11 Q17.5 5.5 20.5 3 M25.5 30.5 H37.5 L35.4 33.2 H27.6 Z M31.5 30.5 V13.5 M31.5 14.5 L37 29 H31.5 M31.5 18 L26.8 29 H31.5",
+  "flagColors": [
+    "#FFFFFF",
+    "#F0901E",
+    "#5A8AE0"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "на Ангільї"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Anguilla"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Anguila"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Anguilla"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

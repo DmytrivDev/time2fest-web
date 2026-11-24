@@ -1,0 +1,104 @@
+{
+  "code": "SR",
+  "zone": "UTC-3",
+  "zoneId": "utc-0300",
+  "cityId": "paramaribo",
+  "names": {
+    "uk": {
+      "name": "Суринам",
+      "city": "Парамарибо",
+      "cityIn": "у Парамарибо",
+      "countryIn": "у Суринамі",
+      "caps": "СУРИНАМ"
+    },
+    "en": {
+      "name": "Suriname",
+      "city": "Paramaribo",
+      "cityIn": "in Paramaribo",
+      "countryIn": "in Suriname",
+      "caps": "SURINAME"
+    },
+    "es": {
+      "name": "Surinam",
+      "city": "Paramaribo",
+      "cityIn": "en Paramaribo",
+      "countryIn": "en Surinam",
+      "caps": "SURINAM"
+    },
+    "fr": {
+      "name": "Suriname",
+      "city": "Paramaribo",
+      "cityIn": "à Paramaribo",
+      "countryIn": "au Suriname",
+      "caps": "SURINAME"
+    }
+  },
+  "picto": "M2 37 H38 M7 37 V15 H14 V37 M26 37 V15 H33 V37 M6.4 15 H14.6 M25.4 15 H33.6 M8.4 15 L10.5 4.4 L12.6 15 M27.4 15 L29.5 4.4 L31.6 15 M10.5 4.4 V1 M9.2 2.2 H11.8 M29.5 4.4 V1 M28.2 2.2 H30.8 M14 22 L20 15.6 L26 22 Z M17.4 27 a2.6 2.6 0 1 0 5.2 0 a2.6 2.6 0 1 0 -5.2 0 M17.6 37 V33.4 Q20 30.6 22.4 33.4 V37 M9.4 25 V21.6 Q10.5 20 11.6 21.6 V25 M28.4 25 V21.6 Q29.5 20 30.6 21.6 V25",
+  "flagColors": [
+    "#377E3F",
+    "#FFFFFF",
+    "#B40A2D",
+    "#ECC81D"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Суринамі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Suriname"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Surinam"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "au Suriname"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}
