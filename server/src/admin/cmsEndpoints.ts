@@ -41,6 +41,7 @@ import { CLOCK_CONTROL_CLASSES, controlClock } from '../timekeeping/control';
 import { fail, isOwner, jsonBodyOf, NO_STORE } from './cmsHttp';
 import { liveEndpoints } from './liveEndpoints';
 import { opsEndpoints } from './opsEndpoints';
+import { streamsEndpoints } from './streamsEndpoints';
 
 function festivalStateEndpoint(resolve: () => Promise<Deps>): Endpoint {
   return {
@@ -161,6 +162,8 @@ export function cmsEndpointsFor(cls: EnvClass, resolve: () => Promise<Deps> = pr
   endpoints.push(siteProductEndpoint(resolve), siteSwitchEndpoint(resolve), siteViewEndpoint(resolve));
   // SPEC-12: the owner's live-air endpoints exist in every class.
   endpoints.push(...liveEndpoints(resolve));
+  // SPEC-21a: the owner's stream sources endpoints (slice «Джерела», `admin/streamsEndpoints.ts`) exist in every class.
+  endpoints.push(...streamsEndpoints(resolve));
   // SPEC-13b: the owner's monitoring overview and `ops-settings` change exist in every class (`admin/opsEndpoints.ts`).
   endpoints.push(...opsEndpoints(resolve));
   return endpoints;
