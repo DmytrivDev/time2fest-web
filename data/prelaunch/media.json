@@ -3437,6 +3437,38 @@
         "x": 50,
         "y": 62
       }
+    },
+    "country:GN": {
+      "src": "/media/photos/conakry.webp",
+      "alt": {
+        "uk": "Сутінки в Конакрі: темні хмари над водою, силуети дерев і щогли лінії електропередач на березі",
+        "en": "Dusk in Conakry: dark clouds over the water, silhouettes of trees and power-line masts on the shore",
+        "es": "Atardecer en Conakri: nubes oscuras sobre el agua, siluetas de árboles y torres de alta tensión en la orilla",
+        "fr": "Crépuscule à Conakry : nuages sombres au-dessus de l’eau, silhouettes d’arbres et pylônes électriques sur le rivage"
+      },
+      "author": "Vincentyang1912",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Conakry_city,Guinea.jpg",
+      "position": {
+        "x": 45,
+        "y": 45
+      }
+    },
+    "country:JE": {
+      "src": "/media/photos/jersey.webp",
+      "alt": {
+        "uk": "Королівська площа Сент-Гельєра вночі 30 грудня: дерева в новорічних гірляндах, статуя короля Георга II, мокра бруківка",
+        "en": "Royal Square in St Helier at night on 30 December: trees in festive lights, the statue of King George II and wet cobblestones",
+        "es": "La plaza Real de Saint Helier de noche el 30 de diciembre: árboles con guirnaldas festivas, la estatua del rey Jorge II y el empedrado mojado",
+        "fr": "Royal Square à Saint-Hélier la nuit du 30 décembre : arbres illuminés pour les fêtes, statue du roi George II et pavés mouillés"
+      },
+      "author": "Pymouss",
+      "license": "CC BY 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Saint_Helier_-_Royal_Square_20181230-02.jpg",
+      "position": {
+        "x": 50,
+        "y": 45
+      }
     }
   }
 }

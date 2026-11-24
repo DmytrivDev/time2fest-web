@@ -1,0 +1,103 @@
+{
+  "code": "GN",
+  "zone": "UTC+0",
+  "zoneId": "utc+0000",
+  "cityId": "conakry",
+  "names": {
+    "uk": {
+      "name": "Гвінея",
+      "city": "Конакрі",
+      "cityIn": "у Конакрі",
+      "countryIn": "у Гвінеї",
+      "caps": "ГВІНЕЯ"
+    },
+    "en": {
+      "name": "Guinea",
+      "city": "Conakry",
+      "cityIn": "in Conakry",
+      "countryIn": "in Guinea",
+      "caps": "GUINEA"
+    },
+    "es": {
+      "name": "Guinea",
+      "city": "Conakri",
+      "cityIn": "en Conakri",
+      "countryIn": "en Guinea",
+      "caps": "GUINEA"
+    },
+    "fr": {
+      "name": "Guinée",
+      "city": "Conakry",
+      "cityIn": "à Conakry",
+      "countryIn": "en Guinée",
+      "caps": "GUINÉE"
+    }
+  },
+  "picto": "M3 37 H37 M10 37 V28.5 H30 V37 M17 37 V33 A3 3 0 0 1 23 33 V37 M16 28.5 V26.5 H24 V28.5 M16 26.5 C16 21.5 18 19.5 20 18.6 C22 19.5 24 21.5 24 26.5 M20 18.6 V16 M11.5 28.5 C11.5 25.8 12.6 24.8 13.6 24.4 C14.6 24.8 15.7 25.8 15.7 28.5 M24.3 28.5 C24.3 25.8 25.4 24.8 26.4 24.4 C27.4 24.8 28.5 25.8 28.5 28.5 M4.8 37 V12 M7.8 37 V12 M3.8 22.5 H8.8 M3.8 15 H8.8 M4.8 12 L6.3 7.5 L7.8 12 M6.3 7.5 V5.5 M32.2 37 V12 M35.2 37 V12 M31.2 22.5 H36.2 M31.2 15 H36.2 M32.2 12 L33.7 7.5 L35.2 12 M33.7 7.5 V5.5",
+  "flagColors": [
+    "#CE1126",
+    "#FCD116",
+    "#009460"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Гвінеї"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Guinea"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Guinea"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "en Guinée"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

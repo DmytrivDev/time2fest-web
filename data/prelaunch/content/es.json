@@ -5638,5 +5638,61 @@
       "description": "Malí recibe 2027 a las 00:00 UTC: en Bamako, pollo en la mesa, cuenta atrás con el grin, el grupo de amigos, y abrazos a medianoche; en las iglesias, vigilias."
     },
     "kit": "ml"
+  },
+  "GN": {
+    "text": "La Navidad y la Nochevieja se funden aquí en una sola temporada, las «fiestas de fin de año»: las familias se reúnen, y el 25 de diciembre y el 1 de enero son festivos. La mayoría de los guineanos son musulmanes (84 % según una estimación de 2023, con un 11 % de cristianos), pero todos reciben el Año Nuevo. Los fuegos artificiales están prohibidos: en las fiestas de 2025/26 se vetó su venta y uso en todo el país del 24 de diciembre al 5 de enero.\n\nLa noche más sonora de Conakri es el «Bal des Grands»: el 31 de diciembre de 2025 tocaron la legendaria Bembeya Jazz National, el maliense Sidiki Diabaté y la cantante Djelykaba Bintou, y se agotaron las entradas por cuarto año seguido. El 1 de enero la ciudad navega a las islas de Los, a dos kilómetros de la costa, en busca de playas y bosque; desde 2024 el Estado organiza la travesía desde la estación marítima de Sandervalia.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "boat",
+        "title": "En barco a las islas de Los",
+        "text": "El 1 de enero muchos vecinos de Conakri cruzan desde los puertos de Kaloum a las islas de Los para bañarse y pasear por el bosque; en la travesía se reparten chalecos salvavidas."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Bal des Grands desde las 20:00",
+        "text": "Las puertas del baile en Camayenne abren a las 20:00 y toda la noche tocan estrellas de la música africana, de los veteranos de Bembeya Jazz a voces jóvenes."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Noche en familia, sin petardos",
+        "text": "De Navidad a Año Nuevo las familias se reúnen, y las autoridades prohíben en las fiestas los petardos y los conciertos en las playas de Conakri."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Guinea: Conakri | Time2Fest",
+      "description": "Guinea recibe 2027 a las 00:00 UTC: el Bal des Grands con Bembeya Jazz en Conakri, fiestas de fin de año en familia y, el 1 de enero, barcos a las islas de Los."
+    },
+    "kit": "gn"
+  },
+  "JE": {
+    "text": "«¡Ma hodgîngnole!», gritaban antes en Jersey para pedir el aguinaldo de Año Nuevo. La costumbre desapareció hace tiempo, pero la palabra se compara con el normando hoguinané y el Hogmanay escocés. La fiesta se alarga hasta la Noche de Reyes, cuando en los huertos se canta y se brinda por la salud de los manzanos para que den buena cosecha. Antes del siglo XX la sidra era la base de la economía de la isla, y las canciones suelen ser en jèrriais, la lengua normanda de Jersey.\n\nNo hay un gran espectáculo público de fuegos artificiales a medianoche: en 2026 los isleños incluso firmaron una petición para tener fuegos de Nochevieja junto al castillo de Elizabeth. La noche la iluminan, en cambio, los fuegos de los vecinos. Y el 1 de enero los nadadores de larga distancia se meten en el mar invernal desde la rampa de St Catherine, en la costa este.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Canciones a los manzanos",
+        "text": "En la Noche de Reyes se canta en los huertos y se brinda por los manzanos para que den fruto, a menudo con canciones en jèrriais."
+      },
+      {
+        "id": "t2",
+        "iconId": "wave",
+        "title": "El primer baño del año",
+        "text": "El 1 de enero los nadadores de larga distancia entran al mar en la rampa de St Catherine, y en Navidad cientos de isleños se bañan en varias bahías por el hospicio."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Los fuegos de los vecinos",
+        "text": "Sin espectáculo oficial a medianoche, el cielo se ilumina con fuegos privados; tras un exitoso espectáculo en la bahía de St Aubin, los isleños piden fuegos de Nochevieja en el castillo de Elizabeth."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Jersey: Saint Helier | Time2Fest",
+      "description": "Jersey recibe 2027 a medianoche local (00:00 UTC): fuegos de los vecinos, canciones a los manzanos en la Noche de Reyes y un primer baño en el mar invernal."
+    },
+    "kit": "je"
   }
 }

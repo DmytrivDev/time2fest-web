@@ -3366,6 +3366,42 @@
         "title": "Nouvel An au Mali : Bamako | Time2Fest",
         "description": "Le Mali entre en 2027 à 0 h UTC : à Bamako, poulet au menu, décompte au grin entre amis et embrassades à minuit, tandis que les églises tiennent leurs veillées."
       }
+    },
+    "GN": {
+      "uk": {
+        "title": "Новий рік у Гвінеї: Конакрі | Time2Fest",
+        "description": "Гвінея зустрічає 2027 рік о 00:00 UTC: «Бал великих» з Bembeya Jazz у Конакрі, родинні «свята кінця року» й човни на острови Лос уранці 1 січня."
+      },
+      "en": {
+        "title": "New Year in Guinea: Conakry | Time2Fest",
+        "description": "Guinea greets 2027 at 00:00 UTC: Conakry’s Bal des Grands with Bembeya Jazz, family year-end festivities and boats to the Îles de Los on 1 January."
+      },
+      "es": {
+        "title": "Año Nuevo en Guinea: Conakri | Time2Fest",
+        "description": "Guinea recibe 2027 a las 00:00 UTC: el Bal des Grands con Bembeya Jazz en Conakri, fiestas de fin de año en familia y, el 1 de enero, barcos a las islas de Los."
+      },
+      "fr": {
+        "title": "Nouvel An en Guinée : Conakry | Time2Fest",
+        "description": "La Guinée fête 2027 à 0 h UTC : Bal des Grands et Bembeya Jazz à Conakry, fêtes de fin d’année en famille, bateaux vers les îles de Loos le 1er janvier."
+      }
+    },
+    "JE": {
+      "uk": {
+        "title": "Новий рік на Джерсі: Сент-Гельєр | Time2Fest",
+        "description": "Джерсі зустрічає 2027 рік опівночі за місцевим часом (00:00 UTC): сусідські феєрверки, пісні для яблунь на Дванадцяту ніч і перший заплив у зимовому морі."
+      },
+      "en": {
+        "title": "New Year in Jersey: St Helier | Time2Fest",
+        "description": "Jersey greets 2027 at local midnight (00:00 UTC): neighbours’ fireworks, wassail songs for the apple trees on Twelfth Night and a first swim in the winter sea."
+      },
+      "es": {
+        "title": "Año Nuevo en Jersey: Saint Helier | Time2Fest",
+        "description": "Jersey recibe 2027 a medianoche local (00:00 UTC): fuegos de los vecinos, canciones a los manzanos en la Noche de Reyes y un primer baño en el mar invernal."
+      },
+      "fr": {
+        "title": "Nouvel An à Jersey : Saint-Hélier | Time2Fest",
+        "description": "Jersey fête 2027 à minuit heure locale (00:00 UTC) : feux d’artifice des voisins, chants aux pommiers la nuit des Rois et premier bain dans la mer d’hiver."
+      }
     }
   }
 }

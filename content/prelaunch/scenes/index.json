@@ -1230,6 +1230,18 @@
       "wide": true,
       "sky": "#2a1d3c",
       "water": "#69504b"
+    },
+    "GN": {
+      "src": "/scenes/GN-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#585f55"
+    },
+    "JE": {
+      "src": "/scenes/JE-wide.svg",
+      "wide": true,
+      "sky": "#1d2846",
+      "water": "#20364a"
     }
   }
 }

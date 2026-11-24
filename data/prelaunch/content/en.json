@@ -5638,5 +5638,61 @@
       "description": "Mali greets 2027 at 00:00 UTC: Bamako enjoys a chicken feast, counts down with the grin, its circle of friends, and hugs at midnight; churches hold vigils."
     },
     "kit": "ml"
+  },
+  "GN": {
+    "text": "Christmas and New Year’s Eve merge here into a single season, the ‘year-end festivities’: families get together, and 25 December and 1 January are public holidays. Most Guineans are Muslim (84% by a 2023 estimate, with 11% Christians), yet everyone sees in the New Year. Fireworks are off limits: for the 2025/26 holidays their sale and use were banned nationwide from 24 December to 5 January.\n\nConakry’s loudest night is the ‘Bal des Grands’: on 31 December 2025 the legendary Bembeya Jazz National, Mali’s Sidiki Diabaté and singer Djelykaba Bintou played, and it sold out for the fourth year in a row. On 1 January the city sails to the Îles de Los, two kilometres offshore, for beaches and forest; since 2024 the state has organised the crossings from the Sandervalia maritime station.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "boat",
+        "title": "By boat to the Îles de Los",
+        "text": "On 1 January many Conakry residents cross from the Kaloum ports to the Îles de Los to swim and walk in the forest; life jackets are handed out for the crossing."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Bal des Grands from 8 pm",
+        "text": "Doors of the ball in Camayenne open at 8 pm, and all evening stars of African music play — from the veterans of Bembeya Jazz to young singers."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "A family night, no firecrackers",
+        "text": "From Christmas to New Year families gather, while the authorities ban firecrackers and beach concerts in Conakry for the holidays."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Guinea: Conakry | Time2Fest",
+      "description": "Guinea greets 2027 at 00:00 UTC: Conakry’s Bal des Grands with Bembeya Jazz, family year-end festivities and boats to the Îles de Los on 1 January."
+    },
+    "kit": "gn"
+  },
+  "JE": {
+    "text": "“Ma hodgîngnole!” Jersey people once cried this when asking for a New Year gift. The custom has long gone, but the word is compared with Norman hoguinané and Scottish Hogmanay. The season runs on until Twelfth Night, when islanders sing and drink to the health of the apple trees so they bear fruit. Before the 20th century cider was the backbone of the island’s economy, so the songs are often in Jèrriais, Jersey’s own Norman language.\n\nThere is no big public fireworks display at midnight: in 2026 islanders even signed a petition for New Year’s Eve fireworks at Elizabeth Castle. Instead, the night is lit by neighbours’ fireworks. And on 1 January long-distance swimmers walk into the winter sea at St Catherine’s slipway on the island’s east coast.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Songs for the apple trees",
+        "text": "On Twelfth Night islanders sing in the orchards and drink to the apple trees’ health so they bear fruit, often with songs in Jèrriais."
+      },
+      {
+        "id": "t2",
+        "iconId": "wave",
+        "title": "The first swim of the year",
+        "text": "On 1 January long-distance swimmers take to the sea at St Catherine’s slipway, and on Christmas Day hundreds of islanders swim in several bays for the hospice."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Neighbours’ fireworks",
+        "text": "With no official display at midnight, private fireworks light the sky; after a popular show in St Aubin’s Bay, islanders are asking for New Year fireworks at Elizabeth Castle."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Jersey: St Helier | Time2Fest",
+      "description": "Jersey greets 2027 at local midnight (00:00 UTC): neighbours’ fireworks, wassail songs for the apple trees on Twelfth Night and a first swim in the winter sea."
+    },
+    "kit": "je"
   }
 }

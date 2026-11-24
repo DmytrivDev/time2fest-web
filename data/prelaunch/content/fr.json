@@ -5638,5 +5638,61 @@
       "description": "Le Mali entre en 2027 à 0 h UTC : à Bamako, poulet au menu, décompte au grin entre amis et embrassades à minuit, tandis que les églises tiennent leurs veillées."
     },
     "kit": "ml"
+  },
+  "GN": {
+    "text": "Noël et la Saint-Sylvestre se fondent ici en une seule saison, les « fêtes de fin d’année » : les familles se retrouvent, et le 25 décembre comme le 1er janvier sont fériés. La plupart des Guinéens sont musulmans (84 % selon une estimation de 2023, 11 % de chrétiens), mais tout le monde fête le Nouvel An. Les feux d’artifice sont proscrits : pour les fêtes 2025/26, leur vente et leur usage ont été interdits dans tout le pays du 24 décembre au 5 janvier.\n\nLa nuit la plus animée de Conakry, c’est le « Bal des Grands » : le 31 décembre 2025, le légendaire Bembeya Jazz National, le Malien Sidiki Diabaté et la chanteuse Djelykaba Bintou y ont joué, à guichets fermés pour la quatrième année de suite. Le 1er janvier, la ville embarque pour les îles de Loos, à deux kilomètres de la côte, entre plages et forêt ; depuis 2024, l’État organise la traversée depuis la gare maritime de Sandervalia.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "boat",
+        "title": "En bateau vers les îles de Loos",
+        "text": "Le 1er janvier, beaucoup d’habitants de Conakry traversent depuis les ports de Kaloum vers les îles de Loos pour se baigner et marcher en forêt ; des gilets de sauvetage sont distribués."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Bal des Grands dès 20 h",
+        "text": "Les portes du bal à Camayenne ouvrent à 20 h, et toute la soirée jouent des stars de la musique africaine, des vétérans du Bembeya Jazz aux jeunes voix."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Fête en famille, sans pétards",
+        "text": "De Noël au Nouvel An, les familles se retrouvent, et les autorités interdisent pendant les fêtes pétards et concerts sur les plages de Conakry."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An en Guinée : Conakry | Time2Fest",
+      "description": "La Guinée fête 2027 à 0 h UTC : Bal des Grands et Bembeya Jazz à Conakry, fêtes de fin d’année en famille, bateaux vers les îles de Loos le 1er janvier."
+    },
+    "kit": "gn"
+  },
+  "JE": {
+    "text": "« Ma hodgîngnole ! » criait-on autrefois à Jersey pour réclamer ses étrennes du Nouvel An. La coutume a disparu, mais le mot est rapproché du normand hoguinané et du Hogmanay écossais. La fête se prolonge jusqu’à la nuit des Rois : on chante alors dans les vergers et l’on boit à la santé des pommiers pour qu’ils donnent de beaux fruits. Avant le XXᵉ siècle, le cidre faisait vivre l’île, et les chants résonnent souvent en jersiais, le normand de Jersey.\n\nPas de grand feu d’artifice public à minuit : en 2026, des insulaires ont même signé une pétition pour en tirer un au château Elizabeth la nuit de la Saint-Sylvestre. Ce sont plutôt les feux des voisins qui illuminent la nuit. Et le 1er janvier, les nageurs de longue distance entrent dans la mer d’hiver depuis la cale de St Catherine, sur la côte est.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Chants pour les pommiers",
+        "text": "La nuit des Rois, on chante dans les vergers et l’on boit à la santé des pommiers pour qu’ils portent fruit, souvent en jersiais."
+      },
+      {
+        "id": "t2",
+        "iconId": "wave",
+        "title": "Le premier bain de l’année",
+        "text": "Le 1er janvier, les nageurs de longue distance entrent dans la mer à la cale de St Catherine ; à Noël, des centaines d’insulaires se baignent dans plusieurs baies pour l’hospice."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Les feux des voisins",
+        "text": "Sans feu d’artifice officiel à minuit, les feux privés éclairent le ciel ; après un spectacle apprécié dans la baie de Saint-Aubin, les insulaires réclament un feu du Nouvel An au château Elizabeth."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 à Jersey : Saint-Hélier | Time2Fest",
+      "description": "Jersey fête 2027 à minuit heure locale (00:00 UTC) : feux d’artifice des voisins, chants aux pommiers la nuit des Rois et premier bain dans la mer d’hiver."
+    },
+    "kit": "je"
   }
 }
