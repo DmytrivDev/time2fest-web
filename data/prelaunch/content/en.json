@@ -6338,5 +6338,33 @@
       "description": "Bermuda greets 2027 at local midnight (04:00 UTC) as a glowing papier-mâché onion drops over St George’s, and Gombey dancers fill the streets on New Year’s Day."
     },
     "kit": "bm"
+  },
+  "BQ": {
+    "text": "The pagara, long ribbons of firecrackers, already roars across Bonaire, one of the three islands of the Caribbean Netherlands, in the daytime on 31 December, as shops and companies hold their own send-offs for the old year. In the evening most people gather with family and friends for festive food and music, with fireworks over the yards at midnight; some ring in the year at hotel parties. Over the December holidays ayaka, a traditional stuffed pastry, appears on menus.\n\nOn the island of Kralendijk, the first morning of the year belongs to Maskarada, one of the oldest folk customs. Groups from every village, disguised beyond recognition, come to the Lt. Governor, dance to a hand-played accordion and call out only “Bon Aña!”, receiving a bottle of rum in return. The masks come out again on the first Sunday of the year and on Three Kings.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Pagara in broad daylight",
+        "text": "In the daytime on 31 December shops and companies light a pagara, long ribbons of firecrackers, as their own farewell to the year. The night-time fireworks belong to family yards."
+      },
+      {
+        "id": "t2",
+        "iconId": "mask",
+        "title": "Maskarada on 1 January",
+        "text": "Masked groups, some dressed as a fish, a donkey or a bull, come to the Lt. Governor in the morning, dance to a hand-played accordion and wish a happy New Year in silence, except for a shout of “Bon Aña!”."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Ayaka and a family dinner",
+        "text": "Most people spend New Year's Eve with family and friends, with festive food and music. During the December holidays ayaka, a traditional stuffed pastry, appears on tables and menus."
+      }
+    ],
+    "meta": {
+      "title": "Caribbean Netherlands: New Year 2027 in Kralendijk | Time2Fest",
+      "description": "Caribbean Netherlands: Bonaire greets 2027 at local midnight (04:00 UTC) with daytime pagara, family dinners and fireworks, then masked Maskarada on 1 January."
+    },
+    "kit": "bq"
   }
 }

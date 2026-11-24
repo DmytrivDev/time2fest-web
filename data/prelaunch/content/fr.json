@@ -6338,5 +6338,33 @@
       "description": "Les Bermudes accueillent 2027 à minuit heure locale (04:00 UTC) : un oignon lumineux descend sur St. George’s et les gombeys dansent le jour de l’An."
     },
     "kit": "bm"
+  },
+  "BQ": {
+    "text": "La pagara, de longs rubans de pétards, crépite déjà à Bonaire, l’une des trois îles des Pays-Bas caribéens, en pleine journée le 31 décembre : boutiques et entreprises organisent leurs propres adieux à la vieille année. Le soir, la plupart se retrouvent en famille et entre amis autour d’un repas de fête et de musique, avec des feux d’artifice au-dessus des cours à minuit ; certains fêtent l’année dans les soirées des hôtels. Pendant les fêtes de décembre, l’ayaka, un chausson salé traditionnel farci, arrive sur les menus.\n\nSur l’île de Kralendijk, le premier matin de l’année appartient à la Maskarada, l’une des plus anciennes coutumes populaires. Des groupes de chaque village, déguisés jusqu’à être méconnaissables, viennent chez le lieutenant-gouverneur, dansent au son d’un accordéon à main et ne crient que « Bon Aña ! », recevant en retour une bouteille de rhum. Les masques ressortent le premier dimanche de l’année et à l’Épiphanie.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "La pagara en plein jour",
+        "text": "Dès la journée du 31 décembre, boutiques et entreprises allument la pagara, de longs rubans de pétards, pour dire adieu à l’année. Les feux de la nuit restent l’affaire des cours familiales."
+      },
+      {
+        "id": "t2",
+        "iconId": "mask",
+        "title": "La Maskarada du 1er janvier",
+        "text": "Des groupes masqués, certains déguisés en poisson, en âne ou en taureau, viennent le matin chez le lieutenant-gouverneur, dansent au son d’un accordéon à main et souhaitent la bonne année en silence, sauf un cri de « Bon Aña ! »."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Ayaka et dîner en famille",
+        "text": "La plupart passent le réveillon en famille et entre amis, avec repas de fête et musique. Pendant les fêtes de décembre, l’ayaka, un chausson traditionnel farci, apparaît sur les tables et les menus."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 aux Pays-Bas caribéens : Kralendijk | Time2Fest",
+      "description": "Pays-Bas caribéens : Bonaire fête 2027 à minuit heure locale (04:00 UTC) avec la pagara du jour, le dîner en famille, puis la Maskarada masquée le 1er janvier."
+    },
+    "kit": "bq"
   }
 }

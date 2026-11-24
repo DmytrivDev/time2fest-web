@@ -3837,6 +3837,22 @@
         "x": 40,
         "y": 45
       }
+    },
+    "country:BQ": {
+      "src": "/media/photos/kralendijk.webp",
+      "alt": {
+        "uk": "Вечірні сутінки на набережній Кая-Краане в Кралендейку: яхти на рейді, рожево-синє небо над морем",
+        "en": "Evening dusk on the Kaya Craane waterfront in Kralendijk: yachts at anchor and a pink and blue sky over the sea",
+        "es": "Atardecer en el paseo Kaya Craane de Kralendijk: yates fondeados y un cielo rosa y azul sobre el mar",
+        "fr": "Crépuscule sur le front de mer Kaya Craane à Kralendijk : voiliers au mouillage et ciel rose et bleu au-dessus de la mer"
+      },
+      "author": "Senor Luis Bertran",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Kaya_Craane,_Boulevard_Kralendijk,_Bonaire.jpg",
+      "position": {
+        "x": 45,
+        "y": 50
+      }
     }
   }
 }

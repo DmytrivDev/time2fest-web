@@ -3816,6 +3816,24 @@
         "title": "Nouvel An aux Bermudes : Hamilton | Time2Fest",
         "description": "Les Bermudes accueillent 2027 à minuit heure locale (04:00 UTC) : un oignon lumineux descend sur St. George’s et les gombeys dansent le jour de l’An."
       }
+    },
+    "BQ": {
+      "uk": {
+        "title": "Карибські Нідерланди: Новий рік 2027 у Кралендейку | Time2Fest",
+        "description": "Карибські Нідерланди: Бонайре зустрічає 2027 рік опівночі за місцевим часом (04:00 UTC) — денна пагара крамниць, родинна вечеря й салют, 1 січня — маскарада."
+      },
+      "en": {
+        "title": "Caribbean Netherlands: New Year 2027 in Kralendijk | Time2Fest",
+        "description": "Caribbean Netherlands: Bonaire greets 2027 at local midnight (04:00 UTC) with daytime pagara, family dinners and fireworks, then masked Maskarada on 1 January."
+      },
+      "es": {
+        "title": "Año Nuevo en el Caribe neerlandés: Kralendijk | Time2Fest",
+        "description": "Caribe neerlandés: Bonaire recibe 2027 a medianoche local (04:00 UTC) con pagara de día, cena en familia y fuegos, y el 1 de enero la Maskarada enmascarada."
+      },
+      "fr": {
+        "title": "Nouvel An aux Pays-Bas caribéens : Kralendijk | Time2Fest",
+        "description": "Pays-Bas caribéens : Bonaire fête 2027 à minuit heure locale (04:00 UTC) avec la pagara du jour, le dîner en famille, puis la Maskarada masquée le 1er janvier."
+      }
     }
   }
 }

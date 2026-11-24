@@ -6338,5 +6338,33 @@
       "description": "Bermudas recibe 2027 a medianoche local (04:00 UTC) con una cebolla luminosa que baja en St. George’s y bailarines gombey por las calles el día de Año Nuevo."
     },
     "kit": "bm"
+  },
+  "BQ": {
+    "text": "La pagara, largas cintas de petardos, ya truena en Bonaire, una de las tres islas del Caribe neerlandés, de día el 31 de diciembre: tiendas y empresas organizan su propia despedida del año viejo. Por la noche la mayoría se reúne con familia y amigos con comida de fiesta y música, y a medianoche hay fuegos sobre los patios; algunos reciben el año en fiestas de hotel. En las fiestas de diciembre aparece en los menús la ayaka, un pastel salado tradicional relleno.\n\nEn la isla de Kralendijk, la primera mañana del año pertenece a la Maskarada, una de las costumbres populares más antiguas. Grupos de cada pueblo, disfrazados hasta ser irreconocibles, llegan ante el teniente gobernador, bailan al son de un acordeón de mano y solo gritan «¡Bon Aña!»; a cambio reciben una botella de ron. Las máscaras vuelven a salir el primer domingo del año y en Reyes.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Pagara a plena luz del día",
+        "text": "Ya de día el 31 de diciembre, tiendas y empresas encienden la pagara, largas cintas de petardos, como su propia despedida del año. Los fuegos de la noche quedan para los patios familiares."
+      },
+      {
+        "id": "t2",
+        "iconId": "mask",
+        "title": "Maskarada el 1 de enero",
+        "text": "Grupos enmascarados, algunos vestidos de pez, burro o toro, llegan por la mañana ante el teniente gobernador, bailan con un acordeón de mano y felicitan el año en silencio, salvo un grito de «¡Bon Aña!»."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Ayaka y cena en familia",
+        "text": "La mayoría pasa la Nochevieja con familia y amigos, con comida de fiesta y música. En las fiestas de diciembre la ayaka, un pastel tradicional relleno, aparece en mesas y menús."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en el Caribe neerlandés: Kralendijk | Time2Fest",
+      "description": "Caribe neerlandés: Bonaire recibe 2027 a medianoche local (04:00 UTC) con pagara de día, cena en familia y fuegos, y el 1 de enero la Maskarada enmascarada."
+    },
+    "kit": "bq"
   }
 }

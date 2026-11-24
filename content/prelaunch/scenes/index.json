@@ -1380,6 +1380,12 @@
       "wide": true,
       "sky": "#1d2846",
       "water": "#223c50"
+    },
+    "BQ": {
+      "src": "/scenes/BQ-wide.svg",
+      "wide": true,
+      "sky": "#2a1d3c",
+      "water": "#673e5c"
     }
   }
 }

@@ -1,0 +1,104 @@
+{
+  "code": "BQ",
+  "zone": "UTC-4",
+  "zoneId": "utc-0400",
+  "cityId": "kralendijk",
+  "names": {
+    "uk": {
+      "name": "Карибські Нідерланди",
+      "city": "Кралендейк",
+      "cityIn": "у Кралендейку",
+      "countryIn": "у Карибських Нідерландах",
+      "caps": "КАРИБСЬКІ НІДЕРЛАНДИ"
+    },
+    "en": {
+      "name": "Caribbean Netherlands",
+      "city": "Kralendijk",
+      "cityIn": "in Kralendijk",
+      "countryIn": "in the Caribbean Netherlands",
+      "caps": "CARIBBEAN NETHERLANDS"
+    },
+    "es": {
+      "name": "Caribe neerlandés",
+      "city": "Kralendijk",
+      "cityIn": "en Kralendijk",
+      "countryIn": "en el Caribe neerlandés",
+      "caps": "CARIBE NEERLANDÉS"
+    },
+    "fr": {
+      "name": "Pays-Bas caribéens",
+      "city": "Kralendijk",
+      "cityIn": "à Kralendijk",
+      "countryIn": "aux Pays-Bas caribéens",
+      "caps": "PAYS-BAS CARIBÉENS"
+    }
+  },
+  "picto": "M12 23 Q13 17.6 20 17 Q27.6 16.6 31.6 21.6 Q27 25 20.4 24.6 Q14.4 24.4 12 23 Z M19 19.4 Q24.6 18.4 29.6 21.4 M12.6 21.4 Q8.4 17 11.4 12.2 Q14.6 7.6 11.8 4.6 Q9.6 3 7.6 4.6 Q6 6.4 7 9 M20 24.6 L20.6 36.6 M21.6 24.6 L25.6 29.6 L21 31.2 M13 36.6 H29",
+  "flagColors": [
+    "#FFDA44",
+    "#0052B4",
+    "#D80027",
+    "#FFFFFF"
+  ],
+  "palette": 4,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Карибських Нідерландах"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in the Caribbean Netherlands"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en el Caribe neerlandés"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "aux Pays-Bas caribéens"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}
