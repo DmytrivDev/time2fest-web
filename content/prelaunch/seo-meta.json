@@ -3402,6 +3402,42 @@
         "title": "Nouvel An à Jersey : Saint-Hélier | Time2Fest",
         "description": "Jersey fête 2027 à minuit heure locale (00:00 UTC) : feux d’artifice des voisins, chants aux pommiers la nuit des Rois et premier bain dans la mer d’hiver."
       }
+    },
+    "IE": {
+      "uk": {
+        "title": "Новий рік в Ірландії: Дублін | Time2Fest",
+        "description": "Ірландія зустрічає 2027 рік опівночі за місцевим часом (00:00 UTC): «ніч великої порції», бармбрек об двері й концерт-відлік у Дублінському замку."
+      },
+      "en": {
+        "title": "New Year in Ireland: Dublin | Time2Fest",
+        "description": "Ireland greets 2027 at local midnight (00:00 UTC): the night of the big portion, a barmbrack thrown at the door and the Countdown Concert at Dublin Castle."
+      },
+      "es": {
+        "title": "Año Nuevo en Irlanda: Dublín | Time2Fest",
+        "description": "Irlanda recibe 2027 a medianoche local (00:00 UTC): la noche de la gran ración, el barmbrack contra la puerta y la cuenta atrás en el Castillo de Dublín."
+      },
+      "fr": {
+        "title": "Nouvel An en Irlande : Dublin | Time2Fest",
+        "description": "L’Irlande fête 2027 à minuit heure locale (00:00 UTC) : nuit de la grosse part, barmbrack lancé contre la porte et compte à rebours au château de Dublin."
+      }
+    },
+    "MR": {
+      "uk": {
+        "title": "Новий рік у Мавританії: Нуакшот | Time2Fest",
+        "description": "Мавританія зустрічає 2027 рік о 00:00 UTC: Нуакшот купує нове вбрання на ринку Себха, святкує в готелях і залах, а великий салют лишає для Дня незалежності."
+      },
+      "en": {
+        "title": "New Year in Mauritania: Nouakchott | Time2Fest",
+        "description": "Mauritania greets 2027 at 00:00 UTC: Nouakchott shops for new outfits at the Sebkha market, parties in hotels and halls and saves big fireworks for 28 November."
+      },
+      "es": {
+        "title": "Año Nuevo en Mauritania: Nuakchot | Time2Fest",
+        "description": "Mauritania recibe 2027 a las 00:00 UTC: Nuakchot compra ropa nueva en el mercado de Sebkha, celebra en hoteles y salones y guarda los fuegos para noviembre."
+      },
+      "fr": {
+        "title": "Nouvel An en Mauritanie : Nouakchott | Time2Fest",
+        "description": "La Mauritanie entre en 2027 à 0 h UTC : Nouakchott achète une tenue neuve au marché de la Sebkha, fête à l’hôtel ou en salle et garde les feux pour novembre."
+      }
     }
   }
 }

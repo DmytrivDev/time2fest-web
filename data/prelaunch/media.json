@@ -3469,6 +3469,38 @@
         "x": 50,
         "y": 45
       }
+    },
+    "country:IE": {
+      "src": "/media/photos/dublin.webp",
+      "alt": {
+        "uk": "Міст Гапені над Ліффі в синіх сутінках: ліхтарі на арках мосту, зелене підсвічування, вогні набережних у воді",
+        "en": "The Ha’penny Bridge over the Liffey at blue dusk: lamps on the bridge arches, green lighting and quay lights in the water",
+        "es": "El puente Ha’penny sobre el Liffey en el crepúsculo azul: farolas en los arcos, iluminación verde y luces de los muelles en el agua",
+        "fr": "Le Ha’penny Bridge sur la Liffey au crépuscule bleu : lanternes sur les arches, éclairage vert et lumières des quais dans l’eau"
+      },
+      "author": "Sonse",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ha%E2%80%99penny_Bridge_at_Night_(27217963797).jpg",
+      "position": {
+        "x": 45,
+        "y": 45
+      }
+    },
+    "country:MR": {
+      "src": "/media/photos/nouakchott.webp",
+      "alt": {
+        "uk": "Захід сонця на рибальському пляжі Нуакшота: хвилі Атлантики, пироги й рибалки, що зустрічають човни",
+        "en": "Sunset on the fishermen’s beach in Nouakchott: Atlantic waves, pirogues and fishermen meeting the boats",
+        "es": "Atardecer en la playa de pescadores de Nuakchot: olas del Atlántico, piraguas y pescadores que reciben las barcas",
+        "fr": "Coucher de soleil sur la plage des pêcheurs de Nouakchott : vagues de l’Atlantique, pirogues et pêcheurs accueillant les bateaux"
+      },
+      "author": "Ammar Hassan",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:The_First_Sunset_(15143800576).jpg",
+      "position": {
+        "x": 50,
+        "y": 60
+      }
     }
   }
 }

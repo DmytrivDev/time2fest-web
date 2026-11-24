@@ -5694,5 +5694,61 @@
       "description": "Jersey fête 2027 à minuit heure locale (00:00 UTC) : feux d’artifice des voisins, chants aux pommiers la nuit des Rois et premier bain dans la mer d’hiver."
     },
     "kit": "je"
+  },
+  "IE": {
+    "text": "En irlandais, le dernier soir de l’année s’appelle Oíche na Coda Móire, « la nuit de la grosse part » : la famille s’attable devant un dîner copieux pour que l’année nouvelle soit, elle aussi, bien nourrie. Ce jour-là, rien ne sortait de la maison — ni nourriture ni biens — et l’on ne tirait plus d’eau du puits après le coucher du soleil. Par endroits, on cuisait un grand barmbrack, un pain aux raisins secs : le maître de maison en prenait trois bouchées puis le lançait contre la porte d’entrée, côté intérieur, pour chasser la faim toute l’année, et la famille ramassait les morceaux pour les manger. Vers minuit, les cloches sonnaient, les feux de joie brûlaient, on chantait. Aujourd’hui, la soirée se passe surtout à la maison, en petit comité, entre famille et amis.\n\nPendant trois jours, du 30 décembre au 1er janvier, Dublin confie ses rues au festival NYF Dublin. La grande scène est le château de Dublin : le concert du compte à rebours du soir s’achève sur le « Moment de minuit », les enfants ont leur concert d’après-midi et, le 1er janvier, le château accueille des concerts gratuits.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Nuit de la grosse part",
+        "text": "Les familles terminent l’année par un dîner copieux : une table pleine devait apporter une année pleine, et ce jour-là rien ne sortait de la maison."
+      },
+      {
+        "id": "t2",
+        "iconId": "door",
+        "title": "Le barmbrack contre la porte",
+        "text": "Autrefois, le maître de maison croquait trois fois le pain aux raisins du Nouvel An et le jetait contre la porte pour chasser la faim ; la famille en mangeait les morceaux."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Compte à rebours au château",
+        "text": "À Dublin, on attend minuit au concert du compte à rebours du château, et le 1er janvier on y revient pour des concerts gratuits l’après-midi."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Irlande : Dublin | Time2Fest",
+      "description": "L’Irlande fête 2027 à minuit heure locale (00:00 UTC) : nuit de la grosse part, barmbrack lancé contre la porte et compte à rebours au château de Dublin."
+    },
+    "kit": "ie"
+  },
+  "MR": {
+    "text": "Le plus grand feu d’artifice de l’année, Nouakchott ne le voit pas le 31 décembre mais dans la nuit du 28 novembre, quand l’armée le tire depuis la place de la Liberté pour la fête de l’Indépendance. En République islamique de Mauritanie, le Nouvel An est une fête laïque : le 1er janvier est férié, beaucoup attendent minuit, et certains courants religieux mettent en garde contre ces fêtes jugées étrangères. La célébration se passe donc surtout à huis clos : les autorités délivrent des autorisations pour les soirées et, à la veille de 2020, le ministère de l’Intérieur a renforcé les patrouilles et la surveillance des hôtels, restaurants et salles des fêtes.\n\nNouakchott se prépare au marché. Dès 2012, Cridem racontait comment, une semaine avant le 31 décembre, les jeunes de toutes les communes envahissaient le marché de la Sebkha en quête de nouvelles tenues venues du Sénégal. Les boîtes de nuit étant fermées, les bandes d’amis louaient des appartements, au point qu’il n’en restait plus un de libre. D’autres attendent minuit en famille, à la maison.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Soirée à l’hôtel ou en salle",
+        "text": "À Nouakchott, les soirées du Nouvel An se tiennent dans les hôtels, les restaurants et les salles des fêtes, sur autorisation, et la police renforce ses patrouilles pour la nuit."
+      },
+      {
+        "id": "t2",
+        "iconId": "white",
+        "title": "Une tenue neuve au marché",
+        "text": "Une semaine avant la fête, les jeunes filent au marché de la Sebkha chercher une tenue neuve pour le 31 décembre, souvent venue du Sénégal."
+      },
+      {
+        "id": "t3",
+        "iconId": "door",
+        "title": "Un appartement pour la nuit",
+        "text": "Les bandes d’amis louent des appartements pour la Saint-Sylvestre : la veille, il n’en reste presque plus. D’autres attendent minuit en famille, à la maison."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An en Mauritanie : Nouakchott | Time2Fest",
+      "description": "La Mauritanie entre en 2027 à 0 h UTC : Nouakchott achète une tenue neuve au marché de la Sebkha, fête à l’hôtel ou en salle et garde les feux pour novembre."
+    },
+    "kit": "mr"
   }
 }

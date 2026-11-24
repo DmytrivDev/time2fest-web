@@ -1,0 +1,103 @@
+{
+  "code": "IE",
+  "zone": "UTC+0",
+  "zoneId": "utc+0000",
+  "cityId": "dublin",
+  "names": {
+    "uk": {
+      "name": "Ірландія",
+      "city": "Дублін",
+      "cityIn": "у Дубліні",
+      "countryIn": "в Ірландії",
+      "caps": "ІРЛАНДІЯ"
+    },
+    "en": {
+      "name": "Ireland",
+      "city": "Dublin",
+      "cityIn": "in Dublin",
+      "countryIn": "in Ireland",
+      "caps": "IRELAND"
+    },
+    "es": {
+      "name": "Irlanda",
+      "city": "Dublín",
+      "cityIn": "en Dublín",
+      "countryIn": "en Irlanda",
+      "caps": "IRLANDA"
+    },
+    "fr": {
+      "name": "Irlande",
+      "city": "Dublin",
+      "cityIn": "à Dublin",
+      "countryIn": "en Irlande",
+      "caps": "IRLANDE"
+    }
+  },
+  "picto": "M3 36.4 Q6.5 35.2 10 36.4 Q13.5 37.6 17 36.4 Q20.5 35.2 24 36.4 Q27.5 37.6 31 36.4 Q34.5 35.2 37 36.2 M1.6 28.6 H5 V33.4 M38.4 28.6 H35 V33.4 M5 33.4 Q20 20.4 35 33.4 M3 28.6 Q20 19.6 37 28.6 M3 25 Q20 16 37 25 M8.6 26.1 V30.7 M13 24.9 V28.3 M27 24.9 V28.3 M31.4 26.1 V30.7 M11.6 21.6 V17.4 M20 20.4 V14.6 M28.4 21.6 V17.4 M10.4 16.2 A1.2 1.2 0 1 0 12.8 16.2 A1.2 1.2 0 1 0 10.4 16.2 M18.8 13.4 A1.2 1.2 0 1 0 21.2 13.4 A1.2 1.2 0 1 0 18.8 13.4 M27.2 16.2 A1.2 1.2 0 1 0 29.6 16.2 A1.2 1.2 0 1 0 27.2 16.2",
+  "flagColors": [
+    "#169B62",
+    "#FFFFFF",
+    "#FF883E"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "в Ірландії"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Ireland"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Irlanda"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "en Irlande"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

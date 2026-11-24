@@ -5694,5 +5694,61 @@
       "description": "Jersey greets 2027 at local midnight (00:00 UTC): neighbours’ fireworks, wassail songs for the apple trees on Twelfth Night and a first swim in the winter sea."
     },
     "kit": "je"
+  },
+  "IE": {
+    "text": "In Irish, the last evening of the year is Oíche na Coda Móire, “the night of the big portion”: the family sits down to a generous dinner so that the new year will be well fed too. On that day nothing left the house — no food, no goods — and no water was drawn from the well after sunset. In some places a large barmbrack, a raisin bread, was baked: the man of the house took three bites and threw it against the inside of the front door to drive hunger away for the whole year, and the family gathered the pieces and ate them. Towards midnight bells rang, bonfires burned and people sang. Today the night is mostly spent at home, at small parties with family and friends.\n\nFor three days, from 30 December to 1 January, Dublin hands its streets to the NYF Dublin festival. The main stage is Dublin Castle: the evening Countdown Concert ends with the “Midnight Moment”, children get an afternoon concert, and on 1 January the castle hosts free concerts.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Night of the big portion",
+        "text": "Families end the year with a generous dinner — a full table was meant to bring a full year, and nothing was carried out of the house that day."
+      },
+      {
+        "id": "t2",
+        "iconId": "door",
+        "title": "Barmbrack at the door",
+        "text": "The man of the house once took three bites of the New Year raisin bread and threw it at the front door to drive hunger away; the family ate the pieces."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Countdown at Dublin Castle",
+        "text": "Dubliners meet midnight at the Countdown Concert in Dublin Castle, and on 1 January they come back for free afternoon concerts."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Ireland: Dublin | Time2Fest",
+      "description": "Ireland greets 2027 at local midnight (00:00 UTC): the night of the big portion, a barmbrack thrown at the door and the Countdown Concert at Dublin Castle."
+    },
+    "kit": "ie"
+  },
+  "MR": {
+    "text": "Nouakchott's loudest fireworks of the year come not on 31 December but on the night of 28 November, when the army fires them from Liberty Square for Independence Day. In the Islamic Republic of Mauritania New Year is a secular holiday: 1 January is a day off, many people see in midnight, and some religious currents warn against the parties as a foreign custom. So the celebration mostly happens behind closed doors: the authorities license parties, and before 2020 began the Interior Ministry stepped up patrols and guarded hotels, restaurants and party halls.\n\nNouakchott gets ready at the markets. Back in 2012 Cridem described how, a week before 31 December, young people from every district crowded the Sebkha market looking for new outfits brought in from Senegal. Nightclubs were closed then, so groups of friends rented flats, and none were left free. Others see in midnight at home with family.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "A night at a hotel or hall",
+        "text": "New Year parties in Nouakchott take place in hotels, restaurants and party halls under official licences, while the police step up patrols for the night."
+      },
+      {
+        "id": "t2",
+        "iconId": "white",
+        "title": "A new outfit from the market",
+        "text": "A week before the holiday young people head to the Sebkha market for a new outfit for 31 December, often brought in from Senegal."
+      },
+      {
+        "id": "t3",
+        "iconId": "door",
+        "title": "A flat for the whole night",
+        "text": "Groups of friends rent flats for New Year's Eve, so hardly any are free by the day before. Others see in midnight at home with family."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Mauritania: Nouakchott | Time2Fest",
+      "description": "Mauritania greets 2027 at 00:00 UTC: Nouakchott shops for new outfits at the Sebkha market, parties in hotels and halls and saves big fireworks for 28 November."
+    },
+    "kit": "mr"
   }
 }

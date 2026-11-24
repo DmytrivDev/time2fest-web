@@ -1,0 +1,103 @@
+{
+  "code": "MR",
+  "zone": "UTC+0",
+  "zoneId": "utc+0000",
+  "cityId": "nouakchott",
+  "names": {
+    "uk": {
+      "name": "Мавританія",
+      "city": "Нуакшот",
+      "cityIn": "у Нуакшоті",
+      "caps": "МАВРИТАНІЯ",
+      "countryIn": "у Мавританії"
+    },
+    "en": {
+      "name": "Mauritania",
+      "city": "Nouakchott",
+      "cityIn": "in Nouakchott",
+      "caps": "MAURITANIA",
+      "countryIn": "in Mauritania"
+    },
+    "es": {
+      "name": "Mauritania",
+      "city": "Nuakchot",
+      "cityIn": "en Nuakchot",
+      "caps": "MAURITANIA",
+      "countryIn": "en Mauritania"
+    },
+    "fr": {
+      "name": "Mauritanie",
+      "city": "Nouakchott",
+      "cityIn": "à Nouakchott",
+      "caps": "MAURITANIE",
+      "countryIn": "en Mauritanie"
+    }
+  },
+  "picto": "M3 35 H37 M14.6 35 L15.2 11 H25.8 L26.4 35 M14.8 11 V9.4 H26.2 V11 M15.00 9.4 L15.70 5.8 L16.40 9.4 M14.85 4.95 a0.85 0.85 0 1 0 1.7 0 a0.85 0.85 0 1 0 -1.7 0 M18.50 9.4 L19.20 5.8 L19.90 9.4 M18.35 4.95 a0.85 0.85 0 1 0 1.7 0 a0.85 0.85 0 1 0 -1.7 0 M22.10 9.4 L22.80 5.8 L23.50 9.4 M21.95 4.95 a0.85 0.85 0 1 0 1.7 0 a0.85 0.85 0 1 0 -1.7 0 M25.60 9.4 L26.30 5.8 L27.00 9.4 M25.45 4.95 a0.85 0.85 0 1 0 1.7 0 a0.85 0.85 0 1 0 -1.7 0 M20.5 15 V18 M20.5 22 V25 M18.8 35 V30.5 H22.2 V35 M14.8 26 H4.5 V35 M6.6 35 V31 Q8.1 28.6 9.6 31 V35 M11.2 35 V31 Q12.7 28.6 14.2 31 V35 M26.2 29 H36 V35",
+  "flagColors": [
+    "#00A95C",
+    "#FFD700",
+    "#D01C1F"
+  ],
+  "palette": 2,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Мавританії"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Mauritania"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Mauritania"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "en Mauritanie"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

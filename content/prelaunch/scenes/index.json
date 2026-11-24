@@ -1242,6 +1242,18 @@
       "wide": true,
       "sky": "#1d2846",
       "water": "#20364a"
+    },
+    "IE": {
+      "src": "/scenes/IE-wide.svg",
+      "wide": true,
+      "sky": "#10162e",
+      "water": "#182740"
+    },
+    "MR": {
+      "src": "/scenes/MR-wide.svg",
+      "wide": true,
+      "sky": "#151a36",
+      "water": "#68534d"
     }
   }
 }
