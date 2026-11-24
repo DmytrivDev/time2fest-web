@@ -1,0 +1,103 @@
+{
+  "code": "IM",
+  "zone": "UTC+0",
+  "zoneId": "utc+0000",
+  "cityId": "isle-of-man",
+  "names": {
+    "uk": {
+      "name": "Острів Мен",
+      "city": "Дуглас",
+      "cityIn": "у Дугласі",
+      "countryIn": "на Острові Мен",
+      "caps": "ОСТРІВ МЕН"
+    },
+    "en": {
+      "name": "Isle of Man",
+      "city": "Douglas",
+      "cityIn": "in Douglas",
+      "countryIn": "in the Isle of Man",
+      "caps": "ISLE OF MAN"
+    },
+    "es": {
+      "name": "Isla de Man",
+      "city": "Douglas",
+      "cityIn": "en Douglas",
+      "countryIn": "en la Isla de Man",
+      "caps": "ISLA DE MAN"
+    },
+    "fr": {
+      "name": "Île de Man",
+      "city": "Douglas",
+      "cityIn": "à Douglas",
+      "countryIn": "sur l’Île de Man",
+      "caps": "ÎLE DE MAN"
+    }
+  },
+  "picto": "M12.5 25 A12.4 12.4 0 1 1 34.7 25 M15.8 25 A9.6 9.6 0 1 1 31.4 25 M25.8 19.4 L33.0 19.4 M25.5 18.3 L31.7 14.7 M24.7 17.5 L28.3 11.3 M23.6 17.2 L23.6 10.0 M22.5 17.5 L18.9 11.3 M21.7 18.3 L15.5 14.7 M21.4 19.4 L14.2 19.4 M21.4 19.4 A2.2 2.2 0 1 1 25.8 19.4 A2.2 2.2 0 1 1 21.4 19.4 M9 25 H37.6 V36.6 H9 M12.4 36.6 V33 A2.4 2.4 0 0 1 17.2 33 V36.6 M20.8 36.6 V33 A2.4 2.4 0 0 1 25.6 33 V36.6 M29.2 36.6 V33 A2.4 2.4 0 0 1 34 33 V36.6 M9 30 H37.6 M2.4 36.6 H9 V7.6 H3.4 V36.6 M3.4 30 L9 24.6 M3.4 21.6 L9 16.2 M3.4 13.2 L9 9 M1.6 7.6 H10.8 M2.6 7.6 V5.6 H9.8 V7.6 M6.2 5.6 V0.8 H10.4 V3.2 H6.2",
+  "flagColors": [
+    "#CF142B",
+    "#FFFFFF",
+    "#F9DD16"
+  ],
+  "palette": 0,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "на Острові Мен"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in the Isle of Man"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en la Isla de Man"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "sur l’Île de Man"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

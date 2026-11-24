@@ -1,0 +1,103 @@
+{
+  "code": "PT",
+  "zone": "UTC+0",
+  "zoneId": "utc+0000",
+  "cityId": "lisbon",
+  "names": {
+    "uk": {
+      "name": "Португалія",
+      "city": "Лісабон",
+      "cityIn": "у Лісабоні",
+      "countryIn": "у Португалії",
+      "caps": "ЛІСАБОН · ПОРТУГАЛІЯ"
+    },
+    "en": {
+      "name": "Portugal",
+      "city": "Lisbon",
+      "cityIn": "in Lisbon",
+      "countryIn": "in Portugal",
+      "caps": "LISBON · PORTUGAL"
+    },
+    "es": {
+      "name": "Portugal",
+      "city": "Lisboa",
+      "cityIn": "en Lisboa",
+      "countryIn": "en Portugal",
+      "caps": "LISBOA · PORTUGAL"
+    },
+    "fr": {
+      "name": "Portugal",
+      "city": "Lisbonne",
+      "cityIn": "à Lisbonne",
+      "countryIn": "au Portugal",
+      "caps": "LISBONNE · PORTUGAL"
+    }
+  },
+  "picto": "M22 33 V12.4 M34 33 V12.4 M20.6 12.4 H35.4 M20.6 12.4 V10 H23 V12.4 M25.4 12.4 V10 H27.8 V12.4 M30.2 12.4 V10 H32.6 V12.4 M35.4 12.4 V10 H33 M24.2 10 V4.6 M31.8 10 V4.6 M23.4 4.6 H32.6 M23.4 4.6 V2.4 H25.6 V4.6 M27 4.6 V2.4 H29 V4.6 M30.4 4.6 V2.4 H32.6 V4.6 M24.4 22 H31.6 M25.2 22 V18.6 a2.8 2.8 0 0 1 5.6 0 V22 M27 28 V26 a1 1 0 0 1 2 0 V28 M3.6 33 V24.6 H22 M10 24.6 V22.4 H12.4 V24.6 M14.2 24.6 V22.4 H16.6 V24.6 M18.4 24.6 V22.4 H20.8 V24.6 M3.6 24.6 V20 H8.2 V24.6 M3.6 20 Q5.9 15.6 8.2 20 M5.9 17.8 V16 M9 29 h2.4 M14.4 29 h2.4 M2.6 33 H37.4 M3 36.6 q2.5 -1.8 5 0 t5 0 t5 0 t5 0 t5 0 t5 0 t5 0",
+  "flagColors": [
+    "#046A38",
+    "#DA291C",
+    "#FFE900"
+  ],
+  "palette": 0,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Лісабоні"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Lisbon"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Lisboa"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Lisbonne"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

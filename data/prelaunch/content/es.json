@@ -5862,5 +5862,173 @@
       "description": "Santo Tomé y Príncipe recibe 2027 a las 00:00 UTC: petardos a medianoche, un festival en la playa de la capital y, el 1 de enero, el baño que lava el año viejo."
     },
     "kit": "st"
+  },
+  "CV": {
+    "text": "En cuanto anochece el 31 de diciembre, en Mindelo, en la isla de São Vicente, se saca el racordai —una sonaja de madera con chapas de botella aplastadas— para cantar los buenos deseos del año, y luego se baila hasta el amanecer. Por las fiestas vuelven a Cabo Verde los emigrantes de Europa y Estados Unidos: los vuelos Boston–Praia pueden agotarse a principios de diciembre. Los pueblos de la isla de Santiago organizan conciertos gratuitos con fuegos artificiales, y en São Filipe, en la isla de Fogo, el año se recibe incluso en una playa de arena volcánica negra.\n\nLa gran fiesta al aire libre de la capital es la «Virada de Ano» en Quebra Canela: los artistas actúan de las diez de la noche a las cuatro de la mañana y los fuegos iluminan el cielo sobre la playa. Para algo más íntimo están los bares y restaurantes: a finales de 2025 los hoteles de Praia estaban al 80–90 %.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Racordai y buenos deseos",
+        "text": "La tarde del 31 de diciembre en Mindelo se agita el racordai, una sonaja de madera con chapas de botella, y se cantan las «boas festas»."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Concierto y fuegos",
+        "text": "Los municipios organizan conciertos gratuitos al aire libre —en Praia, Assomada, Santa Cruz o São Filipe— y a medianoche estallan los fuegos."
+      },
+      {
+        "id": "t3",
+        "iconId": "suitcase",
+        "title": "En casa por las fiestas",
+        "text": "Por Navidad y Año Nuevo los emigrantes vuelven de Europa y Estados Unidos para celebrar en familia, y vuelos y hoteles se llenan."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Cabo Verde: Praia | Time2Fest",
+      "description": "Cabo Verde recibe 2027 a medianoche local (01:00 UTC): el racordai y sus cantos en Mindelo, concierto con fuegos en Praia y emigrantes de vuelta a casa."
+    },
+    "kit": "cv"
+  },
+  "GS": {
+    "text": "Georgia del Sur no tiene habitantes permanentes, así que el Año Nuevo lo reciben quienes trabajan en la isla ese verano: funcionarios del gobierno con sus familias, científicos del British Antarctic Survey en dos estaciones y el personal del museo que llega para la temporada. La medianoche cae a las 02:00 UTC y nunca oscurece del todo: a fines de diciembre el sol se pone hacia las ocho y media de la tarde y el cielo sigue en penumbra hasta la mañana. La gran fiesta polar es el Pleno Invierno de junio, y el 1 de enero llega en plena temporada, cuando recalan los barcos de expedición. Las islas son un territorio británico de ultramar que Argentina también reclama.\n\nEn King Edward Point viven unas veinte personas. Muy cerca, en Grytviken, la iglesia blanca de madera de los balleneros, consagrada el día de Navidad de 1913, todavía acoge algún oficio, y los visitantes de los barcos suben a la tumba de Ernest Shackleton.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "sunset",
+        "title": "Medianoche sin oscuridad",
+        "text": "A fines de diciembre el sol se oculta hacia las 20:37 y vuelve a salir a las 03:53, así que el Año Nuevo llega bajo un cielo de penumbra."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "La iglesia de los balleneros",
+        "text": "Consagrada el día de Navidad de 1913, es el único edificio de la estación ballenera que conserva su función: de vez en cuando hay oficios e incluso bodas."
+      },
+      {
+        "id": "t3",
+        "iconId": "boat",
+        "title": "Temporada de barcos",
+        "text": "No hay aeropuerto, así que los visitantes llegan en barcos de expedición, unas 80 escalas al año, sobre todo en verano, y en Grytviken van a la tumba de Shackleton."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Georgia del Sur: Grytviken | Time2Fest",
+      "description": "Georgia del Sur recibe 2027 a las 02:00 UTC sin habitantes fijos: científicos y funcionarios junto a Grytviken, cielo de penumbra y la iglesia ballenera."
+    },
+    "kit": "gs"
+  },
+  "PT": {
+    "text": "A medianoche Portugal no solo cuenta las campanadas: también cuenta pasas. Son doce, una por cada mes del año, cada una con un deseo, y después se brinda con champán. En la mesa de estos días está el bolo-rei, el «roscón del rey» en forma de corona, con frutas confitadas y frutos secos. En la masa se esconde una haba, la fava, y quien la encuentra paga el roscón del año siguiente.\n\nLisboa se reúne junto al Tajo, en la Praça do Comércio: desde las 21:30 hay conciertos y la medianoche se cuenta con el reloj del arco de la Rua Augusta. A las doce, los fuegos artificiales arden sobre el río durante diez minutos, en 2025 junto con 250 drones. Y la tarde del 1 de enero la Orquesta Metropolitana de Lisboa ofrece su concierto de Año Nuevo en Belém.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "grapes",
+        "title": "Doce pasas",
+        "text": "A medianoche, come doce pasas y pide un deseo con cada una, uno por mes, y luego brinda con champán."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Bolo-rei con fava",
+        "text": "Las familias cortan el bolo-rei, un roscón en forma de corona con frutas confitadas y frutos secos. Quien encuentra la fava paga el del año siguiente."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fuegos sobre el Tajo",
+        "text": "Los lisboetas se reúnen en la Praça do Comércio y en los muelles de Cais do Sodré y Ribeira das Naus; a medianoche, diez minutos de fuegos iluminan el río."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Portugal: Lisboa | Time2Fest",
+      "description": "Portugal recibe 2027 a medianoche, a las 00:00 UTC: en Lisboa, doce pasas con deseos, bolo-rei y diez minutos de fuegos artificiales sobre el Tajo."
+    },
+    "kit": "pt+0"
+  },
+  "SL": {
+    "text": "En Sierra Leona, muchos pasan las primeras horas del año en la iglesia o en otro lugar de culto; otros, en bares de playa, cafés y discotecas. Casi ocho de cada diez habitantes son musulmanes y alrededor de una quinta parte, cristianos, y las fiestas de ambas religiones son nacionales, así que el 1 de enero descansa todo el país. No esperes una gran traca a medianoche: en la temporada festiva la policía prohíbe los fuegos artificiales en todo el país y la música alta en los barrios después de las diez de la noche.\n\nEstos días Freetown mira al océano. Miles de personas acuden a las playas de Lumley y Aberdeen, donde la policía prepara de antemano aparcamientos y cámaras. Lumley acoge desde hace tiempo fiestas y festivales, y la carretera de Aberdeen a Lumley, llena de restaurantes y clubes, es el corazón de la vida nocturna de la ciudad.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Medianoche en el culto",
+        "text": "Parte de la gente recibe la medianoche y las primeras horas del año nuevo en un servicio en la iglesia u otro lugar de culto."
+      },
+      {
+        "id": "t2",
+        "iconId": "wave",
+        "title": "Playas de Lumley y Aberdeen",
+        "text": "Miles de vecinos de Freetown pasan las fiestas en las playas oceánicas de Lumley y Aberdeen, con bares, restaurantes y clubes junto a la carretera."
+      },
+      {
+        "id": "t3",
+        "iconId": "mask",
+        "title": "Mascaradas con permiso",
+        "text": "La temporada festiva es tiempo de mascaradas y «diablos enmascarados»; cada salida a la calle, como desfiles o carnavales, se acuerda con la policía."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Sierra Leona: Freetown | Time2Fest",
+      "description": "Las primeras horas de 2027 en Sierra Leona pasan en iglesias y bares de playa: medianoche a las 00:00 UTC, miles en Lumley y Aberdeen, sin fuegos artificiales."
+    },
+    "kit": "sl"
+  },
+  "TG": {
+    "text": "Los petardos truenan a medianoche y el año cambia, pero muchos togoleses rezan antes. Cerca de la mitad del país es cristiana, y la noche del 31 de diciembre las iglesias se llenan: vigilias de alabanza, testimonios y oración van de las nueve de la noche a la una de la madrugada y terminan con una bendición y buenos deseos para el año nuevo. Hay quien viaja a su pueblo natal para estar con los mayores; otros pasan la noche en un bar o en casa con la familia. El pueblo guin tiene además su propio Año Nuevo, el Épé-Ékpé: cada septiembre en Glidji se saca una piedra sagrada, y desde 2025 estos ritos están en la lista de la UNESCO.\n\nLomé recibe la medianoche con fuegos artificiales: cada año el Gobierno anuncia espectáculos en la capital y en Kara. En la rotonda Colombe de la Paix se celebra el Caliente: orquestas y coros después de las diez, y vuvuzelas, gongs y tam-tams hasta las tres de la madrugada.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Noche de oración",
+        "text": "El 31 de diciembre las iglesias se llenan desde la tarde: alabanzas, testimonios y oraciones duran hasta la una, y al final llegan la bendición y los buenos deseos."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Fuegos y Caliente",
+        "text": "Lomé y Kara reciben la medianoche con fuegos artificiales, y en la rotonda Colombe de la Paix de Lomé suenan orquestas, gongs y tam-tams hasta las tres."
+      },
+      {
+        "id": "t3",
+        "iconId": "door",
+        "title": "De vuelta al pueblo",
+        "text": "Algunas familias pasan la Nochevieja en el pueblo natal con los abuelos, otras en casa o en un bar, y a medianoche estallan petardos por todas partes."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Togo: Lomé | Time2Fest",
+      "description": "Togo recibe 2027 a las 00:00 UTC: vigilias en las iglesias hasta la una, fuegos artificiales en Lomé y Kara, y tam-tams en la Colombe de la Paix."
+    },
+    "kit": "tg"
+  },
+  "IM": {
+    "text": "En la Isla de Man, el 1 de enero se llamaba antiguamente Laa Nolick beg, «la Pequeña Navidad». El año empezaba con quien cruzaba primero el umbral, un invitado llamado qualtagh. Un hombre moreno era quien traía más suerte; nunca debía llegar con las manos vacías, y la familia le servía lo mejor que tenía. Esa mañana se barría el suelo desde la puerta hacia el hogar, para no echar la suerte de casa, y no se prestaba nada, porque quien prestaba ese día seguiría prestando todo el año.\n\nLa víspera, el 31 de diciembre, se adivinaba el futuro: por cada persona de la casa se volcaba un dedal de sal en un plato, y por la mañana se miraba qué montoncito se había desmoronado. El día de Año Nuevo los mozos iban de casa en casa cantando «Ollick ghennal erriu, as blein feer vie» y deseaban un buen año con patatas y arenques de sobra.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "door",
+        "title": "El qualtagh, primer invitado",
+        "text": "Al primer visitante del año, el qualtagh, se le ofrecía lo mejor de la casa; un hombre moreno con un regalo traía más suerte."
+      },
+      {
+        "id": "t2",
+        "iconId": "horseshoe",
+        "title": "Sal y ceniza adivinan",
+        "text": "En Nochevieja se volcaba un dedal de sal en un plato por cada persona de la casa, y en las cabañas de montaña se alisaba la ceniza para buscar una huella al alba."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "La caza del chochín",
+        "text": "El 26 de diciembre, grupos que cantan «Hunt the Wren» pasean un aro de acebo adornado con cintas y bailan a su alrededor; la costumbre revivió en los años noventa y ya no se caza ningún pájaro."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en la Isla de Man: Douglas | Time2Fest",
+      "description": "La Isla de Man recibe 2027 a medianoche local (00:00 UTC): el qualtagh, primer invitado en cruzar la puerta, la sal que adivina y un viejo canto al arenque."
+    },
+    "kit": "im"
   }
 }

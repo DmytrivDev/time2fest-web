@@ -1,0 +1,103 @@
+{
+  "code": "TG",
+  "zone": "UTC+0",
+  "zoneId": "utc+0000",
+  "cityId": "lome",
+  "names": {
+    "uk": {
+      "name": "Того",
+      "city": "Ломе",
+      "cityIn": "у Ломе",
+      "countryIn": "у Того",
+      "caps": "ТОГО"
+    },
+    "en": {
+      "name": "Togo",
+      "city": "Lomé",
+      "cityIn": "in Lomé",
+      "countryIn": "in Togo",
+      "caps": "TOGO"
+    },
+    "es": {
+      "name": "Togo",
+      "city": "Lomé",
+      "cityIn": "en Lomé",
+      "countryIn": "en Togo",
+      "caps": "TOGO"
+    },
+    "fr": {
+      "name": "Togo",
+      "city": "Lomé",
+      "cityIn": "à Lomé",
+      "countryIn": "au Togo",
+      "caps": "TOGO"
+    }
+  },
+  "picto": "M5 36 V33.6 H35 V36 Z M8 33.6 V4 L15 7.6 V33.6 Z M32 33.6 V4 L25 7.6 V33.6 Z M15 10.6 Q20 6.6 25 10.6 M18.4 33.6 L20 27.8 L21.6 33.6 M20 27.8 V22.8 M20.5 20.2 A0.5 0.5 0 1 0 19.5 20.2 A0.5 0.5 0 1 0 20.5 20.2 Z M20 22.8 L17.1 19.8 L17.7 15.4 M20 22.8 L22.9 19.8 L22.3 15.4 M17 13.8 A3 1.8 0 1 0 23 13.8 A3 1.8 0 1 0 17 13.8 Z",
+  "flagColors": [
+    "#006A4E",
+    "#FFCE00",
+    "#D21034"
+  ],
+  "palette": 5,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Того"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Togo"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Togo"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "au Togo"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

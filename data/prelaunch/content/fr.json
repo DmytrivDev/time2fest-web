@@ -5862,5 +5862,173 @@
       "description": "Sao Tomé-et-Principe entre en 2027 à 0 h UTC : pétards à minuit, festival sur la plage de la capitale et, le 1er janvier, bain de mer pour laver l’an passé."
     },
     "kit": "st"
+  },
+  "CV": {
+    "text": "Dès la tombée de la nuit le 31 décembre, à Mindelo, sur l’île de São Vicente, on sort le racordai — un hochet en bois garni de capsules de bouteilles aplaties — pour chanter les vœux de bonne année, puis on danse jusqu’à l’aube. Pour les fêtes, les émigrés d’Europe et des États-Unis rentrent au Cap-Vert : les vols Boston–Praia peuvent être complets dès début décembre. Les villes de l’île de Santiago offrent des concerts gratuits avec feu d’artifice, et à São Filipe, sur l’île de Fogo, on accueille même l’année sur une plage de sable volcanique noir.\n\nLa grande fête en plein air de la capitale, c’est la « Virada de Ano » à Quebra Canela : les artistes se succèdent de 22 h à 4 h, et le feu d’artifice illumine le ciel au-dessus de la plage. Pour plus d’intimité, il y a les bars et les restaurants — fin 2025, les hôtels de Praia étaient remplis à 80–90 %.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Racordai et vœux",
+        "text": "Le soir du 31 décembre, Mindelo agite le racordai, un hochet en bois à capsules, et chante les « boas festas », les vœux de fin d’année."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Concert et feu d’artifice",
+        "text": "Les communes offrent des concerts gratuits en plein air — à Praia, Assomada, Santa Cruz ou São Filipe — et à minuit le feu d’artifice s’élève."
+      },
+      {
+        "id": "t3",
+        "iconId": "suitcase",
+        "title": "Rentrer pour les fêtes",
+        "text": "À Noël et au Nouvel An, les émigrés reviennent d’Europe et des États-Unis fêter en famille : vols et hôtels affichent complet."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Cap-Vert : Praia | Time2Fest",
+      "description": "Le Cap-Vert fête 2027 à minuit heure locale (01:00 UTC) : racordai et chants à Mindelo, concert en plein air avec feu d’artifice à Praia, émigrés de retour."
+    },
+    "kit": "cv"
+  },
+  "GS": {
+    "text": "La Géorgie du Sud n’a pas d’habitants permanents : le Nouvel An est fêté par ceux qui travaillent sur l’île cet été-là, agents du gouvernement et leurs familles, scientifiques du British Antarctic Survey dans deux stations et personnel du musée venu pour la saison. Minuit sonne à 02 h UTC, et la nuit ne tombe jamais vraiment : fin décembre, le soleil se couche vers vingt heures trente et le ciel reste crépusculaire jusqu’au matin. La grande fête polaire est le Midwinter de juin ; le 1er janvier tombe en pleine saison, quand les navires d’expédition font escale. Les îles sont un territoire britannique d’outre-mer que l’Argentine revendique aussi.\n\nUne vingtaine de personnes vivent à King Edward Point. Tout près, à Grytviken, l’église en bois blanc des baleiniers, consacrée le jour de Noël 1913, accueille encore parfois un office, et les visiteurs des navires montent jusqu’à la tombe d’Ernest Shackleton.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "sunset",
+        "title": "Minuit sans obscurité",
+        "text": "Fin décembre, le soleil se couche vers 20 h 37 et se relève dès 3 h 53 : le Nouvel An arrive sous un ciel de crépuscule."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "L’église des baleiniers",
+        "text": "Consacrée le jour de Noël 1913, c’est le seul bâtiment de la station baleinière resté fidèle à sa fonction : on y célèbre parfois un office, et même des mariages."
+      },
+      {
+        "id": "t3",
+        "iconId": "boat",
+        "title": "La saison des navires",
+        "text": "Pas d’aéroport : les visiteurs arrivent par navires d’expédition, environ 80 escales par an, surtout l’été, et à Grytviken ils se rendent sur la tombe de Shackleton."
+      }
+    ],
+    "meta": {
+      "title": "Géorgie du Sud : le Nouvel An à Grytviken | Time2Fest",
+      "description": "La Géorgie du Sud fête 2027 à 02 h UTC sans habitants permanents : scientifiques et agents près de Grytviken, ciel crépusculaire et église des baleiniers."
+    },
+    "kit": "gs"
+  },
+  "PT": {
+    "text": "À minuit, le Portugal ne compte pas seulement les coups de l'horloge, il compte aussi des raisins secs : douze, un pour chaque mois de l'année, chacun avec un vœu, puis on lève une coupe de champagne. Sur la table de ces jours-là trône le bolo-rei, le « gâteau des rois » en forme de couronne, garni de fruits confits et de noix. Une fève, la fava, se cache dans la pâte : qui la trouve offre le gâteau l'année suivante.\n\nLisbonne se rassemble au bord du Tage, sur la Praça do Comércio : les concerts commencent à 21 h 30 et l'on compte jusqu'à minuit sur l'horloge de l'arc de la Rua Augusta. À minuit, le feu d'artifice embrase le fleuve pendant dix minutes, en 2025 avec 250 drones. Et le soir du 1er janvier, l'Orchestre métropolitain de Lisbonne donne son concert du Nouvel An à Belém.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "grapes",
+        "title": "Douze raisins secs",
+        "text": "À minuit, mange douze raisins secs en faisant un vœu pour chacun, un par mois, puis lève une coupe de champagne."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Le bolo-rei et sa fève",
+        "text": "Les familles découpent le bolo-rei, gâteau en couronne aux fruits confits et aux noix. Celui qui trouve la fève offre le gâteau l’année suivante."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Feu d’artifice sur le Tage",
+        "text": "Les Lisboètes se retrouvent sur la Praça do Comércio et les quais de Cais do Sodré et de Ribeira das Naus ; à minuit, dix minutes de feu d’artifice illuminent le fleuve."
+      }
+    ],
+    "meta": {
+      "title": "Portugal : le Nouvel An à Lisbonne | Time2Fest",
+      "description": "Le Portugal fête 2027 à minuit, 00 h UTC : à Lisbonne, douze raisins secs et autant de vœux, le bolo-rei et dix minutes de feu d’artifice sur le Tage."
+    },
+    "kit": "pt+0"
+  },
+  "SL": {
+    "text": "En Sierra Leone, beaucoup passent les premières heures de l’année à l’église ou dans un autre lieu de culte, d’autres dans les bars de plage, les cafés et les boîtes de nuit. Près de huit habitants sur dix sont musulmans et environ un cinquième chrétiens, et les fêtes des deux religions sont nationales : le 1er janvier, tout le pays est en congé. Pas de canonnade à minuit : pendant la saison des fêtes, la police interdit les feux d’artifice dans tout le pays, et la musique forte dans les quartiers après dix heures du soir.\n\nCes jours-là, Freetown se tourne vers l’océan. Des milliers de personnes gagnent les plages de Lumley et d’Aberdeen, où la police prévoit à l’avance parkings et caméras. Lumley accueille depuis longtemps fêtes et festivals, et la route d’Aberdeen à Lumley, bordée de restaurants et de clubs, est le cœur de la vie nocturne de la ville.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Minuit à l’office",
+        "text": "Une partie des habitants accueille minuit et les premières heures de l’année lors d’un office à l’église ou dans un autre lieu de culte."
+      },
+      {
+        "id": "t2",
+        "iconId": "wave",
+        "title": "Plages de Lumley et d’Aberdeen",
+        "text": "Des milliers d’habitants de Freetown passent les fêtes sur les plages océanes de Lumley et d’Aberdeen, où bars, restaurants et clubs bordent la route."
+      },
+      {
+        "id": "t3",
+        "iconId": "mask",
+        "title": "Mascarades autorisées",
+        "text": "La saison des fêtes est celle des mascarades et des « diables masqués » ; chaque sortie dans la rue, comme défilés et carnavals, est validée par la police."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An en Sierra Leone : Freetown | Time2Fest",
+      "description": "Les premières heures de 2027 en Sierra Leone se passent à l’église ou au bar de plage : minuit à 0 h UTC, foule à Lumley et Aberdeen, feux d’artifice interdits."
+    },
+    "kit": "sl"
+  },
+  "TG": {
+    "text": "Les pétards claquent à minuit et l’année bascule, mais beaucoup de Togolais ont d’abord prié. Environ la moitié du pays est chrétienne, et la nuit du 31 décembre les églises sont prises d’assaut : les veillées de louange, de témoignages et de prière vont de 21 h à 1 h du matin et se terminent par une bénédiction et des vœux de bonne année. Certains rejoignent les anciens au village natal, d’autres passent la nuit au bar ou en famille à la maison. Le peuple guin a aussi son propre Nouvel An, Épé-Ékpé : chaque septembre à Glidji, on sort une pierre sacrée, et ces rites figurent depuis 2025 sur la liste de l’UNESCO.\n\nLomé accueille minuit avec des feux d’artifice : chaque année, le gouvernement annonce des tirs dans la capitale et à Kara. Au rond-point de la Colombe de la Paix, c’est Caliente : orchestres et chorales après 22 h, puis vuvuzelas, gongs et tam-tams jusqu’à 3 h du matin.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "La veillée de prière",
+        "text": "Le 31 décembre, les églises sont pleines dès le soir : louanges, témoignages et prières durent jusqu’à 1 h, puis viennent la bénédiction et les vœux."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Feux d’artifice et Caliente",
+        "text": "Lomé et Kara accueillent minuit par des feux d’artifice, et au rond-point de la Colombe de la Paix, à Lomé, orchestres, gongs et tam-tams jouent jusqu’à 3 h."
+      },
+      {
+        "id": "t3",
+        "iconId": "door",
+        "title": "Retour au village",
+        "text": "Certaines familles passent la nuit du Nouvel An au village natal avec les grands-parents, d’autres à la maison ou au bar, et à minuit les pétards éclatent partout."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An au Togo : Lomé | Time2Fest",
+      "description": "Le Togo entre en 2027 à 0 h UTC : veillées de prière jusqu’à 1 h, feux d’artifice à Lomé et à Kara, orchestres et tam-tams à la Colombe de la Paix."
+    },
+    "kit": "tg"
+  },
+  "IM": {
+    "text": "Sur l’Île de Man, on appelait autrefois le 1er janvier Laa Nolick beg, « le petit Noël ». L’année commençait avec celui qui franchissait le premier le seuil, un visiteur nommé qualtagh. C’est un homme brun qui portait le plus bonheur ; il ne devait jamais venir les mains vides, et la maisonnée lui servait ce qu’elle avait de meilleur. Ce matin-là, on balayait de la porte vers le foyer pour ne pas chasser la chance, et l’on ne prêtait rien, de peur de prêter toute l’année.\n\nLa veille, le 31 décembre, on interrogeait l’avenir : pour chaque habitant de la maison, on renversait un dé à coudre de sel sur une assiette, puis on regardait au matin quel petit tas s’était effondré. Le jour de l’An, les jeunes gens allaient de maison en maison en chantant « Ollick ghennal erriu, as blein feer vie » et souhaitaient une bonne année, avec pommes de terre et harengs à volonté.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "door",
+        "title": "Le qualtagh, premier visiteur",
+        "text": "Le premier visiteur de l’année, le qualtagh, recevait le meilleur de la maison ; un homme brun apportant un cadeau portait le plus bonheur."
+      },
+      {
+        "id": "t2",
+        "iconId": "horseshoe",
+        "title": "Le sel et la cendre",
+        "text": "La nuit du 31, on renversait un dé à coudre de sel par habitant sur une assiette, et dans les chaumières des hauteurs on lissait la cendre pour y chercher une empreinte à l’aube."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "La chasse au roitelet",
+        "text": "Le 26 décembre, des groupes chantant « Hunt the Wren » promènent un cerceau de houx enrubanné et dansent autour ; la coutume a été relancée dans les années 1990, sans plus capturer d’oiseau."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 sur l’Île de Man : Douglas | Time2Fest",
+      "description": "L’Île de Man fête 2027 à minuit heure locale (00:00 UTC) : le qualtagh, premier à franchir le seuil, le sel qui prédit l’avenir et un vieux chant du hareng."
+    },
+    "kit": "im"
   }
 }

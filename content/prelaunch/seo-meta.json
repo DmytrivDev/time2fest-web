@@ -3510,6 +3510,114 @@
         "title": "Nouvel An à Sao Tomé-et-Principe : Sao Tomé | Time2Fest",
         "description": "Sao Tomé-et-Principe entre en 2027 à 0 h UTC : pétards à minuit, festival sur la plage de la capitale et, le 1er janvier, bain de mer pour laver l’an passé."
       }
+    },
+    "CV": {
+      "uk": {
+        "title": "Новий рік у Кабо-Верде: Прая | Time2Fest",
+        "description": "Кабо-Верде зустрічає 2027 рік опівночі за місцевим часом (01:00 UTC): ракордай і пісні в Мінделу, концерт із салютом у Праї й емігранти, що повертаються додому."
+      },
+      "en": {
+        "title": "New Year in Cape Verde: Praia | Time2Fest",
+        "description": "Cape Verde welcomes 2027 at local midnight (01:00 UTC): racordai rattles and songs in Mindelo, an open-air concert with fireworks in Praia, emigrants home."
+      },
+      "es": {
+        "title": "Año Nuevo en Cabo Verde: Praia | Time2Fest",
+        "description": "Cabo Verde recibe 2027 a medianoche local (01:00 UTC): el racordai y sus cantos en Mindelo, concierto con fuegos en Praia y emigrantes de vuelta a casa."
+      },
+      "fr": {
+        "title": "Nouvel An au Cap-Vert : Praia | Time2Fest",
+        "description": "Le Cap-Vert fête 2027 à minuit heure locale (01:00 UTC) : racordai et chants à Mindelo, concert en plein air avec feu d’artifice à Praia, émigrés de retour."
+      }
+    },
+    "GS": {
+      "uk": {
+        "title": "Новий рік на Південній Джорджії: Гритвікен | Time2Fest",
+        "description": "Південна Джорджія зустрічає 2027-й о 02:00 UTC без постійних жителів: науковці й урядовці біля Гритвікена, сутінкове небо замість ночі й церква китобоїв."
+      },
+      "en": {
+        "title": "New Year on South Georgia: Grytviken | Time2Fest",
+        "description": "South Georgia meets 2027 at 02:00 UTC with no permanent residents: scientists and officials near Grytviken, a twilight sky instead of night, a whalers' church."
+      },
+      "es": {
+        "title": "Año Nuevo en Georgia del Sur: Grytviken | Time2Fest",
+        "description": "Georgia del Sur recibe 2027 a las 02:00 UTC sin habitantes fijos: científicos y funcionarios junto a Grytviken, cielo de penumbra y la iglesia ballenera."
+      },
+      "fr": {
+        "title": "Géorgie du Sud : le Nouvel An à Grytviken | Time2Fest",
+        "description": "La Géorgie du Sud fête 2027 à 02 h UTC sans habitants permanents : scientifiques et agents près de Grytviken, ciel crépusculaire et église des baleiniers."
+      }
+    },
+    "PT": {
+      "uk": {
+        "title": "Новий рік у Португалії: Лісабон | Time2Fest",
+        "description": "Португалія зустрічає 2027-й опівночі (00:00 UTC): у Лісабоні — дванадцять родзинок із бажаннями, болу-рей і десятихвилинний салют над річкою Тежу."
+      },
+      "en": {
+        "title": "New Year in Portugal: Lisbon | Time2Fest",
+        "description": "Portugal greets 2027 at midnight, 00:00 UTC: in Lisbon it means twelve raisins with wishes, bolo-rei and ten minutes of fireworks over the Tagus."
+      },
+      "es": {
+        "title": "Año Nuevo en Portugal: Lisboa | Time2Fest",
+        "description": "Portugal recibe 2027 a medianoche, a las 00:00 UTC: en Lisboa, doce pasas con deseos, bolo-rei y diez minutos de fuegos artificiales sobre el Tajo."
+      },
+      "fr": {
+        "title": "Portugal : le Nouvel An à Lisbonne | Time2Fest",
+        "description": "Le Portugal fête 2027 à minuit, 00 h UTC : à Lisbonne, douze raisins secs et autant de vœux, le bolo-rei et dix minutes de feu d’artifice sur le Tage."
+      }
+    },
+    "SL": {
+      "uk": {
+        "title": "Новий рік у Сьєрра-Леоне: Фрітаун | Time2Fest",
+        "description": "Перші години 2027-го Сьєрра-Леоне проводить у храмах і пляжних барах: північ о 00:00 UTC, тисячі людей на пляжах Ламлі й Абердин, феєрверки під забороною."
+      },
+      "en": {
+        "title": "New Year in Sierra Leone: Freetown | Time2Fest",
+        "description": "The first hours of 2027 in Sierra Leone pass in churches and beach bars: midnight at 00:00 UTC, crowds on Freetown’s Lumley and Aberdeen beaches, no fireworks."
+      },
+      "es": {
+        "title": "Año Nuevo en Sierra Leona: Freetown | Time2Fest",
+        "description": "Las primeras horas de 2027 en Sierra Leona pasan en iglesias y bares de playa: medianoche a las 00:00 UTC, miles en Lumley y Aberdeen, sin fuegos artificiales."
+      },
+      "fr": {
+        "title": "Nouvel An en Sierra Leone : Freetown | Time2Fest",
+        "description": "Les premières heures de 2027 en Sierra Leone se passent à l’église ou au bar de plage : minuit à 0 h UTC, foule à Lumley et Aberdeen, feux d’artifice interdits."
+      }
+    },
+    "TG": {
+      "uk": {
+        "title": "Того зустрічає Новий рік: Ломе | Time2Fest",
+        "description": "О 00:00 UTC Того входить у 2027 рік: нічні служби до першої ночі, феєрверк у Ломе й Карі, оркестри й там-тами на кільці Голуба миру до ранку."
+      },
+      "en": {
+        "title": "New Year in Togo: Lomé | Time2Fest",
+        "description": "Togo meets 2027 at 00:00 UTC: church vigils until 1 a.m., fireworks over Lomé and Kara, and orchestras and tam-tams at Colombe de la Paix until 3 a.m."
+      },
+      "es": {
+        "title": "Año Nuevo en Togo: Lomé | Time2Fest",
+        "description": "Togo recibe 2027 a las 00:00 UTC: vigilias en las iglesias hasta la una, fuegos artificiales en Lomé y Kara, y tam-tams en la Colombe de la Paix."
+      },
+      "fr": {
+        "title": "Nouvel An au Togo : Lomé | Time2Fest",
+        "description": "Le Togo entre en 2027 à 0 h UTC : veillées de prière jusqu’à 1 h, feux d’artifice à Lomé et à Kara, orchestres et tam-tams à la Colombe de la Paix."
+      }
+    },
+    "IM": {
+      "uk": {
+        "title": "Новий рік на Острові Мен: Дуглас | Time2Fest",
+        "description": "Острів Мен зустрічає 2027 рік опівночі за місцевим часом (00:00 UTC): перший гість-квалтах, ворожіння на солі й старовинна пісня про картоплю й оселедці."
+      },
+      "en": {
+        "title": "New Year in the Isle of Man: Douglas | Time2Fest",
+        "description": "The Isle of Man greets 2027 at local midnight (00:00 UTC): the qualtagh as first guest at the door, salt-heap fortunes and an old song wishing herring."
+      },
+      "es": {
+        "title": "Año Nuevo en la Isla de Man: Douglas | Time2Fest",
+        "description": "La Isla de Man recibe 2027 a medianoche local (00:00 UTC): el qualtagh, primer invitado en cruzar la puerta, la sal que adivina y un viejo canto al arenque."
+      },
+      "fr": {
+        "title": "Nouvel An sur l’Île de Man : Douglas | Time2Fest",
+        "description": "L’Île de Man fête 2027 à minuit heure locale (00:00 UTC) : le qualtagh, premier à franchir le seuil, le sel qui prédit l’avenir et un vieux chant du hareng."
+      }
     }
   }
 }

@@ -1,0 +1,103 @@
+{
+  "code": "GS",
+  "zone": "UTC-2",
+  "zoneId": "utc-0200",
+  "cityId": "south-georgia",
+  "names": {
+    "uk": {
+      "name": "Південна Джорджія",
+      "city": "Гритвікен",
+      "cityIn": "у Гритвікені",
+      "countryIn": "на Південній Джорджії",
+      "caps": "ПІВДЕННА ДЖОРДЖІЯ"
+    },
+    "en": {
+      "name": "South Georgia",
+      "city": "Grytviken",
+      "cityIn": "in Grytviken",
+      "countryIn": "on South Georgia",
+      "caps": "SOUTH GEORGIA"
+    },
+    "es": {
+      "name": "Georgia del Sur",
+      "city": "Grytviken",
+      "cityIn": "en Grytviken",
+      "countryIn": "en Georgia del Sur",
+      "caps": "GEORGIA DEL SUR"
+    },
+    "fr": {
+      "name": "Géorgie du Sud",
+      "city": "Grytviken",
+      "cityIn": "à Grytviken",
+      "countryIn": "en Géorgie du Sud",
+      "caps": "GÉORGIE DU SUD"
+    }
+  },
+  "picto": "M10 35 V25.6 L13.6 19 H27 V15.4 H26 L29.6 4.4 L33.2 15.4 H32.2 V35 Z M29.6 4.4 V0.8 M28.2 2.2 H31 M15.2 32 V28.4 L16.4 26.6 L17.6 28.4 V32 Z M21 32 V28.4 L22.2 26.6 L23.4 28.4 V32 Z M28.6 21.6 V19.2 L29.6 18 L30.6 19.2 V21.6 Z M5 36.4 H38",
+  "flagColors": [
+    "#FFFFFF",
+    "#C8102E",
+    "#012169"
+  ],
+  "palette": 0,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "на Південній Джорджії"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "on South Georgia"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Georgia del Sur"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "en Géorgie du Sud"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

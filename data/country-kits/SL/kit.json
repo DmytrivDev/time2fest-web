@@ -1,0 +1,103 @@
+{
+  "code": "SL",
+  "zone": "UTC+0",
+  "zoneId": "utc+0000",
+  "cityId": "freetown",
+  "names": {
+    "uk": {
+      "name": "Сьєрра-Леоне",
+      "city": "Фрітаун",
+      "cityIn": "у Фрітауні",
+      "countryIn": "у Сьєрра-Леоне",
+      "caps": "СЬЄРРА-ЛЕОНЕ"
+    },
+    "en": {
+      "name": "Sierra Leone",
+      "city": "Freetown",
+      "cityIn": "in Freetown",
+      "countryIn": "in Sierra Leone",
+      "caps": "SIERRA LEONE"
+    },
+    "es": {
+      "name": "Sierra Leona",
+      "city": "Freetown",
+      "cityIn": "en Freetown",
+      "countryIn": "en Sierra Leona",
+      "caps": "SIERRA LEONA"
+    },
+    "fr": {
+      "name": "Sierra Leone",
+      "city": "Freetown",
+      "cityIn": "à Freetown",
+      "countryIn": "en Sierra Leone",
+      "caps": "SIERRA LEONE"
+    }
+  },
+  "picto": "M5 35.5 H35 M13 35.5 C16.4 34 17.2 30.8 17.4 27 L9.6 20.6 M12.4 20.6 L17.8 24.4 L17.4 20.6 M22.6 20.6 L22.2 24.4 L27.6 20.6 M30.4 20.6 L22.6 27 C22.8 30.8 23.6 34 27 35.5 M4 19 C1.6 17 2.6 13.4 5.4 13.2 C5.6 10 8.6 8.6 11 9.6 C12.4 6.8 16.2 6 18.4 7.6 C20.4 5.6 24.4 5.8 25.8 8.2 C28.4 7 31.6 8.8 31.6 11.4 C34.6 11.2 37.8 14 36.4 17 C37 19.4 34.4 20.6 32.4 19.6 C31 21 28.4 21 27.2 19.6 C25.8 20.8 23.6 20.8 22.6 19.6 C21.2 20.6 18.6 20.6 17.4 19.6 C16 20.8 13.6 20.8 12.6 19.6 C11.2 21 8.6 21 7.6 19.6 C6.4 20.6 4.6 20.4 4 19 Z",
+  "flagColors": [
+    "#1EB53A",
+    "#FFFFFF",
+    "#0072C6"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Сьєрра-Леоне"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Sierra Leone"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Sierra Leona"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "en Sierra Leone"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

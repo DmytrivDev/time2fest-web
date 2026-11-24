@@ -5862,5 +5862,173 @@
       "description": "São Tomé and Príncipe greets 2027 at 00:00 UTC: firecrackers at midnight, a beach festival in the capital and a sea swim on 1 January to wash the old year away."
     },
     "kit": "st"
+  },
+  "CV": {
+    "text": "As soon as night falls on 31 December, people in Mindelo on São Vicente pick up the racordai — a wooden shaker studded with flattened bottle caps — to sing New Year greetings, then dance until dawn. Emigrants from Europe and the USA fly home to Cape Verde for the holidays: Boston–Praia flights can be sold out by early December. Towns on Santiago island put on free concerts with fireworks, and in São Filipe on Fogo island the year is even welcomed on a beach of black volcanic sand.\n\nThe capital’s big open-air party is the “Virada de Ano” at Quebra Canela: artists perform from 10 pm until 4 am, and fireworks light up the sky over the beach. For something cosier there are bars and restaurants — at the end of 2025 Praia’s hotels were 80–90 % full.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Racordai and greetings",
+        "text": "On the evening of 31 December Mindelo shakes the racordai, a wooden rattle with bottle caps, and sings “boas festas”, the season’s greetings."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Concert and fireworks",
+        "text": "Towns hold free open-air concerts — in Praia, Assomada, Santa Cruz and São Filipe — and at midnight fireworks rise over the squares."
+      },
+      {
+        "id": "t3",
+        "iconId": "suitcase",
+        "title": "Home for the holidays",
+        "text": "For Christmas and New Year emigrants return from Europe and the USA to celebrate with family, so flights and hotels fill up."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Cape Verde: Praia | Time2Fest",
+      "description": "Cape Verde welcomes 2027 at local midnight (01:00 UTC): racordai rattles and songs in Mindelo, an open-air concert with fireworks in Praia, emigrants home."
+    },
+    "kit": "cv"
+  },
+  "GS": {
+    "text": "South Georgia has no permanent residents, so the New Year is seen in by whoever is working on the island that summer: government officers and their families, British Antarctic Survey scientists at two stations and museum staff who come for the season. Midnight falls at 02:00 UTC, and it never gets truly dark: at the end of December the sun sets around half past eight in the evening and the sky stays in twilight until morning. The big polar holiday is Midwinter in June, while 1 January falls in the busiest season, when expedition ships call. The islands are a British Overseas Territory that Argentina also claims.\n\nAbout twenty people live at King Edward Point. Nearby in Grytviken, the white wooden whalers' church, consecrated on Christmas Day 1913, still holds an occasional service, and visitors from the ships walk up to Ernest Shackleton's grave.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "sunset",
+        "title": "Midnight without darkness",
+        "text": "At the end of December the sun drops behind the mountains around 20:37 and is up again at 03:53, so the New Year arrives under a twilight sky."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "The whalers' church",
+        "text": "Consecrated on Christmas Day 1913, it is the only building of the whaling station still used as intended: services are held now and then, and couples have even married here."
+      },
+      {
+        "id": "t3",
+        "iconId": "boat",
+        "title": "Summer ship season",
+        "text": "There is no airport, so guests arrive on expedition ships, about 80 visits a year, mostly in summer, and in Grytviken they walk to Shackleton's grave."
+      }
+    ],
+    "meta": {
+      "title": "New Year on South Georgia: Grytviken | Time2Fest",
+      "description": "South Georgia meets 2027 at 02:00 UTC with no permanent residents: scientists and officials near Grytviken, a twilight sky instead of night, a whalers' church."
+    },
+    "kit": "gs"
+  },
+  "PT": {
+    "text": "At midnight Portugal counts more than the clock's strokes: it counts raisins too. There are twelve, one for each month of the year, each with a wish, followed by a glass of champagne. On the table these days sits bolo-rei, the 'king cake', a crown-shaped ring topped with candied fruit and nuts. A fava bean is hidden in the dough, and whoever finds it buys the cake next year.\n\nLisbon gathers by the Tagus on Praça do Comércio: concerts start at 21:30, and midnight is counted down on the clock of the Rua Augusta arch. At midnight fireworks blaze over the river for ten minutes, in 2025 together with 250 drones. And on the evening of 1 January the Lisbon Metropolitan Orchestra plays its New Year's concert in Belém.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "grapes",
+        "title": "Twelve raisins",
+        "text": "At midnight, eat twelve raisins and make a wish on each, one for every month, then raise a glass of champagne."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Bolo-rei and the fava",
+        "text": "Families cut the bolo-rei, a crown-shaped cake with candied fruit and nuts. Whoever finds the fava bean in their slice buys next year’s cake."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fireworks over the Tagus",
+        "text": "Lisboners gather on Praça do Comércio and the Cais do Sodré and Ribeira das Naus waterfronts, and at midnight fireworks blaze over the river for ten minutes."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Portugal: Lisbon | Time2Fest",
+      "description": "Portugal greets 2027 at midnight, 00:00 UTC: in Lisbon it means twelve raisins with wishes, bolo-rei and ten minutes of fireworks over the Tagus."
+    },
+    "kit": "pt+0"
+  },
+  "SL": {
+    "text": "Many people in Sierra Leone spend the first hours of the year in church or another place of worship, while others choose beach bars, cafés and nightclubs. Nearly eight in ten people here are Muslim and about a fifth are Christian, and the holidays of both faiths are national ones, so on 1 January the whole country has the day off. Don’t expect a midnight barrage: for the festive season police ban fireworks nationwide, and loud music in neighbourhoods after ten at night.\n\nIn these days Freetown is drawn to the ocean. Thousands head to Lumley and Aberdeen beaches, where police set up parking and cameras in advance. Lumley has long hosted parties and festivals, and the road from Aberdeen to Lumley, lined with restaurants and clubs, is the heart of the city’s nightlife.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Midnight at a service",
+        "text": "Some people greet midnight and the first hours of the new year at a service in church or another place of worship."
+      },
+      {
+        "id": "t2",
+        "iconId": "wave",
+        "title": "Lumley and Aberdeen beaches",
+        "text": "Thousands of Freetown residents spend the holidays on the ocean beaches of Lumley and Aberdeen, where bars, restaurants and clubs line the road."
+      },
+      {
+        "id": "t3",
+        "iconId": "mask",
+        "title": "Masquerades with a permit",
+        "text": "The festive season is a time of masquerades and “mask devils”; every street outing, like any procession or carnival, is cleared with the police."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Sierra Leone: Freetown | Time2Fest",
+      "description": "The first hours of 2027 in Sierra Leone pass in churches and beach bars: midnight at 00:00 UTC, crowds on Freetown’s Lumley and Aberdeen beaches, no fireworks."
+    },
+    "kit": "sl"
+  },
+  "TG": {
+    "text": "Firecrackers crackle at midnight and the year turns over, but many Togolese have said a prayer first. About half the country is Christian, and on the night of 31 December churches are packed: vigils of worship, testimonies and prayer run from nine in the evening until one in the morning and end with a blessing and New Year wishes. Some travel to the home village to be with their elders; others spend the night in a bar or at home with family. The Guin people also keep a New Year of their own, Épé-Ékpé: every September in Glidji a sacred stone is brought out, and since 2025 these rites have been on UNESCO’s list.\n\nLomé greets midnight with fireworks: each year the government announces displays in the capital and in Kara. At the Colombe de la Paix roundabout the Caliente show takes over — orchestras and choirs after ten, and vuvuzelas, gongs and tam-tams until three in the morning.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Night of prayer",
+        "text": "On 31 December churches are full from the evening: hymns, testimonies and prayers last until one in the morning, closing with a blessing and New Year wishes."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Fireworks and Caliente",
+        "text": "Lomé and Kara meet midnight with fireworks, and at Lomé’s Colombe de la Paix roundabout orchestras, gongs and tam-tams play until 3 a.m."
+      },
+      {
+        "id": "t3",
+        "iconId": "door",
+        "title": "Back to the village",
+        "text": "Some families spend New Year’s night in the home village with the grandparents, others at home or in a bar, and at midnight firecrackers go off everywhere."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Togo: Lomé | Time2Fest",
+      "description": "Togo meets 2027 at 00:00 UTC: church vigils until 1 a.m., fireworks over Lomé and Kara, and orchestras and tam-tams at Colombe de la Paix until 3 a.m."
+    },
+    "kit": "tg"
+  },
+  "IM": {
+    "text": "People on the Isle of Man once called the first of January Laa Nolick beg, “Little Christmas Day”. The year began with whoever crossed the threshold first, a guest known as the qualtagh. A dark-haired man brought the most luck; he was never to arrive empty-handed, and the household set the best it had before him. That morning the floor was swept from the door towards the hearth, so as not to sweep the luck out of the house, and nothing was lent, or you would be lending all year.\n\nOn the eve, 31 December, families told fortunes: a thimble of salt was tipped onto a plate for everyone at home, and in the morning they looked to see whose little heap had fallen. On New Year’s Day young men went from house to house singing “Ollick ghennal erriu, as blein feer vie”, wishing a good year with plenty of potatoes and herring.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "door",
+        "title": "The qualtagh, first guest",
+        "text": "The year’s first visitor, the qualtagh, was offered the best food in the house; a dark-haired man bearing a gift brought the most luck."
+      },
+      {
+        "id": "t2",
+        "iconId": "horseshoe",
+        "title": "Salt and ash fortunes",
+        "text": "On New Year’s Eve a thimble of salt was tipped onto a plate for each person at home, and in upland cottages ash was smoothed out to look for a footprint at dawn."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Hunt the Wren",
+        "text": "On St Stephen’s Day groups singing “Hunt the Wren” carry a ribboned wren bush and dance around it; the custom was revived in the 1990s, and no bird is caught."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in the Isle of Man: Douglas | Time2Fest",
+      "description": "The Isle of Man greets 2027 at local midnight (00:00 UTC): the qualtagh as first guest at the door, salt-heap fortunes and an old song wishing herring."
+    },
+    "kit": "im"
   }
 }
