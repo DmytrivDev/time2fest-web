@@ -4,6 +4,7 @@
  * Routes never import `pg` or Payload: they reach a dependency through `ctx.deps` (onion ban 1),
  * and `Deps` holds ports only — the raw Payload accessor stays in `container.ts`.
  */
+import type { OpsWiring } from '../ops/runner';
 import type { ApiError } from '@time2fest/contracts';
 import type { ZodType } from 'zod';
 import type { AlarmService } from '../alarms/service';
@@ -170,6 +171,8 @@ export interface Deps {
   scheduler?: SchedulerHandle;
   /** Text moderation and AI (SPEC-09): built by `createDeps`; timers started only by `startProcessBackground`. */
   moderation?: ModerationDeps;
+  /** Operations (SPEC-13b): the Telegram outbox and sink, `log-alarms`, the ops leases; the runner starts only in `startProcessBackground`. */
+  ops?: OpsWiring;
 }
 
 export interface Ctx {

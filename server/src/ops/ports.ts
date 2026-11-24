@@ -51,6 +51,8 @@ export interface NewOutboxRow {
   slotKey?: string;
   /** Epoch ms. */
   createdAt: number;
+  /** Epoch ms of the first attempt; absent → `createdAt` (a storm summary waits for its window end, AC-7). */
+  notBefore?: number;
 }
 
 export interface OutboxRow extends NewOutboxRow {
@@ -70,18 +72,40 @@ export interface Outbox {
   /** `duplicate-slot` when a row with the same `slotKey` exists. Throws when the store is down (AC-9). */
   insert(row: NewOutboxRow): Promise<{ id: string } | 'duplicate-slot'>;
   /**
-   * Claims up to `limit` pending rows due at `now` (conditional update: two instances never claim the
-   * same row, AC-8); the claim pushes their `nextAttemptAt` forward until they are marked.
+   * Claims up to `limit` pending rows due at `now`, oldest `raisedAt` first, of `kinds` (all when absent): one
+   * conditional update, so two instances never claim the same row (AC-8); the claim pushes their
+   * `nextAttemptAt` 30 s forward, so a row claimed by a crashed holder is retried after that.
    */
-  claimDue(limit: number, now: number): Promise<OutboxRow[]>;
-  markDelivered(id: string, at: number): Promise<void>;
-  markRetry(id: string, nextAt: number): Promise<void>;
-  /** Final failure (AC-5): the row stays as `failed`, never retried. */
-  markFailed(id: string, at: number): Promise<void>;
+  claimDue(limit: number, now: number, kinds?: readonly OutboxKind[]): Promise<OutboxRow[]>;
+  /** A sent attempt succeeded: `delivered`, `attempts += 1`. */
+  markDelivered(id: string, at: number, status?: number): Promise<void>;
+  /** A sent attempt failed and will be repeated at `nextAt`: `attempts += 1`. */
+  markRetry(id: string, nextAt: number, status?: number): Promise<void>;
+  /**
+   * Final failure (AC-5): the row stays as `failed`, never retried, `attempts += 1`; one
+   * journal row `ops.telegram-delivery-failed` in the same transaction.
+   */
+  markFailed(id: string, at: number, status?: number): Promise<void>;
   /** The newest delivered `alarm` row of `kind` delivered at or after `sinceMs` (AC-6). */
   latestDeliveredOfKind(kind: AlarmKind, sinceMs: number): Promise<OutboxRow | null>;
-  /** `repeatCount += 1` on that row instead of a new row (AC-6). */
-  incrementRepeat(id: string): Promise<void>;
+  /**
+   * The pending `alarm` row of `kind`, if any: while Telegram is down, repeats of one kind count on that row
+   * instead of queueing a row each (AC-6 coalescing extended to rows not yet sent).
+   */
+  pendingOfKind(kind: AlarmKind): Promise<OutboxRow | null>;
+  /** `repeatCount += by` (default 1) on that row instead of a new row (AC-6). */
+  incrementRepeat(id: string, by?: number): Promise<void>;
+  /** `alarm` rows actually sent (a successful attempt) in `[sinceMs, untilMs]` — the storm count (AC-7). */
+  countSent(sinceMs: number, untilMs: number): Promise<number>;
+  /**
+   * Storm (AC-7): held `alarm` rows are closed as delivered without a message (`attempts` stays 0); the
+   * window's summary row reports them.
+   */
+  markSummarized(ids: readonly string[], at: number): Promise<void>;
+  /** `alarm` rows closed by `markSummarized` with `at` in `[fromMs, toMs)` (the summary text). */
+  listSummarized(fromMs: number, toMs: number): Promise<OutboxRow[]>;
+  /** Replaces the text of a pending row (the storm summary is written when it is sent). */
+  setText(id: string, text: string): Promise<void>;
 }
 
 /** Stage at which a backup run stopped (AC-42, AC-44). */

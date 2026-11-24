@@ -74,8 +74,12 @@ import { createAlarmService } from './alarms/service';
 import { createPgEventLog, createPgEventPublisher, createPgEventSource, eventsChannel } from './adapters/pgEvents';
 import { loadEnv, type EnvClass, type RawEnv } from './platform/env';
 import { daySalts } from './platform/fingerprint';
-import { createAlarm, createLogger } from './platform/logger';
-import type { Alarm, LockState, SeedStore } from './ports';
+import { createLogger } from './platform/logger';
+import { createDeliveringAlarm } from './alarms/delivery';
+import { createPayloadLogAlarms, createPayloadOutbox, createPgOpsLease } from './adapters/payloadOps';
+import { selectTelegramSink } from './adapters/telegram';
+import { startOpsTicker, type OpsRunner, type OpsWiring } from './ops/runner';
+import type { Alarm, LockState, Logger, SeedStore } from './ports';
 import { envRegistry } from './registries/env';
 import { channelClassesFor } from './registries/channels';
 import { middlewareRegistry } from './registries/middleware';
@@ -103,6 +107,7 @@ const MODERATION_TIMERS_KEY = Symbol.for('t2f.moderationTimers');
 const REBUILD_TICKER_KEY = Symbol.for('t2f.rebuildTicker');
 const LIVE_POLLER_KEY = Symbol.for('t2f.livePoller');
 const LIVE_VIEWERS_KEY = Symbol.for('t2f.liveViewers');
+const OPS_TICKER_KEY = Symbol.for('t2f.opsTicker');
 const BACKGROUND_RETRY_MS = 5_000;
 
 /** The thin typed getters over the ports `createDeps` sets on `Deps` (re-exported for the callers of the root). */
@@ -181,6 +186,27 @@ const unrefTimers: Scheduler = {
   clearTimeout: (handle) => clearTimeout(handle as ReturnType<typeof setTimeout>),
 };
 
+/**
+ * The ops stores and the Telegram sink (SPEC-13b W14): sink chosen by class (AC-13), `null` when not configured
+ * (AC-14: the status is kept for the overview; the alarm `ops/telegram-not-configured` is raised once by
+ * `startOpsTicker`, never by building deps).
+ */
+function createOpsWiring(env: AppEnv, log: Logger, payload: () => Promise<Payload>): OpsWiring {
+  const selected = selectTelegramSink(env.class, env.vars, { log });
+  const journal = createPayloadJournal(isRevertible);
+  return {
+    telegram:
+      selected.sink !== null
+        ? { status: 'configured', sink: selected.sink, chatId: selected.chatId }
+        : { status: 'not-configured', sink: null, chatId: null, ...(selected.missing ? { missing: selected.missing } : {}) },
+    outbox: createPayloadOutbox({ payload, journal }),
+    logAlarms: createPayloadLogAlarms(payload, realClock),
+    lease: createPgOpsLease({ payload, journal, holderId: `${hostname()}:${process.pid}:${randomBytes(4).toString('hex')}` }),
+    clock: realClock,
+    cls: env.class,
+  };
+}
+
 /** Builds the dependencies from a raw environment. Throws, naming variables only, when it is invalid. */
 export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   const loaded = loadEnv(raw, envRegistry);
@@ -210,7 +236,20 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
         }));
   const clock = overrides.clock ?? clockFor(env.class, sharedClock);
   const alarmStore = overrides.alarmStore ?? createPayloadAlarmStore(() => payloadRef(), clock);
-  const alarm = overrides.alarm ?? createAlarm(log, alarmStore);
+  // SPEC-13b: the alarm also feeds the Telegram outbox and `log-alarms` (W14); ops time is the wall clock.
+  const ops = overrides.ops ?? createOpsWiring(env, log, () => payloadRef());
+  const alarm =
+    overrides.alarm ??
+    createDeliveringAlarm({
+      logger: log,
+      alarmStore,
+      outbox: ops.outbox,
+      logStore: ops.logAlarms,
+      telegram: ops.telegram.sink ? { sink: ops.telegram.sink, chatId: ops.telegram.chatId ?? '' } : null,
+      cls: env.class,
+      secretValues: loaded.secrets,
+      clock: ops.clock,
+    });
   const payload = overrides.payload ?? lazyPayload(alarm);
   payloadRef = payload;
   const deps: Deps = {
@@ -225,6 +264,7 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
     orderStore: overrides.orderStore ?? createPayloadIdempotencyStore(payload),
   };
   Object.defineProperty(deps, PAYLOAD_KEY, { value: payload, enumerable: false });
+  deps.ops = ops;
   if (sharedClock) deps.sharedClock = sharedClock;
   deps.divergence = overrides.divergence ?? createDivergenceMeter({ real: realClock, alarm, log });
   deps.events = overrides.events ?? {
@@ -798,6 +838,12 @@ export function startClockRefresher(deps: Deps, intervalMs?: number): Promise<Cl
   });
 }
 
+/** The ops runner of the process (SPEC-13b [П-5]): Telegram sender now, more jobs later; `undefined` without ops. */
+export function startOpsTickerOf(deps: Deps, intervalMs?: number): OpsRunner | undefined {
+  if (!deps.ops) return undefined;
+  return startOpsTicker({ ops: deps.ops, alarm: deps.alarm, log: deps.log }, intervalMs);
+}
+
 /**
  * Starts the process background once. First the shared clock is loaded (so nothing below starts
  * on a stale clock), then the internal-events delivery loop (a failed start, database down, is
@@ -821,6 +867,7 @@ export function startProcessBackground(): void {
     g[REBUILD_TICKER_KEY] ??= startRebuildTicker(getDeps());
     g[LIVE_POLLER_KEY] ??= startLivePoller(getDeps());
     g[LIVE_VIEWERS_KEY] ??= startViewersTicker(getDeps());
+    g[OPS_TICKER_KEY] ??= startOpsTickerOf(getDeps());
     if (!g[MODERATION_TIMERS_KEY]) {
       pageMissingAiKeys(getDeps());
       g[MODERATION_TIMERS_KEY] = startModerationTimers(getDeps());
