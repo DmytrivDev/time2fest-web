@@ -29,8 +29,18 @@ export interface EnvBlock {
 }
 
 export type LoadEnvResult =
-  | { ok: true; class: EnvClass; env: Readonly<Record<string, unknown>>; secrets: string[] }
+  | {
+      ok: true;
+      class: EnvClass;
+      env: Readonly<Record<string, unknown>>;
+      secrets: string[];
+      /** SPEC-13b AC-13: set when the Telegram sink must stay off although the env is valid. */
+      telegramDisabledReason?: TelegramDisabledReason;
+    }
   | { ok: false; failing: string[] };
+
+/** Why the Telegram sink is off in a valid env: a `test` class pointing it off this machine (AC-13). */
+export type TelegramDisabledReason = 'non-loopback';
 
 /**
  * Identifiers of production resources (database hosts, Redis, buckets, …) that a `test` or
@@ -162,6 +172,15 @@ function aiUrlAllowed(value: unknown, cls: EnvClass): boolean {
   }
 }
 
+/**
+ * SPEC-13b AC-13: in `test` the Telegram base address may only be loopback (the fake). Anything else
+ * switches the sink off — never a refusal, so a stray value cannot block a test stack.
+ */
+export function telegramDisabledReason(env: Readonly<Record<string, unknown>>, cls: EnvClass): TelegramDisabledReason | undefined {
+  if (cls !== 'test' || env.T2F_TELEGRAM_API_BASE === undefined) return undefined;
+  return loopbackUrl(env.T2F_TELEGRAM_API_BASE) ? undefined : 'non-loopback';
+}
+
 /** Exact match only; anything else, including unset, is the strictest class (AC-18). */
 export function envClass(raw: RawEnv): EnvClass {
   const v = raw.T2F_ENV;
@@ -248,5 +267,7 @@ export function loadEnv(
   const rank = (name: string) => (order.includes(name) ? order.indexOf(name) : order.length);
   failing.sort((a, b) => rank(a) - rank(b));
 
-  return failing.length > 0 ? { ok: false, failing } : { ok: true, class: cls, env, secrets };
+  if (failing.length > 0) return { ok: false, failing };
+  const telegramOff = telegramDisabledReason(env, cls);
+  return telegramOff ? { ok: true, class: cls, env, secrets, telegramDisabledReason: telegramOff } : { ok: true, class: cls, env, secrets };
 }

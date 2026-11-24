@@ -51,6 +51,12 @@ const usdPerMTok = z.string().regex(/^\d+(\.\d+)?$/);
 
 const hostPort = z.string().regex(/^[a-z0-9.-]+(:\d{1,5})?$/i);
 
+/** Canonical base64 of exactly 32 bytes (AES-256 key of the backups, SPEC-13b AC-41). */
+const backupKey = z.string().regex(/^[A-Za-z0-9+/]{42}[AEIMQUYcgkosw048]=$/);
+
+/** A Telegram chat id: a (possibly negative) integer or a public `@channel` name. */
+const telegramChatId = z.string().regex(/^(-?\d{1,20}|@[A-Za-z0-9_]{5,32})$/);
+
 export const envRegistry: readonly EnvBlock[] = [
   {
     key: 'access',
@@ -124,6 +130,19 @@ export const envRegistry: readonly EnvBlock[] = [
       { name: 'T2F_LIVE_CONFIG', schema: z.string().min(1).optional() },
       { name: 'T2F_YOUTUBE_API_KEY', schema: z.string().min(1).optional(), secret: true },
       { name: 'T2F_YOUTUBE_BASE_URL', schema: z.url().optional() },
+    ],
+  },
+  {
+    // SPEC-13b: Telegram alarms and encrypted backups. Optional in `test` and `rehearsal` (absent: the
+    // Telegram sink is off / the backup does not start, AC-14, AC-48); required in production (AC-67).
+    key: 'ops',
+    vars: [
+      { name: 'T2F_BACKUP_KEY', schema: backupKey.optional(), secret: true, requiredIn: ['production'] },
+      // In `test` a non-loopback base only switches the sink off (`telegramDisabledReason`), never a refusal (AC-13).
+      { name: 'T2F_TELEGRAM_API_BASE', schema: z.url().optional() },
+      { name: 'T2F_TELEGRAM_BOT_TOKEN', schema: z.string().min(1).optional(), secret: true, requiredIn: ['production'] },
+      { name: 'T2F_TELEGRAM_CHAT_ID', schema: telegramChatId.optional(), requiredIn: ['production'] },
+      { name: 'T2F_TELEGRAM_TEST_CHAT_ID', schema: telegramChatId.optional() },
     ],
   },
   {

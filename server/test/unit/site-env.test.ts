@@ -39,6 +39,10 @@ function rawEnv(cls: 'test' | 'rehearsal' | 'production', over: Record<string, s
         : { DATABASE_URI: 'postgres://t2f@127.0.0.1:5433/t2f_spec_08_site_state_test', T2F_REDIS_PREFIX: 't2f:spec_08_site_state:', T2F_ADMIN_HOST: 'admin.localhost:3100', T2F_R2_BUCKET: 't2f-catalog', T2F_CENTRIFUGO_URL: 'http://127.0.0.1:8000', REDIS_URL: 'redis://127.0.0.1:6380/12' };
   return {
     T2F_ENV: cls,
+    // SPEC-13b AC-67: required in production since the ops wave; optional elsewhere.
+    T2F_TELEGRAM_BOT_TOKEN: 'test-telegram-token-not-real', // check-secrets: allow test fake
+    T2F_TELEGRAM_CHAT_ID: '-1001234567890',
+    T2F_BACKUP_KEY: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=', // check-secrets: allow test fake backup key
     REDIS_URL: 'redis://redis:6379/0',
     T2F_CENTRIFUGO_API_KEY: randomBytes(24).toString('hex'),
     T2F_CENTRIFUGO_TOKEN_SECRET: randomBytes(24).toString('hex'),

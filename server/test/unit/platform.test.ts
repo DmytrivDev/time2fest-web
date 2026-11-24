@@ -33,6 +33,10 @@ function rawEnv(over: Record<string, string | undefined> = {}) {
     T2F_R2_SECRET_ACCESS_KEY: 't2f-local-secret-0000', // check-secrets: allow fake local R2 key for the env loader unit test
     T2F_CENTRIFUGO_API_KEY: 'centrifugo-api-key-unit-test-0000000000', // check-secrets: allow test fake
     T2F_CENTRIFUGO_TOKEN_SECRET: 'centrifugo-token-secret-unit-test-000000', // check-secrets: allow test fake
+    // SPEC-13b AC-67: required in production since the ops wave; optional elsewhere.
+    T2F_TELEGRAM_BOT_TOKEN: 'test-telegram-token-not-real', // check-secrets: allow test fake
+    T2F_TELEGRAM_CHAT_ID: '-1001234567890',
+    T2F_BACKUP_KEY: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=', // check-secrets: allow test fake backup key
     ...over,
   };
 }

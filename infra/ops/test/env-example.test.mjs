@@ -99,6 +99,15 @@ describe('node env examples', () => {
     for (const n of NODE_ENV_FILES) expect(() => read(`${n}.example`), n).not.toThrow();
   });
 
+  it('SPEC-13b AC-67: the Telegram and backup names are listed with empty values', async () => {
+    const OPS = ['T2F_BACKUP_KEY', 'T2F_TELEGRAM_API_BASE', 'T2F_TELEGRAM_BOT_TOKEN', 'T2F_TELEGRAM_CHAT_ID', 'T2F_TELEGRAM_TEST_CHAT_ID'];
+    const registry = await loadRegistry();
+    const block = registry.find((b) => /** @type {any} */ (b).key === 'ops');
+    expect(block?.vars.map((v) => v.name)).toEqual(OPS);
+    const example = assignments(read('server.env.example'));
+    for (const n of OPS) expect(example.find((a) => a.name === n), n).toEqual({ name: n, value: '' });
+  });
+
   it('a new required registry variable turns the check red (synthetic block)', async () => {
     const registry = await loadRegistry();
     const synthetic = [

@@ -30,6 +30,10 @@ const PRODUCTION: Record<string, string> = {
   T2F_R2_SECRET_ACCESS_KEY: 'key-secret',
   // Required in rehearsal/production since SPEC-05 (edge gate); built at runtime, never a literal.
   T2F_EDGE_SECRET: randomBytes(24).toString('hex'),
+  // SPEC-13b AC-67: required in production; built at runtime, never a literal.
+  T2F_TELEGRAM_BOT_TOKEN: randomBytes(24).toString('hex'),
+  T2F_TELEGRAM_CHAT_ID: '-1001234567890',
+  T2F_BACKUP_KEY: randomBytes(32).toString('base64'),
 };
 
 function envCheck(over: Record<string, string>) {
