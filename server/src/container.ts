@@ -21,6 +21,7 @@ import { noSessionSubjects } from './adapters/noSessionSubjects';
 import { createIdentityMarker } from './adapters/identityMarker';
 import { createPayloadCatalogMeta, createPayloadCatalogStore } from './adapters/payloadCatalog';
 import { createReadinessProbe } from './adapters/readiness';
+import { createMeteredObjectStore } from './adapters/meteredObjectStore';
 import { createS3ObjectStore } from './adapters/s3';
 import { createPayloadIdempotencyStore, createPayloadSeedStore } from './adapters/payload';
 import { parseAccessConfig } from './domain/access/config';
@@ -78,6 +79,7 @@ import { createLogger } from './platform/logger';
 import { createDeliveringAlarm } from './alarms/delivery';
 import { createPayloadLogAlarms, createPayloadOpsJournal, createPayloadOutbox, createPgOpsLease } from './adapters/payloadOps';
 import { selectTelegramSink } from './adapters/telegram';
+import { createR2Meter, r2PrefixOf } from './ops/meter';
 import { createOpsRunner, startOpsTicker, type OpsRunner, type OpsRunnerDeps, type OpsWiring } from './ops/runner';
 import type { Alarm, LockState, Logger, SeedStore } from './ports';
 import { envRegistry } from './registries/env';
@@ -290,6 +292,8 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   };
   Object.defineProperty(deps, PAYLOAD_KEY, { value: payload, enumerable: false });
   deps.ops = ops;
+  // One meter per process: the R2 stores built per call share it (SPEC-13b W22).
+  deps.r2Meter = overrides.r2Meter ?? createR2Meter();
   if (sharedClock) deps.sharedClock = sharedClock;
   deps.divergence = overrides.divergence ?? createDivergenceMeter({ real: realClock, alarm, log });
   deps.events = overrides.events ?? {
@@ -558,14 +562,17 @@ export function catalogCopyDepsOf(deps: Deps): CatalogCopyDeps | undefined {
   const secretAccessKey = v.T2F_R2_SECRET_ACCESS_KEY;
   const prefix = v.T2F_R2_PREFIX;
   if (!endpoint || !bucket || !accessKeyId || !secretAccessKey || !prefix) return undefined;
+  const raw = createS3ObjectStore({
+    endpoint: String(endpoint),
+    bucket: String(bucket),
+    accessKeyId: String(accessKeyId),
+    secretAccessKey: String(secretAccessKey),
+  });
+  // The site and live fan-outs reuse this store, so every R2 write of the process is counted (SPEC-13b AC-39).
+  const objects = deps.r2Meter ? createMeteredObjectStore(raw, deps.r2Meter, r2PrefixOf(String(prefix)), realClock) : raw;
   return {
     store: catalogStoreOf(deps),
-    objects: createS3ObjectStore({
-      endpoint: String(endpoint),
-      bucket: String(bucket),
-      accessKeyId: String(accessKeyId),
-      secretAccessKey: String(secretAccessKey),
-    }),
+    objects,
     prefix: String(prefix),
     alarm: deps.alarm,
     log: deps.log,

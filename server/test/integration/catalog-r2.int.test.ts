@@ -3,7 +3,11 @@
  * a city rename puts both objects under this worktree's prefix within 60 s, the body equals what
  * `GET /api/catalog` returns; another prefix does not mix with it; a failing store is retried and then
  * pages; no log line carries the secret key. The stopped-emulator case is in `r2-down.exclusive.test.ts`.
+ * SPEC-13b (AC-39, AC-50, W23): one catalog copy adds its two writes to class A of the process meter; the
+ * additive `get` / `head` / `list` / `putMultipart` work against the emulator (multipart in 5 MiB parts).
  */
+import { createHash } from 'node:crypto';
+import { Readable } from 'node:stream';
 import type { Payload } from 'payload';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createS3ObjectStore } from '../../src/adapters/s3';
@@ -119,6 +123,51 @@ describe('catalog R2 copy', { timeout: 120_000 }, () => {
     expect(recovered.ok).toBe(true);
     expect(recovered.attempts).toBe(3);
     expect(raised).toEqual([]);
+  });
+
+  it('SPEC-13b AC-39: one catalog copy adds two class A operations and a last-ok time under catalog', async () => {
+    const meter = deps.r2Meter;
+    if (!meter) throw new Error('no meter');
+    const before = meter.snapshot();
+    const fresh = catalogCopyDepsOf(deps);
+    if (!fresh) throw new Error('r2: not configured');
+    const done = await copyCatalog({ ...fresh, schedule: [0] });
+    expect(done.ok).toBe(true);
+    const after = meter.snapshot();
+    expect(after.classA - before.classA).toBe(2);
+    expect(after.classB - before.classB).toBe(0);
+    expect(after.prefixes.catalog.lastOkAt).not.toBeNull();
+    expect(after.prefixes.catalog.lastFailedAt).toBe(before.prefixes.catalog.lastFailedAt);
+  });
+
+  it('SPEC-13b AC-50: get, head, list and a 3-part multipart upload against the emulator', async () => {
+    const objects = copyDeps.objects;
+    const base = `${env.prefix}backups/_int_${run}/`;
+    try {
+      expect(await objects.get!(`${base}absent`)).toBeNull();
+      expect(await objects.head!(`${base}absent`)).toBeNull();
+      const MiB = 1024 * 1024;
+      const pieces = Array.from({ length: 11 }, (_, i) => Buffer.alloc(MiB, i + 1));
+      const whole = Buffer.concat(pieces);
+      const up = await objects.putMultipart!(`${base}big.bin`, Readable.from(pieces), 'application/octet-stream', 5 * MiB);
+      expect(up).toEqual({ size: whole.length });
+      const small = await objects.putMultipart!(`${base}small.bin`, Readable.from([Buffer.from('tiny')]), 'application/octet-stream', 5 * MiB);
+      expect(small).toEqual({ size: 4 });
+      expect((await objects.head!(`${base}big.bin`))?.size).toBe(whole.length);
+      const stream = await objects.get!(`${base}big.bin`);
+      if (!stream) throw new Error('missing');
+      const hash = createHash('sha256');
+      for await (const c of stream as AsyncIterable<Buffer>) hash.update(c);
+      expect(hash.digest('hex')).toBe(createHash('sha256').update(whole).digest('hex'));
+      const listed = await objects.list!(base);
+      expect(listed.map((o) => [o.key, o.size]).sort()).toEqual([
+        [`${base}big.bin`, whole.length],
+        [`${base}small.bin`, 4],
+      ]);
+      expect(listed.every((o) => o.lastModified > 0)).toBe(true);
+    } finally {
+      await deleteUnder(env, base);
+    }
   });
 
   it('NFR-5: no captured log line carries the secret access key', () => {
