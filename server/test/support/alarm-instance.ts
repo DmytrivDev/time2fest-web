@@ -1,8 +1,8 @@
 /**
  * One server instance's alarm path for `alarm-delivery.int.test.ts` (AC-3) and `alarm-two-instances.exclusive.test.ts`
- * (AC-8): its own Node process, container and Postgres pool; the delivering process alarm and the ops runner
- * (Telegram sender under the REAL `ops-telegram` lease) as `startProcessBackground` builds them, ticking every
- * 250 ms. The parent passes the fake Telegram env. Run with `tsx`:
+ * (AC-8), `ops-heartbeat-two.exclusive.test.ts` (AC-21): its own Node process, container and Postgres pool; the
+ * delivering process alarm and the ops runner (sender under the REAL `ops-telegram` lease, heartbeat and digest under
+ * `ops-heartbeat`) as `startProcessBackground` builds them, ticking every 250 ms. The parent passes the fake Telegram env. Run with `tsx`:
  *
  *   tsx test/support/alarm-instance.ts <tag>
  *
@@ -12,11 +12,9 @@
  */
 import { createInterface } from 'node:readline';
 import { getDeps, payloadOf } from '../../src/container';
-import { createOpsRunner } from '../../src/ops/runner';
 
 const tag = process.argv[2] ?? 'instance';
 const print = (line: string) => process.stdout.write(`${line}\n`);
-const silent = { info: () => {}, warn: () => {}, error: () => {} };
 
 async function main(): Promise<void> {
   process.env.T2F_ENV = 'test';
@@ -24,8 +22,8 @@ async function main(): Promise<void> {
   delete process.env.T2F_EDGE_SECRET;
   const deps = getDeps();
   await payloadOf(deps)();
-  if (!deps.ops?.telegram.sink) throw new Error('telegram sink not configured');
-  const runner = createOpsRunner({ ops: deps.ops, alarm: deps.alarm, log: silent });
+  if (!deps.ops?.telegram.sink || !deps.opsRunner) throw new Error('telegram sink not configured');
+  const runner = deps.opsRunner;
   let offset = 0;
   let running = false;
   const timer = setInterval(() => {

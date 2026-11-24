@@ -106,6 +106,14 @@ export interface Outbox {
   listSummarized(fromMs: number, toMs: number): Promise<OutboxRow[]>;
   /** Replaces the text of a pending row (the storm summary is written when it is sent). */
   setText(id: string, text: string): Promise<void>;
+  /** A row with this `slotKey` exists, whatever its status (a missed slot already sent elsewhere, AC-21). */
+  hasSlot(slotKey: string): Promise<boolean>;
+}
+
+/** System journal lines of the ops jobs (`audit-log`, actor `system/ops`): a skipped slot (AC-21). */
+export interface OpsJournal {
+  /** One line `action` about `targetId` (a slot key) with `after`, at the wall-clock `at`. */
+  line(action: string, targetId: string, after: Record<string, unknown>, at: number): Promise<void>;
 }
 
 /** Stage at which a backup run stopped (AC-42, AC-44). */

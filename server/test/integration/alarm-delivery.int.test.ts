@@ -2,7 +2,7 @@
  * SPEC-13b W15: alarm delivery to the Telegram fake over the real Postgres outbox.
  * AC-2 (page → one message ≤60 s, row `deliveredAt`), AC-3 (a row left by a crashed process is delivered once by
  * the next one), AC-12 (`log` → `log-alarms`, no message), AC-27 (unregistered kind → marker in class `test`).
- * AC-5 over 11 min of substitute time needs the `ops-tick` door (W18): completed in W19.
+ * AC-5 (W19): the final failure after 11 min of substitute time, through the `ops-tick` door (W18).
  */
 import type { Payload } from 'payload';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -90,7 +90,47 @@ describe('alarm delivery to Telegram (W15)', () => {
       expect(await deliveries(code)).toHaveLength(0);
     }, 30_000);
 
-    it.todo('AC-5: fake down 11 min of substitute time → failed row, one log alarm, a journal row, no outbox row from it (W19, needs the ops-tick door)');
+    it('AC-5: fake down 11 min of substitute time (ops-tick door) → failed row, one log alarm, one journal row, no outbox row from it', async () => {
+      const code = `down-${run}`;
+      const since = new Date().toISOString();
+      const dispatch = await buildDispatcher(deps);
+      await fake.down(true);
+      try {
+        expect((await dispatch(post('/api/_test/alarm', { level: 'page', source: 'test', code }))).status).toBe(200);
+        // Tried at least once on the wall clock while Telegram is down.
+        const pending = await until(() => deliveries(code), (r) => Number(r[0]?.attempts ?? 0) >= 1, 30_000);
+        expect(pending[0]).toMatchObject({ status: 'pending' });
+        const raisedAt = Date.parse(String(pending[0]!.raisedAt));
+        const res = await dispatch(post('/api/_test/ops-tick', { now: new Date(raisedAt + 11 * 60_000).toISOString(), jobs: ['sender'] }));
+        expect(res.status).toBe(200);
+        const rows = await until(() => deliveries(code), (r) => r[0]?.status === 'failed', 5_000);
+        expect(rows).toHaveLength(1);
+        expect(rows[0]).toMatchObject({ status: 'failed' });
+        expect(rows[0]!.failedAt).toBeTruthy();
+        const failedAlarms = async () =>
+          (await logAlarms('telegram-delivery-failed')).filter((r) => r.source === 'ops' && String(r.createdAt) >= since);
+        expect(await until(failedAlarms, (r) => r.length >= 1, 5_000)).toHaveLength(1);
+        const journal = (
+          await payload.find({
+            collection: 'audit-log',
+            where: { and: [{ action: { equals: 'ops.telegram-delivery-failed' } }, { 'target.ref': { equals: String(rows[0]!.id) } }] },
+            overrideAccess: true,
+            depth: 0,
+          })
+        ).docs;
+        expect(journal).toHaveLength(1);
+        await sleep(1_500);
+        // The alarm about the failure never reaches the outbox (no recursion).
+        expect(await deliveries('telegram-delivery-failed')).toHaveLength(0);
+        // A failed row is never retried: Telegram back up → no further attempt of it.
+        const attempts = (await fake.callsWith(code)).length;
+        await fake.down(false);
+        await sleep(2_000);
+        expect(await fake.callsWith(code)).toHaveLength(attempts);
+      } finally {
+        await fake.down(false);
+      }
+    }, 90_000);
   });
 
   it('AC-3: a row left by a crashed process is delivered exactly once by the next process ≤60 s after its start', async () => {

@@ -17,7 +17,7 @@ import type { Payload, PayloadRequest } from 'payload';
 import type { AlarmDetails, LogAlarmRecord, LogAlarmStore } from '../alarms/ports';
 import type { Actor, Journal } from '../audit/ports';
 import { isDependencyFailure } from '../endpoints/pipeline';
-import type { Outbox, OutboxKind, OutboxRow, OpsLease, OpsLeaseName, WallClock } from '../ops/ports';
+import type { OpsJournal, Outbox, OutboxKind, OutboxRow, OpsLease, OpsLeaseName, WallClock } from '../ops/ports';
 import { DependencyUnavailable } from '../ports';
 import { findKind } from '../registries/ops';
 import { createPgScheduler } from './pgScheduler';
@@ -259,6 +259,11 @@ export function createPayloadOutbox({ payload, journal }: PayloadOutboxOptions):
       await exec(sql`
         UPDATE "alarm_deliveries" SET "text" = ${text}, "updated_at" = now() WHERE "id" = ${Number(id)} AND "status" = 'pending'`);
     },
+
+    async hasSlot(slotKey) {
+      const { rows } = await exec(sql`SELECT 1 AS "one" FROM "alarm_deliveries" WHERE "slot_key" = ${slotKey} LIMIT 1`);
+      return rows.length > 0;
+    },
   };
 }
 
@@ -293,6 +298,18 @@ export function createPayloadLogAlarms(payload: () => Promise<Payload>, clock: W
       const { rows } = await exec(sql`
         DELETE FROM "log_alarms" WHERE "raised_at" < ${iso(beforeMs)}::timestamptz RETURNING "id"`);
       return rows.length;
+    },
+  };
+}
+
+/** Journal lines of the ops jobs (AC-21: a skipped heartbeat or digest slot); target = the outbox slot. */
+export function createPayloadOpsJournal({ payload, journal }: { payload: () => Promise<Payload>; journal: Journal }): OpsJournal {
+  return {
+    async line(action, targetId, after, at) {
+      await guard(async () => {
+        const req = await createLocalReq({ context: CONTEXT }, await payload());
+        await journal.append(req, { actor: ACTOR, action, target: { collection: ALARM_DELIVERIES, id: targetId }, at, before: null, after, revertOf: null });
+      });
     },
   };
 }

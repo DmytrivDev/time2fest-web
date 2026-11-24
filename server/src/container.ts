@@ -76,9 +76,9 @@ import { loadEnv, type EnvClass, type RawEnv } from './platform/env';
 import { daySalts } from './platform/fingerprint';
 import { createLogger } from './platform/logger';
 import { createDeliveringAlarm } from './alarms/delivery';
-import { createPayloadLogAlarms, createPayloadOutbox, createPgOpsLease } from './adapters/payloadOps';
+import { createPayloadLogAlarms, createPayloadOpsJournal, createPayloadOutbox, createPgOpsLease } from './adapters/payloadOps';
 import { selectTelegramSink } from './adapters/telegram';
-import { startOpsTicker, type OpsRunner, type OpsWiring } from './ops/runner';
+import { createOpsRunner, startOpsTicker, type OpsRunner, type OpsRunnerDeps, type OpsWiring } from './ops/runner';
 import type { Alarm, LockState, Logger, SeedStore } from './ports';
 import { envRegistry } from './registries/env';
 import { channelClassesFor } from './registries/channels';
@@ -207,6 +207,31 @@ function createOpsWiring(env: AppEnv, log: Logger, payload: () => Promise<Payloa
   };
 }
 
+/**
+ * What the ops runner reads beyond the ops stores (SPEC-13b W18): catalog zones for the celebration window
+ * (AC-18, AC-19), open `page` alarms, the last backup (none until S8), spend over 50 % (`[]` until W29) and the
+ * journal of skipped slots (AC-21). All lazy: nothing is read while building deps.
+ */
+function opsRunnerDepsOf(deps: Deps, ops: OpsWiring, payload: () => Promise<Payload>): OpsRunnerDeps {
+  const str = (v: unknown): string => (typeof v === 'string' ? v : v === null || v === undefined ? '' : String(v));
+  return {
+    ops,
+    alarm: deps.alarm,
+    log: deps.log,
+    sources: {
+      async zones() {
+        const stored = await catalogStoreOf(deps).read();
+        if (!stored.season) return null;
+        return { zones: stored.zones.map((z) => ({ midnightMs: Date.parse(str(z.midnightUtc)) })).filter((z) => Number.isFinite(z.midnightMs)) };
+      },
+      openPageCount: async () => (await alarmStoreOf(deps).listOpenPage()).length,
+      lastBackupAt: async () => null,
+      spendOver50: async () => [],
+      journal: createPayloadOpsJournal({ payload, journal: createPayloadJournal(isRevertible) }),
+    },
+  };
+}
+
 /** Builds the dependencies from a raw environment. Throws, naming variables only, when it is invalid. */
 export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   const loaded = loadEnv(raw, envRegistry);
@@ -292,6 +317,8 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   deps.liveFanOut = overrides.liveFanOut ?? (() => liveFanOutDepsOf(deps));
   // Built in every process, started only by `startProcessBackground` (SPEC-07 W28).
   deps.scheduler = overrides.scheduler ?? createProcessScheduler(deps, payload, sharedClock);
+  // The ops jobs (SPEC-13b W18): built here without a timer; ticked by `startProcessBackground` and the `ops-tick` door.
+  if (ops && !deps.opsRunner) deps.opsRunner = createOpsRunner(opsRunnerDepsOf(deps, ops, payload));
   // Realtime (SPEC-06): no session yet (C5); the signer only with the token secret (else AC-19 in `test`).
   deps.subjects = overrides.subjects ?? noSessionSubjects;
   // Text moderation and AI (SPEC-09): built here, timers started only by `startProcessBackground`.
@@ -838,10 +865,10 @@ export function startClockRefresher(deps: Deps, intervalMs?: number): Promise<Cl
   });
 }
 
-/** The ops runner of the process (SPEC-13b [П-5]): Telegram sender now, more jobs later; `undefined` without ops. */
+/** Starts the ops runner of `deps` (SPEC-13b [П-5]) on its ticker; `undefined` without ops. */
 export function startOpsTickerOf(deps: Deps, intervalMs?: number): OpsRunner | undefined {
-  if (!deps.ops) return undefined;
-  return startOpsTicker({ ops: deps.ops, alarm: deps.alarm, log: deps.log }, intervalMs);
+  if (!deps.ops || !deps.opsRunner) return undefined;
+  return startOpsTicker(deps.opsRunner, { ops: deps.ops, alarm: deps.alarm, log: deps.log }, intervalMs);
 }
 
 /**

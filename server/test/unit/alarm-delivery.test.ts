@@ -89,6 +89,9 @@ function memoryOutbox(): Outbox & { rows: OutboxRow[]; failInsert: boolean; hang
     async setText(id: string, text: string) {
       find(id)!.text = text;
     },
+    async hasSlot(slotKey: string) {
+      return self.rows.some((r) => r.slotKey === slotKey);
+    },
   };
   return self;
 }
