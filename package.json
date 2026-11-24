@@ -47,6 +47,8 @@
     "infra:cf": "node infra/cloudflare/cf.mjs",
     "deploy:env": "node infra/ops/ops.mjs deploy",
     "rollback:env": "node infra/ops/ops.mjs rollback",
+    "backup:env": "node infra/ops/ops.mjs backup",
+    "restore:env": "node infra/ops/ops.mjs restore",
     "node:bootstrap": "node infra/ops/ops.mjs bootstrap",
     "edge:secret": "node infra/ops/ops.mjs edge-secret",
     "edge:move-domain": "node infra/ops/ops.mjs move-domain",

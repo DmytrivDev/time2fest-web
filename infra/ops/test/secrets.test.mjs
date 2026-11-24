@@ -360,3 +360,21 @@ describe('edge-secret --generate: Redis password upgrade of a deployed node (S1)
     expectNowhere(w, [withPass]);
   });
 });
+
+describe('edge-secret --generate: backup key (SPEC-13b W43, AC-48)', () => {
+  it('fills T2F_BACKUP_KEY once with 32 random bytes of standard base64, never regenerates it, never prints it', async () => {
+    const w = world();
+    expect(await main(GEN, w.deps())).toBe(0);
+    const key = String(getVar(w.local('server.env'), 'T2F_BACKUP_KEY'));
+    expect(key).toMatch(/^[A-Za-z0-9+/]{43}=$/);
+    expect(Buffer.from(key, 'base64')).toHaveLength(32);
+    expect(w.sc.out.join('\n')).toContain('server.env T2F_BACKUP_KEY — згенеровано');
+    expectNowhere(w, [key]);
+
+    w.sc.out.length = 0;
+    expect(await main(GEN, w.deps())).toBe(0);
+    expect(getVar(w.local('server.env'), 'T2F_BACKUP_KEY')).toBe(key);
+    expect(w.sc.out.join('\n')).toContain('server.env T2F_BACKUP_KEY — вже було');
+    expectNowhere(w, [key]);
+  });
+});

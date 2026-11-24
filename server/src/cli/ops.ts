@@ -9,6 +9,7 @@
  *   spend-record server --hours <n> --usd-per-hour <r> --reason <text ≤200>
  *                                           години розміру вузла в рядок витрат `server` + рядок журналу (AC-63)
  *   restore-pull [--key <ключ|штамп|latest>] [--manifest-only]
+ *                                           (`--manifest-only`: маніфест + `snapshots` — моменти всіх копій префікса)
  *                                           завантажити копію, перевірити sha256 і id ключа, розшифрувати потоком у
  *                                           `pg_restore` ПОРОЖНЬОЇ цілі (AC-53, AC-55, AC-59). Читає лише `T2F_R2_*`,
  *                                           `T2F_BACKUP_KEY`, `DATABASE_URI`, `T2F_RESTORE_TMP`, `T2F_ENV`.
@@ -30,11 +31,11 @@ import type { ObjectStore } from '../catalog/ports';
 import { monthPeriod } from '../domain/ops/spend';
 import type { Deps } from '../endpoints/types';
 import { PRODUCTION_DENYLIST, envClass, type RawEnv } from '../platform/env';
-import type { BackupOutcome } from '../ops/backup';
 import { parseBackupKey } from '../ops/backupFormat';
 import { OverviewSchema } from '../ops/overviewSchema';
 import type { RestoreRun } from '../ops/ports';
-import { pullManifest, restorePull, type RestorePullDeps, type RestorePullRun, type RestoreRunner, type RestoreTarget } from '../ops/restorePull';
+import { backupsPrefixOf, type BackupOutcome } from '../ops/backup';
+import { manifestKeyOf, pullManifest, restorePull, type RestorePullDeps, type RestorePullRun, type RestoreRunner, type RestoreTarget } from '../ops/restorePull';
 
 const serverDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 
@@ -50,6 +51,8 @@ const TARGET = /^[A-Za-z0-9_.:-]{1,64}$/;
 const BACKUP_REF = /^(latest|\d{8}T\d{6}Z|[A-Za-z0-9_.:/-]{1,512})$/;
 const hasControl = (s: string) => [...s].some((ch) => ch.charCodeAt(0) < 0x20 || ch.charCodeAt(0) === 0x7f);
 /** `pg_restore` arguments; the connection is the child's environment, `-d` names the database only. */
+/** How long `backup-now` waits after a non-ok copy before closing, so the alarm's outbox row is written. */
+export const ALARM_SETTLE_MS = 3_000;
 export const PG_RESTORE_ARGS: readonly string[] = ['--no-owner', '--exit-on-error'];
 
 export type OpsCommand =
@@ -164,6 +167,20 @@ export interface OpsCliDeps {
   onTemp?(dir: string | null): void;
 }
 
+const MANIFEST_STAMP = /(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z\.manifest\.json$/;
+
+/** ISO moments of the manifests under `<prefix>backups/db/`, oldest first (the stamp is the snapshot start). */
+export async function snapshotsOf(deps: RestorePullDeps): Promise<string[]> {
+  if (!deps.store.list) return [];
+  const out: string[] = [];
+  for (const { key } of await deps.store.list(backupsPrefixOf(deps.prefix))) {
+    if (manifestKeyOf(deps.prefix, key) !== key) continue;
+    const m = MANIFEST_STAMP.exec(key);
+    if (m) out.push(`${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:${m[6]}.000Z`);
+  }
+  return out.sort();
+}
+
 async function runRestorePull(command: Extract<OpsCommand, { cmd: 'restore-pull' }>, io: OpsCliIo, deps: OpsCliDeps): Promise<number> {
   const ports = deps.openRestore(command.manifestOnly);
   if (typeof ports === 'string') {
@@ -176,7 +193,10 @@ async function runRestorePull(command: Extract<OpsCommand, { cmd: 'restore-pull'
       io.err(`ops: restore-pull ${found.result}`);
       return found.result === 'bad-manifest' ? 1 : 2;
     }
-    io.out(JSON.stringify({ ok: true, manifestKey: found.manifestKey, manifest: found.manifest }));
+    // Snapshot moments of every copy under the prefix (a manifest exists only after a successful copy): the
+    // operator's `restore:env` computes the loss window from them (AC-57, [А16]) without a second listing.
+    const snapshots = await snapshotsOf(ports.deps);
+    io.out(JSON.stringify({ ok: true, manifestKey: found.manifestKey, manifest: found.manifest, snapshots }));
     return 0;
   }
   const out = await restorePull({ ...ports.run, ...(deps.onTemp ? { onTemp: deps.onTemp } : {}) }, command.ref);
@@ -272,7 +292,11 @@ export async function opsPortsOf(deps: Deps): Promise<OpsCliPorts> {
       const renew = setInterval(() => lease.acquire('ops-backup', backupMod.BACKUP_LEASE_MS).catch(() => undefined), backupMod.BACKUP_LEASE_MS / 3);
       renew.unref?.();
       try {
-        return await backupMod.runBackup(container.backupDepsOf(deps), now, 'manual');
+        const out = await backupMod.runBackup(container.backupDepsOf(deps), now, 'manual');
+        // A failed or unconfigured copy raises a `page` alarm whose outbox insert is fire-and-forget; the CLI exits
+        // right after `close()`, so it gives that insert a bounded moment to land first (I1 note of S11).
+        if (out.result !== 'ok') await new Promise((resolve) => setTimeout(resolve, ALARM_SETTLE_MS));
+        return out;
       } finally {
         clearInterval(renew);
         await lease.release('ops-backup').catch(() => undefined);

@@ -11,6 +11,7 @@ import fs from 'node:fs';
 import { messageOf } from '../common.mjs';
 import { REALTIME_COMPOSE_PATH } from '../config.mjs';
 import { execute, journalFile, readJournal } from './execute.mjs';
+import { afterResize, backupWindowWarning } from './spendRecord.mjs';
 import { classify, composeServices, envTag, label, planSteps, price, SERVER2_ACTIONS, TAG_MANAGED } from './plan.mjs';
 
 /**
@@ -116,7 +117,12 @@ export async function runCapacity(ctx) {
     out(`capacity: це лише план; щоб виконати — --confirm ${env}`);
     return 0;
   }
+  // SPEC-13b: зміна розміру у вікні годинної копії — попередження, не відмова (Design review 9).
+  const warning = backupWindowWarning(action, ctx.now());
+  if (warning) err(warning);
   const code = await execute(ctx, { env, action, steps, bundle, clock, composeText: composeText ?? '' });
+  // SPEC-13b [П-6], AC-63: години нічного розміру — у рядок витрат `server` на вузлі.
+  if (code === 0) await afterResize(ctx, { env, action, steps, sizes, offSeason: envSizes.main.offSeason });
   // O·P18a: після видалення другого вузла — що лишилося в середовищі.
   if (action === 'server2-delete' && code === 0) return remainingInventory(ctx, bundle, env, envSizes, sizes, suspectLine);
   return code;

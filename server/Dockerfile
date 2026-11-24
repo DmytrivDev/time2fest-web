@@ -46,6 +46,28 @@ RUN rm -rf server/test \
 
 FROM base AS runtime
 ARG T2F_COMMIT
+# PostgreSQL 17 client (SPEC-13b AC-47, [П-1]): `pg_dump` of the hourly backup and `pg_restore` of
+# `ops restore-pull`. The client major must equal the node's server major (postgres:17.12-alpine);
+# Debian bookworm ships only 15, so it comes from the PGDG apt repository (apt.postgresql.org,
+# `bookworm-pgdg`), resolved 2026-11-24. Only the major is pinned (`postgresql-client-17`): PGDG keeps
+# one current minor. The signing key is fetched over TLS from postgresql.org into the keyring path the
+# `postgresql-common` setup script uses; curl is removed again and the apt lists are dropped, so the
+# layer holds the client only (~15 MB). The final `grep` fails the build if the client is not 17.
+USER root
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends ca-certificates curl; \
+    install -d -m 0755 /usr/share/postgresql-common/pgdg; \
+    curl -fsSL --proto '=https' --tlsv1.2 -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc \
+      https://www.postgresql.org/media/keys/ACCC4CF8.asc; \
+    echo 'deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt bookworm-pgdg main' \
+      > /etc/apt/sources.list.d/pgdg.list; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends postgresql-client-17; \
+    apt-get purge -y --auto-remove curl; \
+    rm -rf /var/lib/apt/lists/*; \
+    pg_dump --version | grep -q ' 17\.'; \
+    pg_restore --version | grep -q ' 17\.'
 COPY --from=build --chown=node:node /app /app
 ENV NODE_ENV=production \
     T2F_COMMIT=$T2F_COMMIT
