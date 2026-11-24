@@ -3325,6 +3325,38 @@
         "x": 60,
         "y": 78
       }
+    },
+    "country:GW": {
+      "src": "/media/photos/bissau.webp",
+      "alt": {
+        "uk": "Вечір у центрі Бісау: площа Національних героїв на заході сонця, пальми й червоні дахи",
+        "en": "Evening in central Bissau: National Heroes Square at sunset, palm trees and red roofs",
+        "es": "Atardecer en el centro de Bisáu: la plaza de los Héroes Nacionales al ponerse el sol, palmeras y tejados rojos",
+        "fr": "Soir dans le centre de Bissau : la place des Héros nationaux au coucher du soleil, palmiers et toits rouges"
+      },
+      "author": "Joehawkins",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Pra%C3%A7a_dos_Herois_Nacionais_%C3%A0_tarde.jpg",
+      "position": {
+        "x": 60,
+        "y": 55
+      }
+    },
+    "country:IS": {
+      "src": "/media/photos/reykjavik.webp",
+      "alt": {
+        "uk": "Засніжена вулиця Рейк’явіка вночі під ліхтарями, у кінці — вежа Гатльґрімскірк’ї",
+        "en": "A snowy Reykjavík street at night under streetlights, Hallgrímskirkja’s tower at the end",
+        "es": "Una calle nevada de Reikiavik de noche bajo las farolas, con la torre de Hallgrímskirkja al fondo",
+        "fr": "Une rue enneigée de Reykjavik la nuit sous les réverbères, la tour de la Hallgrímskirkja au bout"
+      },
+      "author": "Petr Kraumann",
+      "license": "CC BY 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Snowy_Reykjav%C3%ADk_-_panoramio.jpg",
+      "position": {
+        "x": 58,
+        "y": 50
+      }
     }
   }
 }

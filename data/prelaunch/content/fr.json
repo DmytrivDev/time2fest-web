@@ -5442,5 +5442,61 @@
       "description": "Le Burkina Faso entre en 2027 à 0 h UTC : à Ouagadougou, messes de nuit et « Bonne année ! » à minuit, danse dans les maquis jusqu’à 2 h, rues en guirlandes."
     },
     "kit": "bf"
+  },
+  "GW": {
+    "text": "Ici, l’année change à 0 h UTC, au même instant que sur le méridien de Greenwich : la Guinée-Bissau vit à l’heure GMT toute l’année. C’est l’un des pays les plus divers au monde sur le plan religieux : environ la moitié des habitants sont musulmans, les autres surtout catholiques ou fidèles aux croyances traditionnelles, si bien que les fêtes d’hiver sont partagées. Le 1er janvier est férié : familles et communautés se retrouvent autour d’un repas commun de riz avec le caldo de mancarra à l’arachide ou le sigá à l’huile de palme, et du vin de palme sur la table.\n\nÀ Bissau, la saison de fin d’année commence avec Noël : les catholiques vont à la messe de minuit, la morue cuit sur des braseros au charbon en pleine rue et l’on partage le repas avec voisins et amis ; même les musulmans font la fête. Le grand carnaval de rue de la ville arrive en février.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "Minuit à l’heure GMT",
+        "text": "La Guinée-Bissau ne change jamais d’heure : la nouvelle année y arrive à 0 h UTC, en même temps que sur le méridien de Greenwich."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Une table partagée le 1er janvier",
+        "text": "Le premier jour de l’année est férié : familles et communautés se retrouvent autour d’un repas commun de riz, de sauces et de ragoûts, avec du vin de palme."
+      },
+      {
+        "id": "t3",
+        "iconId": "ladle",
+        "title": "Caldo de mancarra chez soi",
+        "text": "Fais mijoter une sauce à l’arachide avec du poulet et sers-la avec du riz : c’est le caldo de mancarra, plat traditionnel de Guinée-Bissau."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An en Guinée-Bissau : Bissau | Time2Fest",
+      "description": "La Guinée-Bissau accueille 2027 à 0 h UTC, avec Greenwich : table partagée le 1er janvier, caldo de mancarra, vin de palme et messe de minuit à Bissau."
+    },
+    "kit": "gw"
+  },
+  "IS": {
+    "text": "En Islande, les fusées du Nouvel An s’achètent auprès des sauveteurs : du 28 décembre au 6 janvier, les équipes de recherche et de sauvetage d’ICE-SAR vendent les feux d’artifice, et la recette finance leur formation, leur matériel et leurs véhicules. La soirée commence autour de la table familiale ; vers 20 h 30, des feux de joie appelés brennur s’allument dans les quartiers, et à 22 h 30 la plupart du pays rit devant « Áramótaskaupið », une revue satirique de l’année diffusée le soir du réveillon depuis les années 1940. Selon une vieille croyance, les elfes déménagent cette nuit-là, et l’on pose des bougies pour leur montrer le chemin.\n\nReykjavik accueille minuit à 00 h UTC sans grand spectacle officiel : les fusées partent de chaque jardin et de chaque rue, et beaucoup montent sur la colline de Hallgrímskirkja, où le ciel autour de la flèche s’embrase presque sans interruption.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Des fusées pour les sauveteurs",
+        "text": "Les feux d’artifice s’achètent auprès des équipes d’ICE-SAR : l’argent finance les opérations de sauvetage. À minuit, les familles les tirent depuis les jardins et les rues."
+      },
+      {
+        "id": "t2",
+        "iconId": "flame",
+        "title": "Les feux de joie brennur",
+        "text": "Entre 20 h 30 et 21 h, les voisins se retrouvent autour des feux de leur quartier, avec des chants et de courts discours. Si le vent dépasse 10 m/s, ils sont reportés."
+      },
+      {
+        "id": "t3",
+        "iconId": "mask",
+        "title": "Rire de l’année",
+        "text": "Avant minuit, le pays rit devant « Áramótaskaupið », une satire de l’année écoulée. Pose une bougie sur le rebord de la fenêtre : selon la croyance, elle guide les elfes qui déménagent."
+      }
+    ],
+    "meta": {
+      "title": "Islande : le Nouvel An à Reykjavik | Time2Fest",
+      "description": "L’Islande fête 2027 à 00 h UTC : fusées achetées aux sauveteurs au-dessus de Reykjavik, feux de joie dans les quartiers et ciel embrasé à Hallgrímskirkja."
+    },
+    "kit": "is"
   }
 }

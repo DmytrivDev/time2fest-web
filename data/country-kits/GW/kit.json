@@ -1,0 +1,103 @@
+{
+  "code": "GW",
+  "zone": "UTC+0",
+  "zoneId": "utc+0000",
+  "cityId": "bissau",
+  "names": {
+    "uk": {
+      "name": "Гвінея-Бісау",
+      "city": "Бісау",
+      "cityIn": "у Бісау",
+      "countryIn": "у Гвінеї-Бісау",
+      "caps": "ГВІНЕЯ-БІСАУ"
+    },
+    "en": {
+      "name": "Guinea-Bissau",
+      "city": "Bissau",
+      "cityIn": "in Bissau",
+      "countryIn": "in Guinea-Bissau",
+      "caps": "GUINEA-BISSAU"
+    },
+    "es": {
+      "name": "Guinea-Bisáu",
+      "city": "Bisáu",
+      "cityIn": "en Bisáu",
+      "countryIn": "en Guinea-Bisáu",
+      "caps": "GUINEA-BISÁU"
+    },
+    "fr": {
+      "name": "Guinée-Bissau",
+      "city": "Bissau",
+      "cityIn": "à Bissau",
+      "countryIn": "en Guinée-Bissau",
+      "caps": "GUINÉE-BISSAU"
+    }
+  },
+  "picto": "M3 37 H37 M7 37 V17 H15 V37 M25 37 V17 H33 V37 M8 17 V11 H14 V17 M26 17 V11 H32 V17 M7 11 L11 3.5 L15 11 M25 11 L29 3.5 L33 11 M11 3.5 V2 M29 3.5 V2 M10 12.5 V15.5 M12 12.5 V15.5 M28 12.5 V15.5 M30 12.5 V15.5 M15 24 L20 18.5 L25 24 M20 18.5 V14.5 M18.5 16 H21.5 M22.1 27.4 A2.1 2.1 0 1 1 17.9 27.4 A2.1 2.1 0 1 1 22.1 27.4 Z M17.4 37 V33.6 A2.6 2.6 0 0 1 22.6 33.6 V37",
+  "flagColors": [
+    "#CE1126",
+    "#FCD116",
+    "#009E49"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Гвінеї-Бісау"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Guinea-Bissau"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Guinea-Bisáu"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "en Guinée-Bissau"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

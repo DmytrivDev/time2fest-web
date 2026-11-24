@@ -5442,5 +5442,61 @@
       "description": "Burkina Faso recibe 2027 a las 00:00 UTC: en Uagadugú, misas nocturnas y «Bonne année!» a medianoche, baile en los maquis hasta las dos y calles con guirnaldas."
     },
     "kit": "bf"
+  },
+  "GW": {
+    "text": "Aquí el año cambia a las 00:00 UTC, en el mismo instante que en el meridiano cero: Guinea-Bisáu vive con la hora de Greenwich todo el año. Es uno de los países con más diversidad religiosa del mundo: cerca de la mitad de la gente es musulmana y el resto, sobre todo, católica o fiel a creencias tradicionales, así que las fiestas de invierno son de todos. El 1 de enero es festivo: familias y comunidades se reúnen en torno a una comida compartida de arroz con caldo de mancarra de cacahuete o sigá con aceite de palma, y vino de palma en la mesa.\n\nEn Bisáu la temporada de fin de año empieza con la Navidad: los católicos van a la misa de medianoche, el bacalao se cocina en braseros de carbón en plena calle y la comida se comparte con vecinos y amigos; hasta los musulmanes lo celebran. El gran carnaval callejero de la ciudad llega en febrero.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "Medianoche con Greenwich",
+        "text": "Guinea-Bisáu no cambia la hora, así que el año nuevo llega aquí a las 00:00 UTC, a la vez que el meridiano cero."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Mesa compartida el 1 de enero",
+        "text": "El primer día del año es festivo: familias y comunidades se reúnen para comer juntas arroz con salsas y guisos, acompañado de vino de palma."
+      },
+      {
+        "id": "t3",
+        "iconId": "ladle",
+        "title": "Caldo de mancarra en casa",
+        "text": "Cocina una salsa de cacahuete con pollo y sírvela con arroz: así es el caldo de mancarra, un plato tradicional de Guinea-Bisáu."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Guinea-Bisáu: Bisáu | Time2Fest",
+      "description": "Guinea-Bisáu recibe 2027 a las 00:00 UTC, a la par de Greenwich: mesa compartida el 1 de enero, caldo de mancarra, vino de palma y misa del gallo en Bisáu."
+    },
+    "kit": "gw"
+  },
+  "IS": {
+    "text": "En Islandia los cohetes de Año Nuevo se compran a los rescatistas: del 28 de diciembre al 6 de enero los venden los equipos de búsqueda y rescate de ICE-SAR, y lo recaudado paga su formación, su equipo y sus vehículos. La velada empieza en la mesa familiar; hacia las ocho y media arden en los barrios las hogueras llamadas brennur, y a las diez y media casi todo el país se ríe con «Áramótaskaupið», un repaso satírico del año que se emite en Nochevieja desde los años cuarenta. Según una vieja creencia, esa noche los elfos se mudan, y se les dejan velas para que no pierdan el camino.\n\nReikiavik recibe la medianoche a las 00:00 UTC sin un único espectáculo oficial: los cohetes salen de cada jardín y cada calle, y muchos suben la colina hasta Hallgrímskirkja, donde el cielo alrededor de la aguja se ilumina casi sin pausa.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Cohetes de los rescatistas",
+        "text": "Los fuegos artificiales se compran a los equipos de ICE-SAR, así que el dinero va a las misiones de rescate. A medianoche las familias los lanzan desde jardines y calles."
+      },
+      {
+        "id": "t2",
+        "iconId": "flame",
+        "title": "Hogueras brennur",
+        "text": "Entre las 20:30 y las 21:00 los vecinos se reúnen junto a las hogueras de su barrio, con canciones y breves discursos. Si el viento supera los 10 m/s, se aplazan."
+      },
+      {
+        "id": "t3",
+        "iconId": "mask",
+        "title": "Reírse del año",
+        "text": "Antes de medianoche el país se ríe con «Áramótaskaupið», una sátira de lo ocurrido en el año. Pon una vela en la ventana: según la tradición, guía a los elfos que se mudan."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Islandia: Reikiavik | Time2Fest",
+      "description": "Islandia recibe 2027 a las 00:00 UTC: cohetes comprados a los rescatistas sobre Reikiavik, hogueras brennur en los barrios y fuegos en torno a Hallgrímskirkja."
+    },
+    "kit": "is"
   }
 }

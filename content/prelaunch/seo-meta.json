@@ -3240,6 +3240,42 @@
         "title": "Nouvel An au Burkina Faso : Ouagadougou | Time2Fest",
         "description": "Le Burkina Faso entre en 2027 à 0 h UTC : à Ouagadougou, messes de nuit et « Bonne année ! » à minuit, danse dans les maquis jusqu’à 2 h, rues en guirlandes."
       }
+    },
+    "GW": {
+      "uk": {
+        "title": "Гвінея-Бісау зустрічає Новий рік: Бісау | Time2Fest",
+        "description": "Гвінея-Бісау зустрічає 2027 рік о 00:00 UTC, разом із Гринвічем: спільний стіл 1 січня, калду ді манкарра й пальмове вино, а в Бісау — різдвяна меса."
+      },
+      "en": {
+        "title": "New Year in Guinea-Bissau: Bissau | Time2Fest",
+        "description": "Guinea-Bissau greets 2027 at 00:00 UTC, in step with Greenwich: a shared table on 1 January, caldo de mancarra and palm wine, and midnight mass in Bissau."
+      },
+      "es": {
+        "title": "Año Nuevo en Guinea-Bisáu: Bisáu | Time2Fest",
+        "description": "Guinea-Bisáu recibe 2027 a las 00:00 UTC, a la par de Greenwich: mesa compartida el 1 de enero, caldo de mancarra, vino de palma y misa del gallo en Bisáu."
+      },
+      "fr": {
+        "title": "Nouvel An en Guinée-Bissau : Bissau | Time2Fest",
+        "description": "La Guinée-Bissau accueille 2027 à 0 h UTC, avec Greenwich : table partagée le 1er janvier, caldo de mancarra, vin de palme et messe de minuit à Bissau."
+      }
+    },
+    "IS": {
+      "uk": {
+        "title": "Новий рік в Ісландії: Рейк’явік | Time2Fest",
+        "description": "Ісландія зустрічає 2027-й о 00:00 UTC: ракети від рятувальників над Рейк’явіком, вогнища-«бренни» в районах і тисячі вогнів довкола Гатльґрімскірк’ї."
+      },
+      "en": {
+        "title": "New Year in Iceland: Reykjavík | Time2Fest",
+        "description": "Iceland greets 2027 at 00:00 UTC: rockets sold by rescue teams light up Reykjavík, brennur bonfires blaze in every district and fireworks ring Hallgrímskirkja."
+      },
+      "es": {
+        "title": "Año Nuevo en Islandia: Reikiavik | Time2Fest",
+        "description": "Islandia recibe 2027 a las 00:00 UTC: cohetes comprados a los rescatistas sobre Reikiavik, hogueras brennur en los barrios y fuegos en torno a Hallgrímskirkja."
+      },
+      "fr": {
+        "title": "Islande : le Nouvel An à Reykjavik | Time2Fest",
+        "description": "L’Islande fête 2027 à 00 h UTC : fusées achetées aux sauveteurs au-dessus de Reykjavik, feux de joie dans les quartiers et ciel embrasé à Hallgrímskirkja."
+      }
     }
   }
 }

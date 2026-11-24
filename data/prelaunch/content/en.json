@@ -5442,5 +5442,61 @@
       "description": "Burkina Faso meets 2027 at 00:00 UTC: Ouagadougou greets midnight with \"Bonne année!\" in church, dances in the maquis until 2 a.m. and glows with garlands."
     },
     "kit": "bf"
+  },
+  "GW": {
+    "text": "The year turns here at 00:00 UTC, the same moment as on the prime meridian: Guinea-Bissau keeps Greenwich time all year round. It is one of the most religiously diverse countries in the world, with about half the people Muslim and most of the rest Catholic or followers of traditional beliefs, so the winter holidays are shared. 1 January is a public holiday: families and communities sit down to a shared meal of rice with peanut caldo de mancarra or palm-oil sigá, with palm wine on the table.\n\nIn Bissau the end-of-year season starts with Christmas: Catholics go to midnight mass, salt cod is cooked on charcoal stoves right in the street, and food is shared with neighbours and friends; even Muslims join in. The city's big street carnival comes in February.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "Midnight on Greenwich time",
+        "text": "Guinea-Bissau never changes its clocks, so the new year arrives here at 00:00 UTC, together with the prime meridian."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "A shared table on 1 January",
+        "text": "The first day of the year is a holiday: families and communities gather for a shared meal of rice with sauces and stews, washed down with palm wine."
+      },
+      {
+        "id": "t3",
+        "iconId": "ladle",
+        "title": "Caldo de mancarra at home",
+        "text": "Simmer a peanut sauce with chicken and serve it with rice: that is caldo de mancarra, a traditional dish of Guinea-Bissau."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Guinea-Bissau: Bissau | Time2Fest",
+      "description": "Guinea-Bissau greets 2027 at 00:00 UTC, in step with Greenwich: a shared table on 1 January, caldo de mancarra and palm wine, and midnight mass in Bissau."
+    },
+    "kit": "gw"
+  },
+  "IS": {
+    "text": "In Iceland, New Year rockets are bought from rescuers: from 28 December to 6 January fireworks are sold by ICE-SAR search-and-rescue teams, and the money pays for their training, equipment and vehicles. The evening starts around the family dinner table; at about half past eight bonfires known as brennur blaze up in neighbourhoods, and at half past ten most of the country laughs at «Áramótaskaupið», a satirical review of the year that has aired on New Year's Eve since the 1940s. Old belief says the elves move house tonight, so candles are left out to light their way.\n\nReykjavík meets midnight at 00:00 UTC with no single official show: rockets go up from every garden and street, and many people climb the hill to Hallgrímskirkja, where the sky around the spire flashes almost without a break.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Rockets from the rescuers",
+        "text": "Fireworks are bought from ICE-SAR teams, so the money goes to rescue missions. At midnight families launch them straight from gardens and streets."
+      },
+      {
+        "id": "t2",
+        "iconId": "flame",
+        "title": "Brennur bonfires",
+        "text": "Between 20:30 and 21:00 neighbours gather at bonfires in their districts, with songs and short speeches. If the wind tops 10 m/s, the fires are postponed."
+      },
+      {
+        "id": "t3",
+        "iconId": "mask",
+        "title": "A laugh at the year",
+        "text": "Before midnight the country laughs at «Áramótaskaupið», a satire of the year’s events. Put a candle on the windowsill: folk belief says it guides the elves as they move house."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Iceland: Reykjavík | Time2Fest",
+      "description": "Iceland greets 2027 at 00:00 UTC: rockets sold by rescue teams light up Reykjavík, brennur bonfires blaze in every district and fireworks ring Hallgrímskirkja."
+    },
+    "kit": "is"
   }
 }
