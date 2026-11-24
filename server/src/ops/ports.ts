@@ -167,26 +167,44 @@ export interface RestoreRunStore {
   latest(): Promise<RestoreRun | null>;
 }
 
-/** A spend counter row: `<spend row key>:<period>`, e.g. `cloudflare:2026-12` (AC-60 … AC-64). */
+/** A spend counter row of one period (`spend-counters`, unique row + period; AC-60 … AC-64). */
 export interface SpendCounter {
-  key: string;
-  /** Numbers by name (`usd`, `hours`, `classA`, `classB`, …). */
-  values: Readonly<Record<string, number>>;
-  /** Thresholds already alarmed in this period (`50`, `80`), once per cluster (AC-62). */
-  alarmed: readonly number[];
-  /** Epoch ms of the last write. */
+  row: string;
+  /** Month UTC, `YYYY-MM`. */
+  period: string;
+  /** Recorded money besides the formula (server: night-size hours × rate), USD. */
+  amountUsd: number;
+  classA: number;
+  classB: number;
+  /** Size of the backups on R2 in bytes as last estimated. */
+  storageBytes: number;
+  /** Recorded night-size hours (`server`). */
+  hours: number;
+  /** Epoch ms when the level was claimed, once per period across the cluster (AC-62). */
+  alarm50At: number | null;
+  alarm80At: number | null;
   updatedAt: number;
 }
 
+/** Increments of one counter row; every value optional, absent = 0. */
+export interface SpendCounterDelta {
+  amountUsd?: number;
+  classA?: number;
+  classB?: number;
+  hours?: number;
+}
+
 export interface SpendCounterStore {
-  get(key: string): Promise<SpendCounter | null>;
-  /** Adds `delta` to the named values (creating the row), at `at`. */
-  add(key: string, delta: Readonly<Record<string, number>>, at: number): Promise<void>;
+  get(row: string, period: string): Promise<SpendCounter | null>;
+  /** Adds `delta` (creating the row) and, when given, sets `storageBytes` (an estimate, not a sum). */
+  upsert(row: string, period: string, delta: SpendCounterDelta, at: number, storageBytes?: number): Promise<void>;
+  /** Records night-size hours: `hours += h`, `amountUsd += usd` in one statement (AC-63). */
+  addServerHours(period: string, hours: number, usd: number, at: number): Promise<void>;
   /**
-   * Conditional claim of one threshold of one period (pattern `claimAlarm`, `adapters/pgAiSpend.ts`):
-   * true for exactly one caller across the cluster.
+   * Conditional claim of one level (pattern `claimAlarm`, `adapters/pgAiSpend.ts`): ONE update on
+   * `alarm<level>At IS NULL`, true for exactly one caller across the cluster.
    */
-  claimThreshold(key: string, threshold: number): Promise<boolean>;
+  claimLevel(row: string, period: string, level: 50 | 80, at: number): Promise<boolean>;
 }
 
 /** `pg_dump` of the environment's database ([П-8]). */

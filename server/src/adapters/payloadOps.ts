@@ -17,7 +17,7 @@ import type { Payload, PayloadRequest } from 'payload';
 import type { AlarmDetails, LogAlarmRecord, LogAlarmStore } from '../alarms/ports';
 import type { Actor, Journal } from '../audit/ports';
 import { isDependencyFailure } from '../endpoints/pipeline';
-import type { BackupRun, BackupRunStore, BackupStage, OpsJournal, Outbox, OutboxKind, OutboxRow, OpsLease, OpsLeaseName, WallClock } from '../ops/ports';
+import type { BackupRun, BackupRunStore, BackupStage, OpsJournal, SpendCounter, SpendCounterDelta, SpendCounterStore, Outbox, OutboxKind, OutboxRow, OpsLease, OpsLeaseName, WallClock } from '../ops/ports';
 import { DependencyUnavailable } from '../ports';
 import { findKind } from '../registries/ops';
 import { createPgScheduler } from './pgScheduler';
@@ -455,6 +455,128 @@ export function createPayloadBackupFacts(payload: () => Promise<Payload>): Backu
         out[slug] = num(rows[0]?.n);
       }
       return out;
+    },
+  };
+}
+
+// ---- Spend counters (SPEC-13b W29) ----
+
+const SPEND_COLUMNS = sql.raw('"row", "period", "amount_micros", "class_a", "class_b", "storage_bytes", "alarm50_at", "alarm80_at", "meta", "updated_at"');
+const micros = (usd: number) => Math.round(usd * 1_000_000);
+const LEVEL_COLUMN = { 50: sql.raw('"alarm50_at"'), 80: sql.raw('"alarm80_at"') } as const;
+
+function toSpendCounter(r: Record<string, unknown>): SpendCounter {
+  const meta = typeof r.meta === 'object' && r.meta !== null ? (r.meta as Record<string, unknown>) : {};
+  return {
+    row: String(r.row),
+    period: String(r.period),
+    amountUsd: num(r.amount_micros) / 1_000_000,
+    classA: num(r.class_a),
+    classB: num(r.class_b),
+    storageBytes: num(r.storage_bytes),
+    hours: num(meta.hours),
+    alarm50At: tsMs(r.alarm50_at),
+    alarm80At: tsMs(r.alarm80_at),
+    updatedAt: tsMs(r.updated_at) ?? 0,
+  };
+}
+
+/**
+ * The `spend-counters` store over Payload's pool (W29). Every write is one statement: an upsert adds to the
+ * counters, and a level is claimed by a conditional update on `alarm<level>_at IS NULL` (pattern `pgAiSpend.ts`),
+ * so two instances never both win one level of one period (AC-62).
+ */
+export function createPayloadSpendCounters(payload: () => Promise<Payload>): SpendCounterStore {
+  const exec = (q: SqlQuery) => guard(async () => ((await payload()).db as unknown as DrizzleAdapter).drizzle.execute(q));
+  return {
+    async get(row, period) {
+      const { rows } = await exec(sql`SELECT ${SPEND_COLUMNS} FROM "spend_counters" WHERE "row" = ${row} AND "period" = ${period}`);
+      return rows[0] ? toSpendCounter(rows[0]) : null;
+    },
+    async upsert(row, period, delta: SpendCounterDelta, at, storageBytes) {
+      const st = storageBytes ?? null;
+      await exec(sql`
+        INSERT INTO "spend_counters" ("row", "period", "amount_micros", "class_a", "class_b", "storage_bytes", "meta", "updated_at", "created_at")
+        VALUES (${row}, ${period}, ${micros(delta.amountUsd ?? 0)}, ${Math.round(delta.classA ?? 0)}, ${Math.round(delta.classB ?? 0)},
+          ${st ?? 0}, ${JSON.stringify({ hours: delta.hours ?? 0 })}::jsonb, ${iso(at)}::timestamptz, now())
+        ON CONFLICT ("row", "period") DO UPDATE SET
+          "amount_micros" = "spend_counters"."amount_micros" + EXCLUDED."amount_micros",
+          "class_a" = "spend_counters"."class_a" + EXCLUDED."class_a",
+          "class_b" = "spend_counters"."class_b" + EXCLUDED."class_b",
+          "storage_bytes" = COALESCE(${st}::numeric, "spend_counters"."storage_bytes"),
+          "meta" = jsonb_set(COALESCE("spend_counters"."meta", '{}'::jsonb), '{hours}',
+            to_jsonb(COALESCE(("spend_counters"."meta"->>'hours')::numeric, 0) + ${delta.hours ?? 0}::numeric)),
+          "updated_at" = EXCLUDED."updated_at"`);
+    },
+    async addServerHours(period, hours, usd, at) {
+      await this.upsert('server', period, { hours, amountUsd: usd }, at);
+    },
+    async claimLevel(row, period, level, at) {
+      const col = LEVEL_COLUMN[level];
+      // The row may not exist yet (a counter that never moved): create it empty, then claim.
+      await exec(sql`
+        INSERT INTO "spend_counters" ("row", "period", "amount_micros", "updated_at", "created_at")
+        VALUES (${row}, ${period}, 0, ${iso(at)}::timestamptz, now()) ON CONFLICT ("row", "period") DO NOTHING`);
+      const { rows } = await exec(sql`
+        UPDATE "spend_counters" SET ${col} = ${iso(at)}::timestamptz, "updated_at" = ${iso(at)}::timestamptz
+        WHERE "row" = ${row} AND "period" = ${period} AND ${col} IS NULL
+        RETURNING "id"`);
+      return rows.length === 1;
+    },
+  };
+}
+
+/** The parameters of the spend rows from the `ops-settings` global (AC-66), with the registry defaults. */
+export interface OpsSpendSettings {
+  serverCeilingUsd: number;
+  cloudflareCeilingUsd: number;
+  mailCeilingUsd: number;
+  priceStoragePerGbUsd: number;
+  priceClassAPerMillionUsd: number;
+  priceClassBPerMillionUsd: number;
+  freeClassA: number;
+  freeClassB: number;
+  freeStorageGb: number;
+}
+
+export const DEFAULT_OPS_SPEND_SETTINGS: OpsSpendSettings = {
+  serverCeilingUsd: 12,
+  cloudflareCeilingUsd: 10,
+  mailCeilingUsd: 10,
+  priceStoragePerGbUsd: 0.015,
+  priceClassAPerMillionUsd: 4.5,
+  priceClassBPerMillionUsd: 0.36,
+  freeClassA: 1_000_000,
+  freeClassB: 10_000_000,
+  freeStorageGb: 10,
+};
+
+export function createPayloadOpsSpendSettings(payload: () => Promise<Payload>): { read(): Promise<OpsSpendSettings> } {
+  return {
+    async read() {
+      const doc = (await guard(async () =>
+        (await payload()).findGlobal({ slug: 'ops-settings', depth: 0, overrideAccess: true, context: CONTEXT }),
+      )) as unknown as Record<string, unknown>;
+      const out: Record<string, number> = { ...DEFAULT_OPS_SPEND_SETTINGS };
+      for (const k of Object.keys(DEFAULT_OPS_SPEND_SETTINGS)) {
+        const v = doc[k];
+        if (typeof v === 'number' && Number.isFinite(v)) out[k] = v;
+      }
+      return out as unknown as OpsSpendSettings;
+    },
+  };
+}
+
+/** Size of the successful backups on record, bytes: the estimate behind `storageGb` of the Cloudflare row (NFR-6). */
+export function createPayloadBackupStorage(payload: () => Promise<Payload>): { bytes(): Promise<number> } {
+  return {
+    async bytes() {
+      const { rows } = await guard(async () =>
+        ((await payload()).db as unknown as DrizzleAdapter).drizzle.execute(
+          sql`SELECT COALESCE(SUM("size"), 0)::text AS "total" FROM "backup_runs" WHERE "result" = 'ok'`,
+        ),
+      );
+      return num(rows[0]?.total);
     },
   };
 }

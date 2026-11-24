@@ -3,7 +3,7 @@
  * lease, on the wall clock (never the SPEC-07 server clock, AC-22). Jobs of a tick, in order: the heartbeat and
  * the digest planners (`ops-heartbeat`, W17), the hourly `log-alarms` prune (AC-12), then the Telegram sender
  * (`ops-telegram`) so a row planned in this tick goes out in it. The backup of the slot (`ops-backup`, AC-40) and the
- * stale check (AC-45, every 10 min) run before the sender; spend joins later (S9). A copy takes minutes, so the
+ * stale check (AC-45, every 10 min) run before the sender, then the spend counters (`ops-spend`, every 60 s, S9). A copy takes minutes, so the
  * ticker does not wait for it (`wait: false`): it runs beside the next ticks, one at a time per process.
  * Started only by `startProcessBackground`; the `ops-tick` test door runs `tick` with a substitute `now`.
  */
@@ -16,6 +16,7 @@ import type { Alarm, Logger } from '../ports';
 import { startTicker, type Ticker } from '../unattended/ticker';
 import type { BackupJob, BackupJobOutcome } from './backup';
 import { createDigestJob, type SpendOver50 } from './digest';
+import { SPEND_EVERY_MS, type SpendJob, type SpendJobOutcome } from './spend';
 import { createHeartbeatJob, type OpsReads, type PlanJob, type PlanOutcome } from './heartbeat';
 import type { OpsJournal, OpsLease, Outbox, WallClock } from './ports';
 
@@ -39,7 +40,7 @@ export interface OpsWiring {
 }
 
 /** Jobs of one tick, in run order. */
-export const OPS_JOBS = ['heartbeat', 'digest', 'log-prune', 'backup', 'backup-stale', 'sender'] as const;
+export const OPS_JOBS = ['heartbeat', 'digest', 'log-prune', 'backup', 'backup-stale', 'spend', 'sender'] as const;
 export type OpsJobName = (typeof OPS_JOBS)[number];
 
 export type OpsJobOutcome =
@@ -47,6 +48,7 @@ export type OpsJobOutcome =
   | (SenderTickResult & { result: 'ran' })
   | { result: 'pruned'; removed: number }
   | BackupJobOutcome
+  | SpendJobOutcome
   | { result: 'started' }
   | { result: 'off' | 'idle' }
   | { result: 'failed'; code: string };
@@ -79,6 +81,8 @@ export interface OpsRunnerDeps {
   sources: OpsSources;
   /** The backup job (S8); `null` / absent — no backups in this process. */
   backup?: BackupJob | null;
+  /** The spend counters job (S9); `null` / absent — no spend evaluation in this process. */
+  spend?: SpendJob | null;
 }
 
 function codeOf(err: unknown): string {
@@ -87,7 +91,7 @@ function codeOf(err: unknown): string {
 }
 
 /** The jobs of one process; no timer (the ticker, the door or a test drives `tick`). */
-export function createOpsRunner({ ops, alarm, log, sources, backup = null }: OpsRunnerDeps): OpsRunner {
+export function createOpsRunner({ ops, alarm, log, sources, backup = null, spend = null }: OpsRunnerDeps): OpsRunner {
   const sink = ops.telegram.sink;
   const chatId = ops.telegram.chatId ?? '';
   const sender: Sender | null = sink ? createSender({ lease: ops.lease, outbox: ops.outbox, sink, chatId, cls: ops.cls, alarm }) : null;
@@ -105,6 +109,7 @@ export function createOpsRunner({ ops, alarm, log, sources, backup = null }: Ops
   const heartbeat: PlanJob | null = sink ? createHeartbeatJob(planDeps) : null;
   const digest: PlanJob | null = sink ? createDigestJob({ ...planDeps, logAlarms: ops.logAlarms, spendOver50: sources.spendOver50 }) : null;
   let lastPruneAt: number | undefined;
+  let lastSpendAt: number | undefined;
 
   const jobs: Record<OpsJobName, (now: number, wait: boolean) => Promise<OpsJobOutcome>> = {
     heartbeat: async (now) => (heartbeat ? heartbeat.run(now) : { result: 'off' }),
@@ -123,6 +128,12 @@ export function createOpsRunner({ ops, alarm, log, sources, backup = null }: Ops
       return { result: 'started' };
     },
     'backup-stale': async (now) => (backup ? backup.staleCheck(now) : { result: 'off' }),
+    spend: async (now) => {
+      if (!spend) return { result: 'off' };
+      if (lastSpendAt !== undefined && Math.abs(now - lastSpendAt) < SPEND_EVERY_MS) return { result: 'idle' };
+      lastSpendAt = now;
+      return spend.run(now);
+    },
     sender: async (now) => {
       if (!sender) return { result: 'off' };
       const r = await sender.tick(now);
@@ -151,6 +162,7 @@ export function createOpsRunner({ ops, alarm, log, sources, backup = null }: Ops
       await sender?.release().catch(() => {});
       await ops.lease.release('ops-heartbeat').catch(() => {});
       await backup?.release();
+      await spend?.release();
     },
   };
 }

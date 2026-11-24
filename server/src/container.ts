@@ -38,7 +38,7 @@ import { ANTHROPIC_MODERATION_MAX_TOKENS, ANTHROPIC_TRANSLATION_MAX_TOKENS, crea
 import { createDeepseekProvider } from './adapters/aiDeepseek';
 import { createPayloadModerationSettings } from './adapters/payloadModerationSettings';
 import { createPgAiSpend } from './adapters/pgAiSpend';
-import { aiPricesFrom } from './domain/moderation/spend';
+import { aiPricesFrom, MICROS_PER_USD } from './domain/moderation/spend';
 import { createProviderLayer, perProcessRpm } from './moderation/providers';
 import { createSpendCounter, type SpendCounter } from './moderation/spend';
 import { createTranslationService } from './moderation/translate';
@@ -80,6 +80,9 @@ import { createDeliveringAlarm } from './alarms/delivery';
 import {
   createPayloadBackupFacts,
   createPayloadBackupRuns,
+  createPayloadBackupStorage,
+  createPayloadOpsSpendSettings,
+  createPayloadSpendCounters,
   createPayloadLogAlarms,
   createPayloadOpsJournal,
   createPayloadOutbox,
@@ -90,6 +93,9 @@ import { createBackupJob, type BackupDeps } from './ops/backup';
 import { keyIdOf, parseBackupKey } from './ops/backupFormat';
 import { selectTelegramSink } from './adapters/telegram';
 import { createR2Meter, r2PrefixOf } from './ops/meter';
+import { createSpendJob, type SpendJob } from './ops/spend';
+import { counterOf, quotaDay } from './domain/live/quota';
+import { periodsAt } from './domain/moderation/spend';
 import { createOpsRunner, startOpsTicker, type OpsRunner, type OpsRunnerDeps, type OpsWiring } from './ops/runner';
 import type { Alarm, LockState, Logger, SeedStore } from './ports';
 import { envRegistry } from './registries/env';
@@ -255,18 +261,51 @@ export function backupDepsOf(deps: Deps): BackupDeps {
 }
 
 /**
+ * The spend counters job of this process (SPEC-13b S9): `ai` and `youtube` read the SPEC-09 / SPEC-12 sources, `server` and
+ * `cloudflare` the `spend-counters` store and `ops-settings`. The runner ticks it; the monitoring overview and the `ops`
+ * commands (`recordServerHours`) use the same instance shape.
+ */
+export function spendJobOf(deps: Deps, ops: OpsWiring, payload: () => Promise<Payload>): SpendJob {
+  return createSpendJob({
+    counters: createPayloadSpendCounters(payload),
+    settings: createPayloadOpsSpendSettings(payload),
+    lease: ops.lease,
+    alarm: deps.alarm,
+    ...(deps.r2Meter ? { meter: deps.r2Meter } : {}),
+    ai: async (now) => {
+      const m = deps.moderation;
+      if (!m) return null;
+      const p = periodsAt(now);
+      const keys = p.night ? [p.night, p.month] : [p.month];
+      const [totals, settings] = await Promise.all([createPgAiSpend(payload).read(keys), m.settings.read()]);
+      // The bucket nearest to its ceiling (SPEC-09 judges night and month separately).
+      const rows = keys.map((k) => ({ usd: (totals.get(k) ?? 0) / MICROS_PER_USD, ceilingUsd: k.startsWith('night:') ? settings.nightCeilingUsd : settings.monthCeilingUsd }));
+      return rows.reduce((a, b) => (b.usd / (b.ceilingUsd || 1) > a.usd / (a.ceilingUsd || 1) ? b : a));
+    },
+    youtube: async (now) => {
+      const live = deps.live;
+      if (!live) return null;
+      const state = await live.quota.read(quotaDay(now, live.cfg.dayTimeZone));
+      return { used: counterOf(state, 'queries', now, live.cfg).used, limit: live.cfg.buckets.queries.perDay };
+    },
+    backupStorageBytes: () => createPayloadBackupStorage(payload).bytes(),
+  });
+}
+
+/**
  * What the ops runner reads beyond the ops stores (SPEC-13b W18): catalog zones for the celebration window
- * (AC-18, AC-19), open `page` alarms, the last successful backup (`backup-runs`, S8), spend over 50 % (`[]` until
- * W29) and the journal of skipped slots (AC-21); the backup job (S8). All lazy: nothing is read while building deps.
+ * (AC-18, AC-19), open `page` alarms, the last successful backup (`backup-runs`, S8), spend over 50 % (S9) and the journal of skipped slots (AC-21); the backup job (S8). All lazy: nothing is read while building deps.
  */
 function opsRunnerDepsOf(deps: Deps, ops: OpsWiring, payload: () => Promise<Payload>): OpsRunnerDeps {
   const str = (v: unknown): string => (typeof v === 'string' ? v : v === null || v === undefined ? '' : String(v));
   const backupDeps = backupDepsOf(deps);
+  const spend = spendJobOf(deps, ops, payload);
   return {
     ops,
     alarm: deps.alarm,
     log: deps.log,
     backup: createBackupJob({ ...backupDeps, lease: ops.lease }),
+    spend,
     sources: {
       async zones() {
         const stored = await catalogStoreOf(deps).read();
@@ -275,7 +314,7 @@ function opsRunnerDepsOf(deps: Deps, ops: OpsWiring, payload: () => Promise<Payl
       },
       openPageCount: async () => (await alarmStoreOf(deps).listOpenPage()).length,
       lastBackupAt: async () => (await backupDeps.runs.latest()).lastOk?.snapshotAt ?? null,
-      spendOver50: async () => [],
+      spendOver50: (now) => spend.over50(now),
       journal: createPayloadOpsJournal({ payload, journal: createPayloadJournal(isRevertible) }),
     },
   };
