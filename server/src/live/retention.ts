@@ -8,6 +8,7 @@
  * refreshed (refused, failed) loses every YouTube field and `ytFetchedAt`, so the public chain drops it (AC-74) until
  * a check succeeds. Nothing here writes a journal row: the only rows of the wave carry our own fields.
  */
+import { retentionPlan, type RetentionCandidate, type RetentionPlan } from '../domain/live/candidates';
 import type { LiveConfig } from '../domain/live/config';
 import { nextOffWindowCheckAt } from '../domain/live/schedule';
 import type { YoutubeVideoState } from '../domain/live/status';
@@ -66,6 +67,56 @@ export async function runRetention(
       run.checks.push(clearedCheck(s, now, cfg));
       run.cleared += 1;
     }
+  }
+  return run;
+}
+
+// ---- candidates (SPEC-21a AC-46) ----
+
+/**
+ * The candidate retention plan of one pass (AC-46), run by the sources watch on the same 6 h grid: live-queue
+ * candidates are refreshed a margin before `candidateRefreshMs` (as the sources above), so no YouTube field of a
+ * candidate outlives it between passes; decided ones lose their YouTube fields; unchanged decided ones are archived.
+ */
+export function candidateRetentionPlan(candidates: readonly RetentionCandidate[], now: number, cfg: LiveConfig): RetentionPlan {
+  const margin = Math.min(DAY_MS, Math.floor(cfg.candidateRefreshMs / 2));
+  return retentionPlan(candidates, now, { ...cfg, candidateRefreshMs: cfg.candidateRefreshMs - margin });
+}
+
+/** The YouTube fields of a candidate, cleared (our fields — videoId, channelId, origin, state, reason, decision — stay). */
+export const CLEARED_CANDIDATE_FIELDS = Object.freeze({
+  liveBroadcastContent: null,
+  scheduledStartTime: null,
+  embeddable: null,
+  privacyStatus: null,
+  ytFetchedAt: null,
+});
+
+export interface CandidateRetentionRun {
+  /** Refreshed with an answer: the video as YouTube returned it now. */
+  refreshed: Map<string, YoutubeVideoState>;
+  /** Fields cleared: decided candidates, and live-queue ones that could not be refreshed or are gone. */
+  strip: string[];
+  archive: string[];
+}
+
+/**
+ * Runs the plan's refresh through `refresh` (one counted `videos.list` per batch, class `candidates`); a live-queue
+ * candidate not answered (refused, failed, gone) loses its YouTube fields so they never outlive the limit.
+ */
+export async function runCandidateRetention(
+  candidates: readonly RetentionCandidate[],
+  now: number,
+  cfg: LiveConfig,
+  refresh: (videoIds: readonly string[]) => Promise<Refreshed>,
+): Promise<CandidateRetentionRun> {
+  const plan = candidateRetentionPlan(candidates, now, cfg);
+  const answers = plan.refresh.length ? await refresh(plan.refresh) : new Map<string, YoutubeVideoState | undefined>();
+  const run: CandidateRetentionRun = { refreshed: new Map(), strip: [...plan.strip], archive: [...plan.archive] };
+  for (const id of plan.refresh) {
+    const item = answers.get(id);
+    if (item) run.refreshed.set(id, item);
+    else run.strip.push(id);
   }
   return run;
 }

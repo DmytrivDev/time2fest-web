@@ -217,6 +217,14 @@ export const opsRegistry: readonly OpsDomainRow[] = [
         action: CHECK_LOG,
         detailKeys: ['pgCode'],
       },
+      {
+        source: 'live',
+        code: 'watch_tick_failed',
+        level: 'log',
+        meaning: 'Такт стеження за джерелами трансляцій (плейлисти, пошук, зберігання кандидатів) впав.',
+        action: CHECK_LOG,
+        detailKeys: ['pgCode'],
+      },
     ],
     metrics: [
       { key: 'live.quotaPercent', title: 'Квота YouTube, %' },

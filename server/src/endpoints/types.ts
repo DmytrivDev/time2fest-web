@@ -22,7 +22,7 @@ import type { TranslationService } from '../moderation/translate';
 import type { VerdictService } from '../moderation/verdict';
 import type { LiveConfig } from '../domain/live/config';
 import type { CallerContext } from '../domain/live/quota';
-import type { LiveEventSource, LiveLease, LiveStore, QuotaStore, SearchSource, VideoStatusSource } from '../live/ports';
+import type { ChannelSource, LiveEventSource, LiveLease, LiveStore, PlaylistSource, QuotaStore, SearchSource, VideoStatusSource } from '../live/ports';
 import type { ClientContext } from '../platform/edge';
 import type { EnvClass } from '../platform/env';
 import type { Alarm, Clock, FastStore, IdempotencyStore, LockState, Logger } from '../ports';
@@ -112,7 +112,11 @@ export interface LiveWiring {
   events: LiveEventSource;
   cfg: LiveConfig;
   caller: CallerContext;
-  statuses?: VideoStatusSource & SearchSource;
+  /**
+   * The YouTube source (fake only in this wave): statuses for the poller; channels, playlists and search for the
+   * sources watch (SPEC-21a [П-4]). Absent = neither the poller nor the watch runs.
+   */
+  statuses?: VideoStatusSource & SearchSource & ChannelSource & PlaylistSource;
   /** The viewers aggregator and the viewer-token deps (SPEC-12 S9); set by `createDeps` once realtime is wired. */
   viewers?: { aggregator: ViewersAggregator; token: ViewerTokenDeps };
 }

@@ -96,13 +96,13 @@ const byOf = (actor: Actor) => `${actor.kind}:${actor.id}`;
 export type CountedResult<T> = { ok: true; value: T } | { ok: false; refusal: QuotaRefusal | VideoStatusError | 'not-wired' };
 
 /**
- * One YouTube call of a ceiled class: allowed by the SPEC-12 rule, charged to `queries` and to the class counter
- * before the request (a failed call counts too), `live/quota-80` on the first crossing, `quotaExceeded` stops the
- * `queries` bucket until the quota day ends.
+ * One YouTube call of a ceiled class or of `search`: allowed by the SPEC-12 rule, charged to its bucket (`queries`, or
+ * `search` for a search) and to the class counter before the request (a failed call counts too), `live/quota-80` on
+ * the first crossing, `quotaExceeded` stops that bucket until the quota day ends.
  */
 export async function countedCall<T>(
   deps: Pick<SourcesDeps, 'quota' | 'alarm' | 'clock' | 'cfg' | 'caller'>,
-  cls: CeiledClass,
+  cls: CeiledClass | 'search',
   call: () => Promise<T | { error: VideoStatusError }>,
 ): Promise<CountedResult<T>> {
   const { cfg } = deps;
@@ -110,10 +110,11 @@ export async function countedCall<T>(
   const day = quotaDay(now, cfg.dayTimeZone);
   const decision = allow(await deps.quota.read(day), cls, now, cfg, deps.caller, 1);
   if (!decision.ok) return { ok: false, refusal: decision.reason };
-  const used = await deps.quota.charge(day, 'queries', decision.units);
-  await deps.quota.charge(day, cls, decision.units);
-  if (used >= cfg.alarmRatio * cfg.buckets.queries.perDay && (await deps.quota.mark80(day, 'queries', now))) {
-    deps.alarm.raise({ level: 'page', source: ALARM_SOURCE, code: 'live/quota-80', details: { bucket: 'queries' } });
+  const bucket = decision.bucket;
+  const used = await deps.quota.charge(day, bucket, decision.units);
+  if (cls !== 'search') await deps.quota.charge(day, cls, decision.units);
+  if (used >= cfg.alarmRatio * cfg.buckets[bucket].perDay && (await deps.quota.mark80(day, bucket, now))) {
+    deps.alarm.raise({ level: 'page', source: ALARM_SOURCE, code: 'live/quota-80', details: { bucket } });
   }
   let result: T | { error: VideoStatusError };
   try {
@@ -123,8 +124,8 @@ export async function countedCall<T>(
   }
   if (result && typeof result === 'object' && 'error' in result) {
     const error = (result as { error: VideoStatusError }).error;
-    if (error === 'quota-exceeded' && (await deps.quota.markExceeded(day, 'queries', nextDayBoundary(now, cfg.dayTimeZone)))) {
-      deps.alarm.raise({ level: 'log', source: ALARM_SOURCE, code: 'live/quota-exceeded', details: { bucket: 'queries' } });
+    if (error === 'quota-exceeded' && (await deps.quota.markExceeded(day, bucket, nextDayBoundary(now, cfg.dayTimeZone)))) {
+      deps.alarm.raise({ level: 'log', source: ALARM_SOURCE, code: 'live/quota-exceeded', details: { bucket } });
     }
     return { ok: false, refusal: error };
   }
@@ -329,7 +330,7 @@ const channelView = (c: Pick<StoredStreamChannel, 'channelId' | 'name' | 'kind' 
   state: c.state,
 });
 
-async function journalChannel(deps: SourcesDeps, tx: Tx, actor: Actor, before: StoredStreamChannel | null, after: StoredStreamChannel) {
+export async function journalChannel(deps: SourcesDeps, tx: Tx, actor: Actor, before: StoredStreamChannel | null, after: StoredStreamChannel) {
   await deps.journal.append(tx, {
     actor,
     action: STREAMS_CHANNEL_ACTION,
