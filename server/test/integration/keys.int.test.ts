@@ -11,7 +11,7 @@ import { NextRequest } from 'next/server';
 import type { Payload } from 'payload';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { IDENTITY_HEADER } from '../../src/adapters/identityMarker';
-import { pgEnvOf } from '../../src/adapters/pgDump';
+import { parsePgDumpVersion, pgEnvOf } from '../../src/adapters/pgDump';
 import { getTestSigner } from '../../src/adapters/testSigner';
 import { payloadOf } from '../../src/container';
 import { proxy } from '../../src/proxy';
@@ -56,17 +56,36 @@ async function capture(payload: Payload, fn: () => Promise<void>): Promise<strin
 
 const COMPOSE_FILE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../docker-compose.yml');
 
-/** `pg_dump --data-only` of `admins` and `audit_log` (the stack's container), as text. Never printed. */
+const DUMP_ARGS = ['--data-only', '-t', 'admins', '-t', 'audit_log'];
+const REQUIRED_MAJOR = 17;
+
+/** Major version of a local `pg_dump`, NaN when there is none (as in `test/support/pgDumpRunner.ts`). */
+function localPgDumpMajor(): number {
+  try {
+    return parsePgDumpVersion(execFileSync('pg_dump', ['--version'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }));
+  } catch {
+    return Number.NaN;
+  }
+}
+
+/**
+ * `pg_dump --data-only` of `admins` and `audit_log`, as text. Never printed. The local `pg_dump` 17 when there is
+ * one (CI installs it; Postgres there is a service container, not the compose stack), else the stack's container.
+ */
 function dumpKeyTables(): string {
   const pg = pgEnvOf(String(process.env.DATABASE_URI));
+  const opts = { encoding: 'utf8' as const, stdio: ['ignore', 'pipe', 'pipe'] as ['ignore', 'pipe', 'pipe'], maxBuffer: 64 * 1024 * 1024 };
+  if (localPgDumpMajor() === REQUIRED_MAJOR) {
+    return execFileSync('pg_dump', DUMP_ARGS, { ...opts, env: { ...process.env, ...pg } });
+  }
   return execFileSync(
     'docker',
     [
       'compose', '-p', 't2f', '-f', COMPOSE_FILE, 'exec', '-T',
       '-e', 'PGPASSWORD', '-e', 'PGUSER', '-e', 'PGDATABASE', '-e', 'PGHOST=127.0.0.1', '-e', 'PGPORT=5432',
-      'postgres', 'pg_dump', '--data-only', '-t', 'admins', '-t', 'audit_log',
+      'postgres', 'pg_dump', ...DUMP_ARGS,
     ],
-    { env: { ...process.env, ...pg, PGHOST: '127.0.0.1', PGPORT: '5432' }, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], maxBuffer: 64 * 1024 * 1024 },
+    { ...opts, env: { ...process.env, ...pg, PGHOST: '127.0.0.1', PGPORT: '5432' } },
   );
 }
 
