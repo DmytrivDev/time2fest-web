@@ -29,6 +29,7 @@ export const adminSlotRegistry: readonly AdminSlotRow[] = [
   { key: '20-unattended', order: 20, label: 'Режим без нагляду', load: () => import('../admin/UnattendedSlice').then((m) => m.UnattendedSlice) },
   { key: '30-moderation', order: 30, label: 'Модерація й AI', load: () => import('../admin/ModerationSlice').then((m) => m.ModerationSlice) },
   { key: '40-site', order: 40, label: 'Стан сайту', load: () => import('../admin/SiteStateSlice').then((m) => m.SiteStateSlice) },
+  { key: '50-ops', order: 50, label: 'Моніторинг', load: () => import('../admin/OpsSlice').then((m) => m.OpsSlice) },
   { key: '90-test', order: 90, label: 'Тестовий зріз', load: () => import('../admin/TestSlice').then((m) => m.TestSlice), testOnly: true },
 ];
 
