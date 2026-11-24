@@ -2,7 +2,7 @@
 // Розбір аргументів підкоманд: перелік дозволеного (allow-list) і перевірка кожного значення до будь-якої дії (AC-10).
 // Відмова — `{ code: 2, message }` з назвою прапорця; значення з керівними символами назад не виводиться.
 import { isIPv4 } from 'node:net';
-import { BOOTSTRAP_ENVS, ENVS } from './config.mjs';
+import { BOOTSTRAP_ENVS, ENVS, OPS_TEST_ENV, opsTestMode } from './config.mjs';
 import { isHostName } from './common.mjs';
 
 const ALL_ENVS = Object.keys(ENVS);
@@ -184,7 +184,10 @@ export const SUBCOMMAND_SPECS = {
   // `restore` — копія середовища-джерела в чистий локальний стек. production відмовляє `runRestore` до будь-якого
   // виклику; `--host` — вузол джерела для `ops restore-record` (без нього — `--no-record` або команда для ручного запису).
   restore: {
-    envs: ALL_ENVS,
+    // `test-local` — лише в тестовому запуску ops (`T2F_OPS_TEST=1`, W46); перелік читається під час розбору.
+    get envs() {
+      return opsTestMode() ? [...ALL_ENVS, OPS_TEST_ENV] : ALL_ENVS;
+    },
     values: { '--from': V.backupRef, '--target': V.restoreTarget, '--host': V.host, '--image': V.commit },
     bools: ['--keep', '--no-record'],
     required: ['--env', '--from', '--target'],

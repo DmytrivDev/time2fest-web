@@ -14,6 +14,7 @@ import { parseEnv } from 'node:util';
 import { main } from '../../ops.mjs';
 import { REPO_ROOT, SHA40, localTransport, run, start } from '../../lib/exec.mjs';
 import { createGit } from '../../lib/git.mjs';
+import { createImage } from '../../lib/image.mjs';
 import { parseJournal } from '../../lib/journal.mjs';
 import { SYSTEM_CLOCK } from '../../lib/node.mjs';
 import { getVar, setVar } from '../../lib/secrets/envFile.mjs';
@@ -352,5 +353,244 @@ export function createSuite(name) {
     cleanup,
     /** Значення змінної з файлу вузла (для перевірок; не друкувати). @param {string} file @param {string} key */
     nodeVar: (file, key) => parseEnv(fs.readFileSync(nodeFile(file), 'utf8'))[key],
+  };
+}
+
+// --- SPEC-13b W46: копія бази worktree → s3mock → чистий стек `t2f-restore-*` ---
+
+/** Тестове джерело `restore` (приймається лише за `T2F_OPS_TEST=1`). */
+export const RESTORE_ENV = 'test-local';
+/** s3mock стека worktree (loopback хоста; у контейнери ops веде його переходником через `host.docker.internal`). */
+export const S3MOCK_HOST_URL = 'http://127.0.0.1:9090';
+/**
+ * TCP-переходник усередині контейнера: `node -e "$T2F_FWD" <порт> <хост> <порт> [адреса прослуховування]`.
+ * Клас `test` дозволяє копію лише на loopback-кінцеву точку (AC-48), тож s3mock хоста з’являється на 127.0.0.1
+ * контейнера; захист сервера не послаблюється. Той самий переходник відкриває сервер класу `test` (слухає лише
+ * 127.0.0.1 контейнера) для опитування здоров’я з хоста.
+ */
+export const FORWARDER_JS =
+  "const n=require('net');const [lp,h,p,la]=process.argv.slice(1);n.createServer((c)=>{const u=n.connect(+p,h);c.pipe(u).pipe(c);c.on('error',()=>u.destroy());u.on('error',()=>c.destroy())}).listen(+lp,la||'127.0.0.1')";
+
+/** `server/.env.local` worktree (значення не друкуються). */
+export function serverEnvLocal() {
+  return /** @type {Record<string, string>} */ (parseEnv(fs.readFileSync(path.join(REPO_ROOT, 'server', '.env.local'), 'utf8')));
+}
+
+/** Текст файлу змінних для `docker --env-file`; значення з переводом рядка — помилка. @param {Record<string, string>} vars */
+export function envFileText(vars) {
+  return `${Object.entries(vars)
+    .map(([k, v]) => {
+      if (/[\r\n]/.test(v)) throw new Error(`env-file: значення ${k} має перевід рядка`);
+      return `${k}=${v}`;
+    })
+    .join('\n')}\n`;
+}
+
+/** Порт loopback-URL змінної `.env.local` (база, Redis). @param {string | undefined} v @param {string} fallback */
+const portOf = (v, fallback) => {
+  try {
+    return new URL(String(v)).port || fallback;
+  } catch {
+    return fallback;
+  }
+};
+
+/**
+ * Обв’язка `restore.int.test.mjs`: каталог стану `infra/ops/.local/node-suite-restore-<pid>/` (git-ignored) з
+ * `test-local/server.env` (s3mock, бакет `t2f-catalog`, префікс `T2F_R2_PREFIX` worktree, ключ копії цього
+ * запуску), образ HEAD, копія бази worktree образом HEAD (`ops backup-now` у разовому контейнері), `ops restore`
+ * у процесі (справжній Docker, SSH заборонений), підміна об’єктів s3mock.
+ */
+export function createRestoreSuite() {
+  const stateRoot = path.join(REPO_ROOT, 'infra', 'ops', '.local', `node-suite-restore-${process.pid}`);
+  const envDir = path.join(stateRoot, RESTORE_ENV);
+  const local = serverEnvLocal();
+  const bucket = local.T2F_R2_BUCKET ?? 't2f-catalog';
+  // Префікс середовища worktree (схема: один сегмент); набір видаляє лише ключі, створені ним, під `<prefix>backups/db/`.
+  const prefix = local.T2F_R2_PREFIX ?? 'spec_13b_ops/';
+  const backupsPrefix = `${prefix}backups/db/`;
+  /** Ключі, що були до запуску (чужі — не видаляються). @type {Set<string>} */
+  let before = new Set();
+  /** Ключ копії цього запуску: лише в пам’яті й у git-ignored файлі стану. */
+  const backupKey = crypto.randomBytes(32).toString('base64');
+  let head = '';
+  let headExisted = true;
+  const realGit = createGit({ exec: { run }, start });
+  const exec = {
+    run,
+    start,
+    localTransport: () => localTransport(run, start),
+    sshTransport: () => {
+      throw new Error('набір відновлення: SSH заборонений');
+    },
+  };
+
+  /** `server.env` джерела `test-local`. @param {Record<string, string>} [over] */
+  function writeSourceEnv(over = {}) {
+    const vars = {
+      T2F_R2_ENDPOINT: S3MOCK_HOST_URL,
+      T2F_R2_BUCKET: bucket,
+      T2F_R2_ACCESS_KEY_ID: local.T2F_R2_ACCESS_KEY_ID ?? 'local',
+      T2F_R2_SECRET_ACCESS_KEY: local.T2F_R2_SECRET_ACCESS_KEY ?? 'local',
+      T2F_R2_PREFIX: prefix,
+      T2F_BACKUP_KEY: backupKey,
+      ...over,
+    };
+    fs.mkdirSync(envDir, { recursive: true });
+    fs.writeFileSync(path.join(envDir, 'server.env'), envFileText(vars), { encoding: 'utf8', mode: 0o600 });
+  }
+
+  /** URL об’єкта s3mock з хоста (path-style). @param {string} key */
+  const objectUrl = (key) => `${S3MOCK_HOST_URL}/${bucket}/${key.split('/').map(encodeURIComponent).join('/')}`;
+
+  /** @param {string} key */
+  async function getObject(key) {
+    const r = await fetch(objectUrl(key));
+    if (r.status !== 200) throw new Error(`s3mock GET ${r.status}`);
+    return Buffer.from(await r.arrayBuffer());
+  }
+
+  /** @param {string} key @param {Buffer} body */
+  async function putObject(key, body) {
+    const r = await fetch(objectUrl(key), { method: 'PUT', body: new Uint8Array(body), headers: { 'content-type': 'application/octet-stream' } });
+    if (r.status !== 200) throw new Error(`s3mock PUT ${r.status}`);
+  }
+
+  /** Усі ключі під префіксом набору (ListObjectsV2, XML). */
+  async function listKeys() {
+    const r = await fetch(`${S3MOCK_HOST_URL}/${bucket}?list-type=2&prefix=${encodeURIComponent(backupsPrefix)}`);
+    const xml = await r.text();
+    return [...xml.matchAll(/<Key>([^<]+)<\/Key>/g)].map((m) => m[1]);
+  }
+
+  /** Видаляє лише ключі, створені цим запуском. */
+  async function deleteOwn() {
+    for (const k of await listKeys()) if (!before.has(k)) await fetch(objectUrl(k), { method: 'DELETE' });
+  }
+
+  /** Образ HEAD (той самий, що збирає `ops restore` як образ-читач). */
+  async function ensureHeadImage() {
+    const h = await realGit.resolveCommit();
+    if (h.code !== 0) throw new Error('HEAD не коміт');
+    head = h.sha;
+    headExisted = (await docker(['image', 'inspect', `t2f-server:${head}`])).code === 0;
+    const t0 = Date.now();
+    const b = await createImage({ local: localTransport(run, start), git: realGit, start }).buildImage(head);
+    if (b.code !== 0) throw new Error(`образ HEAD не зібрано: ${'message' in b ? b.message : ''}`);
+    console.log(`[w46] image t2f-server:${head.slice(0, 12)} ${headExisted ? 'present' : `built in ${Math.round((Date.now() - t0) / 1000)}s`}`);
+    return head;
+  }
+
+  /**
+   * Копія бази worktree (`DATABASE_URI` з `server/.env.local`) образом HEAD: `pnpm run ops backup-now` у разовому
+   * контейнері, клас `test`, s3mock через переходник на 127.0.0.1:9090 контейнера. Повертає маніфест.
+   */
+  async function backup() {
+    /** @type {Record<string, string>} */
+    const vars = {};
+    // Клас `test` приймає лише loopback-базу й Redis (ізоляція worktree): URL лишаються як у `.env.local`, а
+    // переходники в контейнері ведуть 127.0.0.1:<порт> до тих самих портів хоста.
+    for (const [k, v] of Object.entries(local)) vars[k] = String(v);
+    const pgPort = portOf(local.DATABASE_URI, '5433');
+    const redisPort = portOf(local.REDIS_URL, '6380');
+    Object.assign(vars, {
+      T2F_ENV: 'test',
+      T2F_R2_ENDPOINT: S3MOCK_HOST_URL,
+      T2F_R2_PREFIX: prefix,
+      T2F_BACKUP_KEY: backupKey,
+      T2F_FWD: FORWARDER_JS,
+    });
+    const file = path.join(stateRoot, 'backup.env');
+    fs.writeFileSync(file, envFileText(vars), { encoding: 'utf8', mode: 0o600 });
+    const t0 = Date.now();
+    const r = await docker([
+      'run', '--rm', '--env-file', file, '--entrypoint', 'sh', `t2f-server:${head}`, '-c',
+      `${[pgPort, redisPort, '9090'].map((p) => `node -e "$T2F_FWD" ${p} host.docker.internal ${p} 127.0.0.1 & `).join('')}sleep 1; pnpm run ops backup-now`,
+    ]);
+    fs.rmSync(file, { force: true });
+    const line = r.stdout.split(/\r?\n/).filter((l) => l.startsWith('{')).at(-1) ?? '';
+    /** @type {any} */
+    let answer = null;
+    try {
+      answer = JSON.parse(line);
+    } catch {
+      /* нижче */
+    }
+    if (r.code !== 0 || answer?.ok !== true) throw new Error(`backup-now → ${r.code}: ${r.stderr.split(/\r?\n/).slice(-5).join(' | ')}`);
+    const seconds = Math.round((Date.now() - t0) / 100) / 10;
+    console.log(`[w46] backup-now ${seconds}s (incl. container start), dump ${answer.manifest.size} bytes, key ${answer.key}`);
+    return /** @type {{ key: string, manifest: Record<string, any>, seconds: number }} */ ({ key: answer.key, manifest: answer.manifest, seconds });
+  }
+
+  /**
+   * SQL у базі worktree (`DATABASE_URI` з `.env.local`) через `psql` контейнера `postgres` спільного стека; пароль —
+   * лише середовищем процесу (`-e PGPASSWORD`), не argv.
+   * @param {string} statement
+   */
+  async function sql(statement) {
+    const u = new URL(String(local.DATABASE_URI));
+    const r = await docker(
+      ['exec', '-e', 'PGPASSWORD', 't2f-postgres-1', 'psql', '-h', '127.0.0.1', '-U', decodeURIComponent(u.username), '-d', decodeURIComponent(u.pathname.slice(1)), '-v', 'ON_ERROR_STOP=1', '-tAc', statement],
+      { env: { ...process.env, PGPASSWORD: decodeURIComponent(u.password) } },
+    );
+    if (r.code !== 0) throw new Error(`psql → ${r.code}`);
+    return r.stdout.trim();
+  }
+
+  /** `ops <argv>` у процесі (справжній Docker; SSH заборонений). @param {string[]} argv */
+  async function ops(argv) {
+    /** @type {string[]} */
+    const lines = [];
+    const t0 = Date.now();
+    /** @param {string} l */
+    const sink = (l) => {
+      lines.push(l);
+      console.log(`[ops] ${l}`);
+    };
+    const code = await main(argv, { exec, git: realGit, clock: SYSTEM_CLOCK, out: sink, err: sink, paths: { stateRoot } });
+    return { code, text: lines.join('\n'), lines, seconds: Math.round((Date.now() - t0) / 100) / 10 };
+  }
+
+  /** Залишки запусків: теки `restore/<проєкт>` і проєкти Compose `t2f-restore-*` (контейнери, томи). */
+  async function leftovers() {
+    const dir = path.join(stateRoot, 'restore');
+    const dirs = fs.existsSync(dir) ? fs.readdirSync(dir) : [];
+    const ps = await docker(['ps', '-a', '--format', '{{.Label "com.docker.compose.project"}}']);
+    const vols = await docker(['volume', 'ls', '--format', '{{.Label "com.docker.compose.project"}}']);
+    const projects = [...ps.stdout.split(/\r?\n/), ...vols.stdout.split(/\r?\n/)].map((l) => l.trim()).filter((p) => p.startsWith('t2f-restore-'));
+    return { dirs, projects: [...new Set(projects)] };
+  }
+
+  async function setup() {
+    fs.rmSync(stateRoot, { recursive: true, force: true });
+    fs.mkdirSync(stateRoot, { recursive: true });
+    writeSourceEnv();
+    before = new Set(await listKeys());
+    await ensureHeadImage();
+  }
+
+  /** Прибирання: об’єкти префікса, каталог стану; образ HEAD — лише якщо його створив цей запуск. */
+  async function cleanup() {
+    await deleteOwn().catch(() => undefined);
+    fs.rmSync(stateRoot, { recursive: true, force: true });
+    if (!headExisted && head && process.env.T2F_W46_KEEP_IMAGE !== '1') await docker(['image', 'rm', `t2f-server:${head}`]);
+  }
+
+  return {
+    stateRoot,
+    prefix,
+    get head() {
+      return head;
+    },
+    writeSourceEnv,
+    getObject,
+    putObject,
+    listKeys,
+    backup,
+    sql,
+    ops,
+    leftovers,
+    setup,
+    cleanup,
   };
 }

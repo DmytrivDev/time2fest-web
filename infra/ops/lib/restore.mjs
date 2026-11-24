@@ -17,7 +17,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { parseEnv } from 'node:util';
 import { DEPLOY_USER, knownHostsFile, messageOf } from './common.mjs';
-import { ENVS, REPO_ROOT } from './config.mjs';
+import { ENVS, OPS_TEST_ENV, OPS_TEST_ENV_CONFIG, REPO_ROOT, opsTestMode } from './config.mjs';
 import { guardRun } from './guard.mjs';
 import { imageTag } from './image.mjs';
 import { createNode, CURRENT_ENV } from './node.mjs';
@@ -35,6 +35,39 @@ export const SOURCE_VARS = /** @type {const} */ (['T2F_R2_ENDPOINT', 'T2F_R2_BUC
 /** Їхні значення маскуються у виводі (кінцева точка, бакет і префікс — не секрети). */
 const SECRET_SOURCE_VARS = /** @type {const} */ (['T2F_R2_ACCESS_KEY_ID', 'T2F_R2_SECRET_ACCESS_KEY', 'T2F_BACKUP_KEY']);
 const SHORT_MS = 60_000;
+/**
+ * TCP-переходник у разовому контейнері: `node -e "$T2F_R2_FWD" <порт>` слухає 127.0.0.1:<порт> контейнера й веде до
+ * `host.docker.internal:<порт>`. Потрібен, коли кінцева точка джерела — loopback хоста (локальний емулятор R2,
+ * `test-local`): клієнт S3 сервера бере path-style лише для loopback, а loopback контейнера — не хост (W46).
+ */
+export const R2_FORWARDER_JS =
+  "const n=require('net');const p=+process.argv[1];n.createServer((c)=>{const u=n.connect(p,'host.docker.internal');c.pipe(u).pipe(c);c.on('error',()=>u.destroy());u.on('error',()=>c.destroy())}).listen(p,'127.0.0.1')";
+
+/**
+ * Порт loopback-кінцевої точки (`http://127.0.0.1:9090` → `9090`), інакше `null` (справжній R2 — без переходника).
+ * @param {string} endpoint
+ * @returns {string | null}
+ */
+export function loopbackPortOf(endpoint) {
+  try {
+    const u = new URL(endpoint);
+    if (!['127.0.0.1', 'localhost', '[::1]'].includes(u.hostname)) return null;
+    return u.port || (u.protocol === 'https:' ? '443' : '80');
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Команда `ops restore-pull` у контейнері: напряму або (loopback-джерело) за переходником.
+ * @param {string | null} fwdPort
+ * @param {string[]} args аргументи після `pnpm run ops restore-pull`
+ */
+export function pullCommand(fwdPort, args) {
+  const cmd = ['pnpm', 'run', 'ops', 'restore-pull', ...args];
+  if (fwdPort === null) return cmd;
+  return ['sh', '-c', `node -e "$T2F_R2_FWD" ${fwdPort} & sleep 1; exec "$@"`, 'sh', ...cmd];
+}
 const UP_MS = 5 * 60_000;
 const PULL_MS = 60 * 60_000;
 
@@ -68,7 +101,9 @@ export function migrationStatus(text) {
   const pending = [];
   /** @type {string[]} */
   const applied = [];
-  for (const line of String(text).split(/\r?\n/)) {
+  // Payload фарбує таблицю (ANSI) і поза терміналом: кольори прибираються до розбору клітинок (W46).
+  // eslint-disable-next-line no-control-regex
+  for (const line of String(text).replace(/\u001b\[[0-9;]*m/g, '').split(/\r?\n/)) {
     const cells = line.split(/[|│┃]/).map((c) => c.trim()).filter(Boolean);
     if (cells.length < 2) continue;
     const ran = cells[cells.length - 1];
@@ -135,9 +170,11 @@ export async function runRestore(ctx) {
     return 2;
   };
 
-  // 1. Відмови до будь-якого виклику (AC-54).
-  if (env === 'production' || ENVS[env]?.freeze === true) return refuse('production не відновлюється цією командою (ні як джерело, ні як ціль)');
-  if (!ENVS[env]?.serverSteps) return refuse(`у середовища ${env} немає бази — відновлювати нічого`);
+  // 1. Відмови до будь-якого виклику (AC-54). `test-local` — лише за `T2F_OPS_TEST=1` і лише без `--host`.
+  const envCfg = env === OPS_TEST_ENV && opsTestMode() ? OPS_TEST_ENV_CONFIG : ENVS[env];
+  if (env === 'production' || envCfg?.freeze === true) return refuse('production не відновлюється цією командою (ні як джерело, ні як ціль)');
+  if (!envCfg?.serverSteps) return refuse(`у середовища ${env} немає бази — відновлювати нічого`);
+  if (env === OPS_TEST_ENV && host !== undefined) return refuse(`${OPS_TEST_ENV} не має вузла — --host недопустимий`);
   if (ctx.args.values.target !== 'local') return refuse('ціль — лише local');
   if (host !== undefined && noRecord) return refuse('--host і --no-record разом не мають сенсу');
   if (host !== undefined) {
@@ -232,10 +269,13 @@ export async function runRestore(ctx) {
     }
 
     // 3. Маніфест (лише читання R2).
+    const fwdPort = loopbackPortOf(source.T2F_R2_ENDPOINT);
+    /** @type {Record<string, string>} */
     const pullEnv = Object.fromEntries(SOURCE_VARS.map((n) => [n, source[n]]));
-    const eFlags = SOURCE_VARS.flatMap((n) => ['-e', n]);
+    if (fwdPort !== null) pullEnv.T2F_R2_FWD = R2_FORWARDER_JS;
+    const eFlags = Object.keys(pullEnv).flatMap((n) => ['-e', n]);
     const m = await run(
-      ['docker', 'run', '--rm', ...eFlags, '-e', 'T2F_ENV=test', imageTag(reader.sha), 'pnpm', 'run', 'ops', 'restore-pull', '--manifest-only', '--key', from],
+      ['docker', 'run', '--rm', '--add-host', 'host.docker.internal:host-gateway', ...eFlags, '-e', 'T2F_ENV=test', imageTag(reader.sha), ...pullCommand(fwdPort, ['--manifest-only', '--key', from])],
       SHORT_MS * 5,
       pullEnv,
     );
@@ -272,7 +312,7 @@ export async function runRestore(ctx) {
 
     // 6. Завантаження, перевірка, розшифрування потоком у pg_restore (у разовому контейнері).
     pulled = true;
-    const p = await run(compose(['--profile', 'pull', 'run', '--rm', '--no-deps', ...eFlags, 'pull', 'pnpm', 'run', 'ops', 'restore-pull', '--key', String(manifest.key)]), PULL_MS, pullEnv);
+    const p = await run(compose(['--profile', 'pull', 'run', '--rm', '--no-deps', ...eFlags, 'pull', ...pullCommand(fwdPort, ['--key', String(manifest.key)])]), PULL_MS, pullEnv);
     if (p.code !== 0) {
       for (const line of String(p.stderr).split(/\r?\n/).filter((l) => l.trim()).slice(-5)) err(`  ${line}`);
       if (p.code === 3) return fail('перевірка копії не пройшла (sha256, id ключа чи автентифікація) — pg_restore не запускався');

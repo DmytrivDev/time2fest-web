@@ -241,6 +241,8 @@ describe('restore helpers', () => {
   it('migration status table → pending and applied names', () => {
     expect(migrationStatus(STATUS_TABLE)).toEqual({ pending: [], applied: ['20261123_live', '20261124_ops'] });
     expect(migrationStatus('| a | 1 | Yes |\n| b |  | No |').pending).toEqual(['b']);
+    // Payload фарбує таблицю й без терміналу (W46, справжній `docker compose exec -T`).
+    expect(migrationStatus('│\u001b[37m \u001b[0m\u001b[32m 20261124_ops\u001b[0m │\u001b[37m \u001b[0m\u001b[32m    1\u001b[0m │\u001b[37m \u001b[0m\u001b[32mYes\u001b[0m │')).toEqual({ pending: [], applied: ['20261124_ops'] });
   });
 
   it('row count SQL refuses a non-table name; mismatches list missing tables', () => {

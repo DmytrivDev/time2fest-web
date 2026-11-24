@@ -51,6 +51,17 @@ export const ENVS = {
   },
 };
 
+/**
+ * Тестове джерело `restore` (SPEC-13b W46): локальний s3mock і база цього worktree. Ім'я приймається лише
+ * за `T2F_OPS_TEST=1` (набір `infra/ops/test/node/`), лише підкомандою `restore` і лише з `--target local`;
+ * у `ENVS` його немає, тож жодна інша підкоманда його не знає.
+ */
+export const OPS_TEST_ENV = 'test-local';
+/** @type {OpsEnv} */
+export const OPS_TEST_ENV_CONFIG = Object.freeze({ workerEnv: OPS_TEST_ENV, serverSteps: true });
+/** Чи цей процес — тестовий запуск ops (`T2F_OPS_TEST=1`). */
+export const opsTestMode = () => process.env.T2F_OPS_TEST === '1';
+
 /** Середовища з підготовкою вузла (`ENVS[env].bootstrap`): `ops bootstrap` і вузол realtime у `capacity`. */
 export const BOOTSTRAP_ENVS = Object.keys(ENVS).filter((e) => ENVS[e].bootstrap === true);
 

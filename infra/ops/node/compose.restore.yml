@@ -9,6 +9,8 @@
 # пароль бази й PAYLOAD_SECRET цього запуску, тека тимчасових файлів на хості. Ключ копії й ключі R2 джерела отримує
 # лише одноразовий `pull` (`-e NAME` без значення). Сервер — клас `test`: жодних ключів R2, Telegram, копій. Портів
 # назовні немає; `backend` — внутрішня мережа без виходу; вихід (`egress`) — лише у `pull`, якому треба R2.
+# Клас `test` приймає лише loopback-базу й Redis (ізоляція, `testIsolationFailures`), тож `redis` і `server` ділять
+# мережевий простір `postgres` (`network_mode: service:postgres`): для сервера обидва — на 127.0.0.1 (W46).
 services:
   postgres:
     # postgres:17.12-alpine (індексний дайджест, linux/amd64 + arm64) — той самий, що на вузлі (compose.yml)
@@ -32,22 +34,24 @@ services:
     # redis:7.4.12-alpine (індексний дайджест, linux/amd64 + arm64) — той самий, що на вузлі; без збереження на диск
     image: redis:7.4.12-alpine@sha256:7f7d30b7fdd09467bac58198a1f166dd69789d348d4fe859cccb20e0cf287fbe
     restart: "no"
-    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    command: ["redis-server", "--bind", "127.0.0.1", "--save", "", "--appendonly", "no"]
+    network_mode: "service:postgres"
+    depends_on:
+      postgres:
+        condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "redis-cli ping | grep -qx PONG"]
       interval: 2s
       timeout: 5s
       retries: 30
-    networks:
-      - backend
 
   server:
     image: t2f-server:${T2F_SERVER_SHA:?set by ops}
     restart: "no"
     environment: &server-env
       T2F_ENV: test
-      DATABASE_URI: postgres://t2f:${T2F_RESTORE_PG_PASSWORD:?set by ops}@postgres:5432/t2f_restore
-      REDIS_URL: redis://redis:6379/0
+      DATABASE_URI: postgres://t2f:${T2F_RESTORE_PG_PASSWORD:?set by ops}@127.0.0.1:5432/t2f_restore
+      REDIS_URL: redis://127.0.0.1:6379/0
       T2F_REDIS_PREFIX: "t2f:restore:"
       PAYLOAD_SECRET: ${T2F_RESTORE_PAYLOAD_SECRET:?set by ops}
       T2F_HOST: 0.0.0.0
@@ -63,8 +67,7 @@ services:
       timeout: 5s
       retries: 24
       start_period: 30s
-    networks:
-      - backend
+    network_mode: "service:postgres"
 
   # Одноразове завантаження й відновлення копії (`ops restore-pull`): розшифрований потік іде лише в `pg_restore`,
   # завантажений шифрований файл — лише в теку `/restore-tmp` (тека цілі на хості, прибирається ops).
@@ -74,9 +77,15 @@ services:
     restart: "no"
     environment:
       <<: *server-env
+      # `pull` — у мережах `backend` і `egress` (йому потрібен R2), тож база — за іменем сервісу; `restore-pull` не
+      # вимагає loopback (лише не-production і порожню ціль).
+      DATABASE_URI: postgres://t2f:${T2F_RESTORE_PG_PASSWORD:?set by ops}@postgres:5432/t2f_restore
       T2F_RESTORE_TMP: /restore-tmp
     volumes:
       - ${T2F_RESTORE_TMP_HOST:?set by ops}:/restore-tmp
+    # Loopback-джерело (локальний емулятор R2): переходник ops веде 127.0.0.1:<порт> контейнера сюди.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - backend
       - egress
