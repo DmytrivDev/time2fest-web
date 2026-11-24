@@ -3309,6 +3309,22 @@
         "x": 50,
         "y": 62
       }
+    },
+    "country:BF": {
+      "src": "/media/photos/ouagadougou.webp",
+      "alt": {
+        "uk": "Нічне Уагадугу: освітлений проспект біля площі Кінематографістів, адміністративні будинки й дерева в теплому світлі ліхтарів",
+        "en": "Ouagadougou at night: the lit avenue by the Place des Cinéastes, administrative buildings and trees in the warm glow of streetlights",
+        "es": "Uagadugú de noche: la avenida iluminada junto a la plaza de los Cineastas, edificios administrativos y árboles bajo la luz cálida de las farolas",
+        "fr": "Ouagadougou la nuit : l’avenue éclairée près de la place des Cinéastes, bâtiments administratifs et arbres sous la lumière chaude des réverbères"
+      },
+      "author": "Wegmann",
+      "license": "CC BY-SA 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ouagadougou_place_cineaste.JPG",
+      "position": {
+        "x": 60,
+        "y": 78
+      }
     }
   }
 }

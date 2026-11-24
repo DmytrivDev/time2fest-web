@@ -5414,5 +5414,33 @@
       "description": "Nuuk recibe 2027 a las 02:00 UTC: Groenlandia lo celebra dos veces, a las 21:00 con Dinamarca y a medianoche, con cohetes y apretones de manos."
     },
     "kit": "gl-2"
+  },
+  "BF": {
+    "text": "«Bonne année!»: a medianoche la gente se abraza y lo dice tanto en la iglesia como en la mesa de un maquis. Cerca de dos tercios de los habitantes de Burkina Faso son musulmanes y más de una cuarta parte, cristianos, así que muchos reciben el año en una misa nocturna y solo después se reúnen con los amigos; el 1 de enero es festivo para todos. En los últimos años, el deseo más repetido de esa noche es la paz.\n\nUagadugú se ilumina con guirnaldas y la gente sale a la calle con su mejor ropa. Los maquis —cafés al aire libre con parrilla y música— suman sillas y camareros, y el baile sigue hasta las dos de la madrugada o más. En el trabajo la fiesta se alarga todo enero: los equipos se reúnen para la «présentation de vœux», los buenos deseos de Año Nuevo, antes con comida y bebida, ahora a menudo con más sencillez.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "La misa de medianoche",
+        "text": "Los fieles reciben la medianoche en la iglesia: oración y cantos y, en cuanto el reloj marca las 00:00, abrazos y «Bonne année!». Después de la misa, algunos aún salen a bailar."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Noche en el maquis",
+        "text": "Los maquis, cafés al aire libre con parrilla y música, se llenan en Nochevieja: a medianoche se baila y los más concurridos abren hasta las dos."
+      },
+      {
+        "id": "t3",
+        "iconId": "letter",
+        "title": "Los deseos de enero",
+        "text": "Durante enero, en los lugares de trabajo se celebra la «présentation de vœux»: los colegas se desean feliz año y hablan de los planes, a veces con algo de comer y beber."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Burkina Faso: Uagadugú | Time2Fest",
+      "description": "Burkina Faso recibe 2027 a las 00:00 UTC: en Uagadugú, misas nocturnas y «Bonne année!» a medianoche, baile en los maquis hasta las dos y calles con guirnaldas."
+    },
+    "kit": "bf"
   }
 }

@@ -3222,6 +3222,24 @@
         "title": "Groenland : le Nouvel An à Nuuk | Time2Fest",
         "description": "Nuuk fête 2027 à 02 h UTC : le Groenland célèbre deux fois, à 21 h avec le Danemark puis à minuit, avec des fusées dans la nuit polaire et des poignées de main."
       }
+    },
+    "BF": {
+      "uk": {
+        "title": "Новий рік у Буркіна-Фасо: Уагадугу | Time2Fest",
+        "description": "Буркіна-Фасо зустрічає 2027 рік о 00:00 UTC: в Уагадугу — нічні служби й «Bonne année!» опівночі, танці в макі до другої ночі й гірлянди на вулицях."
+      },
+      "en": {
+        "title": "New Year in Burkina Faso: Ouagadougou | Time2Fest",
+        "description": "Burkina Faso meets 2027 at 00:00 UTC: Ouagadougou greets midnight with \"Bonne année!\" in church, dances in the maquis until 2 a.m. and glows with garlands."
+      },
+      "es": {
+        "title": "Año Nuevo en Burkina Faso: Uagadugú | Time2Fest",
+        "description": "Burkina Faso recibe 2027 a las 00:00 UTC: en Uagadugú, misas nocturnas y «Bonne année!» a medianoche, baile en los maquis hasta las dos y calles con guirnaldas."
+      },
+      "fr": {
+        "title": "Nouvel An au Burkina Faso : Ouagadougou | Time2Fest",
+        "description": "Le Burkina Faso entre en 2027 à 0 h UTC : à Ouagadougou, messes de nuit et « Bonne année ! » à minuit, danse dans les maquis jusqu’à 2 h, rues en guirlandes."
+      }
     }
   }
 }

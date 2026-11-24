@@ -5414,5 +5414,33 @@
       "description": "Nuuk fête 2027 à 02 h UTC : le Groenland célèbre deux fois, à 21 h avec le Danemark puis à minuit, avec des fusées dans la nuit polaire et des poignées de main."
     },
     "kit": "gl-2"
+  },
+  "BF": {
+    "text": "« Bonne année ! » : à minuit, on s’embrasse en le disant, à l’église comme à une table de maquis. Environ deux tiers des habitants du Burkina Faso sont musulmans et plus d’un quart chrétiens ; beaucoup accueillent donc l’année à la messe de nuit avant de rejoindre leurs amis, et le 1er janvier est férié pour tous. Ces dernières années, le vœu le plus répandu cette nuit-là est celui de la paix.\n\nOuagadougou s’illumine de guirlandes et l’on sort dans ses plus beaux habits. Les maquis, ces cafés en plein air avec grillades et musique, ajoutent chaises et serveurs, et l’on y danse jusqu’à deux heures du matin, voire plus tard. Au travail, la fête s’étire sur tout janvier : les équipes se retrouvent pour la présentation de vœux, autrefois autour d’un buffet, aujourd’hui souvent plus sobrement.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "La messe de minuit",
+        "text": "Les fidèles attendent minuit à l’église : prière et chants, puis, dès que l’horloge affiche 00 h, embrassades et « Bonne année ! ». Après l’office, certains vont encore danser."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Une nuit au maquis",
+        "text": "Les maquis, cafés en plein air avec grillades et musique, sont pleins le soir du réveillon : on y danse à minuit, et les plus courus tournent jusqu’à deux heures."
+      },
+      {
+        "id": "t3",
+        "iconId": "letter",
+        "title": "Les vœux de janvier",
+        "text": "Tout au long de janvier, les services organisent leur présentation de vœux : les collègues se souhaitent la bonne année et parlent des projets, parfois autour d’un buffet."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An au Burkina Faso : Ouagadougou | Time2Fest",
+      "description": "Le Burkina Faso entre en 2027 à 0 h UTC : à Ouagadougou, messes de nuit et « Bonne année ! » à minuit, danse dans les maquis jusqu’à 2 h, rues en guirlandes."
+    },
+    "kit": "bf"
   }
 }

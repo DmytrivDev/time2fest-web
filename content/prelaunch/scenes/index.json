@@ -1182,6 +1182,12 @@
       "wide": true,
       "sky": "#10162e",
       "water": "#203955"
+    },
+    "BF": {
+      "src": "/scenes/BF-wide.svg",
+      "wide": true,
+      "sky": "#1d2846",
+      "water": "#5d4344"
     }
   }
 }

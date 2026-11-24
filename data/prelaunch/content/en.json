@@ -5414,5 +5414,33 @@
       "description": "Nuuk greets 2027 at 02:00 UTC: Greenland celebrates twice, at 21:00 with Denmark and again at midnight, with rockets in the polar night and handshakes."
     },
     "kit": "gl-2"
+  },
+  "BF": {
+    "text": "\"Bonne année!\" — at midnight people hug and say it both in church and at a maquis table. About two thirds of Burkina Faso is Muslim and over a quarter Christian, so many see in the year at a night service and only then join friends; 1 January is a day off for everyone. In recent years the most common New Year's wish has been for peace.\n\nOuagadougou glows with garlands for the occasion, and people walk the streets in their best clothes. The maquis — open-air grill cafés with music — bring in extra chairs and waiters, and the dancing goes on until 2 a.m. and later. At work the holiday stretches through January: teams gather for the \"présentation de vœux\", the New Year greetings — once with food and drink, now often more modestly.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "The night service",
+        "text": "Believers meet midnight in church: prayer and singing, and as soon as the clock shows 00:00, hugs and \"Bonne année!\". After the service some still go out dancing."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "A night at the maquis",
+        "text": "The maquis, open-air grill cafés with music, are packed on New Year's Eve: people dance there at midnight, and the busiest stay open until 2 a.m."
+      },
+      {
+        "id": "t3",
+        "iconId": "letter",
+        "title": "January greetings",
+        "text": "Throughout January, workplaces hold a \"présentation de vœux\": colleagues wish each other a happy new year and talk about plans, sometimes over food and drink."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Burkina Faso: Ouagadougou | Time2Fest",
+      "description": "Burkina Faso meets 2027 at 00:00 UTC: Ouagadougou greets midnight with \"Bonne année!\" in church, dances in the maquis until 2 a.m. and glows with garlands."
+    },
+    "kit": "bf"
   }
 }

@@ -75,19 +75,19 @@ describe('метатексти сторінок країн — унікальн�
 });
 
 describe('sitemap і robots', () => {
-  it('sitemap: країни закриті перемикачем — 8 сторінок × 4 мови; відкриті (типово з 2026-11-21) — 180 × 4 (8 + 172 описаних країн)', () => {
+  it('sitemap: країни закриті перемикачем — 8 сторінок × 4 мови; відкриті (типово з 2026-11-21) — 181 × 4 (8 + 173 описаних країн)', () => {
     expect(files.openRoutes(ALL, false)).toEqual(routes.STATIC_ROUTES);
     expect(files.sitemapXml(ALL, false).count).toBe(32);
     expect(files.sitemapXml(ALL, false).text).not.toContain('/country/');
     expect(files.openRoutes(ALL)).toEqual(files.openRoutes(ALL, true));
     const open = files.openRoutes(ALL, true);
-    expect(open).toHaveLength(180);
+    expect(open).toHaveLength(181);
     for (const r of routes.STATIC_ROUTES) expect(open).toContain(r);
     const { count, text } = files.sitemapXml(ALL, true);
-    expect(count).toBe(720);
+    expect(count).toBe(724);
     expect(text).toContain('<loc>https://time2fest.com/uk/country/japan/</loc>');
     expect(text).not.toContain('/country/western-sahara/');
-    expect(text.match(/hreflang="x-default"/g)).toHaveLength(720);
+    expect(text.match(/hreflang="x-default"/g)).toHaveLength(724);
     expect(text).not.toMatch(/lastmod|priority|changefreq/);
   });
 
