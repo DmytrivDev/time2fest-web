@@ -8,7 +8,9 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { PG_DUMP_ARGS, createPgDumpRunner, parsePgDumpVersion, pgEnvOf, runForOutput, streamOf } from '../../src/adapters/pgDump';
+import { PG_RESTORE_ARGS, createPgRestoreRunner, runRestoreSpec } from '../../src/cli/ops';
 import type { DumpRunner } from '../../src/ops/ports';
+import type { RestoreRunner } from '../../src/ops/restorePull';
 
 const COMPOSE_FILE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../docker-compose.yml');
 const REQUIRED_MAJOR = 17;
@@ -38,4 +40,17 @@ export async function testDumpRunner(databaseUri: string, serverVersion: () => P
     serverVersion,
     dump: () => streamOf(dockerSpec(databaseUri, PG_DUMP_ARGS)),
   };
+}
+
+/**
+ * `pg_restore` for integration tests (SPEC-13b W37): the local binary when its major is 17 (the command's own
+ * adapter), else `pg_restore` inside the stack's `postgres` container, stdin piped through `exec -T`.
+ */
+export async function testRestoreRunner(databaseUri: string): Promise<RestoreRunner> {
+  const local = await runForOutput({ cmd: 'pg_restore', args: ['--version'], env: {} }).then(parsePgDumpVersion, () => Number.NaN);
+  if (local === REQUIRED_MAJOR) return createPgRestoreRunner(databaseUri);
+  const db = pgEnvOf(databaseUri).PGDATABASE ?? '';
+  const spec = dockerSpec(databaseUri, []);
+  const args = spec.args.slice(0, -1).concat(['pg_restore', ...PG_RESTORE_ARGS, '-d', db]);
+  return { restore: (input) => runRestoreSpec({ ...spec, args }, input) };
 }

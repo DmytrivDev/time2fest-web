@@ -17,7 +17,7 @@ import type { Payload, PayloadRequest } from 'payload';
 import type { AlarmDetails, LogAlarmRecord, LogAlarmStore } from '../alarms/ports';
 import type { Actor, Journal } from '../audit/ports';
 import { isDependencyFailure } from '../endpoints/pipeline';
-import type { BackupRun, BackupRunStore, BackupStage, OpsJournal, SpendCounter, SpendCounterDelta, SpendCounterStore, Outbox, OutboxKind, OutboxRow, OpsLease, OpsLeaseName, WallClock } from '../ops/ports';
+import type { BackupRun, BackupRunStore, BackupStage, OpsJournal, RestoreRun, RestoreRunStore, SpendCounter, SpendCounterDelta, SpendCounterStore, Outbox, OutboxKind, OutboxRow, OpsLease, OpsLeaseName, WallClock } from '../ops/ports';
 import { DependencyUnavailable } from '../ports';
 import { findKind } from '../registries/ops';
 import { createPgScheduler } from './pgScheduler';
@@ -577,6 +577,36 @@ export function createPayloadBackupStorage(payload: () => Promise<Payload>): { b
         ),
       );
       return num(rows[0]?.total);
+    },
+  };
+}
+
+// ---- Restore runs (SPEC-13b W35) ----
+
+/** The `restore-runs` journal of `ops restore-record` (AC-56), raw SQL over Payload's pool. `note` has no column. */
+export function createPayloadRestoreRuns(payload: () => Promise<Payload>): RestoreRunStore {
+  const exec = (q: SqlQuery) => guard(async () => ((await payload()).db as unknown as DrizzleAdapter).drizzle.execute(q));
+  return {
+    async record(run) {
+      await exec(sql`
+        INSERT INTO "restore_runs" ("at", "key", "duration_ms", "loss_window_ms", "result", "target", "updated_at", "created_at")
+        VALUES (${iso(run.at)}::timestamptz, ${run.source}, ${Math.round(run.durationMs)}, ${run.lossWindowMs === null ? null : Math.round(run.lossWindowMs)},
+          ${run.result}, ${run.target}, now(), now())`);
+    },
+    async latest() {
+      const { rows } = await exec(sql`
+        SELECT "at", "key", "duration_ms", "loss_window_ms", "result", "target" FROM "restore_runs" ORDER BY "at" DESC, "id" DESC LIMIT 1`);
+      const r = rows[0];
+      if (!r) return null;
+      const run: RestoreRun = {
+        at: tsMs(r.at) ?? 0,
+        result: r.result === 'ok' ? 'ok' : 'failed',
+        source: String(r.key),
+        target: typeof r.target === 'string' ? r.target : '',
+        durationMs: num(r.duration_ms),
+        lossWindowMs: r.loss_window_ms === null || r.loss_window_ms === undefined ? null : num(r.loss_window_ms),
+      };
+      return run;
     },
   };
 }
