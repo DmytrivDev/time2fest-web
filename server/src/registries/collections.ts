@@ -27,6 +27,8 @@ import { runRecords } from '../collections/runRecords';
 import { schedulerLeases } from '../collections/schedulerLeases';
 import { schedulerRuns } from '../collections/schedulerRuns';
 import { spendCounters } from '../collections/spendCounters';
+import { streamCandidates } from '../collections/streamCandidates';
+import { streamChannels } from '../collections/streamChannels';
 import { streamSources } from '../collections/streamSources';
 import { unattendedWindows } from '../collections/unattendedWindows';
 
@@ -60,6 +62,8 @@ export const collectionRegistry: readonly CollectionRow[] = [
   { key: 'scheduler-runs', collection: schedulerRuns, resettable: true },
   { key: 'seasons', collection: seasons, resettable: true, audited: true },
   { key: 'spend-counters', collection: spendCounters, resettable: true },
+  { key: 'stream-candidates', collection: streamCandidates, resettable: true },
+  { key: 'stream-channels', collection: streamChannels, resettable: true },
   { key: 'stream-sources', collection: streamSources, resettable: true },
   { key: 'traditions', collection: traditions, resettable: true, audited: true },
   { key: 'unattended-windows', collection: unattendedWindows, resettable: true, audited: true },
