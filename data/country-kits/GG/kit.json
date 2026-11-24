@@ -1,0 +1,103 @@
+{
+  "code": "GG",
+  "zone": "UTC+0",
+  "zoneId": "utc+0000",
+  "cityId": "guernsey",
+  "names": {
+    "uk": {
+      "name": "Гернсі",
+      "city": "Сент-Пітер-Порт",
+      "cityIn": "у Сент-Пітер-Порті",
+      "countryIn": "на Гернсі",
+      "caps": "ГЕРНСІ"
+    },
+    "en": {
+      "name": "Guernsey",
+      "city": "St Peter Port",
+      "cityIn": "in St Peter Port",
+      "countryIn": "in Guernsey",
+      "caps": "GUERNSEY"
+    },
+    "es": {
+      "name": "Guernsey",
+      "city": "Saint Peter Port",
+      "cityIn": "en Saint Peter Port",
+      "countryIn": "en Guernsey",
+      "caps": "GUERNSEY"
+    },
+    "fr": {
+      "name": "Guernesey",
+      "city": "Saint-Pierre-Port",
+      "cityIn": "à Saint-Pierre-Port",
+      "countryIn": "à Guernesey",
+      "caps": "GUERNESEY"
+    }
+  },
+  "picto": "M4 37.6 Q7.5 36.4 11 37.6 Q14.5 38.8 18 37.6 Q21.5 36.4 25 37.6 Q28.5 38.8 32 37.6 Q35 36.6 36.6 37.2 M2.6 34.6 Q4.6 32 7.4 31.6 H33.4 Q35.8 32 37.6 34.6 M5 31.6 L6.2 25.6 H34.2 L35.4 31.6 M6.2 25.6 Q3.6 26.4 3.6 29 V31.6 H5 M18.6 31.6 V29.4 Q19.6 28 20.6 29.4 V31.6 M9 25.6 V20.6 H31.8 V25.6 M10 20.6 L12.6 17.6 H15.4 L18 20.6 M18 20.6 V11.6 H27 V20.6 M18 11.6 V9.8 H19.8 V11.6 M21.6 11.6 V9.8 H23.4 V11.6 M25.2 11.6 V9.8 H27 V11.6 M21.2 15 V17 M23.8 15 V17 M22.5 9.8 V2.6 H27.2 V5.4 H22.5 M27 20.6 V14.6 H31.2 V20.6",
+  "flagColors": [
+    "#FFFFFF",
+    "#E8112D",
+    "#F9DD16"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "на Гернсі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Guernsey"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Guernsey"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Guernesey"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

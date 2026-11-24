@@ -5498,5 +5498,145 @@
       "description": "Iceland greets 2027 at 00:00 UTC: rockets sold by rescue teams light up Reykjavík, brennur bonfires blaze in every district and fireworks ring Hallgrímskirkja."
     },
     "kit": "is"
+  },
+  "GG": {
+    "text": "In Guernsey the old year used to be buried at the stroke of midnight. Boys wrapped a log in black cloth, called it le vieux bout de l’an, “the old end of the year”, and carried it through the streets by the light of hollowed-out turnip lanterns like a funeral procession, before burying it on the beach or burning it on a bonfire. Children, meanwhile, went from door to door for a New Year gift called the oguinane, singing “Open your purse, then shut it again!” The word is often compared with the Scottish Hogmanay.\n\nToday December on the island belongs to the sea. Until 31 December people dip into twelve festive bays to raise money for a hospice, on Christmas morning swimmers plunge into the La Vallette sea pools in St Peter Port, and on Boxing Day thousands of islanders wade together into the cold water of Cobo Bay.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "flame",
+        "title": "Burying the old year",
+        "text": "At midnight boys once carried a log wrapped in black, “the old end of the year”, through the streets by turnip lantern, then buried it on the beach or burned it."
+      },
+      {
+        "id": "t2",
+        "iconId": "coin",
+        "title": "The oguinane gift",
+        "text": "Children went from door to door singing for a New Year present, the oguinane, a word often compared with the Scottish Hogmanay."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Winter sea dips",
+        "text": "Until 31 December islanders dip into twelve festive bays for a hospice, and on Boxing Day thousands wade together into the sea at Cobo Bay."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Guernsey: St Peter Port | Time2Fest",
+      "description": "Guernsey greets 2027 at local midnight (00:00 UTC): the old torchlit burial of the year, the children's oguinane gift and December dips in a cold sea."
+    },
+    "kit": "gg"
+  },
+  "GM": {
+    "text": "A paper boat glowing from within sails down the street to drums and songs: this is the fanal, and it is how The Gambia sees the year out. Almost all Gambians are Muslim, yet the season from Christmas to New Year belongs to everyone: Kankurang and Zimba masquerades, stilt walkers and “hunting” groups fill the streets, and many hotels set off fireworks on New Year’s Eve. Fanals, frames of bamboo and paper lit from inside, are carried until 1 or 2 January; New Year’s Day itself is a public holiday.\n\nThe capital gathers it all into the week-long Banjul Cultural Festival. Its 2025 programme had wrestlers competing on the beach on 31 December and fireworks at Arch 22 at midnight, and on 1 January more than fifty hunting societies with their masquerades paraded until dawn. An estimated 50,000 people came.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "boat",
+        "title": "Fanal, the lantern boat",
+        "text": "From mid-December to 1 or 2 January men carry a big paper boat lit from inside through the streets, while women lead the songs to the drums."
+      },
+      {
+        "id": "t2",
+        "iconId": "mask",
+        "title": "Masquerades until dawn",
+        "text": "During the holiday week Kankurang, Zimba “lions” and stilt walkers roam the streets, and on 1 January hunting societies with masquerades dance in Banjul from morning until dawn."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Wrestling and fireworks",
+        "text": "On the afternoon of 31 December wrestlers compete on Banjul Beach, and at midnight fireworks light up the sky above Arch 22 and many hotels along the coast."
+      }
+    ],
+    "meta": {
+      "title": "New Year in The Gambia: Banjul | Time2Fest",
+      "description": "The Gambia enters 2027 at 00:00 UTC: glowing paper fanal boats, Kankurang masquerades in the streets, beach wrestling and fireworks at Banjul’s Arch 22."
+    },
+    "kit": "gm"
+  },
+  "LR": {
+    "text": "More than eight in ten Liberians are Christians, so the last evening of the year here belongs to Watch Night, the night vigil. Churches across the country fill up from the evening: a choir, drums and piano, a sermon and prayers of thanks for the year gone by. Seconds before twelve the pastor leads the countdown himself, and the moment midnight comes, quiet prayer bursts into dancing right between the rows. The first of January is a public holiday.\n\nMonrovia sees the year in more loudly. On the night into 2015, when the Ebola curfew was lifted for a single night, music boomed from beer parlours, clubs and storefront churches all along Tubman Boulevard, car horns honked and people danced in the streets. On the morning of 1 January many head to the ocean beach, where roast chicken and smoked fish are sold at the gate.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "The pastor’s countdown",
+        "text": "At the Watch Night vigil the pastor counts down the last seconds before twelve, and with the first minute of the year the whole church starts dancing."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Music from every doorway",
+        "text": "After midnight the beer parlours and clubs along Monrovia’s Tubman Boulevard play loud, cars honk and some people dance right in the street."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "New Year’s Day by the sea",
+        "text": "1 January is a day off, and Monrovians relax by the ocean, sitting under thatch umbrellas with roast chicken and smoked fish."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Liberia: Monrovia | Time2Fest",
+      "description": "Liberia greets 2027 at 00:00 UTC: Watch Night vigils with the pastor’s countdown, music along Monrovia’s Tubman Boulevard and the ocean beach on 1 January."
+    },
+    "kit": "lr"
+  },
+  "MA": {
+    "text": "A log cake: few Moroccan families see out the old year without one. On the morning of 31 December people hurry to the pastry shops before the best ones sell out, and in the evening they gather round it at home. Some book a table at a restaurant, while squares and boulevards fill with families and groups of young people. New Year’s Day is a holiday. Two weeks later, on 14 January, comes Yennayer, the Amazigh New Year, a public holiday too since 2023. The table holds seven-vegetable dishes or tagoula, a porridge of barley or corn grits with honey and argan oil, with a date stone hidden inside for luck.\n\nCasablanca, along with Marrakech and Fez, is one of the cities people travel to for New Year’s, with traditional music and dancing. Along the Atlantic runs the Ain Diab corniche, lined with hotels, restaurants and nightclubs.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "A log cake by morning",
+        "text": "Families hurry out for a log cake first thing in the morning, before it sells out, and gather round it at home in the evening."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Music and dancing in Casablanca",
+        "text": "In Casablanca, Marrakech and Fez the night brings traditional music and dancing; on the Ain Diab corniche the restaurants and clubs stay lit."
+      },
+      {
+        "id": "t3",
+        "iconId": "ladle",
+        "title": "Tagoula for Yennayer",
+        "text": "On 14 January, the Amazigh New Year, families cook tagoula from barley or corn grits with honey; a date stone hidden inside brings luck."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Morocco: Casablanca | Time2Fest",
+      "description": "Morocco greets 2027 at 00:00 UTC: a morning dash for the log cake on 31 December, music and dancing in Casablanca, then Yennayer and tagoula on 14 January."
+    },
+    "kit": "ma"
+  },
+  "ML": {
+    "text": "Chicken is the dish of the year's end: before 31 December Mali's markets fill with poultry, even if prices bite every year. Over 96% of Malians are Muslim, so 1 January is above all a public holiday, while Christian communities meet midnight at masses and prayer vigils. Firecrackers and fireworks are banned nationwide every December, so at midnight what matters is hugs and good wishes.\n\nBamako celebrates in its \"grin\", the circle of friends who meet right on the street. Young people pool money for a shared table and head to clubs, hotels or rented flats, and the countdown ends in hugs. Others stay home: on 31 December 2024 residents queued at banks to buy chickens, gifts for the children and a good dinner. Older people remember open-air dances to battery radios.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Chicken for the feast",
+        "text": "Before 31 December the markets fill with poultry: chicken is Mali's year-end dish. Families buy it for the dinner even when prices bite."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Countdown with the grin",
+        "text": "Young people meet midnight with their circle of friends: they pool money for a shared table, go to clubs or rented flats, and the last seconds end in hugs and wishes."
+      },
+      {
+        "id": "t3",
+        "iconId": "bell",
+        "title": "Mass and night vigil",
+        "text": "Mali's Christian communities hold New Year masses and prayer vigils, giving thanks for the year that is ending and entrusting their hopes for the new one to God."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Mali: Bamako | Time2Fest",
+      "description": "Mali greets 2027 at 00:00 UTC: Bamako enjoys a chicken feast, counts down with the grin, its circle of friends, and hugs at midnight; churches hold vigils."
+    },
+    "kit": "ml"
   }
 }

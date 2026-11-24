@@ -3276,6 +3276,96 @@
         "title": "Islande : le Nouvel An à Reykjavik | Time2Fest",
         "description": "L’Islande fête 2027 à 00 h UTC : fusées achetées aux sauveteurs au-dessus de Reykjavik, feux de joie dans les quartiers et ciel embrasé à Hallgrímskirkja."
       }
+    },
+    "GG": {
+      "uk": {
+        "title": "Новий рік на Гернсі: Сент-Пітер-Порт | Time2Fest",
+        "description": "Гернсі зустрічає 2027 рік опівночі за місцевим часом (00:00 UTC): давній похорон старого року, дитячий гостинець «огінане» й грудневі запливи в морі."
+      },
+      "en": {
+        "title": "New Year in Guernsey: St Peter Port | Time2Fest",
+        "description": "Guernsey greets 2027 at local midnight (00:00 UTC): the old torchlit burial of the year, the children's oguinane gift and December dips in a cold sea."
+      },
+      "es": {
+        "title": "Año Nuevo en Guernsey: Saint Peter Port | Time2Fest",
+        "description": "Guernsey recibe 2027 a medianoche local (00:00 UTC): el viejo entierro del año con faroles, el aguinaldo oguinane de los niños y baños en el mar."
+      },
+      "fr": {
+        "title": "Nouvel An à Guernesey : Saint-Pierre-Port | Time2Fest",
+        "description": "Guernesey fête 2027 à minuit heure locale (00:00 UTC) : vieil enterrement du bout de l’an aux lanternes, étrenne oguinane et bains de mer d’hiver."
+      }
+    },
+    "GM": {
+      "uk": {
+        "title": "Новий рік у Гамбії: Банжул | Time2Fest",
+        "description": "Гамбія входить у 2027 рік о 00:00 UTC: паперові човни-фанали зі світлом, маски Канкуранг на вулицях, боротьба на пляжі й салют біля Арки 22 у Банжулі."
+      },
+      "en": {
+        "title": "New Year in The Gambia: Banjul | Time2Fest",
+        "description": "The Gambia enters 2027 at 00:00 UTC: glowing paper fanal boats, Kankurang masquerades in the streets, beach wrestling and fireworks at Banjul’s Arch 22."
+      },
+      "es": {
+        "title": "Año Nuevo en Gambia: Banjul | Time2Fest",
+        "description": "Gambia entra en 2027 a las 00:00 UTC: barcos de papel fanal iluminados, máscaras Kankurang en las calles, lucha en la playa y fuegos en el Arco 22 de Banjul."
+      },
+      "fr": {
+        "title": "Nouvel An en Gambie : Banjul | Time2Fest",
+        "description": "La Gambie entre en 2027 à 0 h UTC : bateaux de papier fanal illuminés, masques Kankurang dans les rues, lutte sur la plage et feu d’artifice à l’Arche 22."
+      }
+    },
+    "LR": {
+      "uk": {
+        "title": "Новий рік у Ліберії: Монровія | Time2Fest",
+        "description": "Ліберія зустрічає 2027 рік о 00:00 UTC: нічне чування Watch Night з відліком від пастора, музика бульвару Табмена в Монровії й океанський пляж 1 січня."
+      },
+      "en": {
+        "title": "New Year in Liberia: Monrovia | Time2Fest",
+        "description": "Liberia greets 2027 at 00:00 UTC: Watch Night vigils with the pastor’s countdown, music along Monrovia’s Tubman Boulevard and the ocean beach on 1 January."
+      },
+      "es": {
+        "title": "Año Nuevo en Liberia: Monrovia | Time2Fest",
+        "description": "Liberia recibe 2027 a las 00:00 UTC: vigilias de Watch Night con la cuenta del pastor, música en el bulevar Tubman de Monrovia y playa en Año Nuevo."
+      },
+      "fr": {
+        "title": "Nouvel An au Liberia : Monrovia | Time2Fest",
+        "description": "Le Liberia fête 2027 à 0 h UTC : veillées de la Watch Night avec le compte du pasteur, musique sur le boulevard Tubman de Monrovia, plage le 1er janvier."
+      }
+    },
+    "MA": {
+      "uk": {
+        "title": "Новий рік у Марокко: Касабланка | Time2Fest",
+        "description": "Марокко зустрічає 2027 рік о 00:00 UTC: зранку 31 грудня — по торт-полін до кондитерських, уночі — музика в Касабланці, а 14 січня — Єннаєр із тагулою."
+      },
+      "en": {
+        "title": "New Year in Morocco: Casablanca | Time2Fest",
+        "description": "Morocco greets 2027 at 00:00 UTC: a morning dash for the log cake on 31 December, music and dancing in Casablanca, then Yennayer and tagoula on 14 January."
+      },
+      "es": {
+        "title": "Año Nuevo en Marruecos: Casablanca | Time2Fest",
+        "description": "Marruecos recibe 2027 a las 00:00 UTC: carrera matinal por el tronco el 31 de diciembre, música en Casablanca y, el 14 de enero, Yennayer con tagula."
+      },
+      "fr": {
+        "title": "Nouvel An au Maroc : Casablanca | Time2Fest",
+        "description": "Le Maroc accueille 2027 à 00 h UTC : course matinale à la bûche le 31 décembre, musique et danse à Casablanca, puis Yennayer et sa tagoula le 14 janvier."
+      }
+    },
+    "ML": {
+      "uk": {
+        "title": "Новий рік у Малі: Бамако | Time2Fest",
+        "description": "Малі зустрічає 2027 рік о 00:00 UTC: у Бамако — курка на святковому столі, відлік у гріні з друзями й обійми опівночі, у церквах — новорічні чування."
+      },
+      "en": {
+        "title": "New Year in Mali: Bamako | Time2Fest",
+        "description": "Mali greets 2027 at 00:00 UTC: Bamako enjoys a chicken feast, counts down with the grin, its circle of friends, and hugs at midnight; churches hold vigils."
+      },
+      "es": {
+        "title": "Año Nuevo en Malí: Bamako | Time2Fest",
+        "description": "Malí recibe 2027 a las 00:00 UTC: en Bamako, pollo en la mesa, cuenta atrás con el grin, el grupo de amigos, y abrazos a medianoche; en las iglesias, vigilias."
+      },
+      "fr": {
+        "title": "Nouvel An au Mali : Bamako | Time2Fest",
+        "description": "Le Mali entre en 2027 à 0 h UTC : à Bamako, poulet au menu, décompte au grin entre amis et embrassades à minuit, tandis que les églises tiennent leurs veillées."
+      }
     }
   }
 }

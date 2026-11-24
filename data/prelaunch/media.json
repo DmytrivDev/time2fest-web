@@ -3357,6 +3357,86 @@
         "x": 58,
         "y": 50
       }
+    },
+    "country:GG": {
+      "src": "/media/photos/guernsey.webp",
+      "alt": {
+        "uk": "Сент-Пітер-Порт уночі в грудні: дахи старого міста, підсвічена церковна вежа, тераси на пагорбі, святкова гірлянда над вуличкою",
+        "en": "St Peter Port at night in December: old-town rooftops, a lit church tower, terraces on the hill and a festive garland over a lane",
+        "es": "St. Peter Port de noche en diciembre: tejados del casco antiguo, la torre iluminada de una iglesia, terrazas en la colina y una guirnalda festiva sobre una callejuela",
+        "fr": "Saint-Pierre-Port la nuit en décembre : toits de la vieille ville, clocher éclairé, terrasses sur la colline et guirlande de fête au-dessus d’une ruelle"
+      },
+      "author": "Gene Selkov",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://www.flickr.com/photos/selkovjr/4188256369/",
+      "position": {
+        "x": 50,
+        "y": 55
+      }
+    },
+    "country:GM": {
+      "src": "/media/photos/banjul.webp",
+      "alt": {
+        "uk": "Нічний Кололі (агломерація Банжула — Серекунди) в новорічні дні: тераси ресторанів у святкових гірляндах на туристичній вулиці",
+        "en": "Kololi at night (the Banjul–Serekunda area) during the New Year days: restaurant terraces in festive garlands on the tourist strip",
+        "es": "Kololi de noche (área de Banjul y Serekunda) en los días de Año Nuevo: terrazas de restaurantes con guirnaldas festivas en la calle turística",
+        "fr": "Kololi la nuit (agglomération de Banjul et Serekunda) pendant les fêtes du Nouvel An : terrasses de restaurants ornées de guirlandes sur la rue touristique"
+      },
+      "author": "Jan Kruithof (tjabeljan)",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Gambia08KololiAtNight008_(5438324316).jpg",
+      "position": {
+        "x": 42,
+        "y": 60
+      }
+    },
+    "country:LR": {
+      "src": "/media/photos/monrovia.webp",
+      "alt": {
+        "uk": "Нічна Монровія з пагорба Дукор: вогні міста на півострові, гирло річки Месурадо й вигин океанського пляжу",
+        "en": "Monrovia at night from Ducor hill: city lights on the peninsula, the mouth of the Mesurado River and the curve of the ocean beach",
+        "es": "Monrovia de noche desde la colina Ducor: luces de la ciudad en la península, la desembocadura del río Mesurado y la curva de la playa",
+        "fr": "Monrovia la nuit depuis la colline Ducor : lumières de la ville sur la péninsule, embouchure du Mesurado et courbe de la plage océane"
+      },
+      "author": "blk24ga",
+      "license": "CC BY 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Downtown,_Monrovia,_Liberia_-_panoramio_(1).jpg",
+      "position": {
+        "x": 55,
+        "y": 55
+      }
+    },
+    "country:MA": {
+      "src": "/media/photos/casablanca.webp",
+      "alt": {
+        "uk": "Площа Мухаммеда V у Касабланці вночі: підсвічений фонтан і годинникова вежа Вілаї",
+        "en": "Mohammed V Square in Casablanca at night: the lit fountain and the clock tower of the Wilaya",
+        "es": "La plaza Mohammed V de Casablanca de noche: la fuente iluminada y la torre del reloj de la Wilaya",
+        "fr": "La place Mohammed-V à Casablanca la nuit : la fontaine illuminée et la tour de l’horloge de la wilaya"
+      },
+      "author": "Radouane (Wikivoyage)",
+      "license": "Public domain",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Casablanca_fountain_night.jpg",
+      "position": {
+        "x": 45,
+        "y": 45
+      }
+    },
+    "country:ML": {
+      "src": "/media/photos/bamako.webp",
+      "alt": {
+        "uk": "Нічне Бамако з висоти: вогні кварталів обабіч Нігеру й освітлений міст через річку",
+        "en": "Bamako at night from above: lights of the districts on both banks of the Niger and a lit bridge across the river",
+        "es": "Bamako de noche desde lo alto: las luces de los barrios a ambas orillas del Níger y un puente iluminado sobre el río",
+        "fr": "Bamako la nuit vue d’en haut : lumières des quartiers des deux côtés du Niger et pont éclairé sur le fleuve"
+      },
+      "author": "Mark Fischer",
+      "license": "CC BY-SA 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Bamako_at_Night_(45407846292).jpg",
+      "position": {
+        "x": 50,
+        "y": 62
+      }
     }
   }
 }

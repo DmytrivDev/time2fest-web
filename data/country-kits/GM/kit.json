@@ -1,0 +1,103 @@
+{
+  "code": "GM",
+  "zone": "UTC+0",
+  "zoneId": "utc+0000",
+  "cityId": "banjul",
+  "names": {
+    "uk": {
+      "name": "Гамбія",
+      "city": "Банжул",
+      "cityIn": "у Банжулі",
+      "countryIn": "у Гамбії",
+      "caps": "ГАМБІЯ"
+    },
+    "en": {
+      "name": "The Gambia",
+      "city": "Banjul",
+      "cityIn": "in Banjul",
+      "countryIn": "in The Gambia",
+      "caps": "THE GAMBIA"
+    },
+    "es": {
+      "name": "Gambia",
+      "city": "Banjul",
+      "cityIn": "en Banjul",
+      "countryIn": "en Gambia",
+      "caps": "GAMBIA"
+    },
+    "fr": {
+      "name": "Gambie",
+      "city": "Banjul",
+      "cityIn": "à Banjul",
+      "countryIn": "en Gambie",
+      "caps": "GAMBIE"
+    }
+  },
+  "picto": "M3 37 H37 M5 37 V23 M8.5 37 V23 M10 37 V23 M13.5 37 V23 M26.5 37 V23 M30 37 V23 M31.5 37 V23 M35 37 V23 M4 23 H36 V14 L20 4.5 L4 14 Z M14.5 21.5 V17.5 A5.5 5.5 0 0 1 25.5 17.5 V21.5 Z M21.3 8.4 A1.3 1.3 0 1 1 18.7 8.4 A1.3 1.3 0 1 1 21.3 8.4 Z M18.2 10.2 Q20 12 21.8 10.2",
+  "flagColors": [
+    "#CE1126",
+    "#0C1C8C",
+    "#3A7728"
+  ],
+  "palette": 5,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Гамбії"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in The Gambia"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Gambia"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "en Gambie"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

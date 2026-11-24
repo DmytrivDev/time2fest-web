@@ -5498,5 +5498,145 @@
       "description": "L’Islande fête 2027 à 00 h UTC : fusées achetées aux sauveteurs au-dessus de Reykjavik, feux de joie dans les quartiers et ciel embrasé à Hallgrímskirkja."
     },
     "kit": "is"
+  },
+  "GG": {
+    "text": "Autrefois, à Guernesey, on enterrait la vieille année sur le coup de minuit. Les garçons enveloppaient une bûche d’un drap noir, l’appelaient « le vieux bout de l’an » et la portaient par les rues à la lueur de lanternes taillées dans des navets, comme un cortège funèbre, avant de l’enterrer sur la grève ou de la brûler dans un feu de joie. Pendant ce temps, les enfants allaient de porte en porte réclamer l’étrenne du Nouvel An, l’oguinane, en chantant : « Ouvre ta pouque, et pis la r’clios ! » Le mot est souvent rapproché du Hogmanay écossais.\n\nAujourd’hui, décembre appartient à la mer. Jusqu’au 31 décembre, on se baigne dans douze baies « de Noël » pour soutenir un hospice ; le matin de Noël, les nageurs plongent dans les piscines d’eau de mer de La Vallette, à Saint-Pierre-Port, et le lendemain de Noël des milliers d’insulaires entrent ensemble dans l’eau froide de la baie de Cobo.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "flame",
+        "title": "L’enterrement du bout de l’an",
+        "text": "Jadis, à minuit, les garçons promenaient une bûche drapée de noir avec des lanternes en navet, puis l’enterraient sur la grève ou la brûlaient."
+      },
+      {
+        "id": "t2",
+        "iconId": "coin",
+        "title": "L’étrenne oguinane",
+        "text": "Les enfants allaient de porte en porte réclamer en chantant un cadeau du Nouvel An, l’oguinane, mot rapproché du Hogmanay écossais."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "Baignades d’hiver en mer",
+        "text": "Jusqu’au 31 décembre, les insulaires se baignent dans douze baies de Noël pour un hospice, et le lendemain de Noël des milliers entrent ensemble dans la mer à Cobo."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 à Guernesey : Saint-Pierre-Port | Time2Fest",
+      "description": "Guernesey fête 2027 à minuit heure locale (00:00 UTC) : vieil enterrement du bout de l’an aux lanternes, étrenne oguinane et bains de mer d’hiver."
+    },
+    "kit": "gg"
+  },
+  "GM": {
+    "text": "Un bateau de papier éclairé de l’intérieur glisse dans la rue au son des tambours et des chants : c’est le fanal, et c’est ainsi que la Gambie dit adieu à l’année. Presque tous les Gambiens sont musulmans, mais la saison de Noël au Nouvel An appartient à tous : masques Kankurang et Zimba, échassiers et groupes de « chasseurs » envahissent les rues, et beaucoup d’hôtels tirent un feu d’artifice le soir du réveillon. Les fanals, carcasses de bambou et de papier illuminées, sont portés jusqu’au 1er ou 2 janvier ; le jour de l’An est férié.\n\nLa capitale rassemble tout cela dans le Festival culturel de Banjul, qui dure une semaine. Au programme 2025 : lutte traditionnelle sur la plage le 31 décembre, feu d’artifice à l’Arche 22 à minuit, puis, le 1er janvier, plus de cinquante sociétés de chasseurs et leurs masques défilant jusqu’à l’aube. Environ 50 000 personnes sont venues, selon les estimations.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "boat",
+        "title": "Le fanal, bateau-lanterne",
+        "text": "De la mi-décembre au 1er ou 2 janvier, des hommes portent dans les rues un grand bateau de papier éclairé de l’intérieur, tandis que les femmes mènent les chants au son des tambours."
+      },
+      {
+        "id": "t2",
+        "iconId": "mask",
+        "title": "Masques jusqu’à l’aube",
+        "text": "Pendant la semaine des fêtes, Kankurang, « lions » Zimba et échassiers parcourent les rues, et le 1er janvier les sociétés de chasseurs dansent masquées à Banjul du matin jusqu’à l’aube."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Lutte et feu d’artifice",
+        "text": "L’après-midi du 31 décembre, des lutteurs s’affrontent sur la plage de Banjul, et à minuit le feu d’artifice illumine le ciel au-dessus de l’Arche 22 et de nombreux hôtels de la côte."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An en Gambie : Banjul | Time2Fest",
+      "description": "La Gambie entre en 2027 à 0 h UTC : bateaux de papier fanal illuminés, masques Kankurang dans les rues, lutte sur la plage et feu d’artifice à l’Arche 22."
+    },
+    "kit": "gm"
+  },
+  "LR": {
+    "text": "Plus de huit Libériens sur dix sont chrétiens : le dernier soir de l’année appartient donc ici à la Watch Night, la veillée de nuit. Les églises de tout le pays se remplissent dès le soir : chorale, tambours et piano, sermon et prières de gratitude pour l’année écoulée. Quelques secondes avant minuit, le pasteur mène lui-même le compte à rebours, et dès que sonne minuit, la prière silencieuse éclate en danses entre les rangs. Le 1er janvier est férié.\n\nMonrovia accueille l’année plus bruyamment. La nuit du passage à 2015, quand le couvre-feu lié à Ebola fut levé pour une seule nuit, la musique résonnait dans les buvettes, les clubs et les petites églises tout le long du boulevard Tubman, les voitures klaxonnaient et l’on dansait dans la rue. Le matin du 1er janvier, beaucoup vont à la plage de l’océan, où l’on vend à l’entrée du poulet rôti et du poisson fumé.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Le compte du pasteur",
+        "text": "À la veillée de la Watch Night, le pasteur compte les dernières secondes avant minuit, et dès la première minute de l’année toute l’église se met à danser."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "De la musique à chaque porte",
+        "text": "Après minuit, buvettes et clubs du boulevard Tubman à Monrovia montent le son, les voitures klaxonnent et certains dansent en pleine rue."
+      },
+      {
+        "id": "t3",
+        "iconId": "wave",
+        "title": "La plage du 1er janvier",
+        "text": "Le 1er janvier est chômé : les habitants de Monrovia se détendent face à l’océan, sous des paillotes, avec du poulet rôti et du poisson fumé."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An au Liberia : Monrovia | Time2Fest",
+      "description": "Le Liberia fête 2027 à 0 h UTC : veillées de la Watch Night avec le compte du pasteur, musique sur le boulevard Tubman de Monrovia, plage le 1er janvier."
+    },
+    "kit": "lr"
+  },
+  "MA": {
+    "text": "La bûche : rares sont les familles marocaines qui terminent l’année sans elle. Le matin du 31 décembre, on se presse dans les pâtisseries avant que les meilleures ne soient parties, et le soir on se retrouve autour d’elle à la maison. Certains réservent une table au restaurant, tandis que places et boulevards se remplissent de familles et de groupes de jeunes. Le 1er janvier est férié. Deux semaines plus tard, le 14 janvier, arrive Yennayer, le Nouvel An amazigh, jour férié lui aussi depuis 2023. Sur la table, des plats aux sept légumes ou la tagoula, une bouillie d’orge ou de maïs au miel et à l’huile d’argan, avec un noyau de datte caché pour la chance.\n\nCasablanca, comme Marrakech et Fès, fait partie des villes où l’on vient fêter le Nouvel An, en musique traditionnelle et en danse. Le long de l’Atlantique s’étire la corniche d’Aïn Diab, avec ses hôtels, ses restaurants et ses boîtes de nuit.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "La bûche dès le matin",
+        "text": "Les familles courent chercher la bûche dès le matin, avant la rupture de stock, et se retrouvent autour d’elle le soir à la maison."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Musique et danse à Casablanca",
+        "text": "À Casablanca, Marrakech et Fès, la nuit se passe en musique traditionnelle et en danse ; sur la corniche d’Aïn Diab, restaurants et clubs restent allumés."
+      },
+      {
+        "id": "t3",
+        "iconId": "ladle",
+        "title": "La tagoula de Yennayer",
+        "text": "Le 14 janvier, Nouvel An amazigh, on cuisine la tagoula d’orge ou de maïs au miel ; le noyau de datte caché dedans porte chance."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Maroc : Casablanca | Time2Fest",
+      "description": "Le Maroc accueille 2027 à 00 h UTC : course matinale à la bûche le 31 décembre, musique et danse à Casablanca, puis Yennayer et sa tagoula le 14 janvier."
+    },
+    "kit": "ma"
+  },
+  "ML": {
+    "text": "Le poulet est le plat de la fin d’année : avant le 31 décembre, les marchés du Mali se remplissent de volailles, même si les prix piquent chaque année. Plus de 96 % des Maliens sont musulmans ; le 1er janvier est donc avant tout un jour férié, tandis que les communautés chrétiennes attendent minuit à la messe et en veillée de prière. Pétards et feux d’artifice sont interdits dans tout le pays chaque décembre : à minuit, l’essentiel, ce sont les embrassades et les vœux.\n\nBamako fête l’an neuf dans son « grin », ce cercle d’amis qui se retrouve en pleine rue. Les jeunes cotisent pour une table commune et filent en boîte, à l’hôtel ou en appartement meublé, et le décompte finit en embrassades. D’autres restent chez eux : le 31 décembre 2024, les Bamakois faisaient la queue aux banques pour acheter des poulets, des cadeaux pour les enfants et un bon dîner. Les anciens se souviennent des bals poussière au son des radios à piles.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Du poulet au menu",
+        "text": "Avant le 31 décembre, les marchés débordent de volailles : le poulet est le plat de fin d’année au Mali. Les familles en achètent pour le dîner, même quand les prix piquent."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Le décompte au grin",
+        "text": "Les jeunes attendent minuit entre amis : ils cotisent pour une table commune, sortent en boîte ou en appartement meublé, et les dernières secondes finissent en embrassades et en vœux."
+      },
+      {
+        "id": "t3",
+        "iconId": "bell",
+        "title": "Messe et veillée",
+        "text": "Les communautés chrétiennes du Mali organisent messes et veillées de prière du Nouvel An : on rend grâce pour l’année écoulée et on confie à Dieu ses espoirs pour la nouvelle."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An au Mali : Bamako | Time2Fest",
+      "description": "Le Mali entre en 2027 à 0 h UTC : à Bamako, poulet au menu, décompte au grin entre amis et embrassades à minuit, tandis que les églises tiennent leurs veillées."
+    },
+    "kit": "ml"
   }
 }

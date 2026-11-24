@@ -1,0 +1,103 @@
+{
+  "code": "MA",
+  "zone": "UTC+0",
+  "zoneId": "utc+0000",
+  "cityId": "casablanca",
+  "names": {
+    "uk": {
+      "name": "Марокко",
+      "city": "Касабланка",
+      "cityIn": "у Касабланці",
+      "countryIn": "у Марокко",
+      "caps": "МАРОККО"
+    },
+    "en": {
+      "name": "Morocco",
+      "city": "Casablanca",
+      "cityIn": "in Casablanca",
+      "countryIn": "in Morocco",
+      "caps": "MOROCCO"
+    },
+    "es": {
+      "name": "Marruecos",
+      "city": "Casablanca",
+      "cityIn": "en Casablanca",
+      "countryIn": "en Marruecos",
+      "caps": "MARRUECOS"
+    },
+    "fr": {
+      "name": "Maroc",
+      "city": "Casablanca",
+      "cityIn": "à Casablanca",
+      "countryIn": "au Maroc",
+      "caps": "MAROC"
+    }
+  },
+  "picto": "M3 37.4 Q6.5 36.2 10 37.4 Q13.5 38.6 17 37.4 Q20.5 36.2 24 37.4 Q27.5 38.6 31 37.4 Q34.5 36.2 37 37 M3 34 H37 M4.5 34 V27.6 H17 M23 27.6 H35.5 V34 M4.5 27.6 L7 25.2 H17 M23 25.2 H33 L35.5 27.6 M7.6 34 V31.4 Q9 29.6 10.4 31.4 V34 M12.6 34 V31.4 Q14 29.6 15.4 31.4 V34 M24.6 34 V31.4 Q26 29.6 27.4 31.4 V34 M29.6 34 V31.4 Q31 29.6 32.4 31.4 V34 M17 34 V9.6 H23 V34 M17 14 H23 M19 25 V22.4 Q20 21 21 22.4 V25 M17 9.6 V8.2 H18.4 M21.6 8.2 H23 V9.6 M18.4 9.6 V5.4 H21.6 V9.6 M18.6 5.4 Q20 2.8 21.4 5.4 M20 3.4 V1",
+  "flagColors": [
+    "#C1272D",
+    "#006233",
+    "#FFFFFF"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Марокко"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Morocco"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Marruecos"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "au Maroc"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}
