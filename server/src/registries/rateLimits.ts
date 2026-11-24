@@ -24,6 +24,11 @@ export const rateLimitRegistry: readonly RateLimitRow[] = [
   // reads; 600 a minute per client keeps a reload storm or a reader test far below the limit. Counted in this
   // process if Redis is down (a public read never fails closed on the fast store).
   { key: 'site-read', limit: 600, windowMs: 60_000, keys: ['ipDay'], onStoreDown: 'memory' },
+  // The stream agent's proposals (SPEC-21a AC-37, [А13]): 30 a minute per agent record; refused if Redis is down
+  // (a write never counts in one process only). The daily cap lives in `LIVE_DEFAULTS.agent`.
+  { key: 'stream-agent-propose', limit: 30, windowMs: 60_000, keys: ['subject'], onStoreDown: 'fail-closed' },
+  // The stream agent's reads (SPEC-21a AC-37): 60 a minute per agent record, counted in this process if Redis is down.
+  { key: 'stream-agent-read', limit: 60, windowMs: 60_000, keys: ['subject'], onStoreDown: 'memory' },
   // Toast text check (SPEC-09 AC-39, C12): 20 a minute per client, before any AI call; counted in this process if Redis is down.
   { key: 'toasts-check', limit: 20, windowMs: 60_000, keys: ['ipDay'], onStoreDown: 'memory' },
 ];

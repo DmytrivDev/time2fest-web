@@ -3,8 +3,10 @@
  *
  * - Only the owner issues or revokes, and only for agent records.
  * - The key is 32 random bytes, base64url. Its value is returned once, from `issue`, and is never
- *   logged; Payload stores it encrypted and never returns it on a read.
- * - Revoke clears the key, so the very next request with it finds no record (no cache).
+ *   logged. Only a one-way index is stored: Payload's HMAC-SHA256 of the key with the server secret
+ *   (`api_key_index`); the store clears Payload's reversibly encrypted copy in the same transaction
+ *   (NFR-3 of SPEC-21a, finding S4-05). A lost key cannot be recovered, only re-issued.
+ * - Revoke clears the index, so the very next request with the key finds no record (no cache).
  */
 import { randomBytes } from 'node:crypto';
 import { isAgentRole, type Role } from '../domain/access/roles';

@@ -24,6 +24,9 @@
  * SPEC-12 (AC-50 … AC-56): `GET /cms-api/live/view` and `POST /cms-api/live/<action>` (`admin/liveEndpoints.ts`), every
  * class, the same gate, role, JSON and 1 KB rules (shared through `admin/cmsHttp.ts`).
  *
+ * SPEC-21a (AC-31 … AC-33, AC-37): `GET /cms-api/stream-agent/{channels,candidates}`, `POST /cms-api/stream-agent/candidates`
+ * (`agent-api/streamAgentEndpoints.ts`), the `stream-agent` role only, rate-limited, propose only.
+ *
  * SPEC-13b (AC-30, AC-31, AC-66): `GET /cms-api/ops/overview` and `POST /cms-api/ops/settings` (`admin/opsEndpoints.ts`), owner only.
  */
 import type { ClockControlValue } from '@time2fest/contracts';
@@ -42,6 +45,7 @@ import { fail, isOwner, jsonBodyOf, NO_STORE } from './cmsHttp';
 import { liveEndpoints } from './liveEndpoints';
 import { opsEndpoints } from './opsEndpoints';
 import { streamsEndpoints } from './streamsEndpoints';
+import { streamAgentEndpoints } from '../agent-api/streamAgentEndpoints';
 
 function festivalStateEndpoint(resolve: () => Promise<Deps>): Endpoint {
   return {
@@ -164,6 +168,8 @@ export function cmsEndpointsFor(cls: EnvClass, resolve: () => Promise<Deps> = pr
   endpoints.push(...liveEndpoints(resolve));
   // SPEC-21a: the owner's stream sources endpoints (slice «Джерела», `admin/streamsEndpoints.ts`) exist in every class.
   endpoints.push(...streamsEndpoints(resolve));
+  // SPEC-21a: the stream agent's three addresses (`agent-api/streamAgentEndpoints.ts`), propose only, every class.
+  endpoints.push(...streamAgentEndpoints(resolve));
   // SPEC-13b: the owner's monitoring overview and `ops-settings` change exist in every class (`admin/opsEndpoints.ts`).
   endpoints.push(...opsEndpoints(resolve));
   return endpoints;

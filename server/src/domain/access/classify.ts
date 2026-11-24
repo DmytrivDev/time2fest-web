@@ -60,17 +60,22 @@ export const isFirstRegisterPath = (path: string): boolean =>
 export const CATALOG_SLUGS = ['cities', 'countries', 'events', 'seasons', 'traditions', 'zones'] as const;
 
 const READ_METHODS = new Set(['GET', 'HEAD']);
+const STREAM_AGENT_CHANNELS = '/cms-api/stream-agent/channels';
+const STREAM_AGENT_CANDIDATES = '/cms-api/stream-agent/candidates';
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 
 /**
  * The only paths a service identity (agent) may reach (S4-02): reads of the catalog collections
  * and of `/cms-api/admins/me`, and in the `test` class the `agent-test-posts` collection (AC-19).
  * Payload's built-in collections, the admins records and their auth operations, and globals are not
- * on the list.
+ * on the list. The stream agent (SPEC-21a AC-32, AC-33) gets exactly three addresses: `GET …/channels`,
+ * `GET …/candidates` (the query is not part of the path) and `POST …/candidates`.
  */
 export function servicePathAllowed(path: string, method: string, testClass: boolean): boolean {
   const m = method.toUpperCase();
   if (testClass && under(path, '/cms-api/agent-test-posts')) return true;
+  if (path === STREAM_AGENT_CANDIDATES) return m === 'GET' || m === 'POST';
+  if (path === STREAM_AGENT_CHANNELS) return m === 'GET';
   if (!READ_METHODS.has(m)) return false;
   return path === '/cms-api/admins/me' || CATALOG_SLUGS.some((slug) => under(path, `/cms-api/${slug}`));
 }

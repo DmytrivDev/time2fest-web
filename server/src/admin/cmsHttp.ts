@@ -20,6 +20,12 @@ export const fail = (code: Code, reason?: string) =>
 /** Owner who passed the Access gate (or a server-side call carrying an owner user). */
 export const isOwner = (req: PayloadRequest) => passedGate(req) && roleOf(req.user) === 'owner';
 
+/**
+ * The stream agent (SPEC-21a AC-31 … AC-33) who passed the Access gate: the role is read from this request's user,
+ * which Payload looks up by the API key on every request (no cache), so a revoked key fails here at once (AC-38).
+ */
+export const isStreamAgent = (req: PayloadRequest) => passedGate(req) && roleOf(req.user) === 'stream-agent';
+
 /** The body as text, read at most `MAX_BODY_BYTES + 1` bytes; `null` when it is longer than the limit. */
 export async function boundedText(req: PayloadRequest): Promise<string | null> {
   const body = (req as { body?: ReadableStream<Uint8Array> | null }).body;

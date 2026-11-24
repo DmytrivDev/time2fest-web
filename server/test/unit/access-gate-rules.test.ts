@@ -85,6 +85,37 @@ describe('servicePathAllowed (S4-02)', () => {
     expect(servicePathAllowed('/cms-api/admins/me', 'POST', true)).toBe(false);
   });
 
+  it('SPEC-21a AC-32, AC-33: exactly the three stream-agent addresses', () => {
+    expect(servicePathAllowed('/cms-api/stream-agent/channels', 'GET', false)).toBe(true);
+    expect(servicePathAllowed('/cms-api/stream-agent/candidates', 'GET', false)).toBe(true);
+    expect(servicePathAllowed('/cms-api/stream-agent/candidates', 'POST', false)).toBe(true);
+    for (const m of ['POST', 'PUT', 'PATCH', 'DELETE', 'HEAD']) {
+      expect(servicePathAllowed('/cms-api/stream-agent/channels', m, true), m).toBe(false);
+    }
+    for (const m of ['PATCH', 'DELETE', 'PUT']) {
+      expect(servicePathAllowed('/cms-api/stream-agent/candidates', m, true), m).toBe(false);
+    }
+    for (const p of [
+      '/cms-api/stream-agent',
+      '/cms-api/stream-agent/candidates/1',
+      '/cms-api/stream-agent/channels/1',
+      '/cms-api/stream-agent/approve',
+      '/cms-api/streams/view',
+      '/cms-api/streams/approve',
+      '/cms-api/streams/blacklist',
+      '/cms-api/live/view',
+      '/cms-api/live/replace',
+      '/cms-api/stream-channels',
+      '/cms-api/stream-channels/1',
+      '/cms-api/stream-candidates',
+      '/cms-api/stream-candidates/1',
+    ]) {
+      for (const m of ['GET', 'POST']) expect(servicePathAllowed(p, m, true), `${m} ${p}`).toBe(false);
+    }
+    expect(decide({ ...base, auth: agent, method: 'POST', path: '/cms-api/stream-agent/candidates' })).toEqual({ kind: 'pass' });
+    expect(decide({ ...base, auth: agent, method: 'POST', path: '/cms-api/streams/approve' })).toEqual({ kind: 'deny403', reason: 'service-path' });
+  });
+
   it('decide: a service on a path off the list → 403 service-path', () => {
     expect(decide({ ...base, auth: agent, path: '/cms-api/payload-preferences' })).toEqual({ kind: 'deny403', reason: 'service-path' });
     expect(decide({ ...base, auth: agent, path: '/cms-api/zones' })).toEqual({ kind: 'pass' });
