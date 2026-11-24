@@ -11,3 +11,4 @@ export * from './publicRoutes';
 export * from './live';
 export * from './liveRules';
 export * from './liveGuard';
+export * from './streams';

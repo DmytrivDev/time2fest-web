@@ -2,6 +2,7 @@
 import { z } from 'zod';
 import {
   LIVE_ARCHIVE_DECISIONS,
+  LIVE_DOOR_QUOTA_BUCKETS,
   LIVE_REASON_MAX,
   LIVE_VIDEO_STATES,
   SOURCE_ERROR_CODES,
@@ -15,6 +16,7 @@ import {
   type StreamSource,
   type ViewerSummary,
 } from './live';
+import { ChannelIdSchema, VideoIdSchema } from './streams.schemas';
 
 const str = z.string();
 const id = z.string().min(1);
@@ -93,10 +95,29 @@ export const LiveActionBodySchema = z.discriminatedUnion('action', [
 
 export const LiveDoorBodySchema = z.discriminatedUnion('door', [
   z.object({ door: z.literal('video-status'), videoId, state: z.enum(LIVE_VIDEO_STATES) }).strict(),
-  z.object({ door: z.literal('quota'), used: int0, exceeded: z.boolean().optional() }).strict(),
+  z.object({ door: z.literal('quota'), used: int0, exceeded: z.boolean().optional(), bucket: z.enum(LIVE_DOOR_QUOTA_BUCKETS).optional() }).strict(),
   z.object({ door: z.literal('viewers'), people: int0, countries: z.array(str) }).strict(),
   z.object({ door: z.literal('hide'), eventId: catalogId, sourceId: catalogId }).strict(),
   z.object({ door: z.literal('reset-live') }).strict(),
+  z
+    .object({
+      door: z.literal('channels'),
+      channels: z
+        .array(
+          z
+            .object({
+              id: ChannelIdSchema,
+              uploads: z.string().regex(/^[A-Za-z0-9_-]{2,64}$/).optional(),
+              videos: z.array(VideoIdSchema).max(50).optional(),
+              deleted: z.literal(true).optional(),
+            })
+            .strict(),
+        )
+        .min(1)
+        .max(200),
+    })
+    .strict(),
+  z.object({ door: z.literal('search-results'), channelId: ChannelIdSchema, ids: z.array(VideoIdSchema).max(50) }).strict(),
 ]) satisfies z.ZodType<LiveDoorBody>;
 
 export const LiveArchiveRowSchema = z

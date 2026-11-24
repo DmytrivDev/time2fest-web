@@ -3559,7 +3559,7 @@
       "text": "ZodObject<{ decision: ZodEnum<{ dead: \"dead\"; hidden: \"hidden\"; kept: \"kept\"; replaced: \"replaced\"; }>; label: ZodString; order: ZodNumber; videoId: ZodString; }, $strict>"
     },
     "packages/contracts/src/live.schemas.ts#LiveDoorBodySchema": {
-      "text": "ZodDiscriminatedUnion<[ZodObject<{ door: ZodLiteral<\"video-status\">; state: ZodEnum<{ \"not-embeddable\": \"not-embeddable\"; ended: \"ended\"; live: \"live\"; missing: \"missing\"; private: \"private\"; upcoming: \"upcoming\"; }>; videoId: ZodString; }, $strict>, ZodObject<{ door: ZodLiteral<\"quota\">; exceeded: ZodOptional<ZodBoolean>; used: ZodNumber; }, $strict>, ZodObject<{ countries: ZodArray<ZodString>; door: ZodLiteral<\"viewers\">; people: ZodNumber; }, $strict>, ZodObject<{ door: ZodLiteral<\"hide\">; eventId: ZodString; sourceId: ZodString; }, $strict>, ZodObject<{ door: ZodLiteral<\"reset-live\">; }, $strict>], \"door\">"
+      "text": "ZodDiscriminatedUnion<[ZodObject<{ door: ZodLiteral<\"video-status\">; state: ZodEnum<{ \"not-embeddable\": \"not-embeddable\"; ended: \"ended\"; live: \"live\"; missing: \"missing\"; private: \"private\"; upcoming: \"upcoming\"; }>; videoId: ZodString; }, $strict>, ZodObject<{ bucket: ZodOptional<ZodEnum<{ candidates: \"candidates\"; playlists: \"playlists\"; queries: \"queries\"; search: \"search\"; }>>; door: ZodLiteral<\"quota\">; exceeded: ZodOptional<ZodBoolean>; used: ZodNumber; }, $strict>, ZodObject<{ countries: ZodArray<ZodString>; door: ZodLiteral<\"viewers\">; people: ZodNumber; }, $strict>, ZodObject<{ door: ZodLiteral<\"hide\">; eventId: ZodString; sourceId: ZodString; }, $strict>, ZodObject<{ door: ZodLiteral<\"reset-live\">; }, $strict>, ZodObject<{ channels: ZodArray<ZodObject<{ deleted: ZodOptional<ZodLiteral<true>>; id: ZodString; uploads: ZodOptional<ZodString>; videos: ZodOptional<ZodArray<ZodString>>; }, $strict>>; door: ZodLiteral<\"channels\">; }, $strict>, ZodObject<{ channelId: ZodString; door: ZodLiteral<\"search-results\">; ids: ZodArray<ZodString>; }, $strict>], \"door\">"
     },
     "packages/contracts/src/live.schemas.ts#SourceErrorReportSchema": {
       "text": "ZodObject<{ code: ZodNumber & ZodType<100 | 2 | 5 | 101 | 150 | 153, number, $ZodTypeInternals<100 | 2 | 5 | 101 | 150 | 153, number>>; eventId: ZodString; sourceId: ZodString; }, $strict>"
@@ -3606,6 +3606,9 @@
     },
     "packages/contracts/src/live.ts#LIVE_CACHE_TAG": {
       "text": "\"t2f-live-chains\""
+    },
+    "packages/contracts/src/live.ts#LIVE_DOOR_QUOTA_BUCKETS": {
+      "text": "readonly [\"queries\", \"search\", \"candidates\", \"playlists\"]"
     },
     "packages/contracts/src/live.ts#LIVE_R2_KEYS": {
       "text": "{ readonly chains: \"live/chains.json\"; }"
@@ -3666,12 +3669,47 @@
     },
     "packages/contracts/src/live.ts#LiveDoorBody": {
       "union": [
+        "{\"props\":{\"bucket\":{\"optional\":true,\"type\":{\"ref\":\"packages/contracts/src/live.ts#LiveDoorQuotaBucket\"}},\"door\":{\"optional\":false,\"type\":{\"union\":[\"'quota'\"]}},\"exceeded\":{\"optional\":true,\"type\":{\"text\":\"boolean\"}},\"used\":{\"optional\":false,\"type\":{\"text\":\"number\"}}}}",
+        "{\"props\":{\"channelId\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"door\":{\"optional\":false,\"type\":{\"union\":[\"'search-results'\"]}},\"ids\":{\"optional\":false,\"type\":{\"text\":\"string[]\"}}}}",
+        "{\"props\":{\"channels\":{\"optional\":false,\"type\":{\"text\":\"LiveDoorChannel[]\"}},\"door\":{\"optional\":false,\"type\":{\"union\":[\"'channels'\"]}}}}",
         "{\"props\":{\"countries\":{\"optional\":false,\"type\":{\"text\":\"string[]\"}},\"door\":{\"optional\":false,\"type\":{\"union\":[\"'viewers'\"]}},\"people\":{\"optional\":false,\"type\":{\"text\":\"number\"}}}}",
         "{\"props\":{\"door\":{\"optional\":false,\"type\":{\"union\":[\"'hide'\"]}},\"eventId\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"sourceId\":{\"optional\":false,\"type\":{\"text\":\"string\"}}}}",
-        "{\"props\":{\"door\":{\"optional\":false,\"type\":{\"union\":[\"'quota'\"]}},\"exceeded\":{\"optional\":true,\"type\":{\"text\":\"boolean\"}},\"used\":{\"optional\":false,\"type\":{\"text\":\"number\"}}}}",
         "{\"props\":{\"door\":{\"optional\":false,\"type\":{\"union\":[\"'reset-live'\"]}}}}",
         "{\"props\":{\"door\":{\"optional\":false,\"type\":{\"union\":[\"'video-status'\"]}},\"state\":{\"optional\":false,\"type\":{\"ref\":\"packages/contracts/src/live.ts#LiveVideoState\"}},\"videoId\":{\"optional\":false,\"type\":{\"text\":\"string\"}}}}"
       ]
+    },
+    "packages/contracts/src/live.ts#LiveDoorChannel": {
+      "props": {
+        "deleted": {
+          "optional": true,
+          "type": {
+            "union": [
+              "true"
+            ]
+          }
+        },
+        "id": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "uploads": {
+          "optional": true,
+          "type": {
+            "text": "string"
+          }
+        },
+        "videos": {
+          "optional": true,
+          "type": {
+            "text": "string[]"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/live.ts#LiveDoorQuotaBucket": {
+      "text": "(typeof LIVE_DOOR_QUOTA_BUCKETS)[number]"
     },
     "packages/contracts/src/live.ts#LiveISO": {
       "text": "string"
@@ -5003,6 +5041,404 @@
     },
     "packages/contracts/src/siteRules.ts#isEnabled": {
       "fn": "export function isEnabled(switches: SiteSwitches, target: IsEnabledTarget): boolean"
+    },
+    "packages/contracts/src/streams.schemas.ts#AgentCandidatesQuerySchema": {
+      "text": "ZodObject<{ cursor: ZodOptional<ZodString>; eventId: ZodOptional<ZodString>; state: ZodOptional<ZodEnum<{ active: \"active\"; approved: \"approved\"; archive: \"archive\"; dead: \"dead\"; new: \"new\"; proposed: \"proposed\"; rejected: \"rejected\"; }>>; }, $strict>"
+    },
+    "packages/contracts/src/streams.schemas.ts#AgentCandidatesResponseSchema": {
+      "text": "ZodObject<{ items: ZodArray<ZodObject<{ channelId: ZodOptional<ZodString>; checkedAt: ZodOptional<ZodString>; eventId: ZodOptional<ZodString>; foundBy: ZodArray<ZodEnum<{ agent: \"agent\"; import: \"import\"; owner: \"owner\"; playlist: \"playlist\"; search: \"search\"; }>>; reason: ZodOptional<ZodEnum<{ \"not-embeddable\": \"not-embeddable\"; \"not-found\": \"not-found\"; \"not-live\": \"not-live\"; blacklisted: \"blacklisted\"; owner: \"owner\"; private: \"private\"; }>>; scheduledStartTime: ZodOptional<ZodString>; state: ZodEnum<{ active: \"active\"; approved: \"approved\"; archive: \"archive\"; dead: \"dead\"; new: \"new\"; proposed: \"proposed\"; rejected: \"rejected\"; }>; videoId: ZodString; }, $strict>>; next: ZodOptional<ZodString>; }, $strict>"
+    },
+    "packages/contracts/src/streams.schemas.ts#AgentChannelsResponseSchema": {
+      "text": "ZodObject<{ blacklist: ZodArray<ZodString>; channels: ZodArray<ZodObject<{ channelId: ZodString; name: ZodString; priority: ZodUnion<readonly [ZodLiteral<1>, ZodLiteral<2>, ZodLiteral<3>]>; seasons: ZodArray<ZodString>; state: ZodEnum<{ off: \"off\"; proposed: \"proposed\"; watched: \"watched\"; }>; type: ZodEnum<{ address: \"address\"; celebration: \"celebration\"; irl: \"irl\"; tv: \"tv\"; webcam: \"webcam\"; }>; zones: ZodArray<ZodString>; }, $strict>>; }, $strict>"
+    },
+    "packages/contracts/src/streams.schemas.ts#AgentProposeBodySchema": {
+      "text": "ZodUnion<readonly [ZodObject<{ eventId: ZodOptional<ZodString>; evidenceUrl: ZodOptional<ZodString>; note: ZodOptional<ZodString>; videoId: ZodString; }, $strict>, ZodObject<{ channelId: ZodString; eventId: ZodOptional<ZodString>; evidenceUrl: ZodOptional<ZodString>; note: ZodOptional<ZodString>; }, $strict>]>"
+    },
+    "packages/contracts/src/streams.schemas.ts#AgentProposeResultSchema": {
+      "text": "ZodObject<{ added: ZodOptional<ZodNumber>; channelId: ZodOptional<ZodString>; created: ZodBoolean; reason: ZodOptional<ZodEnum<{ \"not-embeddable\": \"not-embeddable\"; \"not-found\": \"not-found\"; \"not-live\": \"not-live\"; blacklisted: \"blacklisted\"; owner: \"owner\"; private: \"private\"; }>>; state: ZodUnion<readonly [ZodEnum<{ active: \"active\"; approved: \"approved\"; archive: \"archive\"; dead: \"dead\"; new: \"new\"; proposed: \"proposed\"; rejected: \"rejected\"; }>, ZodEnum<{ off: \"off\"; proposed: \"proposed\"; watched: \"watched\"; }>]>; videoId: ZodOptional<ZodString>; }, $strict>"
+    },
+    "packages/contracts/src/streams.schemas.ts#CandidateStateSchema": {
+      "text": "ZodEnum<{ active: \"active\"; approved: \"approved\"; archive: \"archive\"; dead: \"dead\"; new: \"new\"; proposed: \"proposed\"; rejected: \"rejected\"; }>"
+    },
+    "packages/contracts/src/streams.schemas.ts#ChannelIdSchema": {
+      "text": "ZodString"
+    },
+    "packages/contracts/src/streams.schemas.ts#ChannelStateSchema": {
+      "text": "ZodEnum<{ off: \"off\"; proposed: \"proposed\"; watched: \"watched\"; }>"
+    },
+    "packages/contracts/src/streams.schemas.ts#FoundBySchema": {
+      "text": "ZodEnum<{ agent: \"agent\"; import: \"import\"; owner: \"owner\"; playlist: \"playlist\"; search: \"search\"; }>"
+    },
+    "packages/contracts/src/streams.schemas.ts#StreamChannelsFileSchema": {
+      "text": "ZodObject<{ blacklist: ZodArray<ZodObject<{ channelId: ZodString; reason: ZodString; }, $strict>>; channels: ZodArray<ZodObject<{ channelId: ZodString; kind: ZodEnum<{ address: \"address\"; celebration: \"celebration\"; irl: \"irl\"; tv: \"tv\"; webcam: \"webcam\"; }>; name: ZodString; priority: ZodUnion<readonly [ZodLiteral<1>, ZodLiteral<2>, ZodLiteral<3>]>; zones: ZodArray<ZodString>; }, $strict>>; season: ZodString; version: ZodLiteral<1>; }, $strict>"
+    },
+    "packages/contracts/src/streams.schemas.ts#StreamsActionBodySchema": {
+      "text": "ZodUnion<readonly [ZodObject<{ action: ZodLiteral<\"channel-add\">; channelId: ZodString; kind: ZodEnum<{ address: \"address\"; celebration: \"celebration\"; irl: \"irl\"; tv: \"tv\"; webcam: \"webcam\"; }>; name: ZodString; priority: ZodUnion<readonly [ZodLiteral<1>, ZodLiteral<2>, ZodLiteral<3>]>; zones: ZodArray<ZodString>; }, $strict>, ZodObject<{ action: ZodLiteral<\"channel-edit\">; channelId: ZodString; kind: ZodOptional<ZodEnum<{ address: \"address\"; celebration: \"celebration\"; irl: \"irl\"; tv: \"tv\"; webcam: \"webcam\"; }>>; name: ZodOptional<ZodString>; priority: ZodOptional<ZodUnion<readonly [ZodLiteral<1>, ZodLiteral<2>, ZodLiteral<3>]>>; state: ZodOptional<ZodEnum<{ off: \"off\"; watched: \"watched\"; }>>; zones: ZodOptional<ZodArray<ZodString>>; }, $strict>, ZodObject<{ action: ZodLiteral<\"blacklist\">; channelId: ZodString; reason: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\"unblacklist\">; channelId: ZodString; reason: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\"channel-approve\">; channelId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\"candidate-add\">; eventId: ZodOptional<ZodString>; videoId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\"candidate-add\">; channelId: ZodString; eventId: ZodOptional<ZodString>; }, $strict>, ZodObject<{ action: ZodLiteral<\"approve\">; eventId: ZodString; reason: ZodOptional<ZodString>; videoId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\"reject\">; reason: ZodString; videoId: ZodString; }, $strict>, ZodObject<{ action: ZodLiteral<\"requeue\">; videoId: ZodString; }, $strict>]>"
+    },
+    "packages/contracts/src/streams.schemas.ts#StreamsViewQuerySchema": {
+      "text": "ZodObject<{ eventId: ZodOptional<ZodString>; state: ZodOptional<ZodEnum<{ active: \"active\"; approved: \"approved\"; archive: \"archive\"; dead: \"dead\"; new: \"new\"; proposed: \"proposed\"; rejected: \"rejected\"; }>>; }, $strict>"
+    },
+    "packages/contracts/src/streams.schemas.ts#VideoIdSchema": {
+      "text": "ZodString"
+    },
+    "packages/contracts/src/streams.ts#AGENT_CANDIDATES_PAGE_MAX": {
+      "text": "100"
+    },
+    "packages/contracts/src/streams.ts#AgentCandidate": {
+      "props": {
+        "channelId": {
+          "optional": true,
+          "type": {
+            "text": "string"
+          }
+        },
+        "checkedAt": {
+          "optional": true,
+          "type": {
+            "text": "string"
+          }
+        },
+        "eventId": {
+          "optional": true,
+          "type": {
+            "text": "string"
+          }
+        },
+        "foundBy": {
+          "optional": false,
+          "type": {
+            "text": "FoundBy[]"
+          }
+        },
+        "reason": {
+          "optional": true,
+          "type": {
+            "ref": "packages/contracts/src/streams.ts#CandidateReason"
+          }
+        },
+        "scheduledStartTime": {
+          "optional": true,
+          "type": {
+            "text": "string"
+          }
+        },
+        "state": {
+          "optional": false,
+          "type": {
+            "ref": "packages/contracts/src/streams.ts#CandidateState"
+          }
+        },
+        "videoId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/streams.ts#AgentCandidatesQuery": {
+      "props": {
+        "cursor": {
+          "optional": true,
+          "type": {
+            "text": "string"
+          }
+        },
+        "eventId": {
+          "optional": true,
+          "type": {
+            "text": "string"
+          }
+        },
+        "state": {
+          "optional": true,
+          "type": {
+            "ref": "packages/contracts/src/streams.ts#CandidateState"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/streams.ts#AgentCandidatesResponse": {
+      "props": {
+        "items": {
+          "optional": false,
+          "type": {
+            "text": "AgentCandidate[]"
+          }
+        },
+        "next": {
+          "optional": true,
+          "type": {
+            "text": "string"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/streams.ts#AgentChannel": {
+      "props": {
+        "channelId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "name": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "priority": {
+          "optional": false,
+          "type": {
+            "ref": "packages/contracts/src/streams.ts#ChannelPriority"
+          }
+        },
+        "seasons": {
+          "optional": false,
+          "type": {
+            "text": "string[]"
+          }
+        },
+        "state": {
+          "optional": false,
+          "type": {
+            "ref": "packages/contracts/src/streams.ts#ChannelState"
+          }
+        },
+        "type": {
+          "optional": false,
+          "type": {
+            "ref": "packages/contracts/src/streams.ts#ChannelKind"
+          }
+        },
+        "zones": {
+          "optional": false,
+          "type": {
+            "text": "string[]"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/streams.ts#AgentChannelsResponse": {
+      "props": {
+        "blacklist": {
+          "optional": false,
+          "type": {
+            "text": "string[]"
+          }
+        },
+        "channels": {
+          "optional": false,
+          "type": {
+            "text": "AgentChannel[]"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/streams.ts#AgentProposeBody": {
+      "text": "({ videoId: string } | { channelId: string }) & ProposeExtras"
+    },
+    "packages/contracts/src/streams.ts#AgentProposeResult": {
+      "props": {
+        "added": {
+          "optional": true,
+          "type": {
+            "text": "number"
+          }
+        },
+        "channelId": {
+          "optional": true,
+          "type": {
+            "text": "string"
+          }
+        },
+        "created": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "reason": {
+          "optional": true,
+          "type": {
+            "ref": "packages/contracts/src/streams.ts#CandidateReason"
+          }
+        },
+        "state": {
+          "optional": false,
+          "type": {
+            "union": [
+              "ref:packages/contracts/src/streams.ts#CandidateState",
+              "ref:packages/contracts/src/streams.ts#ChannelState"
+            ]
+          }
+        },
+        "videoId": {
+          "optional": true,
+          "type": {
+            "text": "string"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/streams.ts#CANDIDATE_REASONS": {
+      "text": "readonly [\"blacklisted\", \"private\", \"not-embeddable\", \"not-live\", \"not-found\", \"owner\"]"
+    },
+    "packages/contracts/src/streams.ts#CANDIDATE_STATES": {
+      "text": "readonly [\"new\", \"proposed\", \"approved\", \"rejected\", \"active\", \"dead\", \"archive\"]"
+    },
+    "packages/contracts/src/streams.ts#CHANNEL_ID_PATTERN": {
+      "text": "RegExp"
+    },
+    "packages/contracts/src/streams.ts#CHANNEL_KINDS": {
+      "text": "readonly [\"address\", \"celebration\", \"irl\", \"tv\", \"webcam\"]"
+    },
+    "packages/contracts/src/streams.ts#CHANNEL_PRIORITIES": {
+      "text": "readonly [1, 2, 3]"
+    },
+    "packages/contracts/src/streams.ts#CHANNEL_STATES": {
+      "text": "readonly [\"watched\", \"proposed\", \"off\"]"
+    },
+    "packages/contracts/src/streams.ts#CandidateReason": {
+      "text": "(typeof CANDIDATE_REASONS)[number]"
+    },
+    "packages/contracts/src/streams.ts#CandidateState": {
+      "text": "(typeof CANDIDATE_STATES)[number]"
+    },
+    "packages/contracts/src/streams.ts#ChannelKind": {
+      "text": "(typeof CHANNEL_KINDS)[number]"
+    },
+    "packages/contracts/src/streams.ts#ChannelPriority": {
+      "text": "(typeof CHANNEL_PRIORITIES)[number]"
+    },
+    "packages/contracts/src/streams.ts#ChannelState": {
+      "text": "(typeof CHANNEL_STATES)[number]"
+    },
+    "packages/contracts/src/streams.ts#FOUND_BY": {
+      "text": "readonly [\"owner\", \"agent\", \"playlist\", \"search\", \"import\"]"
+    },
+    "packages/contracts/src/streams.ts#FoundBy": {
+      "text": "(typeof FOUND_BY)[number]"
+    },
+    "packages/contracts/src/streams.ts#STREAMS_ACTIONS": {
+      "text": "readonly [\"channel-add\", \"channel-edit\", \"blacklist\", \"unblacklist\", \"channel-approve\", \"candidate-add\", \"approve\", \"reject\", \"requeue\"]"
+    },
+    "packages/contracts/src/streams.ts#STREAMS_BODY_MAX_BYTES": {
+      "text": "1024"
+    },
+    "packages/contracts/src/streams.ts#STREAMS_EVIDENCE_URL_MAX": {
+      "text": "500"
+    },
+    "packages/contracts/src/streams.ts#STREAMS_NAME_MAX": {
+      "text": "120"
+    },
+    "packages/contracts/src/streams.ts#STREAMS_NOTE_MAX": {
+      "text": "300"
+    },
+    "packages/contracts/src/streams.ts#STREAMS_REASON_MAX": {
+      "text": "200"
+    },
+    "packages/contracts/src/streams.ts#StreamChannelsFile": {
+      "props": {
+        "blacklist": {
+          "optional": false,
+          "type": {
+            "text": "{ channelId: string; reason: string }[]"
+          }
+        },
+        "channels": {
+          "optional": false,
+          "type": {
+            "text": "StreamChannelsFileChannel[]"
+          }
+        },
+        "season": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "version": {
+          "optional": false,
+          "type": {
+            "union": [
+              "1"
+            ]
+          }
+        }
+      }
+    },
+    "packages/contracts/src/streams.ts#StreamChannelsFileChannel": {
+      "props": {
+        "channelId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "kind": {
+          "optional": false,
+          "type": {
+            "ref": "packages/contracts/src/streams.ts#ChannelKind"
+          }
+        },
+        "name": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "priority": {
+          "optional": false,
+          "type": {
+            "ref": "packages/contracts/src/streams.ts#ChannelPriority"
+          }
+        },
+        "zones": {
+          "optional": false,
+          "type": {
+            "text": "string[]"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/streams.ts#StreamsAction": {
+      "text": "(typeof STREAMS_ACTIONS)[number]"
+    },
+    "packages/contracts/src/streams.ts#StreamsActionBody": {
+      "union": [
+        "{\"props\":{\"action\":{\"optional\":false,\"type\":{\"union\":[\"'approve'\"]}},\"eventId\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"reason\":{\"optional\":true,\"type\":{\"text\":\"string\"}},\"videoId\":{\"optional\":false,\"type\":{\"text\":\"string\"}}}}",
+        "{\"props\":{\"action\":{\"optional\":false,\"type\":{\"union\":[\"'blacklist'\",\"'unblacklist'\"]}},\"channelId\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"reason\":{\"optional\":false,\"type\":{\"text\":\"string\"}}}}",
+        "{\"props\":{\"action\":{\"optional\":false,\"type\":{\"union\":[\"'channel-approve'\"]}},\"channelId\":{\"optional\":false,\"type\":{\"text\":\"string\"}}}}",
+        "{\"props\":{\"action\":{\"optional\":false,\"type\":{\"union\":[\"'reject'\"]}},\"reason\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"videoId\":{\"optional\":false,\"type\":{\"text\":\"string\"}}}}",
+        "{\"props\":{\"action\":{\"optional\":false,\"type\":{\"union\":[\"'requeue'\"]}},\"videoId\":{\"optional\":false,\"type\":{\"text\":\"string\"}}}}",
+        "{\"text\":\"{ action: 'candidate-add'; eventId?: string } & ({ videoId: string } | { channelId: string })\"}",
+        "{\"text\":\"{ action: 'channel-add'; channelId: string } & ChannelFields\"}",
+        "{\"text\":\"{ action: 'channel-edit'; channelId: string } & Partial<ChannelFields> & { state?: 'watched' | 'off' }\"}"
+      ]
+    },
+    "packages/contracts/src/streams.ts#StreamsViewQuery": {
+      "props": {
+        "eventId": {
+          "optional": true,
+          "type": {
+            "text": "string"
+          }
+        },
+        "state": {
+          "optional": true,
+          "type": {
+            "ref": "packages/contracts/src/streams.ts#CandidateState"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/streams.ts#VIDEO_ID_PATTERN": {
+      "text": "RegExp"
+    },
+    "packages/contracts/src/streams.ts#streamsBodyWithinLimit": {
+      "fn": "export function streamsBodyWithinLimit(raw: string): boolean"
     }
   },
   "breaking": [
@@ -5033,6 +5469,13 @@
         "lib/api/contracts/live.ts#StreamEvent: declaration removed",
         "lib/api/contracts/live.ts#ViewerCountry: declaration removed",
         "lib/api/contracts/live.ts#ViewerSummary: declaration removed"
+      ]
+    },
+    {
+      "recordedAt": "2026-11-24T13:56:26.842Z",
+      "changes": [
+        "packages/contracts/src/live.schemas.ts#LiveDoorBodySchema: text changed (\"ZodDiscriminatedUnion<[ZodObject<{ door: ZodLiteral<\\\"video-status\\\">; state: ZodEnum<{ \\\"not-embeddable\\\": \\\"not-embeddable\\\"; ended: \\\"ended\\\"; live: \\\"live\\\"; missing: \\\"missing\\\"; private: \\\"private\\\"; upcoming: \\\"upcoming\\\"; }>; videoId: ZodString; }, $strict>, ZodObject<{ door: ZodLiteral<\\\"quota\\\">; exceeded: ZodOptional<ZodBoolean>; used: ZodNumber; }, $strict>, ZodObject<{ countries: ZodArray<ZodString>; door: ZodLiteral<\\\"viewers\\\">; people: ZodNumber; }, $strict>, ZodObject<{ door: ZodLiteral<\\\"hide\\\">; eventId: ZodString; sourceId: ZodString; }, $strict>, ZodObject<{ door: ZodLiteral<\\\"reset-live\\\">; }, $strict>], \\\"door\\\">\" -> \"ZodDiscriminatedUnion<[ZodObject<{ door: ZodLiteral<\\\"video-status\\\">; state: ZodEnum<{ \\\"not-embeddable\\\": \\\"not-embeddable\\\"; ended: \\\"ended\\\"; live: \\\"live\\\"; missing: \\\"missing\\\"; private: \\\"private\\\"; upcoming: \\\"upcoming\\\"; }>; videoId: ZodString; }, $strict>, ZodObject<{ bucket: ZodOptional<ZodEnum<{ candidates: \\\"candidates\\\"; playlists: \\\"playlists\\\"; queries: \\\"queries\\\"; search: \\\"search\\\"; }>>; door: ZodLiteral<\\\"quota\\\">; exceeded: ZodOptional<ZodBoolean>; used: ZodNumber; }, $strict>, ZodObject<{ countries: ZodArray<ZodString>; door: ZodLiteral<\\\"viewers\\\">; people: ZodNumber; }, $strict>, ZodObject<{ door: ZodLiteral<\\\"hide\\\">; eventId: ZodString; sourceId: ZodString; }, $strict>, ZodObject<{ door: ZodLiteral<\\\"reset-live\\\">; }, $strict>, ZodObject<{ channels: ZodArray<ZodObject<{ deleted: ZodOptional<ZodLiteral<true>>; id: ZodString; uploads: ZodOptional<ZodString>; videos: ZodOptional<ZodArray<ZodString>>; }, $strict>>; door: ZodLiteral<\\\"channels\\\">; }, $strict>, ZodObject<{ channelId: ZodString; door: ZodLiteral<\\\"search-results\\\">; ids: ZodArray<ZodString>; }, $strict>], \\\"door\\\">\")",
+        "packages/contracts/src/live.ts#LiveDoorBody: union member {\"props\":{\"door\":{\"optional\":false,\"type\":{\"union\":[\"'quota'\"]}},\"exceeded\":{\"optional\":true,\"type\":{\"text\":\"boolean\"}},\"used\":{\"optional\":false,\"type\":{\"text\":\"number\"}}}} removed"
       ]
     }
   ]

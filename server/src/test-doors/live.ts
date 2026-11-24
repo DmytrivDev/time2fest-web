@@ -117,6 +117,10 @@ export const liveDoor: DoorRow = {
         live.viewers?.aggregator.setFixture?.(null);
         return { ok: true, value: {} };
       }
+      // SPEC-21a variants: wired in phase S3 (W15).
+      case 'channels':
+      case 'search-results':
+        return failure('unavailable', { reason: 'not-implemented' });
     }
   },
 };

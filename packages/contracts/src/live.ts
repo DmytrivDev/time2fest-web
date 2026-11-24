@@ -90,10 +90,25 @@ export type LiveVideoState = (typeof LIVE_VIDEO_STATES)[number];
 /** Test door `POST /api/_test/live` (class `test` only). */
 export type LiveDoorBody =
   | { door: 'video-status'; videoId: string; state: LiveVideoState }
-  | { door: 'quota'; used: number; exceeded?: boolean }
+  | { door: 'quota'; used: number; exceeded?: boolean; bucket?: LiveDoorQuotaBucket }
   | { door: 'viewers'; people: number; countries: string[] }
   | { door: 'hide'; eventId: string; sourceId: string }
-  | { door: 'reset-live' };
+  | { door: 'reset-live' }
+  /** SPEC-21a: what the fake YouTube knows about channels (uploads playlist, its videos, deleted). */
+  | { door: 'channels'; channels: LiveDoorChannel[] }
+  /** SPEC-21a: the fake's `search.list` result for one channel. */
+  | { door: 'search-results'; channelId: string; ids: string[] };
+
+/** Counters the `quota` door may set (SPEC-21a adds the class counters; absent = `queries`). */
+export const LIVE_DOOR_QUOTA_BUCKETS = ['queries', 'search', 'candidates', 'playlists'] as const;
+export type LiveDoorQuotaBucket = (typeof LIVE_DOOR_QUOTA_BUCKETS)[number];
+
+export interface LiveDoorChannel {
+  id: string;
+  uploads?: string;
+  videos?: string[];
+  deleted?: true;
+}
 
 export const LIVE_ARCHIVE_DECISIONS = ['kept', 'hidden', 'dead', 'replaced'] as const;
 export type LiveArchiveDecision = (typeof LIVE_ARCHIVE_DECISIONS)[number];

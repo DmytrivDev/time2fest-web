@@ -65,6 +65,38 @@ export interface LiveConfig {
   blackout: { from: string; to: string };
   /** Countries are listed from this many people (В2). */
   viewersMinPerCountry: number;
+  // ---- Stream sources (SPEC-21a) ----
+  /** Chain ceiling: active sources (videoId, not dead, not hidden) per event ([А1], AC-23). */
+  maxSourcesPerEvent: number;
+  /** Channels in the `watched` state at most (AC-6). */
+  maxWatchedChannels: number;
+  /** Daily ceilings of the SPEC-21a request classes, in units, also charged to `queries` ([П-3], AC-24, AC-25). */
+  classCeilings: { candidates: number; playlists: number };
+  /** Uploads playlist read of a watched channel: every `playlistEveryMs` ([А4]) … */
+  playlistEveryMs: number;
+  /** … and every `playlistNearEveryMs` in `[moment − playlistNearBeforeMs; moment + playlistNearAfterMs)` of its zones. */
+  playlistNearEveryMs: number;
+  playlistNearBeforeMs: number;
+  playlistNearAfterMs: number;
+  /** Entries of the uploads playlist's first page read per call. */
+  playlistPageSize: number;
+  /** The uploads playlist id is refreshed through `channels.list` after this (AC-27). */
+  channelRefreshMs: number;
+  /** One lawful search per channel and zone moment in `[moment − searchFromMs; moment − searchToMs]` ([А5]). */
+  searchFromMs: number;
+  searchToMs: number;
+  /** Approve writes the candidate's YouTube fields when its check is not older than this ([А9]). */
+  candidateFreshMs: number;
+  /** Default event of an approval: the channel zone's moment nearest to `scheduledStartTime` within ± this ([А8]). */
+  defaultEventToleranceMs: number;
+  /** Candidate YouTube fields older than this are refreshed (AC-46; never above `MAX_RETENTION_MS`). */
+  candidateRefreshMs: number;
+  /** Decided candidates unchanged this long go to `archive` (AC-46). */
+  candidateArchiveMs: number;
+  /** Stream-search agent limits per key and quota day ([А13]; per-minute limits live in `registries/rateLimits.ts`). */
+  agent: { proposalsPerDay: number };
+  /** Period of the sources watch pass ([П-4]). */
+  watchPassMs: number;
 }
 
 /** The longest the YouTube fields may be kept (YouTube API Services policy, AC-73). */
@@ -95,6 +127,23 @@ export const LIVE_DEFAULTS: LiveConfig = Object.freeze({
   rehearsalDailyUnits: 1_000,
   blackout: Object.freeze({ from: '12-29', to: '01-01' }),
   viewersMinPerCountry: 3,
+  maxSourcesPerEvent: 3,
+  maxWatchedChannels: 100,
+  classCeilings: Object.freeze({ candidates: 300, playlists: 1_000 }),
+  playlistEveryMs: 6 * HOUR,
+  playlistNearEveryMs: 60 * MIN,
+  playlistNearBeforeMs: 6 * HOUR,
+  playlistNearAfterMs: 1 * HOUR,
+  playlistPageSize: 50,
+  channelRefreshMs: 30 * DAY,
+  searchFromMs: 12 * HOUR,
+  searchToMs: 2 * HOUR,
+  candidateFreshMs: 5 * MIN,
+  defaultEventToleranceMs: 3 * HOUR,
+  candidateRefreshMs: MAX_RETENTION_MS,
+  candidateArchiveMs: 30 * DAY,
+  agent: Object.freeze({ proposalsPerDay: 300 }),
+  watchPassMs: 60 * SEC,
 }) as LiveConfig;
 
 const posInt = z.number().int().positive();
@@ -132,6 +181,25 @@ const OverrideSchema = z
     rehearsalDailyUnits: nonNegInt,
     blackout: z.object({ from: monthDay, to: monthDay }).strict(),
     viewersMinPerCountry: posInt,
+    maxSourcesPerEvent: posInt,
+    maxWatchedChannels: nonNegInt,
+    classCeilings: z.object({ candidates: nonNegInt, playlists: nonNegInt }).partial().strict(),
+    playlistEveryMs: posInt,
+    playlistNearEveryMs: posInt,
+    playlistNearBeforeMs: nonNegInt,
+    playlistNearAfterMs: nonNegInt,
+    /** YouTube `playlistItems.list` maxResults is at most 50. */
+    playlistPageSize: posInt.max(50),
+    channelRefreshMs: posInt,
+    searchFromMs: posInt,
+    searchToMs: nonNegInt,
+    candidateFreshMs: nonNegInt,
+    defaultEventToleranceMs: nonNegInt,
+    /** YouTube API Services policy: never above 30 days. */
+    candidateRefreshMs: posInt.max(MAX_RETENTION_MS),
+    candidateArchiveMs: posInt,
+    agent: z.object({ proposalsPerDay: nonNegInt }).partial().strict(),
+    watchPassMs: posInt,
   })
   .partial()
   .strict();
@@ -172,7 +240,10 @@ export function parseLiveConfig(json: string | undefined): LiveConfigResult {
       batchGetStats: { ...d.buckets.batchGetStats, ...o.buckets?.batchGetStats },
     },
     blackout: { ...d.blackout, ...o.blackout },
+    classCeilings: { ...d.classCeilings, ...o.classCeilings },
+    agent: { ...d.agent, ...o.agent },
   };
   if (config.offWindowMinMs > config.offWindowMaxMs) return { ok: false, failing: ['T2F_LIVE_CONFIG.offWindowMinMs'] };
+  if (config.searchToMs >= config.searchFromMs) return { ok: false, failing: ['T2F_LIVE_CONFIG.searchToMs'] };
   return { ok: true, config };
 }
