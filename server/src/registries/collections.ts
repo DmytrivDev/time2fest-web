@@ -7,7 +7,9 @@ import { assertRegistry } from '../platform/registry';
 import { admins } from '../collections/admins';
 import { aiSpend } from '../collections/aiSpend';
 import { agentTestPosts } from '../collections/agentTestPosts';
+import { alarmDeliveries } from '../collections/alarmDeliveries';
 import { alarms } from '../collections/alarms';
+import { backupRuns } from '../collections/backupRuns';
 import { auditLog } from '../collections/auditLog';
 import { cities } from '../collections/catalog/cities';
 import { countries } from '../collections/catalog/countries';
@@ -19,9 +21,12 @@ import { eventPatches } from '../collections/eventPatches';
 import { idempotencyRecords } from '../collections/idempotencyRecords';
 import { internalEvents } from '../collections/internalEvents';
 import { liveQuota } from '../collections/liveQuota';
+import { logAlarms } from '../collections/logAlarms';
+import { restoreRuns } from '../collections/restoreRuns';
 import { runRecords } from '../collections/runRecords';
 import { schedulerLeases } from '../collections/schedulerLeases';
 import { schedulerRuns } from '../collections/schedulerRuns';
+import { spendCounters } from '../collections/spendCounters';
 import { streamSources } from '../collections/streamSources';
 import { unattendedWindows } from '../collections/unattendedWindows';
 
@@ -37,8 +42,10 @@ export const collectionRegistry: readonly CollectionRow[] = [
   { key: 'admins', collection: admins, resettable: false, audited: true },
   { key: 'agent-test-posts', collection: agentTestPosts, resettable: false, audited: true },
   { key: 'ai-spend', collection: aiSpend, resettable: true },
+  { key: 'alarm-deliveries', collection: alarmDeliveries, resettable: true },
   { key: 'alarms', collection: alarms, resettable: false, audited: true },
   { key: 'audit-log', collection: auditLog, resettable: false },
+  { key: 'backup-runs', collection: backupRuns, resettable: false },
   { key: 'cities', collection: cities, resettable: true, audited: true },
   { key: 'countries', collection: countries, resettable: true, audited: true },
   { key: 'event-patches', collection: eventPatches, resettable: true },
@@ -46,10 +53,13 @@ export const collectionRegistry: readonly CollectionRow[] = [
   { key: 'idempotency-records', collection: idempotencyRecords, resettable: true },
   { key: 'internal-events', collection: internalEvents, resettable: false },
   { key: 'live-quota', collection: liveQuota, resettable: true },
+  { key: 'log-alarms', collection: logAlarms, resettable: true },
+  { key: 'restore-runs', collection: restoreRuns, resettable: false },
   { key: 'run-records', collection: runRecords, resettable: true },
   { key: 'scheduler-leases', collection: schedulerLeases, resettable: false },
   { key: 'scheduler-runs', collection: schedulerRuns, resettable: true },
   { key: 'seasons', collection: seasons, resettable: true, audited: true },
+  { key: 'spend-counters', collection: spendCounters, resettable: true },
   { key: 'stream-sources', collection: streamSources, resettable: true },
   { key: 'traditions', collection: traditions, resettable: true, audited: true },
   { key: 'unattended-windows', collection: unattendedWindows, resettable: true, audited: true },

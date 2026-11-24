@@ -189,6 +189,10 @@ function rawEnv(cls: 'rehearsal' | 'production'): Record<string, string> {
     T2F_R2_PREFIX: prod ? 'production/' : 'rehearsal/',
     T2F_R2_ACCESS_KEY_ID: 't2f-key',
     T2F_R2_SECRET_ACCESS_KEY: randomBytes(16).toString('hex'),
+    // SPEC-13b AC-67: required in production since the ops wave.
+    T2F_TELEGRAM_BOT_TOKEN: randomBytes(16).toString('hex'),
+    T2F_TELEGRAM_CHAT_ID: '-1001234567890',
+    T2F_BACKUP_KEY: randomBytes(32).toString('base64'),
   };
 }
 

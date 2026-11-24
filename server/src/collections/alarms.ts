@@ -37,6 +37,7 @@ export const alarms: CollectionConfig = {
     { name: 'source', type: 'text', required: true },
     { name: 'code', type: 'text', required: true },
     { name: 'level', type: 'select', options: ['page'], required: true, defaultValue: 'page' },
+    { name: 'details', type: 'json' },
     { name: 'raisedAt', type: 'date', required: true, index: true },
     { name: 'acknowledgedAt', type: 'date', index: true },
   ],
