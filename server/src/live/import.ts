@@ -11,6 +11,8 @@ import { StreamChainSchema } from '@time2fest/contracts/schemas';
 import { z } from 'zod';
 import type { Journal } from '../audit/ports';
 import type { EventPublisher } from '../events/ports';
+import { activeSourceCount } from '../domain/live/candidates';
+import type { LiveConfig } from '../domain/live/config';
 import type { Clock } from '../ports';
 import { LIVE_CHANGED_TOPIC, type LiveChangedPayload } from './poller';
 import type { ImportedSource, LiveImportStore, LiveStore, StoredImportSource } from './ports';
@@ -46,6 +48,8 @@ export interface ChainsImportPorts {
   publisher: EventPublisher;
   journal: Journal;
   clock: Clock;
+  /** SPEC-21a AC-23: with it, an event the import would take beyond `maxSourcesPerEvent` active sources is refused. */
+  cfg?: LiveConfig;
 }
 
 const ms = (v: string | undefined): number | null => {
@@ -105,6 +109,24 @@ export function chainsReportLines(plan: ChainsPlan): string[] {
   return lines;
 }
 
+/**
+ * The events the plan would take beyond the ceiling (AC-23): the stored sources with the added and changed rows in
+ * place (an added row is active when it has a video; a changed one keeps its stored dead / hidden flags). Only events
+ * the import writes are checked.
+ */
+async function fullEvents(live: LiveStore, plan: ChainsPlan, cfg: LiveConfig): Promise<string[]> {
+  const written = plan.entries.filter((e) => e.group === 'add' || e.group === 'change');
+  if (written.length === 0) return [];
+  const eventIds = [...new Set(written.map((e) => e.source.eventId))].sort();
+  const stored = await live.sources({ eventIds });
+  const bySource = new Map(stored.map((s) => [s.sourceId, { eventId: s.eventId, videoId: s.videoId ?? null, dead: s.dead, hidden: s.hidden, override: s.override ?? null }]));
+  for (const { source } of written) {
+    const have = bySource.get(source.sourceId);
+    bySource.set(source.sourceId, { eventId: source.eventId, videoId: source.videoId, dead: have?.dead ?? false, hidden: have?.hidden ?? false, override: have?.override ?? null });
+  }
+  return eventIds.filter((eventId) => activeSourceCount([...bySource.values()].filter((s) => s.eventId === eventId)) > cfg.maxSourcesPerEvent);
+}
+
 export async function importChains(ports: ChainsImportPorts, run: { apply: boolean; readSource(file: string): unknown }): Promise<ChainsImportResult> {
   let raw: unknown;
   try {
@@ -120,6 +142,8 @@ export async function importChains(ports: ChainsImportPorts, run: { apply: boole
     return { code: 1, lines: issues.length ? issues : [`${STREAMS_FILE}: invalid`] };
   }
   const plan = planChains(rows, await ports.sources.read());
+  const full = ports.cfg ? await fullEvents(ports.live, plan, ports.cfg) : [];
+  if (full.length) return { code: 1, lines: full.map((eventId) => `chain-full: ${eventId}`), plan };
   const lines = chainsReportLines(plan);
   if (!run.apply) return { code: 0, lines: ['dry run: nothing is written', ...lines], plan };
 

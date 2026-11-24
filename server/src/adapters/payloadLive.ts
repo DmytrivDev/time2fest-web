@@ -272,8 +272,11 @@ export function createPayloadLiveStore(deps: PayloadLiveDeps): LiveStore {
       await conn.execute(sql`
         INSERT INTO "stream_sources" ("source_id", "event_id", "platform", "video_id", "kind", "order", "status", "hidden", "dead", "long_news",
           "admin_edited_at", "updated_at", "created_at")
-        VALUES (${source.sourceId}, ${source.eventId}, 'youtube', ${source.videoId}, 'main', ${source.order}::numeric, ${source.status}, false, false, false,
+        VALUES (${source.sourceId}, ${source.eventId}, 'youtube', ${source.videoId}, ${source.kind ?? 'main'}, ${source.order}::numeric, ${source.status}, false, false, false,
           ${iso(source.adminEditedAt)}::timestamptz, ${at}::timestamptz, ${at}::timestamptz)`);
+      if (source.name !== undefined) await conn.execute(sql`UPDATE "stream_sources" SET "name" = ${source.name} WHERE "source_id" = ${source.sourceId}`);
+      // SPEC-21a [П-5]: an approved candidate's fields, with their fetch time (served without waiting for the poller).
+      if (source.youtube) await conn.execute(sql`UPDATE "stream_sources" SET ${setsOf({ sourceId: source.sourceId, youtube: source.youtube }, at)} WHERE "source_id" = ${source.sourceId}`);
     },
     async setZoneLive(tx, zoneLive) {
       const conn = await sessionOf(tx);

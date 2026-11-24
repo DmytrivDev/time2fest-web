@@ -28,7 +28,9 @@ import { batchesOf, nextOffWindowCheckAt, planTick, type ScheduledSource } from 
 import { asStreamStatus, statusFromCheck, type YoutubeVideoState } from '../domain/live/status';
 import type { EventPublisher } from '../events/ports';
 import type { Alarm } from '../ports';
-import type { LiveEventSource, LiveLease, LiveSource, LiveStore, QuotaStore, SourceCheck, Tx, VideoStatusSource } from './ports';
+import type { Actor, Journal } from '../audit/ports';
+import { candidateOnSourceStatus, transition } from '../domain/live/candidates';
+import type { LiveEventSource, LiveLease, LiveSource, LiveStore, QuotaStore, SourceCheck, StreamsStore, Tx, VideoStatusSource } from './ports';
 import { expiredSources, RETENTION_RUN_MS, runRetention, type Refreshed } from './retention';
 
 export const LIVE_CHANGED_TOPIC = 'live.changed';
@@ -38,6 +40,7 @@ export const LIVE_PASS_MS = 5_000;
 /** Lease term: three passes, so one slow pass does not hand the lease over. */
 const LEASE_TTL_MS = 3 * LIVE_PASS_MS;
 const ALARM_SOURCE = 'live';
+const POLLER_ACTOR: Actor = Object.freeze({ kind: 'system', id: 'live-poller', label: 'live-poller' });
 
 /** Payload of `live.changed`: the new version and the events whose public chain changed. */
 export interface LiveChangedPayload {
@@ -56,6 +59,12 @@ export interface LivePollerDeps {
   alarm: Alarm;
   cfg: LiveConfig;
   caller: CallerContext;
+  /**
+   * SPEC-21a AC-10: with it, an approved candidate follows its source in the same transaction (`approved` → `active`
+   * on the first `live`, → `dead` when the source dies), one journal row each (actor `system`).
+   */
+  streams?: StreamsStore;
+  journal?: Journal;
 }
 
 export interface TickReport {
@@ -230,6 +239,31 @@ export function createLivePoller(deps: LivePollerDeps): LivePoller {
     return checks;
   }
 
+  /** AC-10: the approved candidates of the checked sources follow their status, in the poller's transaction. */
+  async function followSources(tx: Tx, checks: readonly SourceCheck[], after: readonly LiveSource[], now: number): Promise<void> {
+    const streams = deps.streams;
+    if (!streams) return;
+    const candidates = await streams.candidates({ sourceIds: checks.map((c) => c.sourceId), states: ['approved', 'active'] }, tx);
+    if (candidates.length === 0) return;
+    const bySource = new Map(after.map((s) => [s.sourceId, s]));
+    for (const c of candidates) {
+      const source = c.sourceId ? bySource.get(c.sourceId) : undefined;
+      if (!source) continue;
+      const next = candidateOnSourceStatus(c.state, source.status === 'live' && source.dead !== true, source.dead === true);
+      if (!next || !transition(c.state, next, 'server').ok) continue;
+      await streams.saveCandidate(tx, { videoId: c.videoId, state: next }, `system:${POLLER_ACTOR.id}`, now);
+      await deps.journal?.append(tx, {
+        actor: POLLER_ACTOR,
+        action: 'streams.candidate',
+        target: { collection: 'stream-candidates', id: c.videoId },
+        at: now,
+        before: { videoId: c.videoId, state: c.state, reason: c.reason ?? null, eventId: c.eventId ?? null, foundBy: [...c.foundBy] },
+        after: { videoId: c.videoId, state: next, reason: c.reason ?? null, eventId: c.eventId ?? null, foundBy: [...c.foundBy] },
+        revertOf: null,
+      });
+    }
+  }
+
   /** Writes the checks and, when a public chain changed, the new version and one `live.changed`. */
   async function commit(evts: readonly LiveEvent[], before: readonly LiveSource[], checks: readonly SourceCheck[], now: number): Promise<{ version?: number; after: LiveSource[] }> {
     const then = lastNow !== null && lastNow <= now ? lastNow : now;
@@ -238,6 +272,7 @@ export function createLivePoller(deps: LivePollerDeps): LivePoller {
       const baseline = chainKeys(evts, before, then, cfg, state.zoneLive);
       await deps.store.applyChecks(tx, checks);
       const after = checks.length ? await deps.store.sources(undefined, tx) : [...before];
+      if (checks.length) await followSources(tx, checks, after, now);
       const changed = changedEvents(baseline, chainKeys(evts, after, now, cfg, state.zoneLive));
       if (changed.length === 0) return { after };
       const version = await deps.store.bumpVersion(tx);

@@ -10,8 +10,10 @@ import { createPayloadJournal } from '../adapters/payloadJournal';
 import { collectionUpdate, correctionSave, unattendedSetManual } from '../adapters/payloadRevert';
 import { processDeps } from '../adapters/processDeps';
 import { eventsOf, liveOf, siteOf } from '../endpoints/deps';
-import type { Deps } from '../endpoints/types';
+import type { Deps, LiveWiring } from '../endpoints/types';
+import { createPayloadStreamsStore } from '../adapters/payloadStreams';
 import { liveRevertHandlers, type LiveActionsDeps } from '../live/actions';
+import { sourcesRevertHandlers, type SourcesDeps } from '../live/sources';
 import { assertRegistry } from '../platform/registry';
 import { siteRevertHandlers, type SiteDeps } from '../site/service';
 
@@ -44,9 +46,45 @@ const [liveHide, liveMain, liveOverride, liveReplace, liveZoneLive] = liveRevert
   },
 ) as [RevertHandler, RevertHandler, RevertHandler, RevertHandler, RevertHandler];
 
+/**
+ * The deps of the stream sources services (SPEC-21a S4) over the process deps: the live and streams stores, the quota,
+ * the YouTube source when one is wired (it must speak channels and playlists too), a journal marking rows revertible
+ * through this registry, the outbox, the alarm and the server clock.
+ */
+export async function sourcesOf(deps: Deps): Promise<SourcesDeps> {
+  const live = liveOf(deps);
+  // The root is loaded here: it imports the registries, so a static import would be a cycle.
+  const { payloadOf } = await import('../container');
+  const yt = live.statuses as (NonNullable<LiveWiring['statuses']> & Partial<NonNullable<SourcesDeps['youtube']>>) | undefined;
+  const youtube = yt && typeof yt.channels === 'function' && typeof yt.firstPage === 'function' ? (yt as NonNullable<SourcesDeps['youtube']>) : undefined;
+  return {
+    live: live.store,
+    streams: createPayloadStreamsStore({ payload: payloadOf(deps), clock: deps.clock }),
+    quota: live.quota,
+    ...(youtube ? { youtube } : {}),
+    events: live.events,
+    journal: createPayloadJournal(isRevertible),
+    publisher: eventsOf(deps).publisher,
+    alarm: deps.alarm,
+    clock: deps.clock,
+    cfg: live.cfg,
+    caller: live.caller,
+  };
+}
+
+/** `live.approve`, `streams.blacklist`, `streams.candidate`: the reverting owner. */
+const [liveApprove, streamsBlacklist, streamsCandidate] = sourcesRevertHandlers(
+  async () => sourcesOf(await processDeps()),
+  (tx) => {
+    const req = tx as PayloadRequest;
+    return { ...resolveActor(req.user, req.context), kind: 'owner' };
+  },
+) as [RevertHandler, RevertHandler, RevertHandler];
+
 export const revertHandlerRegistry: readonly RevertHandler[] = [
   collectionUpdate,
   correctionSave,
+  liveApprove,
   liveHide,
   liveMain,
   liveOverride,
@@ -54,6 +92,8 @@ export const revertHandlerRegistry: readonly RevertHandler[] = [
   liveZoneLive,
   siteProduct,
   siteSwitch,
+  streamsBlacklist,
+  streamsCandidate,
   unattendedSetManual,
 ];
 

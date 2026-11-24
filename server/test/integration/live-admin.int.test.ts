@@ -245,6 +245,8 @@ describe('owner live-air actions', { timeout: 120_000 }, () => {
       body: JSON.stringify({ videos: Object.values(V).map((id) => ({ id, state: 'live' })) }),
       headers: { 'content-type': 'application/json' },
     });
+    // SPEC-21a AC-23: a 4th active source would be `chain-full`; S3 is dead, so the new one fits the ceiling.
+    await live.store.inTransaction(null, (tx) => live.store.editSource(tx, S3, { dead: true, deadReason: 'ended' }));
     const mark = await maxJournalId();
     const startedAt = performance.now();
     const res = await call('replace', { action: 'replace', eventId: EVENT_ID, sourceId: S4, videoId: V.fresh, reason: `Заміна ${run}` });

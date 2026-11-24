@@ -56,6 +56,7 @@ export const importRegistry: readonly ImportRow[] = [
           publisher: eventsOf(ctx.deps).publisher,
           journal: createPayloadJournal(() => false),
           clock: ctx.deps.clock,
+          cfg: liveOf(ctx.deps).cfg,
         },
         { apply: ctx.apply, readSource: ctx.readSource },
       );

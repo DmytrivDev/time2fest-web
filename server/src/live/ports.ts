@@ -2,7 +2,7 @@
  * Ports of the live-air capability (SPEC-12), ring 2. They name the conversation, never a vendor type.
  * `PresenceSource` is the realtime presence read (S9): only each entry's `chan_info`, never a client id.
  */
-import type { CandidateReason, CandidateState, FoundBy, StreamStatus } from '@time2fest/contracts';
+import type { CandidateReason, CandidateState, ChannelState, FoundBy, StreamStatus } from '@time2fest/contracts';
 import type { SourceOverride, ZoneLive, StoredSource } from '../domain/live/chain';
 import type { QuotaBucket } from '../domain/live/config';
 import type { LiveEvent } from '../domain/live/moment';
@@ -221,6 +221,7 @@ export interface StoredCandidate {
   checkedAt: number | null;
   stateChangedAt: number | null;
   stateChangedBy: string | null;
+  evidenceUrl: string | null;
   note: string | null;
 }
 
@@ -231,24 +232,43 @@ export interface StoredStreamChannel {
   uploadsFetchedAt: number | null;
   name: string;
   kind: string;
+  zones: string[];
+  seasons: string[];
   priority: number;
-  state: string;
+  state: ChannelState;
   blacklisted: boolean;
+  blacklistReason: string | null;
+  blacklistSource: string | null;
+  proposedBy: string | null;
+  adminEditedAt: number | null;
   lastPlaylistAt: number | null;
   lastSearchAt: number | null;
 }
 
+export interface CandidateFilter {
+  videoIds?: readonly string[];
+  states?: readonly CandidateState[];
+  eventId?: string;
+  channelId?: string;
+  sourceIds?: readonly string[];
+}
+
 /**
- * The candidates and channels conversation of the sources services (SPEC-21a, used from S4 on). Writes join the
- * caller's `tx`; the shape is refined by S4/S5 when the services need more.
+ * The candidates and channels conversation of the sources services (SPEC-21a). Writes join the caller's `tx`; reads
+ * inside `tx` lock the rows they return (`FOR UPDATE`), so a check-then-write in one transaction is safe.
  */
 export interface StreamsStore {
-  candidates(filter?: { videoIds?: readonly string[]; states?: readonly CandidateState[]; eventId?: string; channelId?: string }, tx?: Tx): Promise<StoredCandidate[]>;
-  channels(filter?: { channelIds?: readonly string[]; state?: string }, tx?: Tx): Promise<StoredStreamChannel[]>;
-  /** Inserts or updates one candidate in `tx`, stamping `stateChangedAt/By` when the state changes. */
-  saveCandidate(tx: Tx, candidate: Partial<StoredCandidate> & Pick<StoredCandidate, 'videoId'>, by: string): Promise<void>;
-  /** Writes channel fields (uploads playlist, last fetch times, state) in `tx`. */
+  candidates(filter?: CandidateFilter, tx?: Tx): Promise<StoredCandidate[]>;
+  channels(filter?: { channelIds?: readonly string[]; state?: ChannelState; blacklisted?: boolean }, tx?: Tx): Promise<StoredStreamChannel[]>;
+  /**
+   * Inserts or updates one candidate in `tx`: absent fields keep their stored value (or the default on insert);
+   * `stateChangedAt/By` are stamped (`at`, `by`) when the state changes or the row is new.
+   */
+  saveCandidate(tx: Tx, candidate: Partial<StoredCandidate> & Pick<StoredCandidate, 'videoId'>, by: string, at: number): Promise<void>;
+  /** Inserts or updates one channel in `tx`; absent fields keep their stored value (or the default on insert). */
   saveChannel(tx: Tx, channel: Partial<StoredStreamChannel> & Pick<StoredStreamChannel, 'channelId'>): Promise<void>;
-  /** The number of channels in state `watched`. */
+  /** The number of channels in state `watched` off the blacklist. */
   watchedCount(tx?: Tx): Promise<number>;
+  /** Removes one `stream-sources` row in `tx` (the revert of `live.approve`, AC-19). */
+  deleteSource(tx: Tx, sourceId: string): Promise<void>;
 }
