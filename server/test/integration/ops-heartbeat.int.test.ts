@@ -7,7 +7,7 @@
  */
 import type { Payload } from 'payload';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { alarmStoreOf, buildDispatcher, payloadOf } from '../../src/container';
+import { alarmStoreOf, buildDispatcher, payloadOf, spendJobOf } from '../../src/container';
 import { digestSlotAt } from '../../src/domain/ops/schedule';
 import type { Deps } from '../../src/endpoints/types';
 import { startTelegramFake, type FakeTelegramHandle } from '../support/fakeTelegram';
@@ -67,11 +67,18 @@ describe('heartbeat and digest through the ops-tick door (W19)', () => {
     const date = slot.key.slice('digest:'.length);
     await dropSlots([slot.key]);
     await payload.delete({ collection: 'log-alarms', where: { id: { exists: true } }, overrideAccess: true });
+    // Other files of the suite leave `backup-runs` rows (ops-backup, ops-cli): the digest must read «no copies yet».
+    await payload.delete({ collection: 'backup-runs', where: { id: { exists: true } }, overrideAccess: true });
     const logs = deps.ops!.logAlarms;
     for (let i = 0; i < 3; i += 1) await logs.insert({ source: 'clock', code: 'refresh_failed' });
     for (let i = 0; i < 2; i += 1) await logs.insert({ source: 'live', code: 'poller_tick_failed' });
     for (let i = 0; i < 2; i += 1) await logs.insert({ source: 'mod', code: 'moderation_degraded' });
     const openPage = (await alarmStoreOf(deps).listOpenPage()).length;
+    // The server row is the base pro-rata of the month (S9), so «over 50 %» depends on the day of the month the
+    // suite runs: the expected line is read from the same spend job at the digest's instant, still matched exactly.
+    const over50 = await spendJobOf(deps, deps.ops!, payloadOf(deps)).over50(slot.due);
+    const spendLine =
+      over50.length > 0 ? `Витрати понад 50 %: ${over50.map((r) => `${r.title} ${Math.floor(r.percent)} %`).join(', ')}` : 'Витрати понад 50 %: немає';
 
     const out = await tick(deps, slot.due, ['digest', 'sender']);
     expect(out.digest).toEqual({ result: 'queued', slotKey: slot.key });
@@ -80,7 +87,8 @@ describe('heartbeat and digest through the ops-tick door (W19)', () => {
     const text = String(calls[0]!.text);
     expect(text).toContain(`Відкритих тривог: ${openPage}`);
     expect(text).toContain('Остання копія бази: копій ще немає');
-    expect(text).toContain('Витрати понад 50 %: немає');
+    expect(text).toContain(`${spendLine}
+`);
     expect(text).toContain('Тривог рівня log за 24 год: 7\nЧас: 3\nЕфір: 2\nМодерація й AI: 2\nНайчастіші види:');
     expect(text).toContain('clock/refresh_failed: 3\nlive/poller_tick_failed: 2\nmod/moderation_degraded: 2');
 

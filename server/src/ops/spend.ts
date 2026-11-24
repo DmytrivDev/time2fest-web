@@ -95,7 +95,7 @@ export function createSpendJob(deps: SpendJobDeps): SpendJob {
   async function money(now: number, st: OpsSpendSettings) {
     const period = monthPeriod(now);
     const [server, cf] = await Promise.all([deps.counters.get('server', period), deps.counters.get('cloudflare', period)]);
-    const serverUsd = serverCost(period, now, st.serverCeilingUsd, server ? [{ hours: 1, usdPerHour: server.amountUsd }] : []);
+    const serverUsd = serverCost(period, now, st.serverBaseUsd, server ? [{ hours: 1, usdPerHour: server.amountUsd }] : []);
     const cloudflareUsd = cloudflareCost(
       { classA: cf?.classA ?? 0, classB: cf?.classB ?? 0, storageGb: bytesToGb(cf?.storageBytes ?? 0) },
       {

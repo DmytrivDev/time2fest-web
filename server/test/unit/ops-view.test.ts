@@ -127,7 +127,7 @@ describe('overview and OpsView', () => {
     for (const file of ['src/admin/OpsView.tsx', 'src/admin/OpsSlice.tsx', 'src/ops/overview.ts']) {
       const code = readFileSync(file, 'utf8')
         .replace(/\/\*[\s\S]*?\*\//g, '')
-        .split('\n')
+        .split(/\r?\n/) // CRLF checkout on Windows: `.` does not match `\r`, so a trailing `// …` would survive
         .map((l) => l.replace(/(^|\s)\/\/.*$/, ''))
         .join('\n');
       expect(/[Ѐ-ӿ]/.test(code), file).toBe(false);

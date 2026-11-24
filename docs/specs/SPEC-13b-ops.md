@@ -328,7 +328,7 @@ Verify: integration — сид `ai_spend` на 85 % → рядок 85 %, нов�
 **AC-62 [server]** WHEN лічильник рядка `server`, `cloudflare` чи `mail` перетинає 50 % / 80 % стелі, the server shall підняти `spend/<рядок>-50` (`log`) / `spend/<рядок>-80` (`page`) рівно один раз на період на весь кластер.
 Verify: integration (exclusive) — два екземпляри, перетин 80 % → одна тривога; новий місяць → знову можлива.
 
-**AC-63 [server, infra]** The `server` row shall рахувати базову ціну з `ops-settings` (типово $12/міс) пропорційно дням плюс записані години додаткових розмірів (`ops spend-record server --hours N --usd-per-hour R --reason …`, рядок журналу); `pnpm capacity` після `night` і `back` записує години.
+**AC-63 [server, infra]** The `server` row shall рахувати базову ціну з `ops-settings` (типово $12/міс; база 12, стеля 40) пропорційно дням плюс записані години додаткових розмірів (`ops spend-record server --hours N --usd-per-hour R --reason …`, рядок журналу); `pnpm capacity` після `night` і `back` записує години.
 Verify: unit — 24 год × $0.0833 + база → точна сума; integration — `spend-record` пише рядок журналу.
 
 **AC-64 [server]** The `cloudflare` row shall рахувати вартість як `max(0, A − 1 000 000) × $4.50/млн + max(0, B − 10 000 000) × $0.36/млн + max(0, ГБ − 10) × $0.015` за місяць за власним обліком AC-39 і сумою розмірів маніфестів; ціни й безплатні межі — параметри з цими типовими значеннями; рядок позначено «нижня межа: без читань краю».

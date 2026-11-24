@@ -46,6 +46,8 @@ describe('spend rows over Postgres (AC-61, AC-63)', { timeout: 60_000 }, () => {
     expect(ai?.percent).toBeCloseTo(85, 1);
     expect(ai?.ceiling).toBe(ceilingUsd);
 
+    // Other files leave open `spend` page alarms (ops-alarms raises `spend/cloudflare-80` through the door): start from none.
+    await payload.delete({ collection: 'alarms', where: { source: { equals: 'spend' } }, overrideAccess: true });
     const before = await payload.count({ collection: 'log-alarms', where: { source: { equals: 'spend' } }, overrideAccess: true });
     const dispatch = await buildDispatcher(deps);
     const res = await dispatch(post('/api/_test/ops-tick', { now: new Date(NOW).toISOString(), jobs: ['spend'] }));

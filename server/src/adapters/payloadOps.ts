@@ -500,7 +500,8 @@ export function createPayloadSpendCounters(payload: () => Promise<Payload>): Spe
 }
 
 export const DEFAULT_OPS_SPEND_SETTINGS: OpsSpendSettings = {
-  serverCeilingUsd: 12,
+  serverBaseUsd: 12,
+  serverCeilingUsd: 40,
   cloudflareCeilingUsd: 10,
   mailCeilingUsd: 10,
   priceStoragePerGbUsd: 0.015,

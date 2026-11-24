@@ -29,6 +29,7 @@ const money = z.number().finite().min(0).max(1_000_000);
 /** The editable keys of `ops-settings` (everything but `version`); a request carries a non-empty subset. */
 export const OpsSettingsBodySchema = z
   .object({
+    serverBaseUsd: money,
     serverCeilingUsd: money,
     cloudflareCeilingUsd: money,
     mailCeilingUsd: money,

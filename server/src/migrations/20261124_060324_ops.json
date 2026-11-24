@@ -5346,12 +5346,19 @@
           "primaryKey": true,
           "notNull": true
         },
+        "server_base_usd": {
+          "name": "server_base_usd",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 12
+        },
         "server_ceiling_usd": {
           "name": "server_ceiling_usd",
           "type": "numeric",
           "primaryKey": false,
           "notNull": false,
-          "default": 12
+          "default": 40
         },
         "cloudflare_ceiling_usd": {
           "name": "cloudflare_ceiling_usd",
@@ -5765,6 +5772,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "9705868f-5fcb-475d-822f-a4913deb94c7",
+  "id": "41e4089b-97db-43d6-9bab-e30d93ce61c0",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }

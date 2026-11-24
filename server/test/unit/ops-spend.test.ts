@@ -155,7 +155,7 @@ function job(over: { store?: ReturnType<typeof memoryStore>; settings?: Partial<
   const meter = createR2Meter();
   const j = createSpendJob({
     counters: store,
-    settings: { read: async () => ({ ...DEFAULT_OPS_SPEND_SETTINGS, ...over.settings }) },
+    settings: { read: async () => ({ ...DEFAULT_OPS_SPEND_SETTINGS, serverCeilingUsd: 12, ...over.settings }) },
     lease: lease(over.held ?? true),
     alarm,
     meter,
@@ -216,6 +216,15 @@ describe('spend job (AC-60, AC-62, AC-65)', () => {
     await j.run(MID_DEC);
     expect(raised.filter((a) => a.code.startsWith('cloudflare')).map((a) => a.code)).toEqual(['cloudflare-50', 'cloudflare-80']);
     expect(raised.some((a) => a.code.startsWith('mail'))).toBe(false);
+  });
+
+  it('server row with defaults (base 12, ceiling 40) and no extra hours stays below 50 % on day 28', async () => {
+    expect(DEFAULT_OPS_SPEND_SETTINGS).toMatchObject({ serverBaseUsd: 12, serverCeilingUsd: 40 });
+    const { j } = job({ settings: { serverCeilingUsd: DEFAULT_OPS_SPEND_SETTINGS.serverCeilingUsd } });
+    const day28 = Date.UTC(2026, 10, 28, 12);
+    const server = (await j.rows(day28)).find((r) => r.key === 'server');
+    expect(server?.percent).toBeLessThanOrEqual(30);
+    expect(server?.percent).toBeLessThan(50);
   });
 
   it('over50 lists the rows past half, for the digest', async () => {

@@ -84,7 +84,8 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   
   CREATE TABLE "ops_settings" (
   	"id" serial PRIMARY KEY NOT NULL,
-  	"server_ceiling_usd" numeric DEFAULT 12,
+  	"server_base_usd" numeric DEFAULT 12,
+  	"server_ceiling_usd" numeric DEFAULT 40,
   	"cloudflare_ceiling_usd" numeric DEFAULT 10,
   	"mail_ceiling_usd" numeric DEFAULT 10,
   	"price_storage_per_gb_usd" numeric DEFAULT 0.015,

@@ -219,6 +219,8 @@ export interface DumpRunner {
 
 /** The parameters of the spend rows from the `ops-settings` global (AC-66), with the registry defaults. */
 export interface OpsSpendSettings {
+  /** Базова ціна вузла за місяць (від неї пропорційно днях рахується рядок `server`). */
+  serverBaseUsd: number;
   serverCeilingUsd: number;
   cloudflareCeilingUsd: number;
   mailCeilingUsd: number;

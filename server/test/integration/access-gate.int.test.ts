@@ -120,6 +120,7 @@ describe('Access gate (proxy)', () => {
     const push = (f: Record<string, unknown>) => void lines.push(f);
     const deps = testDeps({ log: { info: push, warn: push, error: push } });
     const gate = buildAccessGate(deps, process.env);
+    lines.length = 0; // building deps logs its own boot lines (e.g. ops/telegram-not-configured, SPEC-13b); NFR-8 counts the denials only
     const gated = proxyWith(() => gate, getIdentityMarker);
     const email = 'stranger@example.com';
     const token = await person(email);

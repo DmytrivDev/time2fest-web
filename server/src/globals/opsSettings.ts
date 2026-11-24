@@ -11,7 +11,8 @@ export const opsSettings: GlobalConfig = {
   admin: { group: 'Моніторинг' },
   access: { read: ownerOnly, update: never, readVersions: ownerOnly },
   fields: [
-    { name: 'serverCeilingUsd', type: 'number', label: 'Стеля сервера за місяць, USD', defaultValue: 12, admin: ro },
+    { name: 'serverBaseUsd', type: 'number', label: 'Базова ціна сервера за місяць, USD', defaultValue: 12, admin: ro },
+    { name: 'serverCeilingUsd', type: 'number', label: 'Стеля сервера за місяць, USD', defaultValue: 40, admin: ro },
     { name: 'cloudflareCeilingUsd', type: 'number', label: 'Стеля Cloudflare за місяць, USD', defaultValue: 10, admin: ro },
     { name: 'mailCeilingUsd', type: 'number', label: 'Стеля пошти за місяць, USD', defaultValue: 10, admin: ro },
     { name: 'priceStoragePerGbUsd', type: 'number', label: 'Ціна сховища R2, USD/ГБ', defaultValue: 0.015, admin: ro },

@@ -1518,6 +1518,7 @@ export interface ModerationSetting {
  */
 export interface OpsSetting {
   id: number;
+  serverBaseUsd?: number | null;
   serverCeilingUsd?: number | null;
   cloudflareCeilingUsd?: number | null;
   mailCeilingUsd?: number | null;
@@ -1639,6 +1640,7 @@ export interface ModerationSettingsSelect<T extends boolean = true> {
  * via the `definition` "ops-settings_select".
  */
 export interface OpsSettingsSelect<T extends boolean = true> {
+  serverBaseUsd?: T;
   serverCeilingUsd?: T;
   cloudflareCeilingUsd?: T;
   mailCeilingUsd?: T;
