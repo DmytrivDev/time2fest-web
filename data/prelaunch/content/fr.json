@@ -6030,5 +6030,33 @@
       "description": "L’Île de Man fête 2027 à minuit heure locale (00:00 UTC) : le qualtagh, premier à franchir le seuil, le sel qui prédit l’avenir et un vieux chant du hareng."
     },
     "kit": "im"
+  },
+  "EH": {
+    "text": "« Le premier verre est amer comme la vie, le deuxième doux comme l’amour, le troisième suave comme la mort », disent les Sahraouis du thé. Trois verres ouvrent presque toute réunion de famille et d’amis : la nuit du réveillon se passe donc souvent autour de la théière. La plupart des Sahraouis sont musulmans sunnites et les grandes fêtes suivent le calendrier islamique ; on sait peu de choses de grandes fêtes de rue dans la nuit du 1er janvier. Le Sahara occidental est un territoire disputé : le Maroc en contrôle de fait la plus grande partie, et l’ONU le considère comme un territoire non autonome.\n\nLaâyoune, la plus grande ville (plus de 260 000 habitants en 2024), s’étend sur la rive sud du lit à sec de la Saguia el-Hamra. Les nuits de décembre y sont douces, autour de 13 °C, sans neige. À table, couscous, agneau ou viande de chameau ; et l’espagnol, héritage de l’époque coloniale, s’entend encore.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "glass",
+        "title": "Trois verres de thé",
+        "text": "Une réunion de famille ou d’amis commence par le thé, bu en trois verres, chacun avec son goût, de l’amer au plus doux. Autour du thé, personne ne se presse."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Couscous et mreifisa",
+        "text": "Sur la table commune : couscous à la viande et aux légumes, agneau, chèvre ou chameau, et la mreifisa, un pain sans levain cuit dans le sable."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "Une nuit d’hiver douce",
+        "text": "Le courant froid des Canaries tempère la chaleur du désert : en décembre, environ 24 °C le jour et 13 °C la nuit ; l’année change sans neige ni gel."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An au Sahara occidental : Laâyoune | Time2Fest",
+      "description": "Trois verres de thé, du couscous et une nuit douce sans neige : le Sahara occidental fête 2027 à minuit heure locale à Laâyoune, sur la Saguia el-Hamra."
+    },
+    "kit": "eh"
   }
 }

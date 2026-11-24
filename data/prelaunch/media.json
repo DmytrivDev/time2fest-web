@@ -3661,6 +3661,22 @@
         "x": 55,
         "y": 55
       }
+    },
+    "country:EH": {
+      "src": "/media/photos/el-aaiun.webp",
+      "alt": {
+        "uk": "Ель-Аюн уночі: мечеть Мулай Абд аль-Азіз із підсвіченим мінаретом над площею",
+        "en": "Laayoune at night: the Moulay Abdelaziz Mosque with its lit minaret above the square",
+        "es": "El Aaiún de noche: la mezquita Mulay Abdelaziz con su minarete iluminado sobre la plaza",
+        "fr": "Laâyoune la nuit : la mosquée Moulay Abdelaziz et son minaret illuminé au-dessus de la place"
+      },
+      "author": "ZAINEB HACHAMI",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:%D9%85%D8%B3%D8%AC%D8%AF_%D9%85%D9%88%D9%84%D8%A7%D9%8A_%D8%B9%D8%A8%D8%AF_%D8%A7%D9%84%D8%B9%D8%B2%D9%8A%D8%B2.jpg",
+      "position": {
+        "x": 46,
+        "y": 42
+      }
     }
   }
 }

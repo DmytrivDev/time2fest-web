@@ -6030,5 +6030,33 @@
       "description": "The Isle of Man greets 2027 at local midnight (00:00 UTC): the qualtagh as first guest at the door, salt-heap fortunes and an old song wishing herring."
     },
     "kit": "im"
+  },
+  "EH": {
+    "text": "“The first glass is bitter like life, the second sweet like love, the third gentle like death,” the Sahrawis say of tea. Three glasses open almost any gathering of family and friends, so New Year's Eve, too, usually passes around the teapot. Most Sahrawis are Sunni Muslims and the main feasts follow the Islamic calendar; little is known about big street celebrations on the night of 1 January. Western Sahara is a disputed territory: Morocco has de facto control of most of it, and the UN regards it as a non-self-governing territory.\n\nLaayoune, the largest city (over 260,000 people in 2024), stands on the south bank of the dry Saguia el-Hamra riverbed. December nights here are mild — around 13 °C, never snowy. On the table: couscous, lamb or camel meat — and Spanish, a legacy of colonial times, is still heard.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "glass",
+        "title": "Three glasses of tea",
+        "text": "A gathering of family and friends begins with tea, drunk in three glasses, each with its own taste, from bitter to gentle. Nobody hurries over tea."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Couscous and mreifisa",
+        "text": "The shared table holds couscous with meat and vegetables, lamb, goat or camel, and mreifisa — unleavened bread baked right in the sand."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "A warm winter night",
+        "text": "The cool Canary Current tempers the desert heat: December days reach about 24 °C and nights about 13 °C, so the year turns without snow or frost."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Western Sahara: Laayoune | Time2Fest",
+      "description": "Three glasses of tea, couscous and a mild night without snow: Western Sahara meets 2027 at local midnight in Laayoune, above the Saguia el-Hamra riverbed."
+    },
+    "kit": "eh"
   }
 }

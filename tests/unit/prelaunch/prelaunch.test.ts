@@ -132,7 +132,7 @@ describe('модель головної в мовному дереві', () => {
         .filter((k) => !k.includes('@'))
         .sort(),
     );
-    const andorra = m.countriesByIso.get('EH'); // країна без набору (AD отримала набір 2026-11-24)
+    const andorra = m.countriesByIso.get('UM'); // країна без набору (AD, потім EH отримали набори)
     expect(andorra?.described).toBe(false);
     expect(andorra?.text).toBe('');
     expect(andorra?.traditions).toEqual([]);
@@ -313,13 +313,13 @@ describe('одне правило індексації сторінки краї
   it('відкрита лише країна з власною розповіддю кожною мовою збірки', async () => {
     const { countryIndexable } = await import('@/lib/prelaunch/siteData');
     expect(countryIndexable('JP', ['en', 'uk'], true)).toBe(true);
-    expect(countryIndexable('EH', ['en', 'uk'], true)).toBe(false);
+    expect(countryIndexable('UM', ['en', 'uk'], true)).toBe(false);
     // Перемикач: з 2026-11-21 відкрито (опубліковані набори); `false` закриває всі країни.
     expect(countryIndexable('JP', ['en', 'uk'])).toBe(true);
     expect(countryIndexable('JP', ['en', 'uk'], false)).toBe(false);
     // Тексти задачі C — власні розповіді всіма чотирма мовами: описана країна відкрита й в іспанській збірці.
     expect(countryIndexable('JP', ['en', 'uk', 'es', 'fr'], true)).toBe(true);
-    expect(countryIndexable('EH', ['en', 'uk', 'es', 'fr'], true)).toBe(false);
+    expect(countryIndexable('UM', ['en', 'uk', 'es', 'fr'], true)).toBe(false);
   });
 });
 

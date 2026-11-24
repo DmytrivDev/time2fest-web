@@ -1314,6 +1314,12 @@
       "wide": true,
       "sky": "#1d2846",
       "water": "#2a3233"
+    },
+    "EH": {
+      "src": "/scenes/EH-wide.svg",
+      "wide": true,
+      "sky": "#1d2846",
+      "water": "#574949"
     }
   }
 }

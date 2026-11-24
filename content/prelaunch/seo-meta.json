@@ -3618,6 +3618,24 @@
         "title": "Nouvel An sur l’Île de Man : Douglas | Time2Fest",
         "description": "L’Île de Man fête 2027 à minuit heure locale (00:00 UTC) : le qualtagh, premier à franchir le seuil, le sel qui prédit l’avenir et un vieux chant du hareng."
       }
+    },
+    "EH": {
+      "uk": {
+        "title": "Новий рік у Західній Сахарі: Ель-Аюн | Time2Fest",
+        "description": "Три склянки чаю, кускус і тепла ніч без снігу: Західна Сахара зустрічає 2027-й опівночі за місцевим часом в Ель-Аюні, над руслом Сакія-ель-Хамра."
+      },
+      "en": {
+        "title": "New Year in Western Sahara: Laayoune | Time2Fest",
+        "description": "Three glasses of tea, couscous and a mild night without snow: Western Sahara meets 2027 at local midnight in Laayoune, above the Saguia el-Hamra riverbed."
+      },
+      "es": {
+        "title": "Año Nuevo en el Sáhara Occidental: El Aaiún | Time2Fest",
+        "description": "Tres vasos de té, cuscús y una noche templada sin nieve: el Sáhara Occidental recibe 2027 a medianoche local en El Aaiún, junto a la Saguía el Hamra."
+      },
+      "fr": {
+        "title": "Nouvel An au Sahara occidental : Laâyoune | Time2Fest",
+        "description": "Trois verres de thé, du couscous et une nuit douce sans neige : le Sahara occidental fête 2027 à minuit heure locale à Laâyoune, sur la Saguia el-Hamra."
+      }
     }
   }
 }

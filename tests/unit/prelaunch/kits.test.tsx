@@ -33,7 +33,7 @@ describe('набори країн', () => {
     // Пачка 3: FR теж широка; TH — новий набір.
     expect(sceneFile('FR', 'utc+0100', true)).toMatchObject({ src: '/scenes/FR-wide.svg', position: 'right center' });
     expect(sceneFile('TH', 'utc+0700', true)).toMatchObject({ src: '/scenes/TH-wide.svg' });
-    expect(sceneFile('EH', 'utc+0100', true)).toBeUndefined(); // EH — без набору (притримано)
+    expect(sceneFile('UM', 'utc-1100', true)).toBeUndefined(); // UM — без набору
   });
 
   it('запис сцени: шлях 3:2 — верх по центру; широка — правий край і кольори тла; фокус 3:2 — свій', () => {

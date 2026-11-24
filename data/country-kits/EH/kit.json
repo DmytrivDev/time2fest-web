@@ -1,0 +1,103 @@
+{
+  "code": "EH",
+  "zone": "UTC+0",
+  "zoneId": "utc+0000",
+  "cityId": "el-aaiun",
+  "names": {
+    "uk": {
+      "name": "Західна Сахара",
+      "city": "Ель-Аюн",
+      "cityIn": "в Ель-Аюні",
+      "caps": "ЗАХІДНА САХАРА",
+      "countryIn": "у Західній Сахарі"
+    },
+    "en": {
+      "name": "Western Sahara",
+      "city": "Laayoune",
+      "cityIn": "in Laayoune",
+      "caps": "WESTERN SAHARA",
+      "countryIn": "in Western Sahara"
+    },
+    "es": {
+      "name": "Sáhara Occidental",
+      "city": "El Aaiún",
+      "cityIn": "en El Aaiún",
+      "caps": "SÁHARA OCCIDENTAL",
+      "countryIn": "en el Sáhara Occidental"
+    },
+    "fr": {
+      "name": "Sahara occidental",
+      "city": "Laâyoune",
+      "cityIn": "à Laâyoune",
+      "caps": "SAHARA OCCIDENTAL",
+      "countryIn": "au Sahara occidental"
+    }
+  },
+  "picto": "M8.6 20.6 Q8 15 12 12.6 Q15 8 18.6 8.6 Q22 9.6 23.4 14.4 Q24.6 17.6 27 18 Q28.6 18 29.4 15 Q30 11.6 31.2 10.2 Q32.4 9.4 34 10 L35.4 11 Q35.8 12.4 34.4 12.6 L32.6 12.8 Q31.6 13.6 31.2 16.6 Q30.4 21.4 26.6 22.4 Q20 23.4 13 22.8 Q9.2 22.6 8.6 20.6 Z M11 22.6 L10 27.4 L8.2 32.6 M14.8 22.9 L15.8 27.6 L15.4 32.6 M23.4 22.9 L22.6 27.6 L23.2 32.6 M27.4 22 L29.6 27 L30.8 32.6 M8.7 19 Q7.4 21 7.8 24.4 M5 32.6 H34",
+  "flagColors": [
+    "#E8C872",
+    "#D9A066",
+    "#8CC7C2"
+  ],
+  "palette": 0,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Західній Сахарі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Western Sahara"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en el Sáhara Occidental"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "au Sahara occidental"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

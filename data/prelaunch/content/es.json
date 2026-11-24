@@ -6030,5 +6030,33 @@
       "description": "La Isla de Man recibe 2027 a medianoche local (00:00 UTC): el qualtagh, primer invitado en cruzar la puerta, la sal que adivina y un viejo canto al arenque."
     },
     "kit": "im"
+  },
+  "EH": {
+    "text": "«El primer vaso es amargo como la vida, el segundo dulce como el amor y el tercero suave como la muerte», dicen los saharauis del té. Tres vasos abren casi cualquier reunión de familia y amigos, así que también la Nochevieja suele pasar alrededor de la tetera. La mayoría de los saharauis son musulmanes suníes y las grandes fiestas siguen el calendario islámico; de grandes celebraciones callejeras la noche del 1 de enero se sabe poco. El Sáhara Occidental es un territorio en disputa: Marruecos controla de hecho la mayor parte, y la ONU lo considera un territorio no autónomo.\n\nEl Aaiún, la mayor ciudad (más de 260 000 habitantes en 2024), se levanta en la orilla sur del cauce seco de la Saguía el Hamra. Las noches de diciembre son suaves, unos 13 °C y sin nieve. En la mesa, cuscús, cordero o carne de camello, y el español, herencia de la época colonial, se sigue oyendo.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "glass",
+        "title": "Tres vasos de té",
+        "text": "Una reunión de familia y amigos empieza con el té, que se toma en tres vasos, cada uno con su sabor, del amargo al suave. Con el té nadie tiene prisa."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Cuscús y mreifisa",
+        "text": "En la mesa compartida hay cuscús con carne y verduras, cordero, cabra o camello, y mreifisa, un pan sin levadura cocido en la arena."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "Una noche de invierno templada",
+        "text": "La fresca corriente de Canarias templa el calor del desierto: en diciembre, unos 24 °C de día y 13 °C de noche, así que el año cambia sin nieve ni heladas."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en el Sáhara Occidental: El Aaiún | Time2Fest",
+      "description": "Tres vasos de té, cuscús y una noche templada sin nieve: el Sáhara Occidental recibe 2027 a medianoche local en El Aaiún, junto a la Saguía el Hamra."
+    },
+    "kit": "eh"
   }
 }
