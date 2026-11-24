@@ -47,7 +47,7 @@ import { clockFor, monotonicClock, processClockCache, realClock } from './clock'
 import { createDivergenceMeter } from './timekeeping/divergence';
 import { createSharedClock, startClockRefresh, type ClockRefresh, type SharedClock } from './timekeeping/shared';
 import { createDispatcher } from './endpoints/pipeline';
-import { alarmStoreOf, catalogStoreOf, eventsOf, publisherOf, unattendedDepsOf } from './endpoints/deps';
+import { alarmStoreOf, catalogStoreOf, eventsOf, liveOf, publisherOf, unattendedDepsOf } from './endpoints/deps';
 import type { AppEnv, Deps, EventPorts, LiveWiring, ModerationDeps, RouteRow, SiteWiring } from './endpoints/types';
 import { createEdgeGate, type EdgeGate } from './platform/edge';
 import { startEventBus, type EventBus } from './events/bus';
@@ -65,6 +65,7 @@ import { parseLiveConfig } from './domain/live/config';
 import { createPayloadLiveFanOutClaim, createPayloadLiveStore, createPayloadQuotaStore, createPgLiveLease } from './adapters/payloadLive';
 import { createYoutubeFakeSource } from './adapters/youtubeFake';
 import { createLivePoller, LIVE_PASS_MS, liveEventsFrom } from './live/poller';
+import type { SourcesDeps } from './live/sources';
 import { createStreamsWatch, type StreamsWatch, type WatchDeps } from './live/watch';
 import { createPayloadStreamsStore } from './adapters/payloadStreams';
 import { currentPatches } from './corrections/service';
@@ -729,8 +730,7 @@ export function startLivePoller(deps: Deps, intervalMs: number = LIVE_PASS_MS): 
     cfg: live.cfg,
     caller: live.caller,
     // SPEC-21a AC-10: approved candidates follow their source in the poller's transaction.
-    streams: createPayloadStreamsStore({ payload: payloadOf(deps), clock: deps.clock }),
-    journal: createPayloadJournal(isRevertible),
+    follow: { streams: createPayloadStreamsStore({ payload: payloadOf(deps), clock: deps.clock }), journal: createPayloadJournal(isRevertible) },
   });
   const ticker = startTicker({
     tick: () => poller.tick(deps.clock.now()),
@@ -749,19 +749,18 @@ export function startLivePoller(deps: Deps, intervalMs: number = LIVE_PASS_MS): 
 }
 
 /**
- * The sources watch of the process deps (SPEC-21a [П-4]): the live stores, the streams store, the YouTube source (it
- * speaks statuses, channels, playlists and search), a revertible journal, the outbox and the server clock.
- * `undefined` without a YouTube source. `overrides` is for tests only (a scoped store, a test clock).
+ * The deps of the stream sources services (SPEC-21a S4) over the process deps — the one assembly of `SourcesDeps`
+ * (the revert registry and the sources watch use it): the live and streams stores, the quota, the YouTube source
+ * when one is wired (`LiveWiring.statuses` speaks statuses, channels, playlists and search), a journal marking rows
+ * revertible, the outbox, the alarm and the server clock.
  */
-export function streamsWatchOf(deps: Deps, overrides: Partial<WatchDeps> = {}): StreamsWatch | undefined {
-  const live = deps.live;
-  if (!live?.statuses) return undefined;
-  return createStreamsWatch({
+export function sourcesDepsOf(deps: Deps): SourcesDeps {
+  const live = liveOf(deps);
+  return {
     live: live.store,
     streams: createPayloadStreamsStore({ payload: payloadOf(deps), clock: deps.clock }),
     quota: live.quota,
-    lease: live.lease,
-    youtube: live.statuses,
+    ...(live.statuses ? { youtube: live.statuses } : {}),
     events: live.events,
     journal: createPayloadJournal(isRevertible),
     publisher: eventsOf(deps).publisher,
@@ -769,8 +768,17 @@ export function streamsWatchOf(deps: Deps, overrides: Partial<WatchDeps> = {}): 
     clock: deps.clock,
     cfg: live.cfg,
     caller: live.caller,
-    ...overrides,
-  });
+  };
+}
+
+/**
+ * The sources watch of the process deps (SPEC-21a [П-4]): the sources deps plus the lease and the YouTube source.
+ * `undefined` without a YouTube source. `overrides` is for tests only (a scoped store, a test clock).
+ */
+export function streamsWatchOf(deps: Deps, overrides: Partial<WatchDeps> = {}): StreamsWatch | undefined {
+  const live = deps.live;
+  if (!live?.statuses) return undefined;
+  return createStreamsWatch({ ...sourcesDepsOf(deps), lease: live.lease, youtube: live.statuses, ...overrides });
 }
 
 /**

@@ -24,7 +24,10 @@ import type { LiveEvent } from '../domain/live/moment';
 import type { YoutubeVideoState } from '../domain/live/status';
 import type { LiveLease, SearchSource, StoredCandidate, StoredStreamChannel } from './ports';
 import { CLEARED_CANDIDATE_FIELDS, RETENTION_RUN_MS, runCandidateRetention, type Refreshed } from './retention';
-import { addCandidates, countedCall, journalChannel, retryUnchecked, STREAMS_CANDIDATE_ACTION, type SourcesDeps } from './sources';
+import { journalCandidate } from './candidateJournal';
+import { videoFields } from './candidateFields';
+import { countedCall } from './quotaCall';
+import { addCandidates, journalChannel, retryUnchecked, type SourcesDeps } from './sources';
 
 export const LIVE_SOURCES_LEASE = 'live-sources';
 /** The watch actor of journal rows and `stateChangedBy` (as the sources services' own server actor). */
@@ -59,14 +62,7 @@ const idle = (): WatchReport => ({ ran: false, retried: 0, refreshed: 0, off: 0,
 
 /** The candidate fields of a fresh `videos.list` answer (as the cheap check writes them). */
 function youtubeFields(v: YoutubeVideoState, at: number): Partial<StoredCandidate> {
-  return {
-    ...(v.channelId ? { channelId: v.channelId } : {}),
-    liveBroadcastContent: v.liveBroadcastContent ?? null,
-    scheduledStartTime: v.scheduledStartTime ? Date.parse(v.scheduledStartTime) || null : null,
-    embeddable: v.embeddable ?? null,
-    privacyStatus: v.privacyStatus ?? null,
-    ytFetchedAt: at,
-  };
+  return { ...(v.channelId ? { channelId: v.channelId } : {}), ...videoFields(v, at) };
 }
 
 export function createStreamsWatch(deps: WatchDeps): StreamsWatch {
@@ -146,16 +142,7 @@ export function createStreamsWatch(deps: WatchDeps): StreamsWatch {
         if (!have || !transition(have.state, 'archive', 'server').ok) continue;
         // The decision time and author stay (AC-46): the archive is recorded by the journal row.
         await deps.streams.saveCandidate(tx, { videoId, state: 'archive', ...CLEARED_CANDIDATE_FIELDS }, have.stateChangedBy ?? BY, have.stateChangedAt ?? at);
-        const view = { videoId, reason: have.reason ?? null, eventId: have.eventId ?? null, foundBy: [...have.foundBy] };
-        await deps.journal.append(tx, {
-          actor: SYSTEM,
-          action: STREAMS_CANDIDATE_ACTION,
-          target: { collection: 'stream-candidates', id: videoId },
-          at,
-          before: { ...view, state: have.state },
-          after: { ...view, state: 'archive' },
-          revertOf: null,
-        });
+        await journalCandidate(deps.journal, tx, { actor: SYSTEM, at, before: have, after: { ...have, state: 'archive' }, revertOf: null });
       }
     });
     return { refreshed: plan.refreshed.size, stripped: plan.strip.filter((id) => !archive.has(id)).length, archived: plan.archive.length };

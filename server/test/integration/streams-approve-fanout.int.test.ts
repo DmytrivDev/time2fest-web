@@ -164,8 +164,7 @@ describe('approve fan-out and the candidate following its source', { timeout: 12
       alarm: { raise: () => {} },
       cfg: live.cfg,
       caller: live.caller,
-      streams: sources.streams,
-      journal: sources.journal,
+      follow: { streams: sources.streams, journal: sources.journal },
     });
     const state = async () => (await sources.streams.candidates({ videoIds: [id] }))[0]?.state;
     const journalRows = async () =>

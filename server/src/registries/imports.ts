@@ -2,12 +2,12 @@
  * Import registry (AC-80): sorted, unique rows, one per import domain. `pnpm --dir server import <domain>`
  * runs the row with that key. Later waves (hosting, streams, content) append their rows here.
  */
+import { createPayloadImportStore } from '../adapters/payloadCatalog';
 import { createPayloadLiveImportStore } from '../adapters/payloadLive';
 import { createPayloadStreamsStore } from '../adapters/payloadStreams';
-import { createPayloadImportStore } from '../adapters/payloadCatalog';
+import { importCatalog, type ImportResult } from '../catalog/import';
 import { importChains } from '../live/import';
 import { importChannels } from '../live/importChannels';
-import { importCatalog, type ImportResult } from '../catalog/import';
 import { assertRegistry } from '../platform/registry';
 import { eventsOf, liveOf, siteOf } from '../endpoints/deps';
 import type { Deps } from '../endpoints/types';

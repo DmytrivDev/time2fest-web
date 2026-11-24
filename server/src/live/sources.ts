@@ -19,11 +19,14 @@ import type { Actor, Journal, RevertHandler, StoredJournalEntry } from '../audit
 import { agentWithinCeilings, capForAgent, chainFull, checkIsFresh, cheapVerdict, mergeOrigin, transition, type CandidateActor } from '../domain/live/candidates';
 import { canWatchMore } from '../domain/live/channels';
 import type { LiveConfig } from '../domain/live/config';
-import { agentCounterKeys, allow, CEILED_CLASSES, nextDayBoundary, quotaDay, type CallerContext, type CeiledClass, type QuotaRefusal } from '../domain/live/quota';
+import { agentCounterKeys, CEILED_CLASSES, nextDayBoundary, quotaDay, type CallerContext, type CeiledClass } from '../domain/live/quota';
 import type { YoutubeVideoState } from '../domain/live/status';
 import type { EventPublisher } from '../events/ports';
 import type { Alarm, Clock } from '../ports';
+import { candidateView, journalCandidate as appendCandidateRow, STREAMS_CANDIDATE_ACTION } from './candidateJournal';
+import { videoFields } from './candidateFields';
 import { checkOf, LIVE_CHANGED_TOPIC, type LiveChangedPayload } from './poller';
+import { countedCall } from './quotaCall';
 import type {
   ChannelSource,
   LiveEventSource,
@@ -35,19 +38,17 @@ import type {
   StoredStreamChannel,
   StreamsStore,
   Tx,
-  VideoStatusError,
   VideoStatusSource,
 } from './ports';
 
+export { STREAMS_CANDIDATE_ACTION } from './candidateJournal';
+export { countedCall, type CountedResult } from './quotaCall';
 export const LIVE_APPROVE_ACTION = 'live.approve';
-export const STREAMS_CANDIDATE_ACTION = 'streams.candidate';
 export const STREAMS_CHANNEL_ACTION = 'streams.channel';
 export const STREAMS_BLACKLIST_ACTION = 'streams.blacklist';
 
-const CANDIDATES = 'stream-candidates';
 const CHANNELS = 'stream-channels';
 const SOURCES = 'stream-sources';
-const ALARM_SOURCE = 'live';
 /** The lowest priority: a channel added without one. */
 const DEFAULT_PRIORITY: number = CHANNEL_PRIORITIES[CHANNEL_PRIORITIES.length - 1] as number;
 const SYSTEM: Actor = Object.freeze({ kind: 'system', id: 'live-sources', label: 'live-sources' });
@@ -91,47 +92,6 @@ const no = <T>(code: SourcesRefusal, detail?: string): SourcesResult<T> => (deta
 const actorOf = (actor: Actor): CandidateActor => (actor.kind === 'owner' ? 'owner' : actor.kind === 'agent' ? 'agent' : 'server');
 const byOf = (actor: Actor) => `${actor.kind}:${actor.id}`;
 
-// ---- counted calls (AC-25) ----
-
-export type CountedResult<T> = { ok: true; value: T } | { ok: false; refusal: QuotaRefusal | VideoStatusError | 'not-wired' };
-
-/**
- * One YouTube call of a ceiled class or of `search`: allowed by the SPEC-12 rule, charged to its bucket (`queries`, or
- * `search` for a search) and to the class counter before the request (a failed call counts too), `live/quota-80` on
- * the first crossing, `quotaExceeded` stops that bucket until the quota day ends.
- */
-export async function countedCall<T>(
-  deps: Pick<SourcesDeps, 'quota' | 'alarm' | 'clock' | 'cfg' | 'caller'>,
-  cls: CeiledClass | 'search',
-  call: () => Promise<T | { error: VideoStatusError }>,
-): Promise<CountedResult<T>> {
-  const { cfg } = deps;
-  const now = deps.clock.now();
-  const day = quotaDay(now, cfg.dayTimeZone);
-  const decision = allow(await deps.quota.read(day), cls, now, cfg, deps.caller, 1);
-  if (!decision.ok) return { ok: false, refusal: decision.reason };
-  const bucket = decision.bucket;
-  const used = await deps.quota.charge(day, bucket, decision.units);
-  if (cls !== 'search') await deps.quota.charge(day, cls, decision.units);
-  if (used >= cfg.alarmRatio * cfg.buckets[bucket].perDay && (await deps.quota.mark80(day, bucket, now))) {
-    deps.alarm.raise({ level: 'page', source: ALARM_SOURCE, code: 'live/quota-80', details: { bucket } });
-  }
-  let result: T | { error: VideoStatusError };
-  try {
-    result = await call();
-  } catch {
-    return { ok: false, refusal: 'unavailable' };
-  }
-  if (result && typeof result === 'object' && 'error' in result) {
-    const error = (result as { error: VideoStatusError }).error;
-    if (error === 'quota-exceeded' && (await deps.quota.markExceeded(day, bucket, nextDayBoundary(now, cfg.dayTimeZone)))) {
-      deps.alarm.raise({ level: 'log', source: ALARM_SOURCE, code: 'live/quota-exceeded', details: { bucket } });
-    }
-    return { ok: false, refusal: error };
-  }
-  return { ok: true, value: result as T };
-}
-
 // ---- the cheap check ----
 
 /** A checked id: the video as YouTube returned it (`null` = not returned), or not checked at all. */
@@ -166,33 +126,13 @@ function checkedFields(check: Check): Partial<StoredCandidate> {
   if (!v) return { checkedAt: check.at };
   return {
     channelId: v.channelId ?? null,
-    liveBroadcastContent: v.liveBroadcastContent ?? null,
-    scheduledStartTime: v.scheduledStartTime ? Date.parse(v.scheduledStartTime) || null : null,
-    embeddable: v.embeddable ?? null,
-    privacyStatus: v.privacyStatus ?? null,
-    ytFetchedAt: check.at,
+    ...videoFields(v, check.at),
     checkedAt: check.at,
   };
 }
 
-const candidateView = (c: Pick<StoredCandidate, 'videoId' | 'state' | 'reason' | 'eventId' | 'foundBy'>) => ({
-  videoId: c.videoId,
-  state: c.state,
-  reason: c.reason ?? null,
-  eventId: c.eventId ?? null,
-  foundBy: [...c.foundBy],
-});
-
 async function journalCandidate(deps: SourcesDeps, tx: Tx, actor: Actor, before: StoredCandidate | null, after: StoredCandidate, revertOf: string | null, extra: Record<string, unknown> = {}) {
-  await deps.journal.append(tx, {
-    actor,
-    action: STREAMS_CANDIDATE_ACTION,
-    target: { collection: CANDIDATES, id: after.videoId },
-    at: deps.clock.now(),
-    before: before ? candidateView(before) : null,
-    after: { ...candidateView(after), ...extra },
-    revertOf,
-  });
+  await appendCandidateRow(deps.journal, tx, { actor, at: deps.clock.now(), before, after, revertOf, extra });
 }
 
 export interface AddCandidatesInput {
