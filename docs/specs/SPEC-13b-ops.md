@@ -169,7 +169,7 @@ Verify: integration — `log`-тривога → рядок у колекції,
 **AC-13 [server]** The Telegram sink shall обирати отримувача за класом: `test` — лише `T2F_TELEGRAM_API_BASE` на loopback; `rehearsal` — лише `T2F_TELEGRAM_TEST_CHAT_ID`; `production` — лише `T2F_TELEGRAM_CHAT_ID`.
 Verify: unit — матриця класів і змінних: на репетиції заданий чат власника ігнорується з одним рядком попередження; у `test` нелокальна адреса → сток вимкнено.
 
-**AC-14 [server]** IF токен чи потрібний id чату не задано, THEN the server shall стартувати з вимкненим стоком Telegram, записати один рядок `ops/telegram-not-configured` і показувати «Telegram: не налаштовано» в моніторингу; WHERE клас `production`, the env check shall вимагати обидві змінні.
+**AC-14 [server]** IF токен чи потрібний id чату не задано, THEN the server shall стартувати з вимкненим стоком Telegram, записати один рядок `ops/telegram-not-configured` і показувати «Telegram: не налаштовано» в моніторингу; WHERE клас `production`, the env check shall вимагати `T2F_TELEGRAM_BOT_TOKEN` і `T2F_TELEGRAM_CHAT_ID` (як і `T2F_BACKUP_KEY` за AC-67).
 Verify: unit — `env.check` для `production` без змінних → відмова з назвами змінних; `rehearsal` без них → старт.
 
 **AC-15 [server]** The real adapter shall надсилати `POST <api base>/bot<token>/sendMessage` з `chat_id`, `text`, `disable_web_page_preview:true` по HTTPS з тайм-аутом 10 с і ніколи не писати токен чи URL з ним у логи, помилки, журнал чи скриньку.
@@ -216,7 +216,7 @@ Verify: unit — сканер на чистому дереві зелений; �
 Verify: integration — підйом незареєстрованого виду дверцятами → позначка є; перевірка кінця набору її ловить.
 
 **AC-28 [server]** The test helper `expectAlarmInTestChannel(kind, trigger)` shall запускати тригер і чекати у фейку повідомлення з назвою домену й значенням із реєстру ≤60 с; ця хвиля перевіряє ним по одному виду з кожного злитого домену й усі свої коди `ops/*`, `spend/*`.
-Verify: integration — помічник зелений для `clock/edge-divergence`, `scheduler/lag`, `catalog-r2-copy-failed`, `site/rebuild-failed`, `live/quota-80`, `spend_80`, `ops/backup-failed`, `ops/backup-stale`, `spend/cloudflare-80`.
+Verify: integration — помічник зелений для `clock/edge-divergence`, `scheduler/lag`, `catalog-r2-copy-failed` (код каталогу SPEC-04), `site/rebuild-failed`, `live/quota-80`, `mod/spend_80`, `ops/backup-failed`, `ops/backup-stale`, `spend/cloudflare-80`.
 
 **AC-29 [server]** The registry shall позначати `site/publish-failed` і `live/publish-failed` як `log`-тривоги (крім наявного рядка `warn`), а `*-skipped`, `rebuild-frozen`, `rebuild-disabled`, `rebuild-not-configured` — як «інфо, не тривога»; `edge/origin-down` — зарезервовано, `page`, власник SPEC-22a.
 Verify: unit — рядки реєстру; integration — збій публікації realtime → одна `log`-тривога.
@@ -342,7 +342,7 @@ Verify: integration — зміна власником → журнал; аген
 
 ### Змінні, документи, межі
 
-**AC-67 [server, infra]** The env registry shall отримати рядки `T2F_TELEGRAM_BOT_TOKEN` (secret), `T2F_TELEGRAM_CHAT_ID`, `T2F_TELEGRAM_TEST_CHAT_ID`, `T2F_TELEGRAM_API_BASE` (url), `T2F_BACKUP_KEY` (secret, `requiredIn` production) — відсортовано, з прикладом у `infra/ops/node/server.env.example` і тестом `env-example.test.mjs`.
+**AC-67 [server, infra]** The env registry shall отримати рядки `T2F_TELEGRAM_BOT_TOKEN` (secret, `requiredIn` production), `T2F_TELEGRAM_CHAT_ID` (`requiredIn` production), `T2F_TELEGRAM_TEST_CHAT_ID`, `T2F_TELEGRAM_API_BASE` (url), `T2F_BACKUP_KEY` (secret, `requiredIn` production) — відсортовано, з прикладом у `infra/ops/node/server.env.example` і тестом `env-example.test.mjs`.
 Verify: unit — `assertRegistry`, `env-example.test.mjs`, `scripts/check-secrets.mjs` зелені.
 
 **AC-68 [server]** The new collections (`alarm-deliveries`, `log-alarms`, `backup-runs`, `restore-runs`, `spend-counters`) і глобал `ops-settings` shall додаватися лише новими міграціями без зміни наявних таблиць, крім додаткового поля `details` у `alarms`.
@@ -352,7 +352,7 @@ Verify: integration — `verify-schema` і правила `migration-safety`; м
 Verify: manual — читання ведучим хвилі; ручне, бо це текст.
 
 **AC-70 [web]** The site shall не мати видимих змін; `layout-fidelity` у цій хвилі пропускається, бо `web/` поза `server/`, `infra/`, `fakes/` не змінюється.
-Verify: unit — різниця гілки проти `master` поза `server/`, `infra/`, `fakes/`, `docs/specs/`, `package.json`, `.github/` — нуль файлів.
+Verify: unit — різниця гілки проти `master` поза `server/`, `infra/`, `fakes/`, `docs/specs/`, `docs/plans/`, `docs/knowledge/`, `package.json`, `.github/` — нуль файлів.
 
 ### Початкові рядки реєстру (до AC-25)
 
