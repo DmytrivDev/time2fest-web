@@ -5081,6 +5081,9 @@
     "packages/contracts/src/streams.schemas.ts#VideoIdSchema": {
       "text": "ZodString"
     },
+    "packages/contracts/src/streams.schemas.ts#looksLikeSecret": {
+      "fn": "export function looksLikeSecret(text: string): boolean"
+    },
     "packages/contracts/src/streams.ts#AGENT_CANDIDATES_PAGE_MAX": {
       "text": "100"
     },
@@ -5418,6 +5421,279 @@
         "{\"text\":\"{ action: 'channel-edit'; channelId: string } & Partial<ChannelFields> & { state?: 'watched' | 'off' }\"}"
       ]
     },
+    "packages/contracts/src/streams.ts#StreamsAgentKey": {
+      "props": {
+        "active": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "adminId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "email": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "issuedAt": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      }
+    },
+    "packages/contracts/src/streams.ts#StreamsViewCandidate": {
+      "props": {
+        "channelId": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "channelName": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "checkedAt": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "defaultEventId": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "eventId": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "evidenceUrl": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "foundBy": {
+          "optional": false,
+          "type": {
+            "text": "FoundBy[]"
+          }
+        },
+        "fromBlacklisted": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "note": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "reason": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "ref:packages/contracts/src/streams.ts#CandidateReason"
+            ]
+          }
+        },
+        "scheduledStartTime": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "sourceId": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "state": {
+          "optional": false,
+          "type": {
+            "ref": "packages/contracts/src/streams.ts#CandidateState"
+          }
+        },
+        "stateChangedAt": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "videoId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/streams.ts#StreamsViewChannel": {
+      "props": {
+        "blacklistReason": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "blacklistSource": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "blacklisted": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "channelId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "kind": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "lastPlaylistAt": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "lastSearchAt": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "name": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "priority": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "proposedBy": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "seasons": {
+          "optional": false,
+          "type": {
+            "text": "string[]"
+          }
+        },
+        "state": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "uploadsFetchedAt": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "uploadsPlaylistId": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "zones": {
+          "optional": false,
+          "type": {
+            "text": "string[]"
+          }
+        }
+      }
+    },
     "packages/contracts/src/streams.ts#StreamsViewQuery": {
       "props": {
         "eventId": {
@@ -5430,6 +5706,90 @@
           "optional": true,
           "type": {
             "ref": "packages/contracts/src/streams.ts#CandidateState"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/streams.ts#StreamsViewQuota": {
+      "props": {
+        "cls": {
+          "optional": false,
+          "type": {
+            "union": [
+              "'candidates'",
+              "'playlists'",
+              "'search'"
+            ]
+          }
+        },
+        "limit": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "percent": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "resetAt": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "used": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/streams.ts#StreamsViewValue": {
+      "props": {
+        "agentKeys": {
+          "optional": false,
+          "type": {
+            "text": "StreamsAgentKey[]"
+          }
+        },
+        "candidates": {
+          "optional": false,
+          "type": {
+            "text": "StreamsViewCandidate[]"
+          }
+        },
+        "channels": {
+          "optional": false,
+          "type": {
+            "text": "StreamsViewChannel[]"
+          }
+        },
+        "events": {
+          "optional": false,
+          "type": {
+            "text": "{ eventId: string; zoneId: string; moment: string }[]"
+          }
+        },
+        "next": {
+          "optional": true,
+          "type": {
+            "text": "string"
+          }
+        },
+        "now": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "quota": {
+          "optional": false,
+          "type": {
+            "text": "StreamsViewQuota[]"
           }
         }
       }
