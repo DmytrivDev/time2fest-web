@@ -23,6 +23,22 @@ export const DEFAULT_SECRETS_ENV = path.resolve(
   '../../../../dashboard/secrets/.env',
 );
 
+/** Відповіді панелі: несекретні поля справ власника (id чатів зберігаються тут, не в `.env`). */
+export const DEFAULT_ANSWERS_JSON = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '../../../../dashboard/data/answers.json',
+);
+
+/** `TELEGRAM_TEST_CHAT_ID` із поля справи `own-telegram` панелі; немає — `undefined`. */
+export function testChatFromAnswers(text: string): string | undefined {
+  try {
+    const v = JSON.parse(text)?.fields?.['own-telegram']?.telegram_test_chat_id?.value;
+    return typeof v === 'string' && v.trim() ? v.trim() : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 const TOKEN = 'TELEGRAM_BOT_TOKEN';
 const TEST_CHAT = 'TELEGRAM_TEST_CHAT_ID';
 
@@ -46,6 +62,7 @@ export function parseEnvFile(text: string): Record<string, string> {
 
 export interface TelegramTestOptions {
   envPath?: string;
+  answersPath?: string;
   apiBase?: string;
   fetch?: typeof fetch;
   now?: () => number;
@@ -61,6 +78,14 @@ export async function runTelegramTest(options: TelegramTestOptions = {}): Promis
     return { ok: false, line: 'помилка no-secrets-file' };
   }
   const env = parseEnvFile(text);
+  if (!env[TEST_CHAT]) {
+    try {
+      const fromPanel = testChatFromAnswers(fs.readFileSync(options.answersPath ?? DEFAULT_ANSWERS_JSON, 'utf8'));
+      if (fromPanel) env[TEST_CHAT] = fromPanel;
+    } catch {
+      /* немає файлу відповідей — лишається missing */
+    }
+  }
   const token = env[TOKEN];
   const chatId = env[TEST_CHAT];
   const missing = [TOKEN, TEST_CHAT].filter((name) => !env[name]);

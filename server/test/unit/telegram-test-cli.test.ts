@@ -7,7 +7,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { startFakeTelegram } from '../../../fakes/telegram/server.mjs';
-import { DEFAULT_SECRETS_ENV, TELEGRAM_API_BASE, parseEnvFile, runTelegramTest } from '../../src/cli/telegramTest';
+import { DEFAULT_SECRETS_ENV, TELEGRAM_API_BASE, parseEnvFile, runTelegramTest, testChatFromAnswers } from '../../src/cli/telegramTest';
 
 const TOKEN = 'fake-cli-token-not-real-0000'; // check-secrets: allow test fake
 const OWNER_CHAT = '-1001111111111';
@@ -65,7 +65,7 @@ describe('ops:telegram-test', () => {
 
   it('missing file / missing or bad variables → error code by name, no request', async () => {
     expect(await runTelegramTest({ envPath: path.join(dir, 'nope.env'), apiBase: fake.url })).toEqual({ ok: false, line: 'помилка no-secrets-file' });
-    expect(await runTelegramTest({ envPath: envFile(`TELEGRAM_BOT_TOKEN=${TOKEN}\n`), apiBase: fake.url })).toEqual({
+    expect(await runTelegramTest({ envPath: envFile(`TELEGRAM_BOT_TOKEN=${TOKEN}\n`), answersPath: path.join(dir, 'nope.json'), apiBase: fake.url })).toEqual({
       ok: false,
       line: 'помилка missing TELEGRAM_TEST_CHAT_ID',
     });
@@ -74,6 +74,17 @@ describe('ops:telegram-test', () => {
       line: 'помилка invalid TELEGRAM_TEST_CHAT_ID',
     });
     expect(await calls()).toHaveLength(0);
+  });
+
+  it('test chat id falls back to the panel answers (own-telegram field) when .env has none', async () => {
+    const answers = path.join(dir, 'answers.json');
+    fs.writeFileSync(answers, JSON.stringify({ fields: { 'own-telegram': { telegram_test_chat_id: { value: ` ${TEST_CHAT} ` } } } }));
+    const r = await runTelegramTest({ envPath: envFile(`TELEGRAM_BOT_TOKEN=${TOKEN}\n`), answersPath: answers, apiBase: fake.url });
+    expect(r).toEqual({ ok: true, line: 'надіслано' });
+    const c = await calls();
+    expect(c).toHaveLength(1);
+    expect(c[0]?.chat_id).toBe(TEST_CHAT);
+    expect(testChatFromAnswers('not json')).toBeUndefined();
   });
 
   it('parseEnvFile: quotes, export, comments, CRLF', () => {
