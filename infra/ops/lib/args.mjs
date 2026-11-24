@@ -2,7 +2,7 @@
 // Розбір аргументів підкоманд: перелік дозволеного (allow-list) і перевірка кожного значення до будь-якої дії (AC-10).
 // Відмова — `{ code: 2, message }` з назвою прапорця; значення з керівними символами назад не виводиться.
 import { isIPv4 } from 'node:net';
-import { BOOTSTRAP_ENVS, ENVS } from './config.mjs';
+import { BOOTSTRAP_ENVS, ENVS, OPS_TEST_ENV, opsTestMode } from './config.mjs';
 import { isHostName } from './common.mjs';
 
 const ALL_ENVS = Object.keys(ENVS);
@@ -12,6 +12,7 @@ const RE_SIZE = /^[a-z0-9-]{1,40}$/;
 const RE_ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z$/;
 const RE_SPEED = /^\d{1,3}(?:\.\d{1,3})?$/;
 const RE_EPOCH = /^\d{1,9}$/;
+const RE_BACKUP_REF = /^(?:latest|\d{8}T\d{6}Z|[a-z0-9_]+\/backups\/db\/\d{8}T\d{6}Z\.(?:dump\.enc|manifest\.json))$/;
 const RE_WORKER =/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
 /**
  * Чи є в рядку керівні символи (U+0000–U+001F, U+007F): перевод рядка, NUL, табуляція тощо.
@@ -59,6 +60,10 @@ const V = {
   epoch: { check: (v) => RE_EPOCH.test(v), expect: 'ціле число (номер епохи)' },
   // O·P17: режим `scheduler-drill`.
   drillMode: { check: (v) => v === 'one-node' || v === 'two-nodes', expect: '`one-node` або `two-nodes`' },
+  // SPEC-13b: ціль відновлення — лише чистий локальний стек у цій хвилі (інші цілі — відмова до будь-якого виклику).
+  restoreTarget: { check: (v) => v === 'local', expect: '`local` (інші цілі відновлення в цій хвилі не підтримуються)', lower: true },
+  // Копія: `latest`, штамп `yyyymmddThhmmssZ` або ключ об’єкта копії (без `..`, без пробілів).
+  backupRef: { check: (v) => RE_BACKUP_REF.test(v) && !v.split('/').includes('..'), expect: '`latest`, штамп yyyymmddThhmmssZ або ключ копії' },
 };
 
 /**
@@ -167,6 +172,27 @@ export const SUBCOMMAND_SPECS = {
     required: ['--env', '--target', '--mode', '--midnight'],
   },
   // --- кінець O·P17 ---
+  // --- SPEC-13b: копія бази й відновлення ---
+  // `backup --now` — позачергова копія на вузлі (`ops backup-now` у контейнері сервера). production — лише з
+  // `--confirm production` і `--allow-main-domain` (запобіжник, як у deploy); prelaunch відмовляє (сервера немає).
+  backup: {
+    envs: ALL_ENVS,
+    values: { '--target': V.target, '--confirm': V.confirm, '--secrets-file': V.path },
+    bools: ['--now', '--allow-main-domain'],
+    required: ['--env', '--target', '--now'],
+  },
+  // `restore` — копія середовища-джерела в чистий локальний стек. production відмовляє `runRestore` до будь-якого
+  // виклику; `--host` — вузол джерела для `ops restore-record` (без нього — `--no-record` або команда для ручного запису).
+  restore: {
+    // `test-local` — лише в тестовому запуску ops (`T2F_OPS_TEST=1`, W46); перелік читається під час розбору.
+    get envs() {
+      return opsTestMode() ? [...ALL_ENVS, OPS_TEST_ENV] : ALL_ENVS;
+    },
+    values: { '--from': V.backupRef, '--target': V.restoreTarget, '--host': V.host, '--image': V.commit },
+    bools: ['--keep', '--no-record'],
+    required: ['--env', '--from', '--target'],
+  },
+  // --- кінець SPEC-13b ---
 };
 
 /**

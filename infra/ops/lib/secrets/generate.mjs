@@ -1,6 +1,7 @@
 // @ts-check
 // `ops edge-secret --generate` (AC-37, NFR-4): заповнює порожні значення файлів змінних вузла в `.local/<env>/`
 // (значення — лише `randomBytes(32)`), за `--target` надсилає їх на ціль, новий секрет краю — у Worker через stdin.
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { resolveSite } from '../common.mjs';
@@ -14,6 +15,7 @@ import {
   REDIS_URL_BASE,
   redisUrl,
   redisUrlPassword,
+  SECRET_BYTES,
   setVar,
 } from './envFile.mjs';
 import { assertPrivatePath, localEnvDir, NODE_ENV_FILES, pushFile, WORKER_PENDING, writePrivate } from './files.mjs';
@@ -22,6 +24,11 @@ import { assertPrivatePath, localEnvDir, NODE_ENV_FILES, pushFile, WORKER_PENDIN
  * @typedef {import('../../ops.mjs').OpsContext} OpsContext
  * @typedef {import('./files.mjs').EnvFileName} EnvFileName
  */
+
+/** Ключ копій бази (SPEC-13b): 32 байти CSPRNG, стандартний base64 з доповненням (44 символи). */
+export function newBackupKey() {
+  return crypto.randomBytes(SECRET_BYTES).toString('base64');
+}
 
 /** Пари «змінна сервера → змінна Centrifugo» з однаковим значенням. */
 const CENTRIFUGO_PAIRS = /** @type {const} */ ([
@@ -166,6 +173,9 @@ export async function generate(ctx) {
       fill('server.env', 'REDIS_URL', () => redisUrl(REDIS_URL_BASE, redisPassword), 'задано');
     }
     fill('server.env', 'T2F_REDIS_PREFIX', () => `t2f:${env}:`, 'задано');
+    // SPEC-13b (AC-48): ключ шифрування копій бази — 32 випадкові байти, стандартний base64 (`parseBackupKey`
+    // сервера). Заповнюється лише порожній; наявний не генерується заново ніколи (інакше старі копії не розшифрувати).
+    fill('server.env', 'T2F_BACKUP_KEY', newBackupKey);
     // Centrifugo (SPEC-06 → вузол): ключі сервера ≥32 символи й різні; Centrifugo бере ті самі значення; рушій — Redis
     // вузла з паролем, окрема база. Наявні значення не змінюються (підтягує й старіший вузол без Centrifugo).
     fill('server.env', 'T2F_CENTRIFUGO_URL', () => CENTRIFUGO_API_URL, 'задано');

@@ -12,7 +12,8 @@
  *  - publishes on `live:streams` one `chain` event per changed event (an event without a public chain — hidden —
  *    gets `sources: []`) and one `hide` event per hidden source, each stamped with the version; the chains come from
  *    `readChains` read after the claim, so they are at least as new as the version. A refusal or an unreachable
- *    Centrifugo writes exactly one `warn` `live/publish-failed {version}` and the change stays (AC-7);
+ *    Centrifugo writes exactly one `warn` `live/publish-failed {version}` plus one `log` alarm of that code
+ *    (SPEC-13b AC-29) and the change stays (AC-7);
  *  - purges the edge by the tag `t2f-live-chains` at 0, 30, 120 s; after the third failure a `log` alarm
  *    `live/purge-failed`; without purge settings one `info` `live/purge-skipped` (AC-14);
  *  - copies the `readChains` body to `<prefix>live/chains.json` at 0, 30, 120, 300 s; each retry re-reads and writes
@@ -132,6 +133,8 @@ async function publish(deps: LiveFanOutDeps, version: number, events: readonly S
     if (status !== 'ok' && status !== 'queued') {
       // One line per version: the rest of this version would meet the same refusal; a client re-reads the chains.
       deps.log.warn({ event: PUBLISH_FAILED, version, result: status });
+      // AC-29 (SPEC-13b): the same failure is also a `log` alarm (`log-alarms`, throttled per kind).
+      deps.alarm.raise({ level: 'log', source: 'live', code: PUBLISH_FAILED, details: { version } });
       return sent;
     }
     sent += 1;

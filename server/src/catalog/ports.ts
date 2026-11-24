@@ -1,6 +1,7 @@
 /** Ports of the catalog (ring 2): technology-neutral; the Payload adapters live in `collections/catalog/hooks.ts`. */
 import type { CatalogSnapshot } from '../domain/catalog/integrity';
 import type { Tx } from '../events/ports';
+import type { Readable } from 'node:stream';
 
 /** Reads the whole catalog inside the caller's transaction. */
 export interface CatalogReader {
@@ -50,4 +51,22 @@ export interface ObjectStore {
   put(key: string, body: string, contentType: string): Promise<void>;
   /** Removes one object (absent → no error). Used only by the `test` door of the red button (SPEC-08 W19). */
   delete?(key: string): Promise<void>;
+  /** SPEC-13b: reads one object as a stream; absent → `null`. */
+  get?(key: string): Promise<Readable | null>;
+  /** SPEC-13b: size and etag of one object; absent → `null`. */
+  head?(key: string): Promise<{ size: number; etag: string } | null>;
+  /** SPEC-13b: every object under `prefix` (all pages), `lastModified` as epoch ms. */
+  list?(prefix: string): Promise<ObjectListing[]>;
+  /**
+   * SPEC-13b AC-43: streams `body` as a multipart upload in parts of `partBytes`; any failure aborts the
+   * upload (no partial object stays) and throws.
+   */
+  putMultipart?(key: string, body: Readable, contentType: string, partBytes: number): Promise<{ size: number }>;
+}
+
+/** One object of an `ObjectStore.list` answer. */
+export interface ObjectListing {
+  key: string;
+  size: number;
+  lastModified: number;
 }

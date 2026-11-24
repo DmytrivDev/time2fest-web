@@ -334,3 +334,53 @@ export function createPgScheduler({ payload, journal, name = SCHEDULER_LEASE, te
 
   return { lease, runs };
 }
+
+export interface PgNamedLeaseOptions {
+  payload: () => Promise<Payload>;
+  /** Journal of lease takeovers (the scheduler store journals each epoch change). */
+  journal: Journal;
+  /** This process: host, pid and a random part. */
+  holderId: string;
+}
+
+/** A set of named leases (`acquire(name, ttlMs)` / `release(name)`). */
+export interface PgNamedLease<N extends string> {
+  acquire(name: N, ttlMs: number): Promise<boolean>;
+  release(name: N): Promise<void>;
+}
+
+/**
+ * Named leases over the scheduler lease table (architecture A-3): one row per name, the term set by `acquire`.
+ * One store per `name:ttl`; the epoch of the last held grant is what `release` hands back. Shared by the live
+ * leases (`createPgLiveLease`) and the ops leases (`createPgOpsLease`).
+ */
+export function createPgNamedLease<N extends string>(opts: PgNamedLeaseOptions): PgNamedLease<N> {
+  const stores = new Map<string, LeaseStore>();
+  const epochs = new Map<N, number>();
+  const lastTtl = new Map<N, number>();
+  const leaseOf = (name: N, ttlMs: number): LeaseStore => {
+    const key = `${name}:${ttlMs}`;
+    let lease = stores.get(key);
+    if (!lease) {
+      lease = createPgScheduler({ payload: opts.payload, journal: opts.journal, name, termMs: ttlMs }).lease;
+      stores.set(key, lease);
+    }
+    return lease;
+  };
+  return {
+    async acquire(name, ttlMs) {
+      const grant = await leaseOf(name, ttlMs).acquireOrRenew(opts.holderId);
+      lastTtl.set(name, ttlMs);
+      if (grant.held) epochs.set(name, grant.epoch);
+      else epochs.delete(name);
+      return grant.held;
+    },
+    async release(name) {
+      const epoch = epochs.get(name);
+      const ttl = lastTtl.get(name);
+      if (epoch === undefined || ttl === undefined) return;
+      await leaseOf(name, ttl).release?.(opts.holderId, epoch);
+      epochs.delete(name);
+    },
+  };
+}

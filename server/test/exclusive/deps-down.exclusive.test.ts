@@ -1,5 +1,6 @@
 /**
- * Shared dependencies stopped (AC-50, AC-72; AC-3 is added by W24). Runs only under
+ * Shared dependencies stopped (AC-50, AC-72; AC-3 is added by W24; SPEC-13b AC-9 — a `page` alarm still
+ * reaches Telegram straight from memory while Postgres is down). Runs only under
  * `pnpm --dir server test:int:exclusive`, which holds the machine's exclusive integration lock:
  * it stops and starts the shared containers of the `t2f` compose project, so no other
  * worktree may be testing meanwhile. Every stopped service is started again in `finally`.
@@ -16,6 +17,7 @@ import { timeRoute } from '../../src/endpoints/time';
 import type { RateLimitRow } from '../../src/platform/rateLimit';
 import { middlewareRegistry, rateLimitMiddleware } from '../../src/registries/middleware';
 import { BASE, ownRedis, testDeps } from '../integration/helpers';
+import { startTelegramFake } from '../support/fakeTelegram';
 
 const COMPOSE_FILE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../docker-compose.yml');
 
@@ -109,4 +111,30 @@ describe('dependencies down (exclusive lock)', () => {
       await startAndWait('postgres');
     }
   });
+
+  it('SPEC-13b AC-9: Postgres stopped → a page alarm reaches the Telegram fake ≤60 s, stdout alarm_outbox_failed', async () => {
+    const fake = await startTelegramFake();
+    const lines: Record<string, unknown>[] = [];
+    const push = (f: Record<string, unknown>) => void lines.push(f);
+    const pgDeps = testDeps({ log: { info: push, warn: push, error: push } }, fake.env);
+    await payloadOf(pgDeps)(); // Payload initialised before the stop
+    const code = `pgdown-${run}`;
+    compose('stop', 'postgres');
+    try {
+      await sleep(500);
+      const started = Date.now();
+      pgDeps.alarm.raise({ level: 'page', source: 'test', code });
+      let calls = await fake.callsWith(code);
+      while (calls.length === 0 && Date.now() - started < 60_000) {
+        await sleep(250);
+        calls = await fake.callsWith(code);
+      }
+      expect(calls).toHaveLength(1);
+      expect(Date.now() - started).toBeLessThan(60_000);
+      expect(lines).toContainEqual(expect.objectContaining({ code: 'alarm_outbox_failed' }));
+    } finally {
+      await startAndWait('postgres');
+      await fake.close();
+    }
+  }, 180_000);
 });

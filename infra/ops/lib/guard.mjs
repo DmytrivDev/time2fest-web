@@ -1,7 +1,7 @@
 // @ts-check
 // Запобіжник запуску: стара продакшн-адреса (AC-22), робочий домен (AC-21), заморозка production (AC-23).
 // Спрацьовує після розбору аргументів і до будь-якого виклику ssh, docker чи wrangler. Відмова — код 2.
-import { ENVS, FORBIDDEN_TARGETS, FREEZE_WINDOW, MAIN_HOSTS } from './config.mjs';
+import { ENVS, FORBIDDEN_TARGETS, FREEZE_WINDOW, MAIN_HOSTS, OPS_TEST_ENV, opsTestMode } from './config.mjs';
 
 /** Підкоманди, на які діє заморозка production (середовище з `freeze`). */
 const FREEZE_SUBS = new Set(['deploy', 'rollback', 'capacity']);
@@ -48,7 +48,9 @@ export function guardRun({ sub, env, action, target, hosts = [], flags, now }) {
   const forbidden = touched.find((h) => FORBIDDEN.has(h));
   if (forbidden) return refuse(`заборонена ціль ${forbidden}: старий продакшн-сервер; жоден прапорець не дозволяє`);
 
-  if (env !== undefined && !Object.hasOwn(ENVS, env)) return refuse('невідоме середовище');
+  // `test-local` (W46) — лише `restore` у тестовому запуску ops (`T2F_OPS_TEST=1`); інакше невідоме.
+  const testEnv = env === OPS_TEST_ENV && sub === 'restore' && opsTestMode();
+  if (env !== undefined && !Object.hasOwn(ENVS, env) && !testEnv) return refuse('невідоме середовище');
   const cfg = env !== undefined ? ENVS[env] : undefined;
 
   // AC-21: робочий домен — лише з `--confirm <env>` і `--allow-main-domain` разом.

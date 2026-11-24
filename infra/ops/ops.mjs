@@ -1,5 +1,5 @@
 // @ts-check
-// Операції розгортання: `node infra/ops/ops.mjs <deploy|rollback|bootstrap|edge-secret|move-domain|capacity> …`.
+// Операції розгортання: `node infra/ops/ops.mjs <deploy|rollback|bootstrap|edge-secret|move-domain|capacity|backup|restore> …`.
 // Нуль залежностей. Порядок: аргументи → запобіжник → підкоманда. Відмова аргументу чи запобіжника — код 2,
 // до будь-якого виклику ssh, docker чи wrangler. Підкоманди підключаються по фазах; до того друкують `not implemented`.
 //
@@ -45,12 +45,17 @@ const TIME_SUBS = ['time-check', 'clock'];
 // --- O·P17 ---
 import { runSchedulerDrill } from './lib/drill.mjs';
 // --- кінець O·P17 ---
+// --- SPEC-13b: копія бази на вузлі й відновлення в чистий локальний стек ---
+import { runBackup } from './lib/backup.mjs';
+import { runRestore } from './lib/restore.mjs';
+const BACKUP_SUBS = ['backup', 'restore'];
+// --- кінець SPEC-13b ---
 
-const SUBCOMMANDS = ['deploy', 'rollback', 'bootstrap', 'edge-secret', 'move-domain', 'capacity', ...SERVER2_SUBS, ...TIME_SUBS, 'scheduler-drill'];
+const SUBCOMMANDS = ['deploy', 'rollback', 'bootstrap', 'edge-secret', 'move-domain', 'capacity', ...SERVER2_SUBS, ...TIME_SUBS, 'scheduler-drill', ...BACKUP_SUBS];
 /** Змінні з `--secrets-file`, значення яких маскуються, навіть коли їх немає в `SECRET_ENV_NAMES`. */
 const SECRET_NAME_RE = /(TOKEN|SECRET|PASSWORD|PASS|KEY|CREDENTIAL)/i;
 /** Підкоманди, що працюють із вузлом середовища: значення секретів з його `.local/<env>/*.env` маскуються у виводі. */
-const NODE_SECRET_SUBS = ['deploy', 'rollback', 'capacity', ...SERVER2_SUBS, 'clock', 'scheduler-drill'];
+const NODE_SECRET_SUBS = ['deploy', 'rollback', 'capacity', ...SERVER2_SUBS, 'clock', 'scheduler-drill', ...BACKUP_SUBS];
 
 /** @param {string} name */
 const isSecretName = (name) => SECRET_ENV_NAMES.includes(name) || SECRET_NAME_RE.test(name);
@@ -141,6 +146,10 @@ const RUNNERS = {
   // --- O·P17 ---
   'scheduler-drill': runSchedulerDrill,
   // --- кінець O·P17 ---
+  // --- SPEC-13b ---
+  backup: runBackup,
+  restore: runRestore,
+  // --- кінець SPEC-13b ---
 };
 
 const PORT_KEYS = ['clock', 'fetch', 'startProbe', 'edgeCheck', 'git', 'image', 'worker', 'transport', 'sshAs', 'provider', 'lookupHost', 'sshHostname'];

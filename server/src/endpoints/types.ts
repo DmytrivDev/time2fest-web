@@ -4,6 +4,9 @@
  * Routes never import `pg` or Payload: they reach a dependency through `ctx.deps` (onion ban 1),
  * and `Deps` holds ports only — the raw Payload accessor stays in `container.ts`.
  */
+import type { R2Meter } from '../ops/meter';
+import type { DumpRunner } from '../ops/ports';
+import type { OpsRunner, OpsWiring } from '../ops/runner';
 import type { ApiError } from '@time2fest/contracts';
 import type { ZodType } from 'zod';
 import type { AlarmService } from '../alarms/service';
@@ -170,6 +173,17 @@ export interface Deps {
   scheduler?: SchedulerHandle;
   /** Text moderation and AI (SPEC-09): built by `createDeps`; timers started only by `startProcessBackground`. */
   moderation?: ModerationDeps;
+  /** Operations (SPEC-13b): the Telegram outbox and sink, `log-alarms`, the ops leases; the runner starts only in `startProcessBackground`. */
+  ops?: OpsWiring;
+  /** Process-wide count of our own R2 operations (SPEC-13b AC-39); every store of `catalogCopyDepsOf` is metered. */
+  r2Meter?: R2Meter;
+  /** The ops jobs over `ops` (SPEC-13b W18), no timer: ticked by `startProcessBackground` and the `ops-tick` door. */
+  opsRunner?: OpsRunner;
+  /**
+   * Test seams of the backup job (SPEC-13b [П-8]): the `pg_dump` runner (default: the local binary) and the
+   * multipart part size (default 16 MB). Never set in production code.
+   */
+  backupTuning?: { dump?: DumpRunner; partBytes?: number };
 }
 
 export interface Ctx {

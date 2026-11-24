@@ -21,6 +21,7 @@ import { noSessionSubjects } from './adapters/noSessionSubjects';
 import { createIdentityMarker } from './adapters/identityMarker';
 import { createPayloadCatalogMeta, createPayloadCatalogStore } from './adapters/payloadCatalog';
 import { createReadinessProbe } from './adapters/readiness';
+import { createMeteredObjectStore } from './adapters/meteredObjectStore';
 import { createS3ObjectStore } from './adapters/s3';
 import { createPayloadIdempotencyStore, createPayloadSeedStore } from './adapters/payload';
 import { parseAccessConfig } from './domain/access/config';
@@ -74,7 +75,13 @@ import { createAlarmService } from './alarms/service';
 import { createPgEventLog, createPgEventPublisher, createPgEventSource, eventsChannel } from './adapters/pgEvents';
 import { loadEnv, type EnvClass, type RawEnv } from './platform/env';
 import { daySalts } from './platform/fingerprint';
-import { createAlarm, createLogger } from './platform/logger';
+import { createLogger } from './platform/logger';
+import { createDeliveringAlarm } from './alarms/delivery';
+import type { BackupDeps } from './ops/backup';
+import { createR2Meter, r2PrefixOf } from './ops/meter';
+import type { SpendJob } from './ops/spend';
+import { createOpsRunner, startOpsTicker, type OpsRunner, type OpsWiring } from './ops/runner';
+import { buildBackupDeps, buildSpendJob, createOpsWiring, opsRunnerDepsOf } from './opsWiring';
 import type { Alarm, LockState, SeedStore } from './ports';
 import { envRegistry } from './registries/env';
 import { channelClassesFor } from './registries/channels';
@@ -103,6 +110,7 @@ const MODERATION_TIMERS_KEY = Symbol.for('t2f.moderationTimers');
 const REBUILD_TICKER_KEY = Symbol.for('t2f.rebuildTicker');
 const LIVE_POLLER_KEY = Symbol.for('t2f.livePoller');
 const LIVE_VIEWERS_KEY = Symbol.for('t2f.liveViewers');
+const OPS_TICKER_KEY = Symbol.for('t2f.opsTicker');
 const BACKGROUND_RETRY_MS = 5_000;
 
 /** The thin typed getters over the ports `createDeps` sets on `Deps` (re-exported for the callers of the root). */
@@ -181,6 +189,19 @@ const unrefTimers: Scheduler = {
   clearTimeout: (handle) => clearTimeout(handle as ReturnType<typeof setTimeout>),
 };
 
+/**
+ * The backup job's dependencies (SPEC-13b W25, AC-48); built in `opsWiring.ts` (A-4) from this deps object's
+ * Payload accessor and the catalog copy deps (the environment's own bucket and prefix).
+ */
+export function backupDepsOf(deps: Deps): BackupDeps {
+  return buildBackupDeps(deps, payloadOf(deps), catalogCopyDepsOf(deps));
+}
+
+/** The spend counters job of this process (SPEC-13b S9); built in `opsWiring.ts` (A-4). */
+export function spendJobOf(deps: Deps, ops: OpsWiring, payload: () => Promise<Payload>): SpendJob {
+  return buildSpendJob(deps, ops, payload);
+}
+
 /** Builds the dependencies from a raw environment. Throws, naming variables only, when it is invalid. */
 export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   const loaded = loadEnv(raw, envRegistry);
@@ -210,7 +231,20 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
         }));
   const clock = overrides.clock ?? clockFor(env.class, sharedClock);
   const alarmStore = overrides.alarmStore ?? createPayloadAlarmStore(() => payloadRef(), clock);
-  const alarm = overrides.alarm ?? createAlarm(log, alarmStore);
+  // SPEC-13b: the alarm also feeds the Telegram outbox and `log-alarms` (W14); ops time is the wall clock.
+  const ops = overrides.ops ?? createOpsWiring(env, log, () => payloadRef());
+  const alarm =
+    overrides.alarm ??
+    createDeliveringAlarm({
+      logger: log,
+      alarmStore,
+      outbox: ops.outbox,
+      logStore: ops.logAlarms,
+      telegram: ops.telegram.sink ? { sink: ops.telegram.sink, chatId: ops.telegram.chatId ?? '' } : null,
+      cls: env.class,
+      secretValues: loaded.secrets,
+      clock: ops.clock,
+    });
   const payload = overrides.payload ?? lazyPayload(alarm);
   payloadRef = payload;
   const deps: Deps = {
@@ -225,6 +259,9 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
     orderStore: overrides.orderStore ?? createPayloadIdempotencyStore(payload),
   };
   Object.defineProperty(deps, PAYLOAD_KEY, { value: payload, enumerable: false });
+  deps.ops = ops;
+  // One meter per process: the R2 stores built per call share it (SPEC-13b W22).
+  deps.r2Meter = overrides.r2Meter ?? createR2Meter();
   if (sharedClock) deps.sharedClock = sharedClock;
   deps.divergence = overrides.divergence ?? createDivergenceMeter({ real: realClock, alarm, log });
   deps.events = overrides.events ?? {
@@ -252,6 +289,9 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   deps.liveFanOut = overrides.liveFanOut ?? (() => liveFanOutDepsOf(deps));
   // Built in every process, started only by `startProcessBackground` (SPEC-07 W28).
   deps.scheduler = overrides.scheduler ?? createProcessScheduler(deps, payload, sharedClock);
+  // The ops jobs (SPEC-13b W18): built here without a timer; ticked by `startProcessBackground` and the `ops-tick` door.
+  if (overrides.backupTuning) deps.backupTuning = overrides.backupTuning;
+  if (ops && !deps.opsRunner) deps.opsRunner = createOpsRunner(opsRunnerDepsOf(deps, ops, payload, backupDepsOf(deps)));
   // Realtime (SPEC-06): no session yet (C5); the signer only with the token secret (else AC-19 in `test`).
   deps.subjects = overrides.subjects ?? noSessionSubjects;
   // Text moderation and AI (SPEC-09): built here, timers started only by `startProcessBackground`.
@@ -491,14 +531,17 @@ export function catalogCopyDepsOf(deps: Deps): CatalogCopyDeps | undefined {
   const secretAccessKey = v.T2F_R2_SECRET_ACCESS_KEY;
   const prefix = v.T2F_R2_PREFIX;
   if (!endpoint || !bucket || !accessKeyId || !secretAccessKey || !prefix) return undefined;
+  const raw = createS3ObjectStore({
+    endpoint: String(endpoint),
+    bucket: String(bucket),
+    accessKeyId: String(accessKeyId),
+    secretAccessKey: String(secretAccessKey),
+  });
+  // The site and live fan-outs reuse this store, so every R2 write of the process is counted (SPEC-13b AC-39).
+  const objects = deps.r2Meter ? createMeteredObjectStore(raw, deps.r2Meter, r2PrefixOf(String(prefix)), realClock) : raw;
   return {
     store: catalogStoreOf(deps),
-    objects: createS3ObjectStore({
-      endpoint: String(endpoint),
-      bucket: String(bucket),
-      accessKeyId: String(accessKeyId),
-      secretAccessKey: String(secretAccessKey),
-    }),
+    objects,
     prefix: String(prefix),
     alarm: deps.alarm,
     log: deps.log,
@@ -798,6 +841,12 @@ export function startClockRefresher(deps: Deps, intervalMs?: number): Promise<Cl
   });
 }
 
+/** Starts the ops runner of `deps` (SPEC-13b [П-5]) on its ticker; `undefined` without ops. */
+export function startOpsTickerOf(deps: Deps, intervalMs?: number): OpsRunner | undefined {
+  if (!deps.ops || !deps.opsRunner) return undefined;
+  return startOpsTicker(deps.opsRunner, { ops: deps.ops, alarm: deps.alarm, log: deps.log }, intervalMs);
+}
+
 /**
  * Starts the process background once. First the shared clock is loaded (so nothing below starts
  * on a stale clock), then the internal-events delivery loop (a failed start, database down, is
@@ -821,6 +870,7 @@ export function startProcessBackground(): void {
     g[REBUILD_TICKER_KEY] ??= startRebuildTicker(getDeps());
     g[LIVE_POLLER_KEY] ??= startLivePoller(getDeps());
     g[LIVE_VIEWERS_KEY] ??= startViewersTicker(getDeps());
+    g[OPS_TICKER_KEY] ??= startOpsTickerOf(getDeps());
     if (!g[MODERATION_TIMERS_KEY]) {
       pageMissingAiKeys(getDeps());
       g[MODERATION_TIMERS_KEY] = startModerationTimers(getDeps());

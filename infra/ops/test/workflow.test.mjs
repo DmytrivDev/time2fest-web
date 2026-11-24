@@ -1,5 +1,5 @@
 // @ts-check
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 const text = readFileSync(new URL('../../../.github/workflows/deploy.yml', import.meta.url), 'utf8').replace(/\r\n/g, '\n');
@@ -114,5 +114,20 @@ describe('deploy workflow', () => {
   it('has least permissions and calls pnpm deploy:env', () => {
     expect(text).toMatch(/^permissions:\n {2}contents:\s*read\s*$/m);
     expect(code.some((l) => /\brun:.*pnpm deploy:env/.test(l))).toBe(true);
+  });
+});
+
+describe('all workflows (SPEC-13b AC-17, NFR-5)', () => {
+  const dir = new URL('../../../.github/workflows/', import.meta.url);
+  const files = readdirSync(dir).filter((f) => /\.ya?ml$/.test(f));
+
+  it('finds the workflows', () => {
+    expect(files).toEqual(expect.arrayContaining(['deploy.yml', 'verify.yml']));
+  });
+
+  it.each(files)('%s has no T2F_TELEGRAM_* and no T2F_BACKUP_KEY', (f) => {
+    const body = readFileSync(new URL(f, dir), 'utf8');
+    expect(body).not.toMatch(/T2F_TELEGRAM_/);
+    expect(body).not.toMatch(/T2F_BACKUP_KEY/);
   });
 });

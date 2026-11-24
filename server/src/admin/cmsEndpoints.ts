@@ -23,6 +23,8 @@
  *
  * SPEC-12 (AC-50 … AC-56): `GET /cms-api/live/view` and `POST /cms-api/live/<action>` (`admin/liveEndpoints.ts`), every
  * class, the same gate, role, JSON and 1 KB rules (shared through `admin/cmsHttp.ts`).
+ *
+ * SPEC-13b (AC-30, AC-31, AC-66): `GET /cms-api/ops/overview` and `POST /cms-api/ops/settings` (`admin/opsEndpoints.ts`), owner only.
  */
 import type { ClockControlValue } from '@time2fest/contracts';
 import { ClockControlBodySchema, SiteProductBodySchema, SiteSwitchBodySchema } from '@time2fest/contracts/schemas';
@@ -38,6 +40,7 @@ import { readSnapshot } from '../site/snapshot';
 import { CLOCK_CONTROL_CLASSES, controlClock } from '../timekeeping/control';
 import { fail, isOwner, jsonBodyOf, NO_STORE } from './cmsHttp';
 import { liveEndpoints } from './liveEndpoints';
+import { opsEndpoints } from './opsEndpoints';
 
 function festivalStateEndpoint(resolve: () => Promise<Deps>): Endpoint {
   return {
@@ -158,5 +161,7 @@ export function cmsEndpointsFor(cls: EnvClass, resolve: () => Promise<Deps> = pr
   endpoints.push(siteProductEndpoint(resolve), siteSwitchEndpoint(resolve), siteViewEndpoint(resolve));
   // SPEC-12: the owner's live-air endpoints exist in every class.
   endpoints.push(...liveEndpoints(resolve));
+  // SPEC-13b: the owner's monitoring overview and `ops-settings` change exist in every class (`admin/opsEndpoints.ts`).
+  endpoints.push(...opsEndpoints(resolve));
   return endpoints;
 }

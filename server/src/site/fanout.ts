@@ -9,7 +9,8 @@
  * conditional update (`lastFannedOut < v`); only the claimer publishes. A later event that reads the same
  * version, or an older one, claims nothing. The claimer then:
  *  - publishes `{type:'snapshot', id:'site:<v>', version:v, data}` on `site:state`; a refusal or an
- *    unreachable Centrifugo writes exactly one `warn` `site/publish-failed` and the change stays (AC-7);
+ *    unreachable Centrifugo writes exactly one `warn` `site/publish-failed` plus one `log` alarm of that code
+ *    (SPEC-13b AC-29) and the change stays (AC-7);
  *  - purges the edge by its cache tag at 0, 30, 120 s; after the third failure a `log` alarm
  *    `site/purge-failed` (AC-35); without purge settings one `info` `site/purge-skipped` (AC-34);
  *  - copies the snapshot to `<prefix>site/latest.json` at 0, 30, 120, 300 s; each retry re-reads the
@@ -105,6 +106,8 @@ async function publish(deps: FanOutDeps, state: SiteState): Promise<boolean> {
   }
   if (status === 'ok' || status === 'queued') return true;
   deps.log.warn({ event: PUBLISH_FAILED, version, result: status });
+  // AC-29 (SPEC-13b): the same failure is also a `log` alarm (`log-alarms`, throttled per kind).
+  deps.alarm.raise({ level: 'log', source: 'site', code: PUBLISH_FAILED, details: { version } });
   return false;
 }
 

@@ -1,6 +1,6 @@
 /**
  * Test-door registry (AC-32, AC-35 … AC-38, AC-62; SPEC-07 AC-67, AC-68): sorted, unique rows under
- * `/api/_test/*` — 19 rows (SPEC-12 W38: the `video-status` stub became the `live` door). Evaluated only in the `test` class with `T2F_TEST_DOORS=1` (see
+ * `/api/_test/*` — 20 rows (SPEC-12 W38: the `video-status` stub became the `live` door; SPEC-13b W18: + `ops-tick`). Evaluated only in the `test` class with `T2F_TEST_DOORS=1` (see
  * `shouldLoadDoors`). `reset` empties this worktree's data (run records and scheduler runs included)
  * and seeds it (AC-47); `fixtures` applies one named fixture row of the seed registry.
  */
@@ -26,6 +26,7 @@ import { seedRegistry, type SeedRow } from '../seed/registry';
 import { edgeEchoDoors } from './edgeEcho';
 import { liveDoor } from './live';
 import { moderationDoor } from './moderation';
+import { opsTickDoor } from './ops';
 import { realtimeTokenDoor, type TestSubjects } from './realtimeToken';
 import { schedulerDoors } from './scheduler';
 import { siteDoor } from './site';
@@ -141,6 +142,7 @@ export const doorRegistry: readonly DoorRow[] = [
   stub('last-code', '/api/_test/last-code'),
   liveDoor,
   moderationDoor,
+  opsTickDoor,
   stub('paypro-webhook', '/api/_test/paypro-webhook'),
   realtimeTokenDoor,
   resetDoor(),

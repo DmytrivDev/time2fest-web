@@ -32,6 +32,10 @@ function rawEnv(over: Record<string, string | undefined> = {}) {
     T2F_R2_PREFIX: 'rehearsal/',
     T2F_R2_ACCESS_KEY_ID: 't2f-rehearsal',
     T2F_R2_SECRET_ACCESS_KEY: randomBytes(16).toString('hex'),
+    // SPEC-13b AC-67: required in production since the ops wave; optional elsewhere.
+    T2F_TELEGRAM_BOT_TOKEN: 'test-telegram-token-not-real', // check-secrets: allow test fake
+    T2F_TELEGRAM_CHAT_ID: '-1001234567890',
+    T2F_BACKUP_KEY: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=', // check-secrets: allow test fake backup key
     ...over,
   };
 }

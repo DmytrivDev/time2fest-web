@@ -129,6 +129,10 @@ describe('GET /api/realtime/token and the realtime test door', () => {
       DATABASE_URI: 'postgres://t2f@127.0.0.1:5432/t2f_production',
       T2F_REDIS_PREFIX: 't2f:production:',
       T2F_R2_BUCKET: 'time2fest-prod',
+      // SPEC-13b: production requires the backup key and the Telegram sink (fakes; nothing is sent here).
+      T2F_BACKUP_KEY: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=', // check-secrets: allow test fake backup key
+      T2F_TELEGRAM_BOT_TOKEN: 'test-telegram-token-not-real', // check-secrets: allow test fake
+      T2F_TELEGRAM_CHAT_ID: '-1001234567890',
     };
     const production = await buildDispatcher(
       testDeps({ redis }, { T2F_ENV: 'production', T2F_EDGE_SECRET: EDGE_SECRET, ...productionNames }),

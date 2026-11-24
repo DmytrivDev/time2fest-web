@@ -8,6 +8,7 @@ import { adminSettings } from '../globals/adminSettings';
 import { clockState } from '../globals/clockState';
 import { liveState } from '../globals/liveState';
 import { moderationSettings } from '../globals/moderationSettings';
+import { opsSettings } from '../globals/opsSettings';
 import { siteState } from '../globals/siteState';
 import { unattendedState } from '../globals/unattendedState';
 
@@ -21,6 +22,7 @@ export const globalRegistry: readonly GlobalRow[] = [
   { key: 'clock-state', global: clockState },
   { key: 'live-state', global: liveState },
   { key: 'moderation-settings', global: moderationSettings },
+  { key: 'ops-settings', global: opsSettings },
   { key: 'site-state', global: siteState },
   { key: 'unattended-state', global: unattendedState },
 ];

@@ -57,6 +57,10 @@ function baseEnv(): RawEnv {
     T2F_R2_SECRET_ACCESS_KEY: 't2f-local-secret-0000', // check-secrets: allow test fake
     T2F_CENTRIFUGO_URL: 'http://127.0.0.1:8000',
     T2F_CENTRIFUGO_PREFIX: 'spec_06_realtime_',
+    // SPEC-13b AC-67: required in production since the ops wave; optional elsewhere.
+    T2F_TELEGRAM_BOT_TOKEN: 'test-telegram-token-not-real', // check-secrets: allow test fake
+    T2F_TELEGRAM_CHAT_ID: '-1001234567890',
+    T2F_BACKUP_KEY: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=', // check-secrets: allow test fake backup key
     T2F_CENTRIFUGO_API_KEY: API_KEY,
     T2F_CENTRIFUGO_TOKEN_SECRET: TOKEN_SECRET,
   };

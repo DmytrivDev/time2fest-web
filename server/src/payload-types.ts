@@ -70,8 +70,10 @@ export interface Config {
     admins: Admin;
     'agent-test-posts': AgentTestPost;
     'ai-spend': AiSpend;
+    'alarm-deliveries': AlarmDelivery;
     alarms: Alarm;
     'audit-log': AuditLog;
+    'backup-runs': BackupRun;
     cities: City;
     countries: Country;
     'event-patches': EventPatch;
@@ -79,10 +81,13 @@ export interface Config {
     'idempotency-records': IdempotencyRecord;
     'internal-events': InternalEvent;
     'live-quota': LiveQuota;
+    'log-alarms': LogAlarm;
+    'restore-runs': RestoreRun;
     'run-records': RunRecord;
     'scheduler-leases': SchedulerLease;
     'scheduler-runs': SchedulerRun;
     seasons: Season;
+    'spend-counters': SpendCounter;
     'stream-sources': StreamSource;
     traditions: Tradition;
     'unattended-windows': UnattendedWindow;
@@ -97,8 +102,10 @@ export interface Config {
     admins: AdminsSelect<false> | AdminsSelect<true>;
     'agent-test-posts': AgentTestPostsSelect<false> | AgentTestPostsSelect<true>;
     'ai-spend': AiSpendSelect<false> | AiSpendSelect<true>;
+    'alarm-deliveries': AlarmDeliveriesSelect<false> | AlarmDeliveriesSelect<true>;
     alarms: AlarmsSelect<false> | AlarmsSelect<true>;
     'audit-log': AuditLogSelect<false> | AuditLogSelect<true>;
+    'backup-runs': BackupRunsSelect<false> | BackupRunsSelect<true>;
     cities: CitiesSelect<false> | CitiesSelect<true>;
     countries: CountriesSelect<false> | CountriesSelect<true>;
     'event-patches': EventPatchesSelect<false> | EventPatchesSelect<true>;
@@ -106,10 +113,13 @@ export interface Config {
     'idempotency-records': IdempotencyRecordsSelect<false> | IdempotencyRecordsSelect<true>;
     'internal-events': InternalEventsSelect<false> | InternalEventsSelect<true>;
     'live-quota': LiveQuotaSelect<false> | LiveQuotaSelect<true>;
+    'log-alarms': LogAlarmsSelect<false> | LogAlarmsSelect<true>;
+    'restore-runs': RestoreRunsSelect<false> | RestoreRunsSelect<true>;
     'run-records': RunRecordsSelect<false> | RunRecordsSelect<true>;
     'scheduler-leases': SchedulerLeasesSelect<false> | SchedulerLeasesSelect<true>;
     'scheduler-runs': SchedulerRunsSelect<false> | SchedulerRunsSelect<true>;
     seasons: SeasonsSelect<false> | SeasonsSelect<true>;
+    'spend-counters': SpendCountersSelect<false> | SpendCountersSelect<true>;
     'stream-sources': StreamSourcesSelect<false> | StreamSourcesSelect<true>;
     traditions: TraditionsSelect<false> | TraditionsSelect<true>;
     'unattended-windows': UnattendedWindowsSelect<false> | UnattendedWindowsSelect<true>;
@@ -128,6 +138,7 @@ export interface Config {
     'clock-state': ClockState;
     'live-state': LiveState;
     'moderation-settings': ModerationSetting;
+    'ops-settings': OpsSetting;
     'site-state': SiteState;
     'unattended-state': UnattendedState;
   };
@@ -136,6 +147,7 @@ export interface Config {
     'clock-state': ClockStateSelect<false> | ClockStateSelect<true>;
     'live-state': LiveStateSelect<false> | LiveStateSelect<true>;
     'moderation-settings': ModerationSettingsSelect<false> | ModerationSettingsSelect<true>;
+    'ops-settings': OpsSettingsSelect<false> | OpsSettingsSelect<true>;
     'site-state': SiteStateSelect<false> | SiteStateSelect<true>;
     'unattended-state': UnattendedStateSelect<false> | UnattendedStateSelect<true>;
   };
@@ -225,6 +237,39 @@ export interface AiSpend {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "alarm-deliveries".
+ */
+export interface AlarmDelivery {
+  id: number;
+  kind: 'alarm' | 'heartbeat' | 'digest' | 'storm-summary';
+  slotKey?: string | null;
+  source?: string | null;
+  code?: string | null;
+  level?: string | null;
+  domain?: string | null;
+  text: string;
+  details?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  status: 'pending' | 'delivered' | 'failed';
+  attempts: number;
+  nextAttemptAt?: string | null;
+  deliveredAt?: string | null;
+  failedAt?: string | null;
+  lastStatus?: number | null;
+  repeatCount: number;
+  raisedAt: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "alarms".
  */
 export interface Alarm {
@@ -232,6 +277,15 @@ export interface Alarm {
   source: string;
   code: string;
   level: 'page';
+  details?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   raisedAt: string;
   acknowledgedAt?: string | null;
   updatedAt: string;
@@ -274,6 +328,24 @@ export interface AuditLog {
     | null;
   revertOf?: string | null;
   revertible: boolean;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "backup-runs".
+ */
+export interface BackupRun {
+  id: number;
+  key: string;
+  kind: 'daily' | 'hourly' | 'manual';
+  result: 'ok' | 'failed';
+  stage?: string | null;
+  size?: number | null;
+  sha256?: string | null;
+  durationMs?: number | null;
+  snapshotAt?: string | null;
+  keyId?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -455,6 +527,43 @@ export interface LiveQuota {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "log-alarms".
+ */
+export interface LogAlarm {
+  id: number;
+  source: string;
+  code: string;
+  domain?: string | null;
+  details?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  raisedAt: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "restore-runs".
+ */
+export interface RestoreRun {
+  id: number;
+  at: string;
+  key: string;
+  durationMs?: number | null;
+  lossWindowMs?: number | null;
+  result: 'ok' | 'failed';
+  target?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "run-records".
  */
 export interface RunRecord {
@@ -520,6 +629,32 @@ export interface Season {
   generatedAt: string;
   tzdbVersion: string;
   importedHash?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "spend-counters".
+ */
+export interface SpendCounter {
+  id: number;
+  row: string;
+  period: string;
+  amountMicros: number;
+  classA?: number | null;
+  classB?: number | null;
+  storageBytes?: number | null;
+  alarm50At?: string | null;
+  alarm80At?: string | null;
+  meta?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -661,12 +796,20 @@ export interface PayloadLockedDocument {
         value: number | AiSpend;
       } | null)
     | ({
+        relationTo: 'alarm-deliveries';
+        value: number | AlarmDelivery;
+      } | null)
+    | ({
         relationTo: 'alarms';
         value: number | Alarm;
       } | null)
     | ({
         relationTo: 'audit-log';
         value: number | AuditLog;
+      } | null)
+    | ({
+        relationTo: 'backup-runs';
+        value: number | BackupRun;
       } | null)
     | ({
         relationTo: 'cities';
@@ -697,6 +840,14 @@ export interface PayloadLockedDocument {
         value: number | LiveQuota;
       } | null)
     | ({
+        relationTo: 'log-alarms';
+        value: number | LogAlarm;
+      } | null)
+    | ({
+        relationTo: 'restore-runs';
+        value: number | RestoreRun;
+      } | null)
+    | ({
         relationTo: 'run-records';
         value: number | RunRecord;
       } | null)
@@ -711,6 +862,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'seasons';
         value: number | Season;
+      } | null)
+    | ({
+        relationTo: 'spend-counters';
+        value: number | SpendCounter;
       } | null)
     | ({
         relationTo: 'stream-sources';
@@ -823,12 +978,37 @@ export interface AiSpendSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "alarm-deliveries_select".
+ */
+export interface AlarmDeliveriesSelect<T extends boolean = true> {
+  kind?: T;
+  slotKey?: T;
+  source?: T;
+  code?: T;
+  level?: T;
+  domain?: T;
+  text?: T;
+  details?: T;
+  status?: T;
+  attempts?: T;
+  nextAttemptAt?: T;
+  deliveredAt?: T;
+  failedAt?: T;
+  lastStatus?: T;
+  repeatCount?: T;
+  raisedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "alarms_select".
  */
 export interface AlarmsSelect<T extends boolean = true> {
   source?: T;
   code?: T;
   level?: T;
+  details?: T;
   raisedAt?: T;
   acknowledgedAt?: T;
   updatedAt?: T;
@@ -858,6 +1038,23 @@ export interface AuditLogSelect<T extends boolean = true> {
   after?: T;
   revertOf?: T;
   revertible?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "backup-runs_select".
+ */
+export interface BackupRunsSelect<T extends boolean = true> {
+  key?: T;
+  kind?: T;
+  result?: T;
+  stage?: T;
+  size?: T;
+  sha256?: T;
+  durationMs?: T;
+  snapshotAt?: T;
+  keyId?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1012,6 +1209,33 @@ export interface LiveQuotaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "log-alarms_select".
+ */
+export interface LogAlarmsSelect<T extends boolean = true> {
+  source?: T;
+  code?: T;
+  domain?: T;
+  details?: T;
+  raisedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "restore-runs_select".
+ */
+export interface RestoreRunsSelect<T extends boolean = true> {
+  at?: T;
+  key?: T;
+  durationMs?: T;
+  lossWindowMs?: T;
+  result?: T;
+  target?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "run-records_select".
  */
 export interface RunRecordsSelect<T extends boolean = true> {
@@ -1065,6 +1289,23 @@ export interface SeasonsSelect<T extends boolean = true> {
   generatedAt?: T;
   tzdbVersion?: T;
   importedHash?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "spend-counters_select".
+ */
+export interface SpendCountersSelect<T extends boolean = true> {
+  row?: T;
+  period?: T;
+  amountMicros?: T;
+  classA?: T;
+  classB?: T;
+  storageBytes?: T;
+  alarm50At?: T;
+  alarm80At?: T;
+  meta?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1273,6 +1514,28 @@ export interface ModerationSetting {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ops-settings".
+ */
+export interface OpsSetting {
+  id: number;
+  serverBaseUsd?: number | null;
+  serverCeilingUsd?: number | null;
+  cloudflareCeilingUsd?: number | null;
+  mailCeilingUsd?: number | null;
+  priceStoragePerGbUsd?: number | null;
+  priceClassAPerMillionUsd?: number | null;
+  priceClassBPerMillionUsd?: number | null;
+  freeClassA?: number | null;
+  freeClassB?: number | null;
+  freeStorageGb?: number | null;
+  heartbeatMinute?: number | null;
+  digestTime?: string | null;
+  version?: number | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-state".
  */
 export interface SiteState {
@@ -1367,6 +1630,28 @@ export interface ModerationSettingsSelect<T extends boolean = true> {
   blockThreshold?: T;
   nightCeilingUsd?: T;
   monthCeilingUsd?: T;
+  version?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ops-settings_select".
+ */
+export interface OpsSettingsSelect<T extends boolean = true> {
+  serverBaseUsd?: T;
+  serverCeilingUsd?: T;
+  cloudflareCeilingUsd?: T;
+  mailCeilingUsd?: T;
+  priceStoragePerGbUsd?: T;
+  priceClassAPerMillionUsd?: T;
+  priceClassBPerMillionUsd?: T;
+  freeClassA?: T;
+  freeClassB?: T;
+  freeStorageGb?: T;
+  heartbeatMinute?: T;
+  digestTime?: T;
   version?: T;
   updatedAt?: T;
   createdAt?: T;

@@ -225,6 +225,7 @@ describe('edge origin check and client (real Redis)', () => {
         new Response('{"ok":true,"value":1}', { headers: { 'set-cookie': 'a=b; Path=/', 'content-type': 'application/json' } }),
     };
     const deps = testDeps({ redis, log });
+    warnings.length = 0; // building deps logs its own boot lines (e.g. ops/telegram-not-configured, SPEC-13b); AC-33 counts the request only
     const dispatch = createDispatcher({ routes: [route], middleware: middlewareRegistry, deps, edge: edgeGateOf(deps) });
     const res = await dispatch(get('/api/pub'));
     expect(res.status).toBe(200);
