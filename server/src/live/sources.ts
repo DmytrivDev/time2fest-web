@@ -16,10 +16,10 @@
  */
 import { CHANNEL_ID_PATTERN, CHANNEL_PRIORITIES, FOUND_BY, STREAMS_REASON_MAX, VIDEO_ID_PATTERN, type CandidateReason, type CandidateState, type ChannelKind, type ChannelState, type FoundBy } from '@time2fest/contracts';
 import type { Actor, Journal, RevertHandler, StoredJournalEntry } from '../audit/ports';
-import { capForAgent, chainFull, checkIsFresh, cheapVerdict, mergeOrigin, transition, type CandidateActor } from '../domain/live/candidates';
+import { agentWithinCeilings, capForAgent, chainFull, checkIsFresh, cheapVerdict, mergeOrigin, transition, type CandidateActor } from '../domain/live/candidates';
 import { canWatchMore } from '../domain/live/channels';
 import type { LiveConfig } from '../domain/live/config';
-import { allow, nextDayBoundary, quotaDay, type CallerContext, type CeiledClass, type QuotaRefusal } from '../domain/live/quota';
+import { agentCounterKeys, allow, CEILED_CLASSES, nextDayBoundary, quotaDay, type CallerContext, type CeiledClass, type QuotaRefusal } from '../domain/live/quota';
 import type { YoutubeVideoState } from '../domain/live/status';
 import type { EventPublisher } from '../events/ports';
 import type { Alarm, Clock } from '../ports';
@@ -397,6 +397,69 @@ export async function addChannel(deps: SourcesDeps, input: { channelId: string; 
     const added = await writeAdd(deps, tx, { videoIds: pageIds, origin: 'playlist', actor, ...(input.eventId ? { eventId: input.eventId } : {}) }, pageIds, checks);
     return ok({ channelId, state: row.state, created: true, added: added.filter((a) => a.created).length });
   });
+}
+
+/** An agent proposal refused by the agent's daily ceilings; `retryAfterMs` = until the quota day ends. */
+export interface AgentCapped {
+  ok: false;
+  code: 'agent-capped';
+  retryAfterMs: number;
+}
+
+export type AgentProposalInput = ({ videoId: string } | { channelId: string }) & { actor: Actor; eventId?: string; evidenceUrl?: string; note?: string };
+
+/**
+ * One proposal of the stream agent (AC-31, AC-37, [П-3], S21-03). Before it runs: under `agent.proposalsPerDay` and
+ * inside the agent's share (`AGENT_CLASS_SHARE`) of the `candidates` and `playlists` ceilings, else `agent-capped`.
+ * It runs as `addCandidates` (origin `agent`) or `addChannel`, with the YouTube units it spends metered; after it
+ * the units actually spent go to `agent:<id>:<class>` (a call that ran costs, whatever the answer), and an accepted
+ * proposal (ok) counts one `agent:<id>`. A refused proposal (`invalid`, `not-found`, …) does not use the cap.
+ * Concurrent proposals may each pass the check; the per-minute limit bounds that overshoot.
+ */
+export async function proposeAsAgent(
+  deps: SourcesDeps,
+  input: AgentProposalInput,
+): Promise<SourcesResult<CandidateOutcome[] | ChannelOutcome> | AgentCapped> {
+  const { actor } = input;
+  if (actor.kind !== 'agent') return no('forbidden');
+  const now = deps.clock.now();
+  const day = quotaDay(now, deps.cfg.dayTimeZone);
+  const keys = agentCounterKeys(actor.id);
+  const kind = 'channelId' in input ? 'channel' : 'video';
+  const [proposals = 0, candidates = 0, playlists = 0] = await deps.quota.usedOf(day, [keys.proposals, keys.candidates, keys.playlists]);
+  if (!agentWithinCeilings({ proposals, candidates, playlists }, kind, deps.cfg)) {
+    return { ok: false, code: 'agent-capped', retryAfterMs: Math.max(1, nextDayBoundary(now, deps.cfg.dayTimeZone) - now) };
+  }
+  const spent: Record<CeiledClass, number> = { candidates: 0, playlists: 0 };
+  const quota = deps.quota;
+  const metered: SourcesDeps = {
+    ...deps,
+    quota: {
+      read: (d) => quota.read(d),
+      usedOf: (d, k) => quota.usedOf(d, k),
+      markExceeded: (d, b, u) => quota.markExceeded(d, b, u),
+      mark80: (d, b, a) => quota.mark80(d, b, a),
+      charge: (d, key, units) => {
+        if (key === 'candidates' || key === 'playlists') spent[key] += Math.max(1, Math.ceil(units));
+        return quota.charge(d, key, units);
+      },
+    },
+  };
+  const extras = {
+    ...(input.eventId !== undefined ? { eventId: input.eventId } : {}),
+    ...(input.evidenceUrl !== undefined ? { evidenceUrl: input.evidenceUrl } : {}),
+    ...(input.note !== undefined ? { note: input.note } : {}),
+  };
+  try {
+    const result =
+      'channelId' in input
+        ? await addChannel(metered, { channelId: input.channelId, actor, ...extras })
+        : await addCandidates(metered, { videoIds: [input.videoId], origin: 'agent', actor, ...extras });
+    if (result.ok) await quota.charge(day, keys.proposals, 1);
+    return result;
+  } finally {
+    for (const cls of CEILED_CLASSES) if (spent[cls] > 0) await quota.charge(day, keys[cls], spent[cls]);
+  }
 }
 
 /** Owner edit of a channel (AC-1): fields and `watched` / `off`; entering `watched` respects the limit (AC-6). */

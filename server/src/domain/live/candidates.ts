@@ -84,6 +84,41 @@ export function agentProposalAllowed(usedToday: number, cfg: LiveConfig): boolea
 }
 
 /**
+ * The share of each ceiled class (`candidates`, `playlists`) the agent's proposals may spend in one quota day
+ * (S21-03): a steered agent cannot drain the class ceilings the owner's adds and the watch need on the night.
+ */
+export const AGENT_CLASS_SHARE = 0.25;
+
+/** The agent's ceiling of `cls` units in one quota day. */
+export function agentClassCeiling(cls: 'candidates' | 'playlists', cfg: LiveConfig): number {
+  return Math.floor(cfg.classCeilings[cls] * AGENT_CLASS_SHARE);
+}
+
+/** What one agent proposal is expected to cost before it runs: a video is one `videos.list` (`candidates`); a channel
+ * is `channels.list` + the first uploads page (`playlists`) and one check batch of that page (`candidates`). */
+export function agentProposalNeeds(kind: 'video' | 'channel', cfg: LiveConfig): { candidates: number; playlists: number } {
+  const u = cfg.unitsPerListCall;
+  return kind === 'video' ? { candidates: u, playlists: 0 } : { candidates: u, playlists: 2 * u };
+}
+
+/** The agent's use of one quota day so far. */
+export interface AgentDayUse {
+  proposals: number;
+  candidates: number;
+  playlists: number;
+}
+
+/** May the agent make one more proposal of `kind` today: under the proposal cap and inside both class shares. */
+export function agentWithinCeilings(used: AgentDayUse, kind: 'video' | 'channel', cfg: LiveConfig): boolean {
+  const needs = agentProposalNeeds(kind, cfg);
+  return (
+    agentProposalAllowed(used.proposals, cfg) &&
+    used.candidates + needs.candidates <= agentClassCeiling('candidates', cfg) &&
+    used.playlists + needs.playlists <= agentClassCeiling('playlists', cfg)
+  );
+}
+
+/**
  * The default event of an approval ([А8], AC-15): among the (not hidden) events of the channel's zones, the one whose
  * moment is nearest to `scheduledStart` within ±`defaultEventToleranceMs`; ties by eventId. `null` = the owner picks.
  */

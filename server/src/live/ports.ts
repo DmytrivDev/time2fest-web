@@ -6,7 +6,7 @@ import type { CandidateReason, CandidateState, ChannelState, FoundBy, StreamStat
 import type { SourceOverride, ZoneLive, StoredSource } from '../domain/live/chain';
 import type { QuotaBucket } from '../domain/live/config';
 import type { LiveEvent } from '../domain/live/moment';
-import type { QuotaCounterKey, QuotaState } from '../domain/live/quota';
+import type { AgentCounterKey, QuotaCounterKey, QuotaState } from '../domain/live/quota';
 import type { YoutubeVideoState } from '../domain/live/status';
 import type { Tx } from '../events/ports';
 import type { CentrifugoPresenceApi } from '../realtime/ports';
@@ -51,7 +51,9 @@ export interface QuotaStore {
   /** The counters of one quota day (an absent counter = nothing used yet). */
   read(day: string): Promise<QuotaState>;
   /** Adds `units` (≥1) to the counter and returns its new `used`. */
-  charge(day: string, key: QuotaCounterKey, units: number): Promise<number>;
+  charge(day: string, key: QuotaCounterKey | AgentCounterKey, units: number): Promise<number>;
+  /** The `used` of each of `keys` on `day` (0 for an absent counter), in the order of `keys`. */
+  usedOf(day: string, keys: readonly AgentCounterKey[]): Promise<number[]>;
   /** Stops the bucket until `until`; true only for the call that set (or extended) the stop. */
   markExceeded(day: string, bucket: QuotaBucket, until: number): Promise<boolean>;
   /** Records the day's 80 % alarm; true only for the first call of the day. */
@@ -251,6 +253,8 @@ export interface CandidateFilter {
   eventId?: string;
   channelId?: string;
   sourceIds?: readonly string[];
+  /** One page, newest decision first (`stateChangedAt` desc, absent last, then videoId); ordered and cut by the store. */
+  page?: { offset: number; limit: number };
 }
 
 /**

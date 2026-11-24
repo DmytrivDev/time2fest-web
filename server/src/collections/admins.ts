@@ -7,11 +7,10 @@
  *   The key fields are never readable or writable through the API: only the key endpoints set them.
  * Access to the records is the `keys` group of the role policy (owner only).
  */
-import { sql } from '@payloadcms/db-postgres';
-import { commitTransaction, Forbidden, initTransaction, killTransaction } from 'payload';
+import { Forbidden } from 'payload';
 import type { CollectionConfig, Endpoint, PayloadRequest } from 'payload';
 import { createKeyService, type AgentKeyStore } from '../access/keys';
-import { ACTION_CONTEXT_KEY } from '../audit/journal';
+import { writeAdminKey } from '../adapters/payloadAdminKeys';
 import { isServerCall } from '../access/payloadGuard';
 import { accessFor, ownerOnly, roleOf } from '../access/policies';
 import { sessionCookieSecure } from '../domain/access/config';
@@ -22,19 +21,6 @@ import { envClass } from '../platform/env';
 export const SESSION_SECONDS = 86_400;
 
 const never = () => false;
-
-interface Exec {
-  execute(query: ReturnType<typeof sql>): Promise<unknown>;
-}
-
-/** The open transaction's connection of `req`. */
-async function sessionOf(req: PayloadRequest): Promise<Exec> {
-  const db = req.payload.db as unknown as { sessions: Record<string, { db: Exec } | undefined> };
-  const id = req.transactionID;
-  const session = id ? db.sessions[String(await id)]?.db : undefined;
-  if (!session) throw new Error('admins: the key write needs an open transaction');
-  return session;
-}
 
 function keyStore(req: PayloadRequest): AgentKeyStore {
   const idOf = (id: string): number | null => (/^\d{1,15}$/.test(id) ? Number(id) : null);
@@ -48,27 +34,8 @@ function keyStore(req: PayloadRequest): AgentKeyStore {
     async setKey(id, key) {
       const n = idOf(id);
       if (n === null) return;
-      // One transaction: Payload writes the key (its hooks compute the HMAC index), then the reversibly
-      // encrypted copy is cleared, so only the one-way index stays in the row (NFR-3, finding S4-05).
-      // Payload's API-key strategy finds the record by `apiKeyIndex` alone; an update that does not carry
-      // `apiKey` leaves the index as it is (`setAPIKeyIndex` drops it from the write).
-      const started = await initTransaction(req);
-      try {
-        await req.payload.update({
-          collection: 'admins',
-          id: n,
-          data: key === null ? { enableAPIKey: false, apiKey: null } : { enableAPIKey: true, apiKey: key },
-          req,
-          context: { [ACTION_CONTEXT_KEY]: key === null ? 'key.revoke' : 'key.issue' },
-          overrideAccess: true,
-          depth: 0,
-        });
-        if (key !== null) await (await sessionOf(req)).execute(sql`UPDATE "admins" SET "api_key" = NULL WHERE "id" = ${n}`);
-        if (started) await commitTransaction(req);
-      } catch (err) {
-        await killTransaction(req);
-        throw err;
-      }
+      // Key write and clearing of the encrypted copy: `adapters/payloadAdminKeys.ts` (A21-01, S21-06).
+      await writeAdminKey(req, n, key);
     },
   };
 }

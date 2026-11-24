@@ -38,6 +38,8 @@ describe('agent propose body (AC-33)', () => {
     expect(ok(AgentProposeBodySchema, { channelId: CH })).toBe(true);
     expect(ok(AgentProposeBodySchema, { videoId: VID, eventId: 'evt_1', evidenceUrl: 'https://example.org/a', note: 'x'.repeat(300) })).toBe(true);
     expect(ok(AgentProposeBodySchema, { videoId: VID, evidenceUrl: 'https://example.org/' + 'a'.repeat(480) })).toBe(true);
+    // ordinary long slugs and ids are not secret-shaped
+    expect(ok(AgentProposeBodySchema, { videoId: VID, evidenceUrl: 'https://example.org/new-year-eve-2026-live-broadcast-from-kyiv-main-square', note: 'UCabcdefghij_-ABCDEFGHIJ channel' })).toBe(true);
   });
   const bad: Array<[string, unknown]> = [
     ['extra field', { videoId: VID, title: 'x' }],
@@ -50,6 +52,10 @@ describe('agent propose body (AC-33)', () => {
     ['bad videoId', { videoId: 'short' }],
     ['handle as channel', { channelId: '@bbcnews' }],
     ['event id with a space', { videoId: VID, eventId: 'evt 1' }],
+    // S21-02: a secret-shaped token in note / evidence (an agent key is 43 base64url chars; Access ids are hex).
+    ['agent key in note', { videoId: VID, note: 'Kq3vZ8xY_2mN-pL7rT1wB9cD4eF6gH0jA5sU8iO2kLm' }],
+    ['agent key in evidence', { videoId: VID, evidenceUrl: 'https://evil.example/?k=Kq3vZ8xY_2mN-pL7rT1wB9cD4eF6gH0jA5sU8iO2kLm' }],
+    ['hex secret in note', { channelId: CH, note: 'see 3f9a1c0b7e2d4f6a8b1c3e5d7f9a0b2c4d6e8f1a3b5c7d9e0f2a4b6c8d0e1f2a' }],
   ];
   it.each(bad)('refuses %s', (_name, body) => {
     expect(ok(AgentProposeBodySchema, body)).toBe(false);

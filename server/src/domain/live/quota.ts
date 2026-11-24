@@ -28,6 +28,18 @@ export type CeiledClass = (typeof CEILED_CLASSES)[number];
 /** Counter keys: the three buckets plus the ad-hoc ceiling and the SPEC-21a class ceilings. */
 export type QuotaCounterKey = QuotaBucket | 'ad-hoc' | CeiledClass;
 export const QUOTA_COUNTER_KEYS: readonly QuotaCounterKey[] = ['queries', 'search', 'batchGetStats', 'ad-hoc', 'candidates', 'playlists'];
+/**
+ * Per-agent counters of one quota day (SPEC-21a [П-3], S21-03): `agent:<id>` counts the accepted proposals,
+ * `agent:<id>:candidates` / `agent:<id>:playlists` the class units its proposals spent. The quota readers of
+ * `QuotaState` skip them; they are read with `QuotaStore.usedOf`.
+ */
+export type AgentCounterKey = `agent:${string}`;
+export const agentCounterKeys = (agentId: string) =>
+  ({
+    proposals: `agent:${agentId}`,
+    candidates: `agent:${agentId}:candidates`,
+    playlists: `agent:${agentId}:playlists`,
+  }) as const satisfies Record<string, AgentCounterKey>;
 
 export interface QuotaCounter {
   /** Quota day `YYYY-MM-DD` the counter belongs to. */

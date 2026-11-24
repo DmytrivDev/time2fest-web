@@ -14,9 +14,10 @@
  * Every request: behind the Access gate and the `stream-agent` role, read fresh from the request (the API-key lookup
  * runs per request, so a revoked key is refused on the very next one, AC-38), else 403 `forbidden` with nothing read
  * or changed. Then the per-minute limit of `registries/rateLimits.ts` by admins id (propose: fail-closed on a fast-store
- * outage, read: counted in this process), and for a valid proposal the daily cap `LIVE_DEFAULTS.agent.proposalsPerDay`
- * per agent and quota day (one `live_quota` row `agent:<admins id>`, so it survives restarts) — over → 429
- * `rate-limited` with `retryAfterMs`, state unchanged (AC-37). Refusal codes as the owner's surface (`streamsFail`).
+ * outage, read: counted in this process), and for a valid proposal the agent's daily ceilings of `proposeAsAgent`
+ * (`live/sources.ts`: `agent.proposalsPerDay` and its share of the `candidates` / `playlists` class ceilings, in
+ * `live_quota` rows `agent:<admins id>[:<class>]`, so they survive restarts) — over → 429 `rate-limited` with
+ * `retryAfterMs`, state unchanged (AC-37). Refusal codes as the owner's surface (`streamsFail`).
  * Logs carry nothing of the request (no key, no ids).
  */
 import {
@@ -33,11 +34,9 @@ import type { Endpoint, PayloadRequest } from 'payload';
 import { streamsFail } from '../admin/streamsEndpoints';
 import { isStreamAgent, jsonBodyOf, NO_STORE } from '../admin/cmsHttp';
 import { resolveActor } from '../audit/journal';
-import { agentProposalAllowed } from '../domain/live/candidates';
-import { nextDayBoundary, quotaDay, type QuotaCounterKey } from '../domain/live/quota';
 import type { Deps } from '../endpoints/types';
 import type { StoredCandidate } from '../live/ports';
-import { addCandidates, addChannel, type SourcesDeps } from '../live/sources';
+import { proposeAsAgent, type SourcesDeps } from '../live/sources';
 import { checkLimit, type RateLimitRow } from '../platform/rateLimit';
 import { rateLimitRegistry } from '../registries/rateLimits';
 import { sourcesOf } from '../registries/revertHandlers';
@@ -68,21 +67,7 @@ async function minuteLimit(deps: Deps, rowKey: string, req: PayloadRequest): Pro
   return streamsFail('unavailable');
 }
 
-/** Counts one proposal against the agent's daily cap ([П-3]); a refusal response, or `null` to go on. */
-async function dailyCap(sources: SourcesDeps, req: PayloadRequest): Promise<Response | null> {
-  const now = sources.clock.now();
-  const day = quotaDay(now, sources.cfg.dayTimeZone);
-  // A per-agent counter row of `live_quota` (`bucket` is text); the quota readers skip keys they do not know.
-  const used = await sources.quota.charge(day, `agent:${agentId(req)}` as QuotaCounterKey, 1);
-  if (agentProposalAllowed(used - 1, sources.cfg)) return null;
-  return rateLimited(Math.max(1, nextDayBoundary(now, sources.cfg.dayTimeZone) - now));
-}
-
 const iso = (ms: number | null) => (ms == null ? undefined : new Date(ms).toISOString());
-
-/** Newest decision first, then by videoId (a stable page order). */
-const byRecent = (a: StoredCandidate, b: StoredCandidate) =>
-  (b.stateChangedAt ?? 0) - (a.stateChangedAt ?? 0) || (a.videoId < b.videoId ? -1 : a.videoId > b.videoId ? 1 : 0);
 
 function agentCandidate(c: StoredCandidate): AgentCandidate {
   const scheduled = iso(c.scheduledStartTime);
@@ -145,14 +130,18 @@ function candidatesReadEndpoint(resolve: () => Promise<Deps>, sourcesFor: Source
         if (limited) return limited;
         const search = req.searchParams ?? new URL(req.url ?? 'http://local/').searchParams;
         const params = AgentCandidatesQuerySchema.safeParse(Object.fromEntries(search));
-        if (!params.success || (params.data.cursor !== undefined && !/^\d+$/.test(params.data.cursor))) return streamsFail('invalid');
+        // The owner view's bound (S21-07); the store orders and cuts the page, one row more tells whether more remain.
+        if (!params.success || (params.data.cursor !== undefined && !/^\d{1,6}$/.test(params.data.cursor))) return streamsFail('invalid');
         const { state, eventId, cursor } = params.data;
-        const all = await (await sourcesFor(deps)).streams.candidates({ ...(state ? { states: [state] } : {}), ...(eventId ? { eventId } : {}) });
         const offset = cursor ? Number(cursor) : 0;
-        const sorted = [...all].sort(byRecent);
+        const rows: StoredCandidate[] = await (await sourcesFor(deps)).streams.candidates({
+          ...(state ? { states: [state] } : {}),
+          ...(eventId ? { eventId } : {}),
+          page: { offset, limit: AGENT_CANDIDATES_PAGE_MAX + 1 },
+        });
         const value: AgentCandidatesResponse = {
-          items: sorted.slice(offset, offset + AGENT_CANDIDATES_PAGE_MAX).map(agentCandidate),
-          ...(offset + AGENT_CANDIDATES_PAGE_MAX < sorted.length ? { next: String(offset + AGENT_CANDIDATES_PAGE_MAX) } : {}),
+          items: rows.slice(0, AGENT_CANDIDATES_PAGE_MAX).map(agentCandidate),
+          ...(rows.length > AGENT_CANDIDATES_PAGE_MAX ? { next: String(offset + AGENT_CANDIDATES_PAGE_MAX) } : {}),
         };
         return Response.json({ ok: true, value }, { headers: NO_STORE });
       } catch {
@@ -175,25 +164,16 @@ function proposeEndpoint(resolve: () => Promise<Deps>, sourcesFor: SourcesFor): 
         const body = await jsonBodyOf(req, AgentProposeBodySchema);
         if (body === null) return streamsFail('invalid');
         const sources = await sourcesFor(deps);
-        const capped = await dailyCap(sources, req);
-        if (capped) return capped;
-        const actor = agentActor(req);
-        const extras = {
-          ...(body.eventId !== undefined ? { eventId: body.eventId } : {}),
-          ...(body.evidenceUrl !== undefined ? { evidenceUrl: body.evidenceUrl } : {}),
-          ...(body.note !== undefined ? { note: body.note } : {}),
-        };
+        const result = await proposeAsAgent(sources, { ...body, actor: agentActor(req) });
+        if (!result.ok) return result.code === 'agent-capped' ? rateLimited(result.retryAfterMs) : streamsFail(result.code, result.detail);
         let value: AgentProposeResult;
-        if ('channelId' in body) {
-          const added = await addChannel(sources, { channelId: body.channelId, actor, ...extras });
-          if (!added.ok) return streamsFail(added.code, added.detail);
-          value = { channelId: added.value.channelId, state: added.value.state, created: added.value.created, added: added.value.added };
-        } else {
-          const added = await addCandidates(sources, { videoIds: [body.videoId], origin: 'agent', actor, ...extras });
-          if (!added.ok) return streamsFail(added.code, added.detail);
-          const one = added.value[0];
+        if (Array.isArray(result.value)) {
+          const one = result.value[0];
           if (!one) return streamsFail('unavailable');
           value = { videoId: one.videoId, state: one.state, ...(one.reason ? { reason: one.reason } : {}), created: one.created };
+        } else {
+          const c = result.value;
+          value = { channelId: c.channelId, state: c.state, created: c.created, added: c.added };
         }
         return Response.json({ ok: true, value }, { headers: NO_STORE });
       } catch {

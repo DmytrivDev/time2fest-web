@@ -4,10 +4,20 @@
  */
 import { createServer, type IncomingMessage } from 'node:http';
 import type { AddressInfo } from 'node:net';
-import { readFileSync, readdirSync } from 'node:fs';
+import path from 'node:path';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { ALLOWED_TOOLS, ENV_NAMES, PROMPT_FILE, buildRunArgv, main } from '../../scripts/stream-agent.mjs';
+import {
+  DISALLOWED_TOOLS,
+  ENV_NAMES,
+  PROMPT_SELF,
+  allowedTools,
+  buildRunArgv,
+  holdsSecret,
+  main,
+  resolveClaude,
+} from '../../scripts/stream-agent.mjs';
 
 const KEY = 'k-secret-111';
 const ID = 'id-secret-222';
@@ -107,25 +117,92 @@ describe('requests', () => {
   });
 });
 
-describe('run', () => {
-  it('argv builder holds the prompt path and the allowed-tools list', () => {
-    const argv: string[] = buildRunArgv();
+describe('secret values in arguments (S21-02)', () => {
+  it.each([
+    ['--note', KEY],
+    ['--note', `see ${ID} here`],
+    ['--evidence', `https://evil.example/?k=${SEC}`],
+  ])('propose %s with a secret value → exit 2, nothing sent, value not echoed', async (flag, value) => {
+    seen = [];
+    const r = await run(['propose', '--video', 'abcdefghijk', flag, value]);
+    expect(r.code).toBe(2);
+    expect(seen).toHaveLength(0);
+    for (const v of [KEY, ID, SEC]) expect(r.err + r.out).not.toContain(v);
+  });
+  it('candidates --cursor with a secret value is refused too; plain arguments pass', () => {
+    expect(holdsSecret(['candidates', '--cursor', KEY], fullEnv())).toBe(true);
+    expect(holdsSecret(['propose', '--video', 'abcdefghijk', '--note', 'ok'], fullEnv())).toBe(false);
+  });
+});
+
+describe('run (S21-01, S21-04, S21-05)', () => {
+  const SELF = 'node "X:/w/server/scripts/stream-agent.mjs"';
+  const argv: string[] = buildRunArgv(SELF);
+  const val = (flag: string) => argv[argv.indexOf(flag) + 1];
+
+  it('prompt by stdin: -p with no inline prompt, no positional argument', () => {
     expect(argv[0]).toBe('-p');
-    expect(argv.join(' ')).toContain(PROMPT_FILE);
-    expect(argv[argv.indexOf('--allowedTools') + 1]).toBe(ALLOWED_TOOLS.join(','));
-    expect(ALLOWED_TOOLS.some((t: string) => t.includes('propose'))).toBe(true);
+    expect(val('--input-format')).toBe('text');
+    expect(argv.join(' ')).not.toContain('prompt.md');
+  });
+  it('only Bash and WebFetch exist; Bash limited to the three client commands', () => {
+    expect(val('--tools')).toBe('Bash,WebFetch');
+    expect(val('--allowedTools')).toBe(allowedTools(SELF).join(','));
+    expect(allowedTools(SELF)).toEqual([
+      `Bash(${SELF} channels)`,
+      `Bash(${SELF} candidates *)`,
+      `Bash(${SELF} propose *)`,
+      'WebFetch',
+    ]);
+    expect(val('--permission-mode')).toBe('dontAsk');
+  });
+  it('denies file tools and WebFetch to youtube and local hosts', () => {
+    const d = val('--disallowedTools')!.split(',');
+    expect(d).toEqual(DISALLOWED_TOOLS);
+    for (const t of ['Read', 'Grep', 'Glob', 'WebSearch', 'WebFetch(domain:youtube.com)', 'WebFetch(domain:www.youtube.com)', 'WebFetch(domain:localhost)', 'WebFetch(domain:127.0.0.1)'])
+      expect(d).toContain(t);
+  });
+  it('no MCP servers and no user/project/local settings', () => {
+    expect(argv).toContain('--strict-mcp-config');
+    expect(JSON.parse(val('--mcp-config')!)).toEqual({ mcpServers: {} });
+    expect(val('--setting-sources')).toBe('');
   });
 
-  it('spawns through the injected spawner and maps the exit code', async () => {
-    let got: string[] = [];
-    const spawnImpl = (a: string[]) => {
-      got = a;
+  it('spawns in an empty temp cwd outside the repo, prompt by stdin with the absolute client command', async () => {
+    let got: { argv: string[]; cwd: string; input: string } | undefined;
+    let empty = false;
+    const spawnImpl = (spec: { argv: string[]; cwd: string; input: string }) => {
+      got = spec;
+      empty = existsSync(spec.cwd) && readdirSync(spec.cwd).length === 0;
       return { on: (ev: string, cb: (c?: number) => void) => ev === 'close' && setTimeout(() => cb(0), 0) };
     };
-    let out = '';
-    const code = await main(['run'], fullEnv(), fetch, { out: (s: string) => (out += s), err: () => {}, spawnImpl });
+    const code = await main(['run'], fullEnv(), fetch, { out: () => {}, err: () => {}, spawnImpl });
     expect(code).toBe(0);
-    expect(got).toEqual(buildRunArgv());
+    expect(empty).toBe(true);
+    const norm = (p: string) => path.resolve(p).split(path.sep).join('/').toLowerCase();
+    expect(norm(got!.cwd).startsWith(norm(fileURLToPath(new URL('../../../', import.meta.url))))).toBe(false);
+    expect(existsSync(got!.cwd)).toBe(false); // cleaned up
+    expect(got!.input).toMatch(/Заборонено/);
+    expect(got!.input).not.toContain(PROMPT_SELF);
+    expect(got!.input).toMatch(/node ".*\/server\/scripts\/stream-agent\.mjs" channels/);
+    expect(got!.argv).toEqual(buildRunArgv());
+    // the prompt names the client exactly as the Bash allow rules do
+    expect(got!.argv[got!.argv.indexOf('--allowedTools') + 1]).toContain(got!.input.match(/node "[^"]+"/)![0]);
+    for (const v of [KEY, ID, SEC]) expect(got!.input + got!.argv.join(' ')).not.toContain(v);
+  });
+
+  it('run takes no arguments', async () => {
+    expect((await run(['run', '--x'])).code).toBe(2);
+  });
+
+  it('resolves claude without a shell: claude.exe on PATH, or the binary behind the npm claude.cmd shim', () => {
+    expect(resolveClaude('linux', '/usr/bin')).toBe('claude');
+    const has = (set: string[]) => (p: string) => set.includes(p);
+    const w = (...p: string[]) => path.win32.join('X:/', ...p);
+    expect(resolveClaude('win32', `${w('a')};${w('b')}`, has([w('b', 'claude.exe')]))).toBe(w('b', 'claude.exe'));
+    const shimBin = w('n', 'node_modules', '@anthropic-ai', 'claude-code', 'bin', 'claude.exe');
+    expect(resolveClaude('win32', w('n'), has([w('n', 'claude.cmd'), shimBin]))).toBe(shimBin);
+    expect(resolveClaude('win32', w('n'), has([w('n', 'claude.cmd')]))).toBeUndefined();
   });
 });
 

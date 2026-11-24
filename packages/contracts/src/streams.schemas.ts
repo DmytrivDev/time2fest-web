@@ -103,7 +103,22 @@ export const AgentCandidatesResponseSchema = z
   })
   .strict() satisfies z.ZodType<AgentCandidatesResponse>;
 
-const proposeExtras = { eventId: eventId.optional(), evidenceUrl: evidenceUrl.optional(), note: note.optional() };
+/**
+ * A token shaped like a secret (S21-02): a run of 32+ base64url characters mixing upper case, lower case and digits
+ * (an agent key is 43), or a run of 32+ hex characters with digits and letters (an Access client id / secret). An agent steered by a page into
+ * expanding a secret variable into `note` / `evidenceUrl` is refused, so no key reaches the queue, journal or dumps.
+ */
+export function looksLikeSecret(text: string): boolean {
+  const hex = (text.match(/[0-9a-fA-F]{32,}/g) ?? []).some((run) => /\d/.test(run) && /[a-fA-F]/.test(run));
+  return hex || (text.match(/[A-Za-z0-9_-]{32,}/g) ?? []).some((run) => /[A-Z]/.test(run) && /[a-z]/.test(run) && /\d/.test(run));
+}
+const noSecret = (v: string) => !looksLikeSecret(v);
+
+const proposeExtras = {
+  eventId: eventId.optional(),
+  evidenceUrl: evidenceUrl.refine(noSecret, 'secret-shaped').optional(),
+  note: note.refine(noSecret, 'secret-shaped').optional(),
+};
 
 /** Exactly one of `videoId` / `channelId` (both at once fail `.strict()` on each side). */
 export const AgentProposeBodySchema = z.union([

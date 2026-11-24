@@ -102,10 +102,14 @@ export function createPayloadStreamsStore(deps: PayloadStreamsDeps): PayloadStre
       if (filter.eventId !== undefined) where.push(sql`"event_id" = ${filter.eventId}`);
       if (filter.channelId !== undefined) where.push(sql`"channel_id" = ${filter.channelId}`);
       const lock = tx ? sql` FOR UPDATE` : sql``;
+      const page = filter.page;
+      const order = page
+        ? sql`ORDER BY "state_changed_at" DESC NULLS LAST, "video_id" LIMIT ${page.limit} OFFSET ${page.offset}`
+        : sql`ORDER BY "video_id"`;
       const { rows } = await (await execOf(tx)).execute(sql`
         SELECT "video_id", "channel_id", "found_by", "state", "reason", "event_id", "source_id", "live_broadcast_content", "scheduled_start_time",
           "embeddable", "privacy_status", "yt_fetched_at", "checked_at", "state_changed_at", "state_changed_by", "evidence_url", "note"
-        FROM "stream_candidates" WHERE ${sql.join(where, sql` AND `)} ORDER BY "video_id"${lock}`);
+        FROM "stream_candidates" WHERE ${sql.join(where, sql` AND `)} ${order}${lock}`);
       return rows.map(candidateOf);
     },
     async channels(filter = {}, tx?: Tx): Promise<StoredStreamChannel[]> {

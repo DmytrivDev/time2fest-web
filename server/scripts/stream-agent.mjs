@@ -10,7 +10,10 @@
  * Exit codes: 0 ok, 1 refused or unreachable, 2 usage error or a missing variable.
  */
 import { spawn } from 'node:child_process';
-import { pathToFileURL } from 'node:url';
+import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 export const ENV_NAMES = /** @type {const} */ ([
   'T2F_STREAM_AGENT_BASE_URL',
@@ -18,35 +21,125 @@ export const ENV_NAMES = /** @type {const} */ ([
   'T2F_STREAM_AGENT_ACCESS_CLIENT_ID',
   'T2F_STREAM_AGENT_ACCESS_CLIENT_SECRET',
 ]);
+/** The variables whose values must never leave the PC in a request argument (S21-02). */
+export const SECRET_ENV_NAMES = /** @type {const} */ ([
+  'T2F_STREAM_AGENT_KEY',
+  'T2F_STREAM_AGENT_ACCESS_CLIENT_ID',
+  'T2F_STREAM_AGENT_ACCESS_CLIENT_SECRET',
+]);
 
-/** Relative to the web root, where `run` is launched from. */
+/** Relative to the web root; `run` reads it and passes it by stdin, the session never reads files. */
 export const PROMPT_FILE = 'agents/stream-search/prompt.md';
 export const RUN_LIMIT_MS = 60 * 60 * 1000;
 const REQUEST_TIMEOUT_MS = 30_000;
-const SELF = 'node server/scripts/stream-agent.mjs';
+/** How the prompt names this client; `run` replaces it with the absolute command. */
+export const PROMPT_SELF = 'node server/scripts/stream-agent.mjs';
+const SCRIPT_PATH = fileURLToPath(import.meta.url);
+const WEB_ROOT = path.resolve(path.dirname(SCRIPT_PATH), '..', '..');
 
-/** The only tools the launched session may use: this client's three commands, open web pages, the prompt file. */
-export const ALLOWED_TOOLS = [
-  `Bash(${SELF} channels)`,
-  `Bash(${SELF} candidates *)`,
-  `Bash(${SELF} propose *)`,
-  'WebFetch',
-  `Read(${PROMPT_FILE})`,
+/**
+ * The client as the launched session must call it: absolute path (the session runs in an empty temp cwd), forward slashes.
+ * @param {string} scriptPath
+ */
+export function selfCommand(scriptPath) {
+  return `node "${scriptPath.replace(/\\/g, '/')}"`;
+}
+
+/**
+ * The only tools the launched session may use: this client's three commands and opening web pages.
+ * @param {string} self
+ */
+export function allowedTools(self) {
+  return [`Bash(${self} channels)`, `Bash(${self} candidates *)`, `Bash(${self} propose *)`, 'WebFetch'];
+}
+
+/** Denied even though WebFetch is allowed (S21-05): YouTube pages (API policy) and services on the owner's PC. */
+export const DISALLOWED_TOOLS = [
+  'Read',
+  'Grep',
+  'Glob',
+  'Edit',
+  'Write',
+  'NotebookEdit',
+  'WebSearch',
+  'Task',
+  'WebFetch(domain:youtube.com)',
+  'WebFetch(domain:www.youtube.com)',
+  'WebFetch(domain:m.youtube.com)',
+  'WebFetch(domain:music.youtube.com)',
+  'WebFetch(domain:youtu.be)',
+  'WebFetch(domain:localhost)',
+  'WebFetch(domain:127.0.0.1)',
+  'WebFetch(domain:[::1])',
+  'WebFetch(domain:0.0.0.0)',
 ];
 
 /**
- * Pure: the argv of the `claude` process for `run`.
+ * Pure: the argv of the `claude` process for `run` (S21-01). The prompt goes by stdin. Only Bash and WebFetch exist
+ * in the session; no MCP servers, no user/project/local settings (so no hooks, plugins, permission rules from them).
+ * @param {string} [self]
  * @returns {string[]}
  */
-export function buildRunArgv() {
+export function buildRunArgv(self = selfCommand(SCRIPT_PATH)) {
   return [
     '-p',
-    `Follow the instructions in ${PROMPT_FILE} exactly.`,
+    '--input-format',
+    'text',
+    '--tools',
+    'Bash,WebFetch',
     '--allowedTools',
-    ALLOWED_TOOLS.join(','),
+    allowedTools(self).join(','),
+    '--disallowedTools',
+    DISALLOWED_TOOLS.join(','),
     '--permission-mode',
     'dontAsk',
+    '--setting-sources',
+    '',
+    '--strict-mcp-config',
+    '--mcp-config',
+    '{"mcpServers":{}}',
   ];
+}
+
+/**
+ * The prompt with the client named by its absolute command.
+ * @param {string} text
+ * @param {string} self
+ */
+export function promptFor(text, self) {
+  return text.split(PROMPT_SELF).join(self);
+}
+
+/**
+ * Resolves the claude executable without a shell (S21-04). On Windows the npm shim `claude.cmd` cannot be spawned
+ * without a shell, so it finds `claude.exe` on PATH or the binary the shim points to.
+ * @param {NodeJS.Platform} platform
+ * @param {string | undefined} pathVar
+ * @param {(p: string) => boolean} [exists]
+ * @returns {string | undefined}
+ */
+export function resolveClaude(platform, pathVar, exists = existsSync) {
+  if (platform !== 'win32') return 'claude';
+  const dirs = (pathVar ?? '').split(';').filter(Boolean);
+  for (const d of dirs) {
+    const exe = path.win32.join(d, 'claude.exe');
+    if (exists(exe)) return exe;
+    if (exists(path.win32.join(d, 'claude.cmd'))) {
+      const bin = path.win32.join(d, 'node_modules', '@anthropic-ai', 'claude-code', 'bin', 'claude.exe');
+      if (exists(bin)) return bin;
+    }
+  }
+  return undefined;
+}
+
+/**
+ * The value of a secret variable inside any argument (S21-02): the agent may have been steered to expand `$T2F_...`.
+ * @param {string[]} argv
+ * @param {Record<string, string | undefined>} env
+ */
+export function holdsSecret(argv, env) {
+  const values = SECRET_ENV_NAMES.map((n) => env[n]).filter((v) => typeof v === 'string' && v.length > 0);
+  return argv.some((a) => values.some((v) => a.includes(/** @type {string} */ (v))));
 }
 
 /**
@@ -102,25 +195,58 @@ export function buildRequest(argv) {
 }
 
 /**
+ * @typedef {{ argv: string[], cwd: string, input: string }} RunSpec
+ * @typedef {(spec: RunSpec) => { on: Function, kill?: Function }} SpawnImpl
+ */
+
+/**
  * @param {Record<string, string | undefined>} env
- * @param {(argv: string[]) => { on: Function, kill?: Function }} [spawnImpl]
+ * @param {(s: string) => void} err
+ * @param {SpawnImpl} [spawnImpl]
  * @returns {Promise<number>}
  */
-function runClaude(env, spawnImpl) {
-  const argv = buildRunArgv();
+function runClaude(env, err, spawnImpl) {
+  const self = selfCommand(SCRIPT_PATH);
+  const argv = buildRunArgv(self);
+  let input;
+  try {
+    input = promptFor(readFileSync(path.join(WEB_ROOT, PROMPT_FILE), 'utf8'), self);
+  } catch {
+    err(`cannot read ${PROMPT_FILE}\n`);
+    return Promise.resolve(2);
+  }
+  // An empty directory outside the repository: nothing for the session to read, no CLAUDE.md or project settings.
+  const cwd = mkdtempSync(path.join(tmpdir(), 't2f-stream-agent-'));
+  const cleanup = () => {
+    try {
+      rmSync(cwd, { recursive: true, force: true });
+    } catch {
+      /* best effort */
+    }
+  };
+  /** @type {any} */
+  let child;
+  if (spawnImpl) child = spawnImpl({ argv, cwd, input });
+  else {
+    const exe = resolveClaude(process.platform, process.env.PATH ?? process.env.Path);
+    if (!exe) {
+      cleanup();
+      err('claude executable not found on PATH\n');
+      return Promise.resolve(2);
+    }
+    child = spawn(exe, argv, { cwd, stdio: ['pipe', 'inherit', 'inherit'], env: { ...process.env, ...env }, shell: false });
+    child.stdin?.end(input);
+  }
   return new Promise((resolve) => {
-    const child = /** @type {any} */ (
-      spawnImpl
-        ? spawnImpl(argv)
-        : spawn('claude', argv, { stdio: 'inherit', env: { ...process.env, ...env }, shell: process.platform === 'win32' })
-    );
     const timer = setTimeout(() => child.kill?.(), RUN_LIMIT_MS);
     child.on('error', () => {
       clearTimeout(timer);
+      cleanup();
       resolve(1);
     });
     child.on('close', (/** @type {number | null} */ code) => {
       clearTimeout(timer);
+      cleanup();
       resolve(code === 0 ? 0 : 1);
     });
   });
@@ -130,7 +256,7 @@ function runClaude(env, spawnImpl) {
  * @param {string[]} argv arguments after the script name
  * @param {Record<string, string | undefined>} env
  * @param {typeof fetch} fetchImpl
- * @param {{ out: (s: string) => void, err: (s: string) => void, spawnImpl?: (argv: string[]) => { on: Function, kill?: Function } }} io
+ * @param {{ out: (s: string) => void, err: (s: string) => void, spawnImpl?: SpawnImpl }} io
  * @returns {Promise<number>} exit code
  */
 export async function main(argv, env, fetchImpl, io) {
@@ -141,7 +267,9 @@ export async function main(argv, env, fetchImpl, io) {
   };
   const missing = ENV_NAMES.filter((n) => !env[n]);
   if (missing.length) return usage(`missing environment: ${missing.join(', ')}`);
-  if (argv[0] === 'run') return runClaude(env, io.spawnImpl);
+  if (argv[0] === 'run') return argv.length === 1 ? runClaude(env, err, io.spawnImpl) : usage('run takes no arguments');
+  // Never send a secret's value to the server, never echo it (S21-02).
+  if (holdsSecret(argv, env)) return usage('refused: an argument holds the value of a secret variable');
   const req = buildRequest(argv);
   if ('error' in req) return usage(req.error);
 
