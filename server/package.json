@@ -31,6 +31,7 @@
     "clock": "tsx src/cli/clock.ts",
     "live": "tsx src/cli/live.ts",
     "ops": "tsx src/cli/ops.ts",
+    "telegram-test": "tsx src/cli/telegramTest.ts",
     "site:prepared": "tsx src/cli/sitePrepared.ts",
     "k6": "node scripts/k6.mjs",
     "serve": "node scripts/stack.mjs serve",
