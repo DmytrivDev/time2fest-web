@@ -20,7 +20,8 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { startFakeYoutube } from '../../../fakes/youtube/server.mjs';
 import { createYoutubeFakeSource } from '../../src/adapters/youtubeFake';
 import { buildDispatcher, getDeps, payloadOf } from '../../src/container';
-import { nextDayBoundary, quotaDay, type QuotaCounterKey } from '../../src/domain/live/quota';
+import { agentClassCeiling } from '../../src/domain/live/candidates';
+import { agentCounterKeys, nextDayBoundary, quotaDay } from '../../src/domain/live/quota';
 import { liveOf } from '../../src/endpoints/deps';
 import type { Deps, LiveWiring } from '../../src/endpoints/types';
 import { STREAMS_CANDIDATE_ACTION } from '../../src/live/sources';
@@ -32,6 +33,7 @@ const OWNER = 'streams-agent-owner@example.com';
 const AGENT = 'streams-agent-main@example.com';
 const LIMITS = 'streams-agent-limits@example.com';
 const DAILY = 'streams-agent-daily@example.com';
+const SHARE = 'streams-agent-share@example.com';
 const PASSWORD = 'streams-agent-password-0001'; // check-secrets: allow test fake
 const R = Math.random().toString(36).slice(2, 6).padEnd(4, 'x');
 const RUN = `sa${R}`;
@@ -58,8 +60,10 @@ describe('stream agent surface', { timeout: 180_000 }, () => {
   let agent: Record<string, string>;
   let limits: Record<string, string>;
   let daily: Record<string, string>;
+  let share: Record<string, string>;
   let agentId = 0;
   let dailyId = 0;
+  let shareId = 0;
   let limitsId = 0;
   let key = '';
   let eventId = '';
@@ -139,6 +143,9 @@ describe('stream agent surface', { timeout: 180_000 }, () => {
     const d = await issue(DAILY);
     dailyId = d.id;
     daily = { ...apiKeyHeader(d.key), ...serviceMark() };
+    const sh = await issue(SHARE);
+    shareId = sh.id;
+    share = { ...apiKeyHeader(sh.key), ...serviceMark() };
     journalStart = await maxJournalId();
 
     // Everything the process writes while the suite runs (never printed by the assertions).
@@ -157,9 +164,9 @@ describe('stream agent surface', { timeout: 180_000 }, () => {
     if (live) (live as { statuses?: LiveWiring['statuses'] }).statuses = savedStatuses;
     if (!payload) return;
     await clean();
-    const buckets = [agentId, limitsId, dailyId].map((id) => `agent:${id}`);
+    const buckets = [agentId, limitsId, dailyId, shareId].flatMap((id) => Object.values(agentCounterKeys(String(id))));
     for (const b of buckets) await db().execute(sql`DELETE FROM "live_quota" WHERE "bucket" = ${b}`);
-    await removeAdmins(payload, [OWNER, AGENT, LIMITS, DAILY]);
+    await removeAdmins(payload, [OWNER, AGENT, LIMITS, DAILY, SHARE]);
     if (tinyMade) await removeTinyCatalog(payload, RUN);
     await fake?.close();
   });
@@ -219,6 +226,29 @@ describe('stream agent surface', { timeout: 180_000 }, () => {
     }
     expect((await live.store.state()).version).toBe(version);
     expect(await chains()).toBe(chainsBefore);
+  });
+
+  it('S21-07: the read pages newest decision first in the store; a cursor over six digits → invalid', async () => {
+    // Three of the AC-31 proposals made the newest decisions, a fourth the oldest.
+    await db().execute(sql`UPDATE "stream_candidates" SET "state_changed_at" = now() + interval '3 hours' WHERE "video_id" = ${vid(11)}`);
+    await db().execute(sql`UPDATE "stream_candidates" SET "state_changed_at" = now() + interval '2 hours' WHERE "video_id" = ${vid(13)}`);
+    await db().execute(sql`UPDATE "stream_candidates" SET "state_changed_at" = now() + interval '2 hours' WHERE "video_id" = ${vid(12)}`);
+    await db().execute(sql`UPDATE "stream_candidates" SET "state_changed_at" = NULL WHERE "video_id" = ${vid(10)}`);
+    const q = `state=proposed&eventId=${encodeURIComponent(eventId)}`;
+    const first = await json(await rest('GET', `/stream-agent/candidates?${q}`, { headers: agent }));
+    const ids = (first.value?.items as { videoId: string }[]).map((c) => c.videoId);
+    expect(ids.slice(0, 3)).toEqual([vid(11), vid(12), vid(13)]);
+    expect(ids.at(-1)).toBe(vid(10));
+    expect(first.value?.next).toBeUndefined();
+    const second = await json(await rest('GET', `/stream-agent/candidates?${q}&cursor=1`, { headers: agent }));
+    expect((second.value?.items as { videoId: string }[]).map((c) => c.videoId)).toEqual(ids.slice(1));
+    const far = await json(await rest('GET', `/stream-agent/candidates?${q}&cursor=999999`, { headers: agent }));
+    expect(far.value?.items).toEqual([]);
+    for (const cursor of ['1000000', '-1', '1e3']) {
+      const res = await rest('GET', `/stream-agent/candidates?cursor=${cursor}`, { headers: agent });
+      expect(res.status, cursor).toBe(400);
+      expect((await json(res)).error?.code).toBe('invalid');
+    }
   });
 
   it('AC-32: every owner and live action and direct collection writes → 403; nothing changes', async () => {
@@ -282,7 +312,7 @@ describe('stream agent surface', { timeout: 180_000 }, () => {
     // The daily cap: 299 proposals already counted today for this agent; the 300th passes, the 301st is refused.
     const now = deps.clock.now();
     const day = quotaDay(now, live.cfg.dayTimeZone);
-    await live.quota.charge(day, `agent:${dailyId}` as QuotaCounterKey, live.cfg.agent.proposalsPerDay - 1);
+    await live.quota.charge(day, agentCounterKeys(String(dailyId)).proposals, live.cfg.agent.proposalsPerDay - 1);
     await upcoming([vid(42), vid(43)]);
     expect((await propose({ videoId: vid(42) }, daily)).status).toBe(200);
     const capped = await propose({ videoId: vid(43) }, daily);
@@ -293,6 +323,36 @@ describe('stream agent surface', { timeout: 180_000 }, () => {
     expect(cappedBody.error?.retryAfterMs).toBeGreaterThan(0);
     expect(Math.abs(Number(cappedBody.error?.retryAfterMs) - toBoundary)).toBeLessThan(120_000);
     expect((await candidateRows()).map((r) => r.video_id)).not.toContain(vid(43));
+  });
+
+  it('S21-03: the agent stops at its share of the candidates and playlists ceilings → 429; the class keeps the rest', async () => {
+    const now = deps.clock.now();
+    const day = quotaDay(now, live.cfg.dayTimeZone);
+    const keys = agentCounterKeys(String(shareId));
+    const cap = agentClassCeiling('candidates', live.cfg);
+    expect(cap).toBeLessThan(live.cfg.classCeilings.candidates);
+    await live.quota.charge(day, keys.candidates, cap - 1);
+    await upcoming([vid(44), vid(45)]);
+    // The last unit of the share: the check of vid(44) spends it and is metered to the agent.
+    expect((await propose({ videoId: vid(44) }, share)).status).toBe(200);
+    expect(await live.quota.usedOf(day, [keys.candidates, keys.proposals])).toEqual([cap, 1]);
+    const capped = await propose({ videoId: vid(45) }, share);
+    expect(capped.status).toBe(429);
+    const body = await json(capped);
+    expect(body.error?.code).toBe('rate-limited');
+    expect(Number(body.error?.retryAfterMs)).toBeGreaterThan(0);
+    expect((await candidateRows()).map((r) => r.video_id)).not.toContain(vid(45));
+    expect(await live.quota.usedOf(day, [keys.candidates, keys.proposals])).toEqual([cap, 1]);
+
+    // A channel needs two playlists units: one short of them is refused before any YouTube call.
+    const pcap = agentClassCeiling('playlists', live.cfg);
+    const bucketsBefore = await live.quota.read(day);
+    await db().execute(sql`DELETE FROM "live_quota" WHERE "bucket" = ${keys.candidates}`);
+    await live.quota.charge(day, keys.playlists, pcap - 1);
+    const channel = await propose({ channelId: chid(8) }, share);
+    expect(channel.status).toBe(429);
+    expect((await channelRows()).map((r) => r.channel_id)).not.toContain(chid(8));
+    expect(await live.quota.read(day)).toEqual(bucketsBefore);
   });
 
   it('AC-38: propose → revoke → the very next proposal and read are refused', async () => {

@@ -8,7 +8,11 @@ import { CANDIDATE_STATES, type CandidateState } from '@time2fest/contracts';
 import { describe, expect, it, vi } from 'vitest';
 import {
   activeSourceCount,
+  AGENT_CLASS_SHARE,
+  agentClassCeiling,
   agentProposalAllowed,
+  agentProposalNeeds,
+  agentWithinCeilings,
   candidateOnSourceStatus,
   capForAgent,
   chainFull,
@@ -106,6 +110,47 @@ describe('duplicates and the agent cap (AC-9, AC-31)', () => {
   it('agent daily proposals stop at the configured count', () => {
     expect(agentProposalAllowed(cfg.agent.proposalsPerDay - 1, cfg)).toBe(true);
     expect(agentProposalAllowed(cfg.agent.proposalsPerDay, cfg)).toBe(false);
+  });
+});
+
+describe('agent share of the class ceilings (S21-03)', () => {
+  const none = { proposals: 0, candidates: 0, playlists: 0 };
+  it('the agent ceiling is a quarter of each class ceiling, rounded down', () => {
+    expect(AGENT_CLASS_SHARE).toBe(0.25);
+    expect(agentClassCeiling('candidates', cfg)).toBe(Math.floor(cfg.classCeilings.candidates / 4));
+    expect(agentClassCeiling('playlists', cfg)).toBe(Math.floor(cfg.classCeilings.playlists / 4));
+    expect(agentClassCeiling('candidates', withCfg({ classCeilings: { candidates: 7, playlists: 0 } }))).toBe(1);
+  });
+  it('a video costs one candidates call, a channel a check batch and two playlists calls', () => {
+    expect(agentProposalNeeds('video', cfg)).toEqual({ candidates: cfg.unitsPerListCall, playlists: 0 });
+    expect(agentProposalNeeds('channel', cfg)).toEqual({ candidates: cfg.unitsPerListCall, playlists: 2 * cfg.unitsPerListCall });
+  });
+  it('a fresh agent may propose both kinds', () => {
+    expect(agentWithinCeilings(none, 'video', cfg)).toBe(true);
+    expect(agentWithinCeilings(none, 'channel', cfg)).toBe(true);
+  });
+  it('the candidates share stops both kinds at the boundary, never above it', () => {
+    const cap = agentClassCeiling('candidates', cfg);
+    expect(agentWithinCeilings({ ...none, candidates: cap - 1 }, 'video', cfg)).toBe(true);
+    expect(agentWithinCeilings({ ...none, candidates: cap }, 'video', cfg)).toBe(false);
+    expect(agentWithinCeilings({ ...none, candidates: cap }, 'channel', cfg)).toBe(false);
+  });
+  it('the playlists share stops channels only', () => {
+    const cap = agentClassCeiling('playlists', cfg);
+    expect(agentWithinCeilings({ ...none, playlists: cap - 2 }, 'channel', cfg)).toBe(true);
+    expect(agentWithinCeilings({ ...none, playlists: cap - 1 }, 'channel', cfg)).toBe(false);
+    expect(agentWithinCeilings({ ...none, playlists: cap }, 'video', cfg)).toBe(true);
+  });
+  it('the proposal cap still applies inside the shares', () => {
+    expect(agentWithinCeilings({ ...none, proposals: cfg.agent.proposalsPerDay }, 'video', cfg)).toBe(false);
+  });
+  it('a capped agent leaves at least three quarters of each class to the owner and the watch', () => {
+    for (const cls of ['candidates', 'playlists'] as const) {
+      expect(cfg.classCeilings[cls] - agentClassCeiling(cls, cfg)).toBeGreaterThanOrEqual(Math.ceil(cfg.classCeilings[cls] * 0.75));
+    }
+  });
+  it('a zero class ceiling stops the agent', () => {
+    expect(agentWithinCeilings(none, 'video', withCfg({ classCeilings: { candidates: 0, playlists: 1_000 } }))).toBe(false);
   });
 });
 
