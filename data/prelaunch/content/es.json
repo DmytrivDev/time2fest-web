@@ -6170,5 +6170,173 @@
       "description": "Surinam recibe 2027 a medianoche local (03:00 UTC): Owru Yari con cintas rojas de pagara, baño de flores swit watra y una fiesta callejera de día en Paramaribo."
     },
     "kit": "sr"
+  },
+  "GF": {
+    "text": "La Nochevieja en la Guayana Francesa es solo el preludio del carnaval más largo del mundo, que empieza después de la Epifanía y dura hasta el Miércoles de Ceniza. El 31 de diciembre es ante todo el réveillon, cuando nadie duerme antes de la medianoche. Las familias se reúnen en torno a una mesa larga de «cosas buenas de casa»: sopa criolla, jamón de Navidad, carne de caza, pescado y, de postre, dizé milé, empanadillas fritas rellenas de crema. Se acompañan de ponche y champán, y la fiesta a menudo dura hasta la mañana.\n\nCayena recibe el año en la Place des Palmistes: el ayuntamiento organiza allí un baile popular, grupos locales tocan hasta el amanecer y, a medianoche en punto, desde el hospital Jean-Martial se lanzan veinte minutos de fuegos artificiales. En la noche hacia 2026 acudieron a la plaza unas 16 000 personas, según el organizador.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Cena criolla hasta el alba",
+        "text": "Las familias se reúnen hacia las diez de la noche: sopa criolla, jamón de Navidad, caza y pescado, y dizé milé de postre. A menudo se celebra hasta el amanecer."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Baile en la Place des Palmistes",
+        "text": "Cayena baila en un baile popular al aire libre y, a medianoche, los fuegos artificiales de la ciudad florecen sobre la plaza durante veinte minutos. Los petardos, en cambio, la prefectura los prohibió del 24 de diciembre de 2024 al 9 de marzo de 2025."
+      },
+      {
+        "id": "t3",
+        "iconId": "mask",
+        "title": "Touloulous y galette",
+        "text": "Tras la Epifanía empieza el carnaval: cada sábado, en los bailes, las touloulous, cubiertas de pies a cabeza, invitan a los hombres a bailar, y cada semana la galette se come en casa de quien encontró el haba."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en la Guayana Francesa: Cayena | Time2Fest",
+      "description": "La Guayana Francesa recibe 2027 a medianoche local (03:00 UTC): baile y fuegos en la Place des Palmistes de Cayena, cena criolla y, después, el carnaval."
+    },
+    "kit": "gf"
+  },
+  "UY": {
+    "text": "Ropa blanca, asado y doce uvas a medianoche: así despide Uruguay el año viejo. La fiesta empieza al caer la noche del 31 de diciembre en la mesa familiar: carne a la parrilla, lechón y, de postre, turrón y pan dulce. El blanco se viste por optimismo y para empezar de cero. A medianoche todos salen a la calle a lanzar fuegos artificiales y petardos. El Año Nuevo llega en pleno verano, y balnearios como Punta del Este se llenan de fiestas en la playa con música y fuegos.\n\nMontevideo se despide del año ya de día. En el último día hábil, por las ventanas de las oficinas de la Ciudad Vieja vuelan agendas y almanaques rotos —una «lluvia de papel»— y desde los balcones caen baldazos de agua sobre los transeúntes. Mientras tanto, junto al Mercado del Puerto hay fiesta en la calle con música y una «guerra de sidra».",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "white",
+        "title": "Ropa blanca y uvas",
+        "text": "La noche se recibe vestido de blanco, por optimismo y para empezar de cero, y con las campanadas de medianoche se comen doce uvas."
+      },
+      {
+        "id": "t2",
+        "iconId": "letter",
+        "title": "Lluvia de papel en la Ciudad Vieja",
+        "text": "En el último día hábil del año, por las ventanas de las oficinas de Montevideo vuelan almanaques rotos y desde los balcones caen baldazos de agua."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Asado en la mesa familiar",
+        "text": "La noche del 31 de diciembre las familias se reúnen: asado y lechón al fuego, y de postre turrón y pan dulce."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Uruguay: Montevideo | Time2Fest",
+      "description": "Uruguay recibe 2027 a medianoche local (03:00 UTC): ropa blanca, asado, doce uvas y lluvia de almanaques rotos sobre la Ciudad Vieja de Montevideo."
+    },
+    "kit": "uy"
+  },
+  "AG": {
+    "text": "Antes, diciembre en Antigua era el mes del Old Time Christmas Festival: por las calles pasaban las máscaras de «John Bull», con hojas de plátano y cuernos, y los cantores llevaban «árboles de villancicos», varas cargadas de farolillos. En 1957 el festival cedió su lugar al Carnaval de verano, y parte de sus máscaras se mudó al verano. En la mesa de fiesta se sirve Ponche Kuba, un licor de crema espeso y dulce. La mayoría de los isleños son cristianos, y anglicanos, moravos, metodistas y adventistas mantienen la costumbre del servicio de vigilia la noche del 31 de diciembre, para cerrar el año con oraciones y cantos.\n\nSaint John’s despide el año con el puerto lleno: el último día de 2024 había cuatro cruceros en sus muelles, y ese año el puerto recibió la cifra récord de 825 000 pasajeros. En la costa sur, frente a English Harbour, los yates salen el 31 de diciembre a la regata Nelson’s Pursuit, que recrea la persecución de la flota francesa en 1805.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Vigilia del 31 de diciembre",
+        "text": "Anglicanos, moravos, metodistas y adventistas, las grandes iglesias de las islas, mantienen la vigilia nocturna: el año se cierra con oraciones e himnos."
+      },
+      {
+        "id": "t2",
+        "iconId": "boat",
+        "title": "Regata Nelson’s Pursuit",
+        "text": "El 31 de diciembre los yates salen frente al fuerte Charlotte, en English Harbour: los más lentos parten primero con bandera francesa y los premios se entregan en Nelson’s Dockyard."
+      },
+      {
+        "id": "t3",
+        "iconId": "glass",
+        "title": "Una copa de Ponche Kuba",
+        "text": "En las fiestas, los antiguanos sirven Ponche Kuba, un licor de crema espeso, muy dulce y fuerte, muy popular en la mesa festiva."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Antigua y Barbuda: Saint John’s",
+      "description": "Antigua y Barbuda recibe 2027 a medianoche local (04:00 UTC): vigilias en las iglesias, Ponche Kuba en la mesa y la regata Nelson’s Pursuit en el mar."
+    },
+    "kit": "ag"
+  },
+  "BL": {
+    "text": "Una isla de poco más de diez mil habitantes recibe en la última noche del año tantos visitantes que los hoteles, villas y restaurantes de San Bartolomé se llenan y el puerto de Gustavia queda abarrotado de yates. Por la tarde hay un concierto en los muelles. Al dar la medianoche, los fuegos artificiales iluminan el cielo sobre el fuerte Oscar y los barcos del puerto hacen sonar sus bocinas a la vez, así que el año nuevo se recibe tanto desde la orilla como desde las cubiertas.\n\nGustavia, llamada así por el rey sueco Gustavo III, rodea una bahía con forma de herradura, y el fuerte Oscar se alza en la colina que la domina, por eso los fuegos se ven desde todos los paseos. La temporada de fiestas no termina el primero de enero: en enero la isla recibe a los músicos de su festival anual.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Fuegos sobre el fuerte Oscar",
+        "text": "Los fuegos se lanzan sobre el fuerte Oscar, una fortificación de la época sueca en la colina sobre el puerto. Se ven desde el paseo y desde las cubiertas."
+      },
+      {
+        "id": "t2",
+        "iconId": "boat",
+        "title": "Bocinas de yates",
+        "text": "La señal de medianoche del puerto no son campanas, sino bocinas: los yates y barcos fondeados las hacen sonar al mismo tiempo."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Concierto en los muelles",
+        "text": "La Nochevieja en Gustavia se vive junto al agua: hay un concierto en los muelles, y restaurantes y villas de la isla no tienen sitio libre."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en San Bartolomé: Gustavia | Time2Fest",
+      "description": "San Bartolomé recibe 2027 a las 04:00 UTC: a medianoche estallan fuegos sobre el fuerte Oscar de Gustavia y los yates del puerto tocan sus bocinas a la vez."
+    },
+    "kit": "bl"
+  },
+  "BB": {
+    "text": "«Old Year’s Night», la Noche del Año Viejo: así llaman en Barbados al 31 de diciembre, y se preparan con tiempo. Días antes se agotan los vestidos brillantes y los trajes, y en barberías, peluquerías y salones de uñas hay cola. Los restaurantes de la costa sur reciben reservas para esa noche desde el verano. Unos reciben el año en la misa de vigilia de su iglesia, otros en casa con amigos o en una cena familiar, y a medianoche muchos miran los fuegos artificiales sobre los hoteles y playas de la costa oeste, como First Street en Holetown.\n\nBridgetown brilla antes de las fiestas: desde mediados de diciembre los edificios neogóticos del Parlamento, junto al Careenage, suelen iluminarse de verde y rojo. Los más incansables esperan también el primer amanecer: el 1 de enero de 2023 cientos de personas acudieron a una fiesta-desayuno en la playa de Rockfield, en el norte de la isla.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Misa de vigilia",
+        "text": "Parte de los barbadenses pasa los primeros minutos del año en la iglesia, despidiendo el año viejo con oración y cantos en la misa de vigilia."
+      },
+      {
+        "id": "t2",
+        "iconId": "white",
+        "title": "Estreno para la fiesta",
+        "text": "En la Noche del Año Viejo se estrena ropa: vestidos y trajes se compran días antes, y barberos y peluqueros atienden la cola hasta el último cliente."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fuegos en la costa oeste",
+        "text": "A medianoche la gente se reúne junto a los hoteles y playas de la costa oeste, como First Street en Holetown, donde los fuegos iluminan el cielo."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Barbados: Bridgetown | Time2Fest",
+      "description": "Barbados recibe 2027 en la Noche del Año Viejo, a medianoche local (04:00 UTC): ropa de estreno, misa de vigilia y fuegos artificiales en la costa oeste."
+    },
+    "kit": "bb"
+  },
+  "BM": {
+    "text": "A los bermudeños se les apoda desde hace mucho «cebollas»: desde 1847 las islas exportaban la dulce cebolla de Bermudas a Estados Unidos, hasta que el comercio se apagó en 1946. Por eso a medianoche no baja una bola, sino una cebolla de papel maché cubierta de luces navideñas, en King’s Square, en St. George’s, la vieja ciudad del extremo este de la isla. La Corporación de St. George reúne allí a miles de personas con música en vivo de las 19:00 a la 1:00, y en la noche hacia 2026, tras la cebolla, se elevaron por primera vez 125 drones sobre la plaza. El día de Año Nuevo, como el 26 de diciembre, los grupos de gombeys recorren las calles: bailarines con máscaras y tocados de plumas de pavo real al son de tambores y pífano.\n\nHamilton, la capital junto a su puerto, tuvo también su cebolla: para recibir 2011 la bajaron sobre Front Street y después estallaron fuegos artificiales. Al año siguiente las cebollas se encendieron en dos ciudades a la vez, Hamilton y St. George’s.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "La cebolla de King’s Square",
+        "text": "En St. George’s, a medianoche baja sobre la plaza una cebolla luminosa de papel maché, guiño a unos isleños apodados «cebollas»."
+      },
+      {
+        "id": "t2",
+        "iconId": "mask",
+        "title": "Gombeys en Año Nuevo",
+        "text": "Grupos de gombeys con máscaras, capas con espejitos y cascabeles y tocados de plumas de pavo real bailan por las calles al son de bombo, cajas y pífano."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Pastel de yuca en las fiestas",
+        "text": "A la mesa de fiesta llega el pastel de yuca con pollo o cerdo, huevos y brandy, un plato que data de 1612; cada familia guarda su receta."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Bermudas: Hamilton | Time2Fest",
+      "description": "Bermudas recibe 2027 a medianoche local (04:00 UTC) con una cebolla luminosa que baja en St. George’s y bailarines gombey por las calles el día de Año Nuevo."
+    },
+    "kit": "bm"
   }
 }

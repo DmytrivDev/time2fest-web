@@ -6170,5 +6170,173 @@
       "description": "Suriname welcomes 2027 at local midnight (03:00 UTC): Owru Yari with red pagara firecracker ribbons, a swit watra flower bath and a daytime fest in Paramaribo."
     },
     "kit": "sr"
+  },
+  "GF": {
+    "text": "New Year's Eve in French Guiana is only the prelude to the longest carnival in the world, which begins after Epiphany and runs all the way to Ash Wednesday. The night of 31 December is above all the réveillon, when no one sleeps before midnight. Families gather around a long table of \"good things from home\": Creole soup, Christmas ham, game, fish and, for dessert, dizé milé — fried turnovers filled with cream. Punch and champagne go with them, and the party often lasts until morning.\n\nCayenne sees in the year on the Place des Palmistes: the city hosts a street ball there, local bands play until dawn, and at the stroke of midnight a twenty-minute fireworks display rises from the Jean-Martial hospital. On the night into 2026 about 16,000 people came to the square, by the organiser's count.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "A Creole feast until morning",
+        "text": "Families gather around ten in the evening: Creole soup, Christmas ham, game and fish, with dizé milé for dessert. The celebration often goes on until dawn."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "A ball on Place des Palmistes",
+        "text": "Cayenne dances at an open-air street ball, and at midnight the city's fireworks bloom over the square for twenty minutes. Firecrackers, meanwhile, were banned by the prefecture from 24 December 2024 to 9 March 2025."
+      },
+      {
+        "id": "t3",
+        "iconId": "mask",
+        "title": "Touloulous and galette",
+        "text": "Carnival begins after Epiphany: every Saturday at the balls, touloulous covered from head to toe invite the men to dance, and each week the galette is eaten at the home of whoever found the bean."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in French Guiana: Cayenne | Time2Fest",
+      "description": "French Guiana welcomes 2027 at local midnight (03:00 UTC): a street ball and fireworks on Cayenne's Place des Palmistes, a Creole feast, then a long carnival."
+    },
+    "kit": "gf"
+  },
+  "UY": {
+    "text": "White clothes, asado and twelve grapes at midnight — this is how Uruguay sees out the old year. The celebration starts at nightfall on 31 December around the family table: meat from the grill, roast suckling pig (lechón) and, for dessert, turrón and sweet pan dulce. White is worn for optimism and a clean start. At midnight everyone steps outside to set off fireworks and firecrackers. New Year falls in high summer here, so resorts such as Punta del Este fill with beach parties, music and fireworks.\n\nMontevideo starts saying goodbye during the day. On the last working day, torn diaries and calendars fly out of office windows in the Old City — a “paper rain” — while buckets of water are poured from balconies onto passers-by. Meanwhile, by the Mercado del Puerto, a street party runs with music and a cider “battle”.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "white",
+        "title": "White clothes and grapes",
+        "text": "The night is greeted in white, for optimism and a clean start, and at the stroke of midnight people eat twelve grapes."
+      },
+      {
+        "id": "t2",
+        "iconId": "letter",
+        "title": "Paper rain in the Old City",
+        "text": "On the last working day of the year, torn calendars fly out of Montevideo’s office windows and buckets of water rain down from balconies."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Asado at the family table",
+        "text": "On the evening of 31 December families gather: asado and lechón on the fire, turrón and pan dulce for dessert."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Uruguay: Montevideo | Time2Fest",
+      "description": "Uruguay welcomes 2027 at local midnight (03:00 UTC): white clothes, asado, twelve grapes and a rain of torn calendars over the Old City of Montevideo."
+    },
+    "kit": "uy"
+  },
+  "AG": {
+    "text": "December on Antigua once belonged to the Old Time Christmas Festival: “John Bull” masqueraders in banana leaves and animal horns roamed the streets, and carolers carried “carol trees” — poles hung with lanterns. In 1957 the festival gave way to the summer Carnival, and some of its masquerades moved to summer. The holiday table gets a glass of Ponche Kuba, a thick, sweet cream liqueur. Most islanders are Christian, and Anglicans, Moravians, Methodists and Adventists all keep the custom of a late watchnight service on 31 December, closing the year with prayer and song.\n\nSt. John’s sees the year out with a full harbour: on the last day of 2024 four cruise ships lay at its piers, and the port welcomed a record 825,000 passengers that year. On the south coast, off English Harbour, yachts set out on 31 December for the Nelson’s Pursuit Race, which re-enacts the 1805 chase of the French fleet.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Watchnight on 31 December",
+        "text": "Anglicans, Moravians, Methodists and Adventists — the islands’ large churches — keep the late watchnight service, closing the year with prayer and hymns."
+      },
+      {
+        "id": "t2",
+        "iconId": "boat",
+        "title": "Nelson’s Pursuit Race",
+        "text": "On 31 December yachts start off Fort Charlotte at English Harbour: slower boats go first under the French flag, and prizes are given at Nelson’s Dockyard."
+      },
+      {
+        "id": "t3",
+        "iconId": "glass",
+        "title": "A glass of Ponche Kuba",
+        "text": "For the holidays Antiguans pour Ponche Kuba, a thick, very sweet and strong cream liqueur that is hugely popular on the festive table."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Antigua and Barbuda: St. John’s | Time2Fest",
+      "description": "Antigua and Barbuda greets 2027 at local midnight (04:00 UTC): late watchnight services, Ponche Kuba on the table and the Nelson’s Pursuit Race at sea."
+    },
+    "kit": "ag"
+  },
+  "BL": {
+    "text": "An island of just over ten thousand people takes in so many guests on the last night of the year that Saint Barthélemy’s hotels, villas and restaurants are full and Gustavia’s harbour gets crowded with yachts. In the evening a concert plays on the docks. As midnight strikes, fireworks light up the sky above Fort Oscar and the vessels in the harbour sound their foghorns all at once, so the new year is greeted from the shore and from the decks alike.\n\nGustavia, named after the Swedish King Gustav III, wraps around a horseshoe-shaped cove, and Fort Oscar stands on the hill above it, so the fireworks can be seen from the waterfronts all around. The festive season does not end on the first of January: in January the island welcomes musicians to its yearly festival.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Fireworks over Fort Oscar",
+        "text": "The fireworks go up over Fort Oscar, a fort from the Swedish era on the hill above the harbour. People watch from the waterfront and from yacht decks."
+      },
+      {
+        "id": "t2",
+        "iconId": "boat",
+        "title": "Yacht horns at midnight",
+        "text": "The harbour’s midnight signal is not bells but foghorns: the yachts and boats at anchor sound them all at the same moment."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "A concert on the docks",
+        "text": "New Year’s Eve in Gustavia is spent by the water: a concert plays on the docks, and the island’s restaurants and villas are fully booked."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Saint Barthélemy: Gustavia | Time2Fest",
+      "description": "Saint Barthélemy greets 2027 at 04:00 UTC: fireworks burst over Fort Oscar in Gustavia at midnight and the yachts in the harbour sound their horns together."
+    },
+    "kit": "bl"
+  },
+  "BB": {
+    "text": "“Old Year’s Night” is what Barbados calls 31 December, and people get ready well in advance. Days before, shoppers snap up shimmery dresses and suits, while barbers, hairdressers and nail technicians work through queues. South-coast restaurants take bookings for the night as early as summer. Some greet the year at a watch night service in church, others at a house lime with friends or a family dinner, and at midnight many watch fireworks over the hotels and beaches of the west coast, such as First Street in Holetown.\n\nBridgetown glows before the holidays: from mid-December the neo-Gothic Parliament Buildings above the Careenage are often lit in green and red. The most tireless revellers stay up for the first sunrise too: on 1 January 2023 hundreds came to a beach breakfast party at Rockfield in the north of the island.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Watch night in church",
+        "text": "Some Barbadians spend the first minutes of the year in church, seeing the old year out with prayer and song at a watch night service."
+      },
+      {
+        "id": "t2",
+        "iconId": "white",
+        "title": "Something new to wear",
+        "text": "Old Year’s Night calls for new clothes: dresses and suits are bought days ahead, and barbers and hairdressers work through the queue to the last client."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "West-coast fireworks",
+        "text": "At midnight people gather by the hotels and beaches of the west coast, such as First Street in Holetown, where fireworks light up the sky."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Barbados: Bridgetown | Time2Fest",
+      "description": "Barbados rings in 2027 on Old Year’s Night at local midnight (04:00 UTC): new outfits, watch night services in church and fireworks over the west coast."
+    },
+    "kit": "bb"
+  },
+  "BM": {
+    "text": "Bermudians have long been nicknamed “onions”: from 1847 the islands shipped sweet Bermuda onions to the United States until exports faded out in 1946. So at midnight it is not a ball that comes down here but a papier-mâché onion wrapped in Christmas lights, in King’s Square in St George’s, the old town at the island’s east end. The Corporation of St George draws thousands there for live music from 7pm to 1am, and on the night into 2026 a show of 125 drones rose over the square after the onion for the first time. On New Year’s Day, as on Boxing Day, Gombey troupes take to the streets — dancers in masks and peacock-feather headdresses moving to drums and fife.\n\nHamilton, the capital above its harbour, once had an onion of its own: to welcome 2011 it was lowered over Front Street, followed by fireworks. The next year onions lit up two towns at once, Hamilton and St George’s.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "The onion over King’s Square",
+        "text": "In St George’s, a glowing papier-mâché onion is lowered over the square at midnight, a nod to islanders nicknamed “onions”."
+      },
+      {
+        "id": "t2",
+        "iconId": "mask",
+        "title": "Gombeys on New Year’s Day",
+        "text": "Gombey troupes in masks, capes hung with mirrors and bells and peacock-feather headdresses dance through the streets to bass drum, snares and fife."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Cassava pie for the holidays",
+        "text": "The holiday table gets cassava pie with chicken or pork, eggs and brandy, a dish dating to 1612; every family keeps its own recipe."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Bermuda: Hamilton | Time2Fest",
+      "description": "Bermuda greets 2027 at local midnight (04:00 UTC) as a glowing papier-mâché onion drops over St George’s, and Gombey dancers fill the streets on New Year’s Day."
+    },
+    "kit": "bm"
   }
 }

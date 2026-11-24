@@ -6170,5 +6170,173 @@
       "description": "Le Suriname fête 2027 à minuit heure locale (03:00 UTC) : Owru Yari aux rubans rouges de pagara, bain de fleurs swit watra et fête de rue le jour à Paramaribo."
     },
     "kit": "sr"
+  },
+  "GF": {
+    "text": "En Guyane, la Saint-Sylvestre n'est que le prélude au plus long carnaval du monde, qui commence après l'Épiphanie et dure jusqu'au mercredi des Cendres. Le 31 décembre, c'est d'abord le réveillon, où l'on veille jusqu'à minuit. Les familles se retrouvent autour d'une grande table de « bonnes choses de chez nous » : soupe créole, jambon de Noël, gibier, poisson et, au dessert, des dizé milé, chaussons frits à la crème. Punch et champagne les accompagnent, et la fête dure souvent jusqu'au matin.\n\nCayenne accueille la nouvelle année sur la place des Palmistes : la Ville y organise un bal populaire, des groupes locaux jouent jusqu'à l'aube et, à minuit pile, un feu d'artifice de vingt minutes s'élève depuis l'hôpital Jean-Martial. Pour le passage à 2026, environ 16 000 personnes sont venues sur la place, selon l'organisateur.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Un repas créole jusqu'à l'aube",
+        "text": "Les familles se retrouvent vers 22 heures : soupe créole, jambon de Noël, gibier et poisson, avec des dizé milé au dessert. On fait souvent la fête jusqu'à l'aube."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Bal sur la place des Palmistes",
+        "text": "Cayenne danse au bal populaire en plein air et, à minuit, le feu d'artifice de la Ville s'épanouit vingt minutes au-dessus de la place. Les pétards, eux, ont été interdits par la préfecture du 24 décembre 2024 au 9 mars 2025."
+      },
+      {
+        "id": "t3",
+        "iconId": "mask",
+        "title": "Touloulous et galette",
+        "text": "Après l'Épiphanie commence le carnaval : chaque samedi, au bal, les touloulous couvertes de la tête aux pieds invitent les hommes à danser, et chaque semaine on mange la galette chez celui qui a trouvé la fève."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Guyane : Cayenne | Time2Fest",
+      "description": "La Guyane fête 2027 à minuit heure locale (03:00 UTC) : bal populaire et feu d'artifice place des Palmistes à Cayenne, repas créole, puis le plus long carnaval."
+    },
+    "kit": "gf"
+  },
+  "UY": {
+    "text": "Vêtements blancs, asado et douze raisins à minuit : c’est ainsi que l’Uruguay dit adieu à l’année. La fête commence à la tombée de la nuit, le 31 décembre, autour de la table familiale : viande grillée au feu de bois, cochon de lait (lechón) et, en dessert, turrón et pan dulce. On s’habille en blanc pour l’optimisme et un nouveau départ. À minuit, tout le monde sort tirer feux d’artifice et pétards. Le Nouvel An tombe en plein été, et les stations comme Punta del Este se remplissent de fêtes sur la plage, de musique et de feux.\n\nMontevideo fait ses adieux à l’année dès la journée. Le dernier jour ouvré, agendas et calendriers déchirés volent des fenêtres des bureaux de la Vieille Ville — une « pluie de papier » — tandis que des seaux d’eau tombent des balcons sur les passants. Pendant ce temps, près du Mercado del Puerto, une fête de rue bat son plein avec musique et « bataille de cidre ».",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "white",
+        "title": "Tenue blanche et raisins",
+        "text": "On accueille la nuit vêtu de blanc, pour l’optimisme et un nouveau départ, et aux douze coups de minuit on mange douze raisins."
+      },
+      {
+        "id": "t2",
+        "iconId": "letter",
+        "title": "Pluie de papier, Vieille Ville",
+        "text": "Le dernier jour ouvré de l’année, des calendriers déchirés volent des fenêtres des bureaux de Montevideo et des seaux d’eau tombent des balcons."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "Asado en famille",
+        "text": "Le soir du 31 décembre, les familles se réunissent : asado et cochon de lait sur le feu, turrón et pan dulce en dessert."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Uruguay : Montevideo | Time2Fest",
+      "description": "L’Uruguay fête 2027 à minuit heure locale (03:00 UTC) : tenue blanche, asado, douze raisins et pluie de calendriers sur la Vieille Ville de Montevideo."
+    },
+    "kit": "uy"
+  },
+  "AG": {
+    "text": "Autrefois, décembre à Antigua appartenait au Old Time Christmas Festival : les masques « John Bull », couverts de feuilles de bananier et de cornes, parcouraient les rues, et les chanteurs portaient des « arbres à cantiques », de longues perches garnies de lanternes. En 1957, le festival a cédé la place au Carnaval d’été, et une partie de ses masques est passée à l’été. Sur la table de fête, on sert le Ponche Kuba, une liqueur à la crème épaisse et sucrée. La plupart des habitants sont chrétiens, et anglicans, moraves, méthodistes et adventistes gardent la coutume de l’office de veille du 31 décembre, pour clore l’année par la prière et le chant.\n\nSaint John’s termine l’année avec un port plein : le dernier jour de 2024, quatre paquebots de croisière étaient à quai, et le port a accueilli cette année-là un record de 825 000 passagers. Sur la côte sud, au large d’English Harbour, les voiliers prennent le départ le 31 décembre de la Nelson’s Pursuit Race, qui rejoue la poursuite de la flotte française en 1805.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Veillée du 31 décembre",
+        "text": "Anglicans, moraves, méthodistes et adventistes, les grandes Églises des îles, gardent l’office de veille : l’année se clôt par la prière et les cantiques."
+      },
+      {
+        "id": "t2",
+        "iconId": "boat",
+        "title": "Régate Nelson’s Pursuit",
+        "text": "Le 31 décembre, les voiliers partent devant le fort Charlotte, à English Harbour : les plus lents s’élancent en premier sous pavillon français, prix remis à Nelson’s Dockyard."
+      },
+      {
+        "id": "t3",
+        "iconId": "glass",
+        "title": "Un verre de Ponche Kuba",
+        "text": "Pour les fêtes, les Antiguais servent le Ponche Kuba, une liqueur à la crème épaisse, très sucrée et forte, très prisée à table."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 à Antigua-et-Barbuda : Saint John’s",
+      "description": "Antigua-et-Barbuda accueille 2027 à minuit heure locale (04:00 UTC) : offices de veille, Ponche Kuba sur la table et régate Nelson’s Pursuit au large."
+    },
+    "kit": "ag"
+  },
+  "BL": {
+    "text": "Une île d’à peine plus de dix mille habitants accueille tant de visiteurs pour la dernière nuit de l’année que les hôtels, villas et restaurants de Saint-Barthélemy affichent complet et que le port de Gustavia se remplit de yachts. En soirée, un concert anime les quais. Au coup de minuit, le feu d’artifice illumine le ciel au-dessus du fort Oscar et les bateaux du port font retentir leurs cornes de brume tous ensemble : on fête la nouvelle année depuis la terre comme depuis les ponts.\n\nGustavia, baptisée en l’honneur du roi de Suède Gustave III, épouse une baie en fer à cheval, et le fort Oscar domine la colline au-dessus, si bien que le feu d’artifice se voit de tous les quais. La saison des fêtes ne s’arrête pas au 1er janvier : en janvier, l’île accueille les musiciens de son festival annuel.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Feu d’artifice au fort Oscar",
+        "text": "Le feu d’artifice est tiré au-dessus du fort Oscar, ouvrage de l’époque suédoise sur la colline du port. On le regarde des quais et du pont des yachts."
+      },
+      {
+        "id": "t2",
+        "iconId": "boat",
+        "title": "Cornes de brume à minuit",
+        "text": "Le signal de minuit du port, ce ne sont pas des cloches mais des cornes de brume : yachts et bateaux au mouillage les font sonner ensemble."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Concert sur les quais",
+        "text": "Le réveillon à Gustavia se passe au bord de l’eau : un concert anime les quais, et restaurants et villas de l’île affichent complet."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An à Saint-Barthélemy : Gustavia | Time2Fest",
+      "description": "Saint-Barthélemy fête 2027 à 04:00 UTC : feu d’artifice au-dessus du fort Oscar à Gustavia et cornes de brume de tous les yachts du port à minuit."
+    },
+    "kit": "bl"
+  },
+  "BB": {
+    "text": "« Old Year’s Night », la nuit de la Vieille Année : c’est ainsi que la Barbade appelle le 31 décembre, et on s’y prépare longtemps à l’avance. Quelques jours avant, robes scintillantes et costumes s’arrachent, et barbiers, coiffeurs et prothésistes ongulaires enchaînent les clients. Les restaurants de la côte sud prennent les réservations pour cette nuit dès l’été. Certains accueillent l’année à la veillée de prière à l’église, d’autres chez des amis ou au dîner familial, et à minuit beaucoup regardent les feux d’artifice au-dessus des hôtels et des plages de la côte ouest, comme sur First Street à Holetown.\n\nBridgetown s’illumine avant les fêtes : dès la mi-décembre, les bâtiments néogothiques du Parlement, au bord du Careenage, sont souvent éclairés en vert et rouge. Les plus endurants attendent aussi le premier lever du soleil : le 1er janvier 2023, des centaines de personnes sont venues à une fête-petit-déjeuner sur la plage de Rockfield, dans le nord de l’île.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "bell",
+        "title": "Veillée à l’église",
+        "text": "Une partie des Barbadiens passe les premières minutes de l’année à l’église, où la veillée du 31 décembre accompagne l’année qui s’en va de prières et de chants."
+      },
+      {
+        "id": "t2",
+        "iconId": "white",
+        "title": "Une tenue neuve",
+        "text": "Pour la nuit de la Vieille Année, on étrenne une tenue : robes et costumes s’achètent quelques jours avant, et barbiers et coiffeurs servent la file jusqu’au dernier client."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Feux sur la côte ouest",
+        "text": "À minuit, on se retrouve près des hôtels et des plages de la côte ouest, comme sur First Street à Holetown, où les feux d’artifice illuminent le ciel."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 à la Barbade : Bridgetown | Time2Fest",
+      "description": "La Barbade fête 2027 lors de l’Old Year’s Night, à minuit heure locale (04:00 UTC) : tenues neuves, veillée à l’église et feux d’artifice sur la côte ouest."
+    },
+    "kit": "bb"
+  },
+  "BM": {
+    "text": "On surnomme depuis longtemps les Bermudiens « les oignons » : dès 1847, les îles expédiaient le doux oignon des Bermudes vers les États-Unis, jusqu’à la fin des exportations en 1946. À minuit, ce n’est donc pas une boule qui descend ici, mais un oignon en papier mâché couvert de guirlandes, sur King’s Square à St. George’s, la vieille ville de l’est de l’île. La Corporation de St. George y réunit des milliers de personnes autour de concerts de 19 h à 1 h, et dans la nuit de 2026, 125 drones se sont envolés pour la première fois au-dessus de la place après l’oignon. Le jour de l’An, comme le lendemain de Noël, les troupes de gombeys défilent dans les rues : danseurs masqués, coiffés de plumes de paon, au son des tambours et du fifre.\n\nHamilton, la capitale au bord de son port, a eu elle aussi son oignon : pour accueillir 2011, on l’a descendu au-dessus de Front Street, suivi d’un feu d’artifice. L’année suivante, des oignons se sont allumés dans deux villes à la fois, Hamilton et St. George’s.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "L’oignon de King’s Square",
+        "text": "À St. George’s, un oignon lumineux en papier mâché descend sur la place à minuit, clin d’œil aux insulaires surnommés « oignons »."
+      },
+      {
+        "id": "t2",
+        "iconId": "mask",
+        "title": "Les gombeys du jour de l’An",
+        "text": "Masques, capes à miroirs et grelots, coiffes en plumes de paon : les troupes de gombeys dansent dans les rues au son de la grosse caisse, des caisses claires et du fifre."
+      },
+      {
+        "id": "t3",
+        "iconId": "feast",
+        "title": "La tourte au manioc des fêtes",
+        "text": "Sur la table des fêtes, la tourte au manioc au poulet ou au porc, aux œufs et au brandy, un plat qui remonte à 1612 ; chaque famille a sa recette."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 aux Bermudes : Hamilton | Time2Fest",
+      "description": "Les Bermudes accueillent 2027 à minuit heure locale (04:00 UTC) : un oignon lumineux descend sur St. George’s et les gombeys dansent le jour de l’An."
+    },
+    "kit": "bm"
   }
 }

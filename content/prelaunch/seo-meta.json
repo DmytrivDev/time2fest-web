@@ -3708,6 +3708,114 @@
         "title": "Nouvel An au Suriname : Paramaribo | Time2Fest",
         "description": "Le Suriname fête 2027 à minuit heure locale (03:00 UTC) : Owru Yari aux rubans rouges de pagara, bain de fleurs swit watra et fête de rue le jour à Paramaribo."
       }
+    },
+    "GF": {
+      "uk": {
+        "title": "Французька Гвіана: Новий рік 2027 у Каєнні | Time2Fest",
+        "description": "Французька Гвіана зустрічає 2027 рік опівночі за місцевим часом (03:00 UTC): бал і феєрверк на площі Пальмістів у Каєнні, креольське застілля, а далі карнавал."
+      },
+      "en": {
+        "title": "New Year in French Guiana: Cayenne | Time2Fest",
+        "description": "French Guiana welcomes 2027 at local midnight (03:00 UTC): a street ball and fireworks on Cayenne's Place des Palmistes, a Creole feast, then a long carnival."
+      },
+      "es": {
+        "title": "Año Nuevo en la Guayana Francesa: Cayena | Time2Fest",
+        "description": "La Guayana Francesa recibe 2027 a medianoche local (03:00 UTC): baile y fuegos en la Place des Palmistes de Cayena, cena criolla y, después, el carnaval."
+      },
+      "fr": {
+        "title": "Nouvel An en Guyane : Cayenne | Time2Fest",
+        "description": "La Guyane fête 2027 à minuit heure locale (03:00 UTC) : bal populaire et feu d'artifice place des Palmistes à Cayenne, repas créole, puis le plus long carnaval."
+      }
+    },
+    "UY": {
+      "uk": {
+        "title": "Уругвай: Новий рік 2027 у Монтевідео | Time2Fest",
+        "description": "Уругвай зустрічає 2027 рік опівночі за місцевим часом (03:00 UTC): біле вбрання, асадо, дванадцять виноградин і паперовий дощ у Старому місті Монтевідео."
+      },
+      "en": {
+        "title": "New Year in Uruguay: Montevideo | Time2Fest",
+        "description": "Uruguay welcomes 2027 at local midnight (03:00 UTC): white clothes, asado, twelve grapes and a rain of torn calendars over the Old City of Montevideo."
+      },
+      "es": {
+        "title": "Año Nuevo en Uruguay: Montevideo | Time2Fest",
+        "description": "Uruguay recibe 2027 a medianoche local (03:00 UTC): ropa blanca, asado, doce uvas y lluvia de almanaques rotos sobre la Ciudad Vieja de Montevideo."
+      },
+      "fr": {
+        "title": "Nouvel An en Uruguay : Montevideo | Time2Fest",
+        "description": "L’Uruguay fête 2027 à minuit heure locale (03:00 UTC) : tenue blanche, asado, douze raisins et pluie de calendriers sur la Vieille Ville de Montevideo."
+      }
+    },
+    "AG": {
+      "uk": {
+        "title": "Новий рік в Антигуа і Барбуді: Сент-Джонс | Time2Fest",
+        "description": "Антигуа і Барбуда зустрічає 2027 рік опівночі за місцевим часом (04:00 UTC): нічна служба в церквах, «Понче Куба» на столі й регата «Погоня Нельсона»."
+      },
+      "en": {
+        "title": "New Year in Antigua and Barbuda: St. John’s | Time2Fest",
+        "description": "Antigua and Barbuda greets 2027 at local midnight (04:00 UTC): late watchnight services, Ponche Kuba on the table and the Nelson’s Pursuit Race at sea."
+      },
+      "es": {
+        "title": "Año Nuevo en Antigua y Barbuda: Saint John’s",
+        "description": "Antigua y Barbuda recibe 2027 a medianoche local (04:00 UTC): vigilias en las iglesias, Ponche Kuba en la mesa y la regata Nelson’s Pursuit en el mar."
+      },
+      "fr": {
+        "title": "Nouvel An à Antigua-et-Barbuda : Saint John’s",
+        "description": "Antigua-et-Barbuda accueille 2027 à minuit heure locale (04:00 UTC) : offices de veille, Ponche Kuba sur la table et régate Nelson’s Pursuit au large."
+      }
+    },
+    "BL": {
+      "uk": {
+        "title": "Новий рік на Сен-Бартелемі: Густавія | Time2Fest",
+        "description": "Сен-Бартелемі зустрічає 2027 рік о 04:00 UTC: опівночі над фортом Оскар у Густавії спалахує салют, а яхти в гавані разом вмикають туманні гудки."
+      },
+      "en": {
+        "title": "New Year in Saint Barthélemy: Gustavia | Time2Fest",
+        "description": "Saint Barthélemy greets 2027 at 04:00 UTC: fireworks burst over Fort Oscar in Gustavia at midnight and the yachts in the harbour sound their horns together."
+      },
+      "es": {
+        "title": "Año Nuevo en San Bartolomé: Gustavia | Time2Fest",
+        "description": "San Bartolomé recibe 2027 a las 04:00 UTC: a medianoche estallan fuegos sobre el fuerte Oscar de Gustavia y los yates del puerto tocan sus bocinas a la vez."
+      },
+      "fr": {
+        "title": "Nouvel An à Saint-Barthélemy : Gustavia | Time2Fest",
+        "description": "Saint-Barthélemy fête 2027 à 04:00 UTC : feu d’artifice au-dessus du fort Oscar à Gustavia et cornes de brume de tous les yachts du port à minuit."
+      }
+    },
+    "BB": {
+      "uk": {
+        "title": "Барбадос: Новий рік 2027 у Бріджтауні | Time2Fest",
+        "description": "Барбадос зустрічає 2027 рік у Ніч старого року опівночі за місцевим часом (04:00 UTC): нове вбрання, нічна служба в церкві й феєрверки західного узбережжя."
+      },
+      "en": {
+        "title": "New Year in Barbados: Bridgetown | Time2Fest",
+        "description": "Barbados rings in 2027 on Old Year’s Night at local midnight (04:00 UTC): new outfits, watch night services in church and fireworks over the west coast."
+      },
+      "es": {
+        "title": "Año Nuevo en Barbados: Bridgetown | Time2Fest",
+        "description": "Barbados recibe 2027 en la Noche del Año Viejo, a medianoche local (04:00 UTC): ropa de estreno, misa de vigilia y fuegos artificiales en la costa oeste."
+      },
+      "fr": {
+        "title": "Nouvel An à la Barbade : Bridgetown | Time2Fest",
+        "description": "La Barbade fête 2027 lors de l’Old Year’s Night, à minuit heure locale (04:00 UTC) : tenues neuves, veillée à l’église et feux d’artifice sur la côte ouest."
+      }
+    },
+    "BM": {
+      "uk": {
+        "title": "Новий рік на Бермудських Островах: Гамільтон | Time2Fest",
+        "description": "Бермудські Острови зустрічають 2027 рік опівночі за місцевим часом (04:00 UTC): сяйна цибулина опускається в Сент-Джорджі, а 1 січня танцюють гомбеї."
+      },
+      "en": {
+        "title": "New Year in Bermuda: Hamilton | Time2Fest",
+        "description": "Bermuda greets 2027 at local midnight (04:00 UTC) as a glowing papier-mâché onion drops over St George’s, and Gombey dancers fill the streets on New Year’s Day."
+      },
+      "es": {
+        "title": "Año Nuevo en Bermudas: Hamilton | Time2Fest",
+        "description": "Bermudas recibe 2027 a medianoche local (04:00 UTC) con una cebolla luminosa que baja en St. George’s y bailarines gombey por las calles el día de Año Nuevo."
+      },
+      "fr": {
+        "title": "Nouvel An aux Bermudes : Hamilton | Time2Fest",
+        "description": "Les Bermudes accueillent 2027 à minuit heure locale (04:00 UTC) : un oignon lumineux descend sur St. George’s et les gombeys dansent le jour de l’An."
+      }
     }
   }
 }

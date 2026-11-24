@@ -3741,6 +3741,102 @@
         "x": 62,
         "y": 62
       }
+    },
+    "country:GF": {
+      "src": "/media/photos/cayenne.webp",
+      "alt": {
+        "uk": "Нічний старт Ariane 5 з Гвіанського космічного центру біля Куру: ракета в стовпі вогню, клуби диму над стартовим комплексом ELA-3",
+        "en": "A night launch of Ariane 5 from the Guiana Space Centre near Kourou: the rocket on a column of fire, smoke billowing over the ELA-3 launch complex",
+        "es": "Lanzamiento nocturno de un Ariane 5 desde el Centro Espacial Guayanés cerca de Kourou: el cohete sobre una columna de fuego y nubes de humo sobre el complejo ELA-3",
+        "fr": "Lancement nocturne d’Ariane 5 depuis le Centre spatial guyanais près de Kourou : la fusée sur une colonne de feu, fumée au-dessus de l’ensemble de lancement ELA-3"
+      },
+      "author": "DLR German Aerospace Center (Thilo Kranz)",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ariane_5ES_liftoff_from_ELA-3.jpg",
+      "position": {
+        "x": 40,
+        "y": 45
+      }
+    },
+    "country:UY": {
+      "src": "/media/photos/montevideo.webp",
+      "alt": {
+        "uk": "Салют над Старим містом Монтевідео: підсвічена Брама Цитаделі на площі Незалежності, пальми, люди дивляться феєрверк (свято двохсотліття, 2011)",
+        "en": "Fireworks over Montevideo’s Old Town: the lit Gate of the Citadel on Independence Square, palm trees and people watching (bicentenary celebrations, 2011)",
+        "es": "Fuegos artificiales sobre la Ciudad Vieja de Montevideo: la Puerta de la Ciudadela iluminada en la plaza Independencia, palmeras y gente mirando (fiestas del Bicentenario, 2011)",
+        "fr": "Feu d’artifice sur la vieille ville de Montevideo : la porte de la Citadelle illuminée place de l’Indépendance, palmiers et spectateurs (fêtes du bicentenaire, 2011)"
+      },
+      "author": "Bicentenario Uruguay",
+      "license": "CC BY-SA 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Puerta_de_la_Ciudadela_(13146538864).jpg",
+      "position": {
+        "x": 50,
+        "y": 40
+      }
+    },
+    "country:AG": {
+      "src": "/media/photos/st-johns-ag.webp",
+      "alt": {
+        "uk": "Захід сонця над Інгліш-Гарбором із Ширлі-Гайтс: затоки, яхти на рейді, пагорби південного узбережжя Антигуа",
+        "en": "Sunset over English Harbour from Shirley Heights: bays, yachts at anchor and the hills of Antigua’s south coast",
+        "es": "Atardecer sobre English Harbour desde Shirley Heights: bahías, yates fondeados y las colinas de la costa sur de Antigua",
+        "fr": "Coucher de soleil sur English Harbour depuis Shirley Heights : baies, voiliers au mouillage et collines de la côte sud d’Antigua"
+      },
+      "author": "Sakturner",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Sunset_over_English_Harbour_in_Antigua.JPG",
+      "position": {
+        "x": 45,
+        "y": 55
+      }
+    },
+    "country:BL": {
+      "src": "/media/photos/st-barthelemy.webp",
+      "alt": {
+        "uk": "Гавань Густавії згори від форту Густав: підковоподібна бухта з яхтами, білі будинки з червоними дахами на схилах, зелені пагорби й море",
+        "en": "Gustavia harbour from above by Fort Gustav: a horseshoe bay with yachts, white houses with red roofs on the slopes, green hills and the sea",
+        "es": "El puerto de Gustavia desde lo alto junto al fuerte Gustav: una bahía en herradura con yates, casas blancas de tejados rojos en las laderas, colinas verdes y el mar",
+        "fr": "Le port de Gustavia vu du fort Gustave : baie en fer à cheval et ses yachts, maisons blanches aux toits rouges sur les pentes, collines vertes et mer"
+      },
+      "author": "Kevin Gabbert (Wikivoyage, Kevin James)",
+      "license": "Public domain",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Gustavia_Harbour_St_Barthelemy.JPG",
+      "position": {
+        "x": 62,
+        "y": 50
+      }
+    },
+    "country:BB": {
+      "src": "/media/photos/bridgetown.webp",
+      "alt": {
+        "uk": "Феєрверк над площею Національних героїв у Бріджтауні в ніч проголошення республіки (30 листопада 2021)",
+        "en": "Fireworks over National Heroes Square in Bridgetown on the night the republic was proclaimed (30 November 2021)",
+        "es": "Fuegos artificiales sobre la plaza de los Héroes Nacionales de Bridgetown la noche de la proclamación de la república (30 de noviembre de 2021)",
+        "fr": "Feu d’artifice sur la place des Héros nationaux à Bridgetown la nuit de la proclamation de la république (30 novembre 2021)"
+      },
+      "author": "PMO Barbados",
+      "license": "Public domain",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Barbados_Independence_Republic_Night_(51718467991).jpg",
+      "position": {
+        "x": 50,
+        "y": 30
+      }
+    },
+    "country:BM": {
+      "src": "/media/photos/hamilton.webp",
+      "alt": {
+        "uk": "Гамільтон на заході сонця з гавані: пастельні будинки з білими дахами на схилі, вежа собору Найсвятішої Трійці, яхти на якорі",
+        "en": "Hamilton at sunset from the harbour: pastel houses with white roofs on the slope, the tower of the Cathedral of the Most Holy Trinity and yachts at anchor",
+        "es": "Hamilton al atardecer desde el puerto: casas pastel de tejados blancos en la ladera, la torre de la catedral de la Santísima Trinidad y yates fondeados",
+        "fr": "Hamilton au coucher du soleil depuis le port : maisons pastel aux toits blancs sur la pente, tour de la cathédrale de la Très-Sainte-Trinité et voiliers au mouillage"
+      },
+      "author": "Larry Lamb",
+      "license": "CC BY-SA 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Hamilton_at_sunset_-_panoramio.jpg",
+      "position": {
+        "x": 40,
+        "y": 45
+      }
     }
   }
 }

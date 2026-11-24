@@ -1,0 +1,103 @@
+{
+  "code": "BB",
+  "zone": "UTC-4",
+  "zoneId": "utc-0400",
+  "cityId": "bridgetown",
+  "names": {
+    "uk": {
+      "name": "Барбадос",
+      "city": "Бріджтаун",
+      "cityIn": "у Бріджтауні",
+      "countryIn": "на Барбадосі",
+      "caps": "БАРБАДОС"
+    },
+    "en": {
+      "name": "Barbados",
+      "city": "Bridgetown",
+      "cityIn": "in Bridgetown",
+      "countryIn": "in Barbados",
+      "caps": "BARBADOS"
+    },
+    "es": {
+      "name": "Barbados",
+      "city": "Bridgetown",
+      "cityIn": "en Bridgetown",
+      "countryIn": "en Barbados",
+      "caps": "BARBADOS"
+    },
+    "fr": {
+      "name": "Barbade",
+      "city": "Bridgetown",
+      "cityIn": "à Bridgetown",
+      "countryIn": "à la Barbade",
+      "caps": "BARBADE"
+    }
+  },
+  "picto": "M3 38 H37 M15.5 38 V11 H24.5 V38 M15.5 11 V6.6 M24.5 11 V6.6 M20 16.6 m-2.6 0 a2.6 2.6 0 1 0 5.2 0 a2.6 2.6 0 1 0 -5.2 0 M20 16.6 V15 M18.4 30 V24 Q20 20.8 21.6 24 V30 M20 11 V1.4 H23.6 V4 H20 M15.5 27 H4 V38 M5.8 38 V34 Q7.4 31.2 9 34 V38 M10.6 38 V34 Q12.2 31.2 13.8 34 V38 M24.5 27 L30.2 21 L35.8 27 V38 M28.8 35 V30.6 Q30.2 28 31.6 30.6 V35",
+  "flagColors": [
+    "#00267F",
+    "#FFC726",
+    "#FFFFFF"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "на Барбадосі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Barbados"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Barbados"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à la Barbade"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}
