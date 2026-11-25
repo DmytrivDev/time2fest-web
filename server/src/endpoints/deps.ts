@@ -8,6 +8,8 @@ import type { AlarmStore } from '../alarms/ports';
 import type { AuthWiring } from '../auth/instance';
 import { rightsDbOf } from '../auth/pool';
 import { seasonKeyOfEnd, type SeasonCtx } from '../domain/rights/passSeason';
+import { createBanMarks } from '../rights/banMarks';
+import { createBanService, type BanService } from '../rights/bans';
 import { publishPassEvent } from '../rights/events';
 import { createPassService, type PassService } from '../rights/passes';
 import type { CatalogStore } from '../catalog/ports';
@@ -60,6 +62,7 @@ export const mailOf = (deps: Deps): MailService => built(deps.mail, 'mail');
 /** The rights services (SPEC-11): built lazily per `deps` over Better Auth's pool, the season clock and the events. */
 export interface RightsServices {
   passes: PassService;
+  bans: BanService;
 }
 const rightsCache = new WeakMap<Deps, RightsServices>();
 
@@ -79,6 +82,13 @@ export function rightsOf(deps: Deps): RightsServices {
         now: () => deps.clock.now(),
         season: () => seasonCtxOf(deps),
         publish: (db, targets, reason) => publishPassEvent(deps, db, targets, reason),
+      }),
+      bans: createBanService({
+        db: () => rightsDbOf(deps),
+        // Read on each call: a test may swap `deps.redis`.
+        marks: createBanMarks(() => deps.redis),
+        alarm: { raise: (a) => deps.alarm.raise(a) },
+        now: () => deps.clock.now(),
       }),
     };
     rightsCache.set(deps, built);
