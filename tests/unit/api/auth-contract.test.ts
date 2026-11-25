@@ -16,7 +16,9 @@ const ctx: AuthSuiteCtx = {
   freshEmail: (tag) => `sim-${tag}-${n++}@example.com`,
   lastCode: async () => useAuthStore.getState().code!.code,
   expireCode: async () => createSimAuth().devCode!.expire(),
-  freeGap: async () => useAuthStore.setState({ sends: [] }),
+  freeGap: async () => {
+    useAuthStore.setState({ sends: [] });
+  },
   breakDelivery: () => useTestControls.setState({ authUnavailable: true }),
   async google(svc, scenario) {
     vi.useFakeTimers();

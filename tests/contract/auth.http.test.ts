@@ -1,5 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
-import { createHttpAuth, type AuthFetch, type AuthTransport } from '@/lib/api/http/auth';
+import { createHttpAuth, type AuthFetch } from '@/lib/api/http/auth';
+import type { RealtimeTransport } from '@/lib/api/http/realtime/types';
 import type { AuthService } from '@/lib/api/contracts/auth';
 import { describeDomain, type AuthSuiteCtx } from './auth.suite';
 
@@ -53,12 +54,12 @@ function makeService(): AuthService {
     jar.store(res.headers);
     return res;
   };
-  const transport: AuthTransport = {
+  const transport: RealtimeTransport = {
     subscribe: () => () => {},
     renewToken: async () => {
       spy.n += 1;
     },
-  } as unknown as AuthTransport;
+  } as unknown as RealtimeTransport;
   const svc = createHttpAuth({ fetch: fetchWithJar, transport });
   jars.set(svc, jar);
   renewals.set(svc, spy);

@@ -68,6 +68,7 @@ function fakeTransport(initial: ConnectionState) {
       stateListeners.add(l);
       return () => stateListeners.delete(l);
     },
+    renewToken: async () => {},
   };
   return {
     transport,

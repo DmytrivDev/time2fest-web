@@ -36,13 +36,10 @@ export type AuthFetch = (
   init: { method: 'GET' | 'POST'; credentials: 'include'; headers?: Record<string, string>; body?: string },
 ) => Promise<AuthFetchResponse>;
 
-/** Транспорт realtime з `renewToken()` (SPEC-10 W45a): новий токен підключення після зміни власника сесії. */
-export type AuthTransport = RealtimeTransport & { renewToken(): Promise<void> };
-
 export interface HttpAuthOptions {
   fetch?: AuthFetch;
   /** Транспорт чи його завантажувач; `null` — realtime немає (лише `renewToken` пропускається, підписка мовчить). */
-  transport?: AuthTransport | (() => Promise<AuthTransport>) | null;
+  transport?: RealtimeTransport | (() => Promise<RealtimeTransport>) | null;
 }
 
 const ERROR_CODES: readonly ApiErrorCode[] = [
@@ -90,9 +87,9 @@ export function createHttpAuth(options: HttpAuthOptions = {}): AuthService {
   let heldCode: CodeInfo | null = null;
   const listeners = new Set<(session: Session) => void>();
   let live: { stop(): void } | null = null;
-  let transportPromise: Promise<AuthTransport | null> | undefined;
+  let transportPromise: Promise<RealtimeTransport | null> | undefined;
 
-  function getTransport(): Promise<AuthTransport | null> {
+  function getTransport(): Promise<RealtimeTransport | null> {
     transportPromise ??= (async () => {
       if (!transportOpt) return null;
       return typeof transportOpt === 'function' ? transportOpt() : transportOpt;
@@ -172,7 +169,7 @@ export function createHttpAuth(options: HttpAuthOptions = {}): AuthService {
     let stopped = false;
     let channel = '';
     let off: (() => void) | undefined;
-    let transport: AuthTransport | null = null;
+    let transport: RealtimeTransport | null = null;
 
     const attach = (s: Session) => {
       if (stopped || !transport) return;
