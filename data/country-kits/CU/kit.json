@@ -1,0 +1,103 @@
+{
+  "code": "CU",
+  "zone": "UTC-4",
+  "zoneId": "utc-0400",
+  "cityId": "havana",
+  "names": {
+    "uk": {
+      "name": "Куба",
+      "city": "Гавана",
+      "cityIn": "у Гавані",
+      "countryIn": "на Кубі",
+      "caps": "КУБА"
+    },
+    "en": {
+      "name": "Cuba",
+      "city": "Havana",
+      "cityIn": "in Havana",
+      "countryIn": "in Cuba",
+      "caps": "CUBA"
+    },
+    "es": {
+      "name": "Cuba",
+      "city": "La Habana",
+      "cityIn": "en La Habana",
+      "countryIn": "en Cuba",
+      "caps": "CUBA"
+    },
+    "fr": {
+      "name": "Cuba",
+      "city": "La Havane",
+      "cityIn": "à La Havane",
+      "countryIn": "à Cuba",
+      "caps": "CUBA"
+    }
+  },
+  "picto": "M3 37.5 H37 M5 37.5 V27 H13 M35 37.5 V27 H27 M8 30 V34.5 M10.5 30 V34.5 M29.5 30 V34.5 M32 30 V34.5 M13 34 V22 H27 V34 M13 25 H27 M16.5 25 V34 M20 25 V34 M23.5 25 V34 M13 34 H27 M13 34 L11 37.5 M27 34 L29 37.5 M12 35.8 H28 M15.3 22 V15.5 H24.7 V22 M17.6 16.6 V21 M20 16.6 V21 M22.4 16.6 V21 M15.8 15.5 C15.8 7.5 24.2 7.5 24.2 15.5 M18.8 10.6 V6.4 H21.2 V10.6 M20 6.4 V3.2",
+  "flagColors": [
+    "#002A8F",
+    "#CF142B",
+    "#FFFFFF"
+  ],
+  "palette": 1,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "на Кубі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Cuba"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Cuba"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Cuba"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

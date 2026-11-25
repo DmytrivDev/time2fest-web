@@ -1,0 +1,104 @@
+{
+  "code": "DM",
+  "zone": "UTC-4",
+  "zoneId": "utc-0400",
+  "cityId": "roseau",
+  "names": {
+    "uk": {
+      "name": "Домініка",
+      "city": "Розо",
+      "cityIn": "у Розо",
+      "countryIn": "у Домініці",
+      "caps": "ДОМІНІКА"
+    },
+    "en": {
+      "name": "Dominica",
+      "city": "Roseau",
+      "cityIn": "in Roseau",
+      "countryIn": "in Dominica",
+      "caps": "DOMINICA"
+    },
+    "es": {
+      "name": "Dominica",
+      "city": "Roseau",
+      "cityIn": "en Roseau",
+      "countryIn": "en Dominica",
+      "caps": "DOMINICA"
+    },
+    "fr": {
+      "name": "Dominique",
+      "city": "Roseau",
+      "cityIn": "à Roseau",
+      "countryIn": "à la Dominique",
+      "caps": "DOMINIQUE"
+    }
+  },
+  "picto": "M14.6 8.6 Q17.6 5.4 21.6 6.4 Q25 7.6 25.8 11.6 Q28.4 15 29 20.4 Q29.6 25.6 33.4 31.4 L30.6 32.6 Q26.4 28.8 23.6 28.2 Q18.2 28 15.4 23.6 Q13.2 19.6 14.6 15.6 M14.6 8.6 Q10.2 8.4 9.8 12.4 Q9.8 15 11.6 16 Q11.2 13.8 12.6 13 Q13.6 12.8 14.4 13.4 M14.4 13.4 Q14 15.4 12.6 15.6 M19.4 18 Q24.4 17.6 27 22.4 Q28 26 31.2 30.6 M21.4 21.6 Q24 22.6 25.4 25.6 M20.8 25 Q22.8 25.6 23.8 27.6 M17.6 28.4 L17 32.4 M21.4 28.4 L21.6 32.4 M8 33 Q20 31.4 36 33.6 M17.6 10 A0.9 0.9 0 1 0 17.61 10",
+  "flagColors": [
+    "#006B3F",
+    "#FCD116",
+    "#D41C30",
+    "#5B2C83"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Домініці"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Dominica"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Dominica"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à la Dominique"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

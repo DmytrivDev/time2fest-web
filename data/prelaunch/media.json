@@ -3853,6 +3853,118 @@
         "x": 45,
         "y": 50
       }
+    },
+    "country:CU": {
+      "src": "/media/photos/havana.webp",
+      "alt": {
+        "uk": "Центр Гавани вночі з готелю «Парк-Сентрал»: купол Капітолію, Великий театр і вогні Пасео-дель-Прадо",
+        "en": "Central Havana at night from the Parque Central hotel: the Capitol dome, the Great Theatre and the lights of the Paseo del Prado",
+        "es": "El centro de La Habana de noche desde el hotel Parque Central: la cúpula del Capitolio, el Gran Teatro y las luces del Paseo del Prado",
+        "fr": "Le centre de La Havane la nuit depuis l’hôtel Parque Central : dôme du Capitole, Grand Théâtre et lumières du Paseo del Prado"
+      },
+      "author": "Tony Hisgett",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:View_from_Parque_Central_Hotel_of_the_Theatre_and_Capitol_Night_(3211031744).jpg",
+      "position": {
+        "x": 74,
+        "y": 55
+      }
+    },
+    "country:DM": {
+      "src": "/media/photos/roseau.webp",
+      "alt": {
+        "uk": "Затока Суфрієр уночі на півдні Домініки: вогні селищ біля підніжжя мису Скоттс-Гед, кам'яний мол і спокійна вода",
+        "en": "Soufrière Bay at night in the south of Dominica: village lights at the foot of Scotts Head, a stone jetty and calm water",
+        "es": "La bahía de Soufrière de noche, en el sur de Dominica: luces de los pueblos al pie de Scotts Head, un muelle de piedra y agua en calma",
+        "fr": "La baie de Soufrière la nuit, au sud de la Dominique : lumières des villages au pied de Scotts Head, jetée de pierre et eau calme"
+      },
+      "author": "Aneil Lutchman",
+      "license": "CC BY-SA 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Soufri%C3%A8re_Bay_At_Night.JPG",
+      "position": {
+        "x": 35,
+        "y": 45
+      }
+    },
+    "country:GD": {
+      "src": "/media/photos/st-georges.webp",
+      "alt": {
+        "uk": "Бухта Каренаж у Сент-Джорджесі вночі: вогні міста на пагорбі відбиваються у воді",
+        "en": "The Carenage in St. George’s at night: the lights of the hillside town reflected in the water",
+        "es": "El Carenage de St. George’s de noche: las luces de la ciudad en la colina reflejadas en el agua",
+        "fr": "Le Carenage de Saint-Georges la nuit : les lumières de la ville sur la colline se reflètent dans l’eau"
+      },
+      "author": "Ramakrishna Reddy Yekulla",
+      "license": "CC BY-SA 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:The_Carenage,_St_George%27s,_Grenada.jpg",
+      "position": {
+        "x": 55,
+        "y": 55
+      }
+    },
+    "country:GY": {
+      "src": "/media/photos/georgetown.webp",
+      "alt": {
+        "uk": "Вечірня вулиця Джорджтауна: дерев'яні будинки з білою огорожею під нічним небом",
+        "en": "An evening street in Georgetown: wooden houses with a white fence under the night sky",
+        "es": "Una calle de Georgetown al anochecer: casas de madera con una valla blanca bajo el cielo nocturno",
+        "fr": "Une rue de Georgetown le soir : maisons en bois et clôture blanche sous le ciel nocturne"
+      },
+      "author": "Dan Sloan",
+      "license": "CC BY-SA 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Georgetown_(23452599896).jpg",
+      "position": {
+        "x": 50,
+        "y": 45
+      }
+    },
+    "country:KN": {
+      "src": "/media/photos/basseterre.webp",
+      "alt": {
+        "uk": "Бастер увечері з моря: вогні міста вздовж затоки, порт і зелені гори Сент-Кіттса під хмарами",
+        "en": "Basseterre in the evening from the sea: town lights along the bay, the port and the green mountains of St. Kitts under clouds",
+        "es": "Basseterre al anochecer desde el mar: luces de la ciudad a lo largo de la bahía, el puerto y las montañas verdes de San Cristóbal bajo las nubes",
+        "fr": "Basseterre le soir depuis la mer : lumières de la ville le long de la baie, le port et les montagnes vertes de Saint-Christophe sous les nuages"
+      },
+      "author": "Gilles Messian",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Saint-Kitts-et-Nevis_(6953490516).jpg",
+      "position": {
+        "x": 70,
+        "y": 50
+      }
+    },
+    "country:LC": {
+      "src": "/media/photos/castries.webp",
+      "alt": {
+        "uk": "Пітони й містечко Суфрієр над затокою на заході сонця, Сент-Люсія",
+        "en": "The Pitons and the town of Soufrière above the bay at sunset, St. Lucia",
+        "es": "Los Pitons y el pueblo de Soufrière sobre la bahía al atardecer, Santa Lucía",
+        "fr": "Les Pitons et la ville de Soufrière au-dessus de la baie au coucher du soleil, Sainte-Lucie"
+      },
+      "author": "Jim Vajda",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Soufriere,_St._Lucia_Sunset.jpg",
+      "position": {
+        "x": 56,
+        "y": 35
+      }
+    },
+    "country:MF": {
+      "src": "/media/photos/marigot.webp",
+      "alt": {
+        "uk": "Маріго в сутінках з пагорба форту Луї: вогні міста й набережної, бухта з яхтами на рейді, зелені гори острова",
+        "en": "Marigot at dusk from the Fort Louis hill: town and waterfront lights, a bay with yachts at anchor and the island’s green hills",
+        "es": "Marigot al anochecer desde la colina del fuerte Luis: luces de la ciudad y del paseo, una bahía con yates fondeados y las colinas verdes de la isla",
+        "fr": "Marigot au crépuscule depuis la colline du fort Louis : lumières de la ville et du front de mer, baie aux voiliers au mouillage et mornes verts de l’île"
+      },
+      "author": "gadl",
+      "license": "CC BY-SA 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Marigot_by_night.jpg",
+      "position": {
+        "x": 62,
+        "y": 55
+      }
     }
   }
 }

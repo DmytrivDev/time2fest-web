@@ -6366,5 +6366,201 @@
       "description": "Caribe neerlandés: Bonaire recibe 2027 a medianoche local (04:00 UTC) con pagara de día, cena en familia y fuegos, y el 1 de enero la Maskarada enmascarada."
     },
     "kit": "bq"
+  },
+  "CU": {
+    "text": "A medianoche el agua sale volando de ventanas y puertas a la calle: los cubanos lanzan un cubo para que con él se vaya de casa todo lo malo acumulado durante el año. La cena tradicional de fin de año es el cerdo asado durante horas en púa sobre carbón o leña, acompañado de cerveza y ron. En algunos lugares se quema el muñeco del Año Viejo, y quien sueña con viajar da la vuelta a la manzana con una maleta justo a las doce. Cuando pasa el último segundo, la gente se abraza y se desea que se cumplan todos sus planes.\n\nLa Habana despide cada noche con un cañonazo: a las 21:00, en la fortaleza de La Cabaña, sobre la entrada de la bahía, soldados con uniformes de época disparan un cañón, como antaño antes de cerrar las puertas de la muralla. El 1 y el 2 de enero son días libres en Cuba; el primer día del año es además fiesta oficial, aniversario de la revolución de 1959.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "wave",
+        "title": "El cubo de agua",
+        "text": "Justo a medianoche, lanza un cubo de agua a la calle: así despiden los cubanos todo lo malo que dejó el año."
+      },
+      {
+        "id": "t2",
+        "iconId": "flame",
+        "title": "Cerdo en púa",
+        "text": "La cena de fin de año empieza, por tradición, mucho antes de la noche: el cerdo se asa durante horas en púa sobre carbón, con cerveza y ron en la mesa."
+      },
+      {
+        "id": "t3",
+        "iconId": "suitcase",
+        "title": "Vuelta con la maleta",
+        "text": "Quien sueña con viajar toma una maleta a medianoche y da con ella la vuelta a la manzana, para que el año nuevo lo lleve de viaje."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Cuba: La Habana | Time2Fest",
+      "description": "Cuba recibe 2027 a medianoche local (04:00 UTC): el cubo de agua por la ventana para la suerte, el cerdo asado en púa y la vuelta a la manzana con maleta."
+    },
+    "kit": "cu"
+  },
+  "DM": {
+    "text": "En Dominica, la mesa de Año Nuevo no está completa sin sorrel, una bebida rojo intenso hecha con los cálices de la rosella, que florece justo en Navidad. Aquí las fiestas suenan a criollo. En Navidad todavía se canta bélé, canciones con tambores llegadas de África Occidental que antes sonaban en las noches de luna llena. Y una banda de jing ping —acordeón, la trompa de bambú boom pipe, un raspador y una pandereta— toca para la cuadrilla y otros bailes. En cuanto pasa el Año Nuevo, la isla entra poco a poco en el ritmo del carnaval Mas Domnik.\n\nCada diciembre Roseau abre una Aldea de Navidad de entrada libre: zona de comidas, mercado de productos locales y juegos para niños. El 31 de diciembre reúne a gente de todas las edades en una fiesta de Nochevieja con DJ.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "La fiesta de la Aldea de Navidad",
+        "text": "La tarde del 31 de diciembre, la Aldea de Navidad de Roseau reúne a la gente en una fiesta de Nochevieja: pinchan DJ y la entrada es libre para todas las edades."
+      },
+      {
+        "id": "t2",
+        "iconId": "glass",
+        "title": "Una copa de sorrel rojo",
+        "text": "En las fiestas, los dominiqueses preparan sorrel, una bebida rojo intenso hecha con cálices de rosella. Prepárala en casa y brinda a medianoche."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Música en vivo hasta fin de año",
+        "text": "En las últimas noches del año, la Aldea de Navidad de Roseau ofrece cada noche conciertos de góspel, jazz, banda en vivo y karaoke."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Dominica: Roseau | Time2Fest",
+      "description": "Dominica recibe 2027 a medianoche local (04:00 UTC): sorrel rojo en la mesa, música en vivo y la fiesta de Nochevieja de la Aldea de Navidad en Roseau."
+    },
+    "kit": "dm"
+  },
+  "GD": {
+    "text": "En Granada la temporada festiva va de Navidad a los primeros días de enero. En la mesa hay black cake, el pastel con ron cuyas frutas se maceran durante semanas, jamón, cerveza de jengibre y sorrel, una bebida pariente del bissap de África occidental. En las calles estallan petardos llamados «scratch bombs», aunque la policía recuerda cada año que están prohibidos. Hasta el primer fin de semana de enero, un parque en Quarantine Point brilla con túneles y arcos de luces al ritmo del parang y las steel bands.\n\nEn Nochevieja el Carenage de Saint George’s, una bahía en forma de herradura, se convierte en punto de encuentro: la fiesta en el muelle dura desde la tarde, y a medianoche los fuegos artificiales estallan sobre el agua y se reflejan en la bahía.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Fuegos a medianoche",
+        "text": "Los fuegos de medianoche son una costumbre de Nochevieja en Granada: el permiso para lanzarlos lo reciben tradicionalmente la Real Policía de Granada y varios hoteles."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Black cake y sorrel",
+        "text": "El black cake con ron y el sorrel no faltan en la mesa festiva granadina: las frutas del pastel se maceran durante semanas, y los acompañan el jamón y la cerveza de jengibre."
+      },
+      {
+        "id": "t3",
+        "iconId": "tree",
+        "title": "Luces en Quarantine Point",
+        "text": "Hasta el primer fin de semana de enero, el parque de Quarantine Point brilla con túneles y arcos de luces, y las familias pasean al son del parang y las steel bands."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Granada: Saint George’s | Time2Fest",
+      "description": "Granada recibe 2027 a medianoche local (04:00 UTC): fuegos sobre el Carenage de Saint George’s, black cake con ron, sorrel y luces en Quarantine Point."
+    },
+    "kit": "gd"
+  },
+  "GY": {
+    "text": "La Old Year’s Night, la Noche del Año Viejo, como llaman en Guyana al 31 de diciembre, huele a cook-up. Arroz con frijoles de ojo negro, varias carnes y leche de coco se cuecen a fuego lento en una olla grande, y por tradición es lo primero que se come en el año nuevo, para tener suerte. A su lado, en la mesa, los platos de toda la temporada festiva: black cake, pepperpot y cerdo al ajo. Antes de la fiesta se limpia la casa y se cuelgan cortinas nuevas, y muchos empiezan la noche en la iglesia antes de ir a una fiesta, a un baile o a casa de amigos.\n\nA medianoche truenan petardos y estallan fuegos artificiales sobre Georgetown y todo el país, aunque la policía advierte contra la pirotecnia antes de la fiesta. Quienes se quedan en casa despiden el año con «Auld Lang Syne» junto a la misma olla de cook-up.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "ladle",
+        "title": "Cook-up para la suerte",
+        "text": "El arroz con frijoles de ojo negro, carne y leche de coco se prepara para la Noche del Año Viejo: por tradición es lo primero que se come en el año nuevo."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Primero misa, luego fiesta",
+        "text": "Muchos guyaneses despiden el año en la iglesia y solo después van a una fiesta, a un baile o con amigos; otros se quedan en casa con una olla de cook-up."
+      },
+      {
+        "id": "t3",
+        "iconId": "door",
+        "title": "Cortinas nuevas para la fiesta",
+        "text": "La temporada festiva va de Nochebuena a Año Nuevo: se limpia la casa, se cuelgan cortinas nuevas y se estrenan colchas."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Guyana: Georgetown | Time2Fest",
+      "description": "Guyana despide el año viejo y recibe 2027 a medianoche local (04:00 UTC): cook-up para la suerte, misa antes de la fiesta, cortinas nuevas y petardos."
+    },
+    "kit": "gy"
+  },
+  "KN": {
+    "text": "San Cristóbal y Nieves recibe el Año Nuevo en pleno carnaval. El carnaval nacional, Sugar Mas, se inaugura a mediados de diciembre y dura hasta los primeros días de enero: cada noche suenan calipso, soca y steelpan, y los masqueraders salen con camisas cosidas de espejitos y cintas y tocados de plumas de pavo real, bailando una mezcla de vals, giga, cuadrilla y ritmos africanos. Entre los payasos avanzan los moko jumbies sobre altos zancos. En la mesa, goat water, un guiso espeso de cabra, fruta del pan y bolas de masa, el plato más conocido del país.\n\nEl primer día del año en Basseterre es del gran desfile: las comparsas disfrazadas recorren el centro de la capital ante los puntos del jurado, que elige la comparsa del año. El 2 de enero es festivo y llega el Last Lap, la última salida de los disfraces, a la que se suman bailando hasta los pasajeros de los cruceros.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "El desfile del 1 de enero",
+        "text": "El día de Año Nuevo las comparsas disfrazadas desfilan por el centro de Basseterre ante los puntos del jurado, que elige la comparsa del año y al rey y la reina de la banda."
+      },
+      {
+        "id": "t2",
+        "iconId": "mask",
+        "title": "Masqueraders y moko jumbies",
+        "text": "Los masqueraders, con tocados de plumas de pavo real, bailan cuadrilla mezclada con giga, y los moko jumbies sobre zancos y los payasos salen a la calle en Navidad y Año Nuevo."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "El Last Lap del 2 de enero",
+        "text": "El 2 de enero, día festivo, el carnaval se despide con un último desfile de disfraces, y hasta los pasajeros de los cruceros se unen a la comitiva en Basseterre."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en San Cristóbal y Nieves: Basseterre",
+      "description": "San Cristóbal y Nieves recibe 2027 a medianoche local (04:00 UTC) en pleno carnaval Sugar Mas: desfile de disfraces el 1 de enero y el Last Lap el día 2."
+    },
+    "kit": "kn"
+  },
+  "LC": {
+    "text": "Antes del Año Nuevo, en Santa Lucía las casas se limpian a fondo para empezar el año en un hogar ordenado. A medianoche el cielo de la isla se llena de fuegos artificiales: aquí son parte habitual de la fiesta, desde lanzamientos pequeños hasta grandes espectáculos. Los grandes se coordinan de antemano con la autoridad de aviación y los bomberos, porque las luces en el cielo pueden molestar a los aviones. Y la fiesta no termina a medianoche: el 1 y el 2 de enero son festivos.\n\nCastries vive el primer día del año al aire libre. La plaza Derek Walcott, junto a la catedral de la Inmaculada Concepción, se convierte en la feria callejera Assou Square: puestos de comida, steelpan, soca y concursos de calipso y de DJ desde la mañana hasta bien entrada la noche. Los niños tienen el bulevar William Peter, sin alcohol, con castillos hinchables y trenecitos, y las parrillas se encienden en las calles vecinas.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Fuegos a medianoche",
+        "text": "A medianoche los fuegos artificiales se elevan sobre la isla, desde lanzamientos pequeños hasta grandes espectáculos autorizados por aviación."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Assou Square en Castries",
+        "text": "El 1 de enero la plaza Derek Walcott se convierte en feria callejera: puestos de comida, steelpan y concursos de calipso y DJ hasta la noche."
+      },
+      {
+        "id": "t3",
+        "iconId": "door",
+        "title": "Casa limpia para el año",
+        "text": "Antes del Año Nuevo la casa se limpia a fondo, para que el nuevo año empiece limpio y en orden."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Santa Lucía: Castries | Time2Fest",
+      "description": "Santa Lucía recibe 2027 a medianoche local (04:00 UTC) con fuegos sobre la isla y pasa el 1 de enero en la feria callejera Assou Square de Castries."
+    },
+    "kit": "lc"
+  },
+  "MF": {
+    "text": "La noche de San Silvestre en San Martín está repleta: decenas de fiestas en restaurantes y clubes de playa de la parte francesa de la isla, menús especiales, DJ y zouk en directo. A medianoche los fuegos artificiales salen directamente de la arena de Baie Orientale y en Anse Marcel empieza un espectáculo pirotécnico; mientras tanto, el puerto restringe el acceso de barcos a esas bahías.\n\nMarigot guarda sus fuegos principales para la primera noche del año. El 1 de enero, desde las cinco de la tarde, el paseo marítimo de la capital se llena de fiesta: juegos para niños, grupos locales y platos de la isla en los lolos. A las 21:00 los fuegos tradicionales estallan sobre la bahía, al pie de la colina del fuerte Louis.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Fuegos desde la playa",
+        "text": "A medianoche los fuegos salen de la misma playa de Baie Orientale y en Anse Marcel empieza un show pirotécnico. En los clubes de playa se recibe el año con DJ."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Cena de San Silvestre",
+        "text": "Restaurantes y clubes de playa preparan menús especiales para la última noche del año. Después de la cena se baila con DJ y zouk en directo."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "1 de enero en el paseo de Marigot",
+        "text": "La tarde del primer día del año el paseo de Marigot tiene conciertos, juegos para niños y lolos con platos locales. A las 21:00 los fuegos tradicionales iluminan la bahía."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en San Martín: Marigot | Time2Fest",
+      "description": "San Martín recibe 2027 a las 04:00 UTC: a medianoche los fuegos salen de la playa de Baie Orientale y el 1 de enero a las 21:00 brillan en la bahía de Marigot."
+    },
+    "kit": "mf"
   }
 }

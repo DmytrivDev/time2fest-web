@@ -6366,5 +6366,201 @@
       "description": "Pays-Bas caribéens : Bonaire fête 2027 à minuit heure locale (04:00 UTC) avec la pagara du jour, le dîner en famille, puis la Maskarada masquée le 1er janvier."
     },
     "kit": "bq"
+  },
+  "CU": {
+    "text": "À minuit, l’eau vole par les fenêtres et les portes jusque dans la rue : les Cubains jettent un seau pour que tout le mauvais accumulé pendant l’année quitte la maison avec lui. Le dîner traditionnel du Nouvel An, c’est le porc rôti des heures à la broche sur la braise ou le bois, avec bière et rhum. Par endroits, on brûle une effigie de la Vieille Année, et qui rêve de voyages fait le tour du pâté de maisons avec une valise sur le coup de minuit. Quand la dernière seconde s’écoule, on s’embrasse et on se souhaite que tous les projets se réalisent.\n\nLa Havane clôt chaque soirée d’un coup de canon : à 21 h, dans la forteresse de La Cabaña qui domine l’entrée de la baie, des soldats en uniformes d’époque tirent au canon, comme autrefois avant la fermeture des portes de la muraille. Les 1er et 2 janvier sont chômés à Cuba ; le jour de l’An est aussi une fête officielle, anniversaire de la révolution de 1959.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "wave",
+        "title": "Le seau d’eau",
+        "text": "Sur le coup de minuit, jette un seau d’eau dans la rue : c’est ainsi que les Cubains chassent de la maison tout le mauvais de l’année."
+      },
+      {
+        "id": "t2",
+        "iconId": "flame",
+        "title": "Le porc à la broche",
+        "text": "Le dîner du Nouvel An commence traditionnellement bien avant la nuit : le porc tourne des heures à la broche sur la braise, avec bière et rhum sur la table."
+      },
+      {
+        "id": "t3",
+        "iconId": "suitcase",
+        "title": "Le tour avec la valise",
+        "text": "Qui rêve de voyages prend une valise à minuit et fait le tour du pâté de maisons, pour que la nouvelle année le mette sur la route."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 à Cuba : La Havane | Time2Fest",
+      "description": "Cuba fête 2027 à minuit heure locale (04:00 UTC) : un seau d’eau jeté par la fenêtre contre la malchance, du porc à la broche et le tour du quartier en valise."
+    },
+    "kit": "cu"
+  },
+  "DM": {
+    "text": "À la Dominique, pas de table du Nouvel An sans sorrel, une boisson rouge vif tirée des calices de la roselle, qui fleurit juste à Noël. Ici, les fêtes sonnent créole. À Noël, on chante encore le bélé, des chants au tambour venus d’Afrique de l’Ouest qu’on entendait jadis les soirs de pleine lune. Et un orchestre de jing ping — accordéon, trompe en bambou boum-boum, racloir et tambourin — fait danser le quadrille. Sitôt le Nouvel An passé, l’île glisse peu à peu vers le rythme du carnaval Mas Domnik.\n\nChaque décembre, Roseau ouvre un Village de Noël en entrée libre : aire de restauration, marché de produits locaux et jeux pour enfants. Le 31 décembre, il réunit petits et grands pour une soirée du Nouvel An avec des DJ.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "La soirée du Village de Noël",
+        "text": "Le soir du 31 décembre, le Village de Noël de Roseau réunit le public pour une soirée du Nouvel An : des DJ jouent, entrée libre pour tous les âges."
+      },
+      {
+        "id": "t2",
+        "iconId": "glass",
+        "title": "Un verre de sorrel rouge",
+        "text": "Pour les fêtes, les Dominiquais préparent le sorrel, une boisson rouge vif à base de calices de roselle. Prépare-le chez toi et lève ton verre à minuit."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Musique live jusqu’au réveillon",
+        "text": "Les derniers soirs de l’année, le Village de Noël de Roseau propose chaque soir concerts de gospel, jazz, groupe live et karaoké."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 à la Dominique : Roseau | Time2Fest",
+      "description": "La Dominique accueille 2027 à minuit heure locale (04:00 UTC) : sorrel rouge à table, musique live et soirée du Nouvel An au Village de Noël de Roseau."
+    },
+    "kit": "dm"
+  },
+  "GD": {
+    "text": "À la Grenade, la saison des fêtes s’étire de Noël aux premiers jours de janvier. Sur la table : le black cake au rhum, dont les fruits macèrent des semaines à l’avance, du jambon, de la bière de gingembre et le sorrel, une boisson cousine du bissap d’Afrique de l’Ouest. Dans les rues claquent des pétards appelés « scratch bombs », même si la police rappelle chaque année qu’ils sont interdits. Jusqu’au premier week-end de janvier, un parc de Quarantine Point s’illumine de tunnels et d’arches lumineuses au son du parang et des steel bands.\n\nLe soir du 31 décembre, le Carenage de Saint-Georges, port en fer à cheval, devient un lieu de fête : on s’y retrouve sur le quai dès le soir, et à minuit le feu d’artifice éclate au-dessus de l’eau, ses lumières reflétées dans la baie.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Feux d’artifice à minuit",
+        "text": "Les feux d’artifice de minuit sont une coutume du 31 décembre à la Grenade : l’autorisation de les tirer revient traditionnellement à la police royale de la Grenade et à plusieurs hôtels."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Black cake et sorrel",
+        "text": "Le black cake au rhum et le sorrel sont incontournables sur la table de fête grenadienne : les fruits du gâteau macèrent des semaines, à côté du jambon et de la bière de gingembre."
+      },
+      {
+        "id": "t3",
+        "iconId": "tree",
+        "title": "Lumières à Quarantine Point",
+        "text": "Jusqu’au premier week-end de janvier, le parc de Quarantine Point brille de tunnels et d’arches lumineuses, et les familles s’y promènent au son du parang et des steel bands."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 à la Grenade : Saint-Georges | Time2Fest",
+      "description": "La Grenade fête 2027 à minuit heure locale (04:00 UTC) : feux d’artifice sur le Carenage de Saint-Georges, black cake au rhum, sorrel et Quarantine Point."
+    },
+    "kit": "gd"
+  },
+  "GY": {
+    "text": "L’Old Year’s Night, la nuit de la Vieille Année, comme on appelle le 31 décembre au Guyana, sent le cook-up. Riz, haricots à œil noir, plusieurs viandes et lait de coco mijotent dans une grande marmite, et la tradition veut que ce soit le premier plat de l’année, pour la chance. À côté, sur la table, les mets de toute la saison des fêtes : black cake, pepperpot et porc à l’ail. Avant la fête, on fait le ménage et on accroche des rideaux neufs, et beaucoup commencent la soirée à l’église avant de rejoindre une fête, un bal ou des amis.\n\nÀ minuit, pétards et feux d’artifice éclatent au-dessus de Georgetown et de tout le pays, même si la police met en garde contre les pétards avant la fête. Ceux qui restent chez eux accompagnent la fin de l’année d’« Auld Lang Syne », près de la même marmite de cook-up.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "ladle",
+        "title": "Le cook-up porte-bonheur",
+        "text": "Riz, haricots à œil noir, viande et lait de coco se préparent pour l’Old Year’s Night : la tradition veut que ce soit le premier plat de l’année."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "L’église, puis la fête",
+        "text": "Beaucoup de Guyaniens accompagnent la fin de l’année à l’église, puis rejoignent une fête, un bal ou des amis ; d’autres restent chez eux avec une marmite de cook-up."
+      },
+      {
+        "id": "t3",
+        "iconId": "door",
+        "title": "Des rideaux neufs",
+        "text": "La saison des fêtes va du réveillon de Noël au jour de l’An : on fait le ménage, on accroche des rideaux neufs et on change les couvre-lits."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 au Guyana : Georgetown | Time2Fest",
+      "description": "Le Guyana accueille 2027 lors de l’Old Year’s Night, à minuit heure locale (04:00 UTC) : cook-up porte-bonheur, église avant la fête et rideaux neufs."
+    },
+    "kit": "gy"
+  },
+  "KN": {
+    "text": "Saint-Christophe-et-Niévès accueille le Nouvel An en plein carnaval. Le carnaval national, Sugar Mas, s’ouvre à la mi-décembre et dure jusqu’aux premiers jours de janvier : chaque soir résonnent calypso, soca et steelpan, et les masqueraders sortent en chemises cousues de petits miroirs et de rubans, coiffés de plumes de paon, dansant un mélange de valse, de gigue, de quadrille et de rythmes africains. Parmi les clowns avancent les moko jumbies, perchés sur de hautes échasses. À table, le goat water, un ragoût épais de chèvre, de fruit à pain et de boulettes, le plat le plus connu du pays.\n\nÀ Basseterre, le premier jour de l’année appartient au grand défilé : les troupes costumées traversent le centre de la capitale devant les points du jury, qui désigne la troupe de l’année. Le 2 janvier est férié : c’est le Last Lap, dernière sortie des costumes, que même les passagers des paquebots suivent en dansant.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "Le défilé du 1er janvier",
+        "text": "Le jour de l’An, les troupes costumées défilent dans le centre de Basseterre devant les points du jury, qui désigne la troupe de l’année ainsi que le roi et la reine de la bande."
+      },
+      {
+        "id": "t2",
+        "iconId": "mask",
+        "title": "Masqueraders et moko jumbies",
+        "text": "Les masqueraders coiffés de plumes de paon dansent un quadrille mêlé de gigue, et les moko jumbies sur échasses et les clowns envahissent les rues à Noël et au Nouvel An."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "Le Last Lap du 2 janvier",
+        "text": "Le 2 janvier, jour férié, le carnaval se clôt par un dernier défilé de costumes, et même les passagers des paquebots rejoignent le cortège à Basseterre."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 à Saint-Christophe-et-Niévès : Basseterre",
+      "description": "Saint-Christophe-et-Niévès fête 2027 à minuit heure locale (04:00 UTC) en plein carnaval Sugar Mas : défilé costumé le 1er janvier et Last Lap le 2."
+    },
+    "kit": "kn"
+  },
+  "LC": {
+    "text": "Avant le Nouvel An, à Sainte-Lucie, on fait le grand ménage pour commencer l’année dans une maison propre. À minuit, le ciel de l’île s’embrase de feux d’artifice : ils font partie de la fête, des petits tirs aux grands spectacles. Les plus grands sont autorisés à l’avance par l’aviation civile et les pompiers, car les lumières dans le ciel peuvent gêner les avions. Et la fête ne s’arrête pas à minuit : le 1er et le 2 janvier sont tous deux fériés.\n\nCastries passe le premier jour de l’année en plein air. La place Derek-Walcott, près de la cathédrale de l’Immaculée-Conception, devient la foire de rue Assou Square : stands de cuisine, steelpan, soca, concours de calypso et de DJ du matin jusqu’au soir. Les enfants ont le boulevard William-Peter, sans alcool, avec châteaux gonflables et petits trains, tandis que les barbecues fument dans les rues voisines.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Feux à minuit",
+        "text": "À minuit, les feux d’artifice montent au-dessus de l’île, des petits tirs aux grands spectacles autorisés par l’aviation civile."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Assou Square à Castries",
+        "text": "Le 1er janvier, la place Derek-Walcott devient une foire de rue : stands de cuisine, steelpan, concours de calypso et de DJ jusqu’au soir."
+      },
+      {
+        "id": "t3",
+        "iconId": "door",
+        "title": "Une maison propre",
+        "text": "Avant le Nouvel An, la maison est nettoyée de fond en comble pour que l’année commence propre et en ordre."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 à Sainte-Lucie : Castries | Time2Fest",
+      "description": "Sainte-Lucie accueille 2027 à minuit heure locale (04:00 UTC) sous les feux d’artifice, puis passe le 1er janvier à la foire Assou Square de Castries."
+    },
+    "kit": "lc"
+  },
+  "MF": {
+    "text": "La nuit de la Saint-Sylvestre, Saint-Martin ne manque pas de rendez-vous : des dizaines de soirées dans les restaurants et les clubs de plage de la partie française de l’île, des menus spéciaux, des DJ et du zouk en live. À minuit, le feu d’artifice part directement du sable de la Baie Orientale et un show pyrotechnique commence à l’Anse Marcel ; pendant ce temps, le port restreint l’accès des bateaux à ces baies.\n\nMarigot garde son grand feu d’artifice pour le premier soir de l’année. Le 1er janvier, dès 17 heures, le front de mer du chef-lieu devient un lieu de fête : jeux pour les enfants, groupes locaux, plats de l’île dans les lolos. À 21 heures, le feu d’artifice traditionnel éclate sur la baie, au pied de la colline du fort Louis.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Feu d’artifice sur la plage",
+        "text": "À minuit, le feu d’artifice part de la plage de la Baie Orientale et un show pyrotechnique démarre à l’Anse Marcel. Dans les clubs de plage, on accueille l’année avec des DJ."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Dîner de la Saint-Sylvestre",
+        "text": "Restaurants et clubs de plage composent des menus spéciaux pour la dernière nuit de l’année. Après le dîner, on danse sur des DJ et du zouk en live."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "1er janvier au front de mer",
+        "text": "Le soir du premier jour de l’année, le front de mer de Marigot accueille concerts, jeux pour enfants et lolos aux plats locaux. À 21 heures, le feu d’artifice traditionnel illumine la baie."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An à Saint-Martin : Marigot | Time2Fest",
+      "description": "Saint-Martin fête 2027 à 04:00 UTC : à minuit, feu d’artifice tiré de la plage de la Baie Orientale, puis le 1er janvier à 21 h, feu sur la baie de Marigot."
+    },
+    "kit": "mf"
   }
 }

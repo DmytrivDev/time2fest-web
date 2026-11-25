@@ -1,0 +1,103 @@
+{
+  "code": "GY",
+  "zone": "UTC-4",
+  "zoneId": "utc-0400",
+  "cityId": "georgetown",
+  "names": {
+    "uk": {
+      "name": "Гаяна",
+      "city": "Джорджтаун",
+      "cityIn": "у Джорджтауні",
+      "countryIn": "у Гаяні",
+      "caps": "ГАЯНА"
+    },
+    "en": {
+      "name": "Guyana",
+      "city": "Georgetown",
+      "cityIn": "in Georgetown",
+      "countryIn": "in Guyana",
+      "caps": "GUYANA"
+    },
+    "es": {
+      "name": "Guyana",
+      "city": "Georgetown",
+      "cityIn": "en Georgetown",
+      "countryIn": "en Guyana",
+      "caps": "GUYANA"
+    },
+    "fr": {
+      "name": "Guyana",
+      "city": "Georgetown",
+      "cityIn": "à Georgetown",
+      "countryIn": "au Guyana",
+      "caps": "GUYANA"
+    }
+  },
+  "picto": "M3 38 H37 M16 38 V16.4 M24 38 V16.4 M14.4 16.4 H25.6 M16.4 16.4 V12.6 M23.6 16.4 V12.6 M20 16.4 V12.6 M14.6 12.6 H25.4 M16.4 12.6 L20 3.6 L23.6 12.6 M20 3.6 V1 H22.2 M20 21 m-2.6 0 a2.6 2.6 0 1 0 5.2 0 a2.6 2.6 0 1 0 -5.2 0 M20 21 V19.4 M20 21 H21.3 M18 38 V33.6 Q20 31 22 33.6 V38 M16 30 L9.5 24.4 L3 30 V38 M24 30 L30.5 24.4 L37 30 V38 M5.4 33 H13.6 M26.4 33 H34.6",
+  "flagColors": [
+    "#009E49",
+    "#FCD116",
+    "#CE1126"
+  ],
+  "palette": 0,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Гаяні"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Guyana"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Guyana"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "au Guyana"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

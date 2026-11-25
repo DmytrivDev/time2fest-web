@@ -6366,5 +6366,201 @@
       "description": "Caribbean Netherlands: Bonaire greets 2027 at local midnight (04:00 UTC) with daytime pagara, family dinners and fireworks, then masked Maskarada on 1 January."
     },
     "kit": "bq"
+  },
+  "CU": {
+    "text": "At midnight water flies out of windows and doors into the street: Cubans toss out a bucketful so that everything bad gathered over the year leaves the house with it. The traditional New Year’s dinner is pork, roasted for hours on a spit over charcoal or wood, with beer and rum alongside. In some places people burn an effigy of the Old Year, and anyone dreaming of travel walks around the block with a suitcase on the stroke of twelve. When the last second passes, people hug and wish each other that all their plans come true.\n\nHavana ends every evening with a cannon shot: at 9 pm in La Cabaña fortress above the harbour entrance, soldiers in period uniforms fire a cannon, just as it once sounded before the gates of the city wall were shut. 1 and 2 January are days off in Cuba; New Year’s Day is also a public holiday marking the anniversary of the 1959 revolution.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "wave",
+        "title": "A bucket out the window",
+        "text": "On the stroke of midnight, toss a bucket of water into the street — that is how Cubans send everything bad from the year out of the house."
+      },
+      {
+        "id": "t2",
+        "iconId": "flame",
+        "title": "Pork on the spit",
+        "text": "The New Year’s dinner traditionally starts long before night: pork turns for hours on a spit over charcoal, with beer and rum on the table."
+      },
+      {
+        "id": "t3",
+        "iconId": "suitcase",
+        "title": "Suitcase round the block",
+        "text": "Those dreaming of travel grab a suitcase at midnight and walk it around the block, so the new year takes them on the road."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Cuba: Havana | Time2Fest",
+      "description": "Cuba greets 2027 at local midnight (04:00 UTC): a bucket of water tossed from the window for luck, pork roasted on a spit and a suitcase walked round the block."
+    },
+    "kit": "cu"
+  },
+  "DM": {
+    "text": "A New Year table in Dominica is not complete without sorrel, a bright red drink brewed from the calyces of roselle, which blooms right at Christmas. The holidays here sound Creole. At Christmas people still sing bélé, drum songs that came from West Africa and were once heard on full-moon evenings. And a jing ping band — accordion, the bamboo boom pipe, a scraper and a tambourine — plays for the quadrille and other dances. As soon as New Year is over, the island gradually shifts into the rhythm of the Mas Domnik carnival.\n\nEvery December Roseau opens a free-entry Christmas Village: a food court, a market of local products and fun for children. On 31 December it gathers people of all ages for a New Year’s Eve party with DJs.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "clock",
+        "title": "The Christmas Village party",
+        "text": "On the evening of 31 December the Roseau Christmas Village gathers people for a New Year’s Eve party: DJs play and entry is free for all ages."
+      },
+      {
+        "id": "t2",
+        "iconId": "glass",
+        "title": "A glass of red sorrel",
+        "text": "For the holidays Dominicans brew sorrel, a bright red drink made from roselle calyces. Make it at home and raise a glass at midnight."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "Live music to the year’s end",
+        "text": "In the last evenings of the year the Roseau Christmas Village hosts gospel concerts, jazz, a live band and karaoke night after night."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Dominica: Roseau | Time2Fest",
+      "description": "Dominica welcomes 2027 at local midnight (04:00 UTC): red sorrel on the table, live music and a New Year’s Eve party at the Christmas Village in Roseau."
+    },
+    "kit": "dm"
+  },
+  "GD": {
+    "text": "In Grenada the festive season runs from Christmas into the first days of January. The table holds black cake made with rum, its fruit soaked for weeks ahead, ham, ginger beer and sorrel, a drink related to West Africa’s bissap. Firecrackers known as “scratch bombs” crackle in the streets, even though the police remind everyone each year that they are illegal. Until the first weekend of January, a park on Quarantine Point glows with tunnels and arches of lights to the sound of parang and steel pan.\n\nOn New Year’s Eve the horseshoe-shaped Carenage in St. George’s becomes a meeting place: celebrations on the waterfront run from the evening, and at midnight fireworks burst over the water, their lights reflected in the harbour.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Fireworks at midnight",
+        "text": "Midnight fireworks are a New Year’s Eve custom in Grenada: permission to launch them traditionally goes to the Royal Grenada Police Force and several hotels."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Black cake and sorrel",
+        "text": "Black cake with rum and sorrel are the must-haves of a Grenadian holiday table: the fruit for the cake is soaked for weeks ahead, served alongside ham and ginger beer."
+      },
+      {
+        "id": "t3",
+        "iconId": "tree",
+        "title": "Lights at Quarantine Point",
+        "text": "Until the first weekend of January, the park on Quarantine Point shines with tunnels and arches of lights, and families stroll there to parang and steel pan."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Grenada: St. George’s | Time2Fest",
+      "description": "Grenada welcomes 2027 at local midnight (04:00 UTC): fireworks over the Carenage in St. George’s, black cake with rum, sorrel and Quarantine Point lights."
+    },
+    "kit": "gd"
+  },
+  "GY": {
+    "text": "Old Year’s Night, as Guyanese call 31 December, smells of cook-up rice. Rice, black-eyed peas, several kinds of meat and coconut milk simmer in a big pot, and by tradition it is the first thing eaten in the new year, for luck. Next to it on the table are the dishes of the whole festive season: black cake, pepperpot and garlic pork. Before the holiday the house is cleaned and new curtains go up, and many start the evening in church before heading on to a party, a ball or friends’ homes.\n\nAt midnight squibs bang and fireworks flash over Georgetown and the rest of the country, even though police warn against firecrackers before the holiday. Those who stay home see the year out to “Auld Lang Syne” beside that same pot of cook-up.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "ladle",
+        "title": "Cook-up rice for luck",
+        "text": "Rice with black-eyed peas, meat and coconut milk is cooked for Old Year’s Night: by tradition it is the first food of the new year."
+      },
+      {
+        "id": "t2",
+        "iconId": "bell",
+        "title": "Church first, then the party",
+        "text": "Many Guyanese see the old year out in church and only then go on to a party, a ball or friends; some stay home with a pot of cook-up."
+      },
+      {
+        "id": "t3",
+        "iconId": "door",
+        "title": "New curtains for the season",
+        "text": "The festive season runs from Christmas Eve to New Year’s Day: homes are cleaned, new curtains go up and beds get fresh spreads."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Guyana: Georgetown | Time2Fest",
+      "description": "Guyana welcomes 2027 on Old Year’s Night at local midnight (04:00 UTC): cook-up rice for luck, church before the party, new curtains and squibs."
+    },
+    "kit": "gy"
+  },
+  "KN": {
+    "text": "Saint Kitts and Nevis welcomes the New Year at the height of carnival. The national carnival, Sugar Mas, opens in mid-December and runs into the first days of January: every evening brings calypso, soca and steelpan, and masqueraders come out in shirts sewn with mirrors and ribbons and headdresses of peacock feathers, dancing a mix of waltz, jig, quadrille and African rhythms. Moko jumbies stride on tall stilts among the clowns. On the table is goat water, a thick stew of goat, breadfruit and dumplings and the country’s best-known dish.\n\nThe first day of the year in Basseterre belongs to the big parade: costumed troupes move through the centre of the capital past the judging points, and the judges name the Troupe of the Year. The second of January is a public holiday and the Last Lap, the final outing of the costumes, which even cruise passengers dance along to.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "music",
+        "title": "The New Year’s Day parade",
+        "text": "On New Year’s Day costumed troupes parade through central Basseterre past the judging points, and the judges pick the Troupe of the Year and the King and Queen of the Band."
+      },
+      {
+        "id": "t2",
+        "iconId": "mask",
+        "title": "Masqueraders and moko jumbies",
+        "text": "Masqueraders in peacock-feather headdresses dance quadrille mixed with jig, while stilt-walking moko jumbies and clowns take to the streets at Christmas and New Year."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "The Last Lap on 2 January",
+        "text": "On 2 January, a public holiday, the carnival closes with a final parade of costumes, and even cruise passengers join the procession in Basseterre."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Saint Kitts and Nevis: Basseterre | Time2Fest",
+      "description": "Saint Kitts and Nevis meets 2027 at local midnight (04:00 UTC) mid-carnival: Sugar Mas masqueraders, a costume parade on 1 January and the Last Lap on the 2nd."
+    },
+    "kit": "kn"
+  },
+  "LC": {
+    "text": "Before the New Year, homes in Saint Lucia get a thorough clean so the year can begin in a tidy house. At midnight the sky over the island bursts with fireworks: they are a familiar part of the celebration here, from small launches to major shows. Big displays are cleared in advance with the aviation authorities and the fire service, since lights in the sky can disturb aircraft. And the party does not stop at midnight: 1 and 2 January are both public holidays.\n\nCastries spends the first day of the year outdoors. Derek Walcott Square, beside the Cathedral of the Immaculate Conception, turns into the Assou Square street fair: food stalls, steelpan, soca, calypso and DJ contests from morning until late evening. Children get William Peter Boulevard, an alcohol-free zone with bouncy castles and train rides, while the barbecue grills fire up on the neighbouring streets.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Fireworks at midnight",
+        "text": "At midnight fireworks rise over the island, from small launches to major shows cleared with the aviation authorities."
+      },
+      {
+        "id": "t2",
+        "iconId": "music",
+        "title": "Assou Square in Castries",
+        "text": "On 1 January Derek Walcott Square becomes a street fair: food stalls, steelpan, calypso and DJ contests until late evening."
+      },
+      {
+        "id": "t3",
+        "iconId": "door",
+        "title": "A clean house for the year",
+        "text": "Before the New Year the house gets a thorough clean, so the new year starts fresh and in order."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Saint Lucia: Castries | Time2Fest",
+      "description": "Saint Lucia greets 2027 at local midnight (04:00 UTC) with fireworks over the island, then spends 1 January at the Assou Square street fair in Castries."
+    },
+    "kit": "lc"
+  },
+  "MF": {
+    "text": "Saint-Sylvestre night in Saint Martin is packed: dozens of parties in restaurants and beach clubs on the French side of the island, festive set menus, DJs and live zouk. At midnight fireworks shoot up straight from the sand at Baie Orientale and a pyrotechnics show begins at Anse Marcel; while they light the sky, the port restricts boat access to these bays.\n\nMarigot keeps its main fireworks for the first evening of the year. On 1 January, from five o’clock, the capital’s waterfront becomes a festival ground: games for children, local bands on stage, island dishes at the lolos. At 9 pm the traditional fireworks burst over the bay below the hill of Fort Louis.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "fireworks",
+        "title": "Midnight fireworks on the beach",
+        "text": "At midnight fireworks go up straight from the beach at Baie Orientale, and a pyrotechnics show starts at Anse Marcel. Beach-club guests greet the year to DJ sets."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Saint-Sylvestre dinner",
+        "text": "Restaurants and beach clubs put together special set menus for the last night of the year. After dinner people dance to DJs and live zouk."
+      },
+      {
+        "id": "t3",
+        "iconId": "music",
+        "title": "1 January on Marigot waterfront",
+        "text": "On the evening of the first day of the year Marigot’s waterfront hosts concerts, a play area for children and lolos serving local dishes. At 9 pm the traditional fireworks light up the bay."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Saint Martin: Marigot | Time2Fest",
+      "description": "Saint Martin greets 2027 at 04:00 UTC: at midnight fireworks rise from the beach at Baie Orientale, and on 1 January at 9 pm Marigot bay gets its own show."
+    },
+    "kit": "mf"
   }
 }
