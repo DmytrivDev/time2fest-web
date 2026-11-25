@@ -117,10 +117,11 @@ describe('device cookie (AC-1)', () => {
     expect(DEVICE_MAX_AGE_S).toBe(400 * 86400);
     expect(line!.toLowerCase()).not.toContain('domain=');
 
-    const second = await main.call('/api/time', { jar });
+    // `/api/time` is not a probe here: it keeps the exact headers of SPEC-01 AC-40 (`noDeviceCookie`).
+    const second = await main.call('/api/auth/get-session', { jar });
     expect(second.headers.getSetCookie().some((l) => l.startsWith('__Host-t2f_device='))).toBe(false);
     // A forged cookie of another shape is ignored and replaced.
-    const forged = await main.call('/api/time', { jar: new CookieJar().set('__Host-t2f_device', 'short') });
+    const forged = await main.call('/api/auth/get-session', { jar: new CookieJar().set('__Host-t2f_device', 'short') });
     expect(forged.headers.getSetCookie().some((l) => /^__Host-t2f_device=[A-Za-z0-9_-]{22};/.test(l))).toBe(true);
   });
 

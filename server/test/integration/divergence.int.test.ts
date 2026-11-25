@@ -6,6 +6,7 @@ import { randomBytes } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
 import { buildDispatcher, createDeps, payloadOf } from '../../src/container';
 import { createDivergenceMeter } from '../../src/timekeeping/divergence';
+import { NON_TEST_GOOGLE } from '../support/nonTestGoogle';
 
 const BASE = 'http://127.0.0.1:3000';
 const SLUG = 'divergence_int_test';
@@ -16,7 +17,7 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 describe('edge divergence (AC-10, AC-12)', () => {
   it('ignores the mark without the edge secret; three 300 ms windows with it give exactly one page row', async () => {
-    const deps = createDeps({ ...process.env, T2F_ENV: 'rehearsal', T2F_TEST_DOORS: '1', T2F_SLUG: SLUG, T2F_EDGE_SECRET: EDGE_SECRET }, { log: silent });
+    const deps = createDeps({ ...process.env, ...NON_TEST_GOOGLE, T2F_ENV: 'rehearsal', T2F_TEST_DOORS: '1', T2F_SLUG: SLUG, T2F_EDGE_SECRET: EDGE_SECRET }, { log: silent });
     let t = 100 * WINDOW;
     const meter = createDivergenceMeter({ real: { now: () => t }, alarm: deps.alarm, log: silent, timers: { every: () => {} } });
     deps.divergence = meter;

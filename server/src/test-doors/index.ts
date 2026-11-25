@@ -51,7 +51,8 @@ export function doorRoutes(
     method: door.method,
     path: door.path,
     ...(door.body ? { body: door.body } : {}),
-    ...(door.edgeProbe ? { edgeProbe: true as const } : {}),
+    // The probe door's Set-Cookie is exact (SPEC-05 AC-35): no SPEC-10 device cookie on it.
+    ...(door.edgeProbe ? { edgeProbe: true as const, noDeviceCookie: true as const } : {}),
     ...(door.subject ? { subject: door.subject } : {}),
     testDoor: true,
     async handler(ctx) {

@@ -244,6 +244,12 @@ export interface RouteRow {
   /** A public route: cacheable at the edge, its `Set-Cookie` stripped (SPEC-05 W15). */
   public?: true;
   /**
+   * A non-public route whose response headers are fixed by an earlier contract: `finalize` does not add the SPEC-10 device
+   * cookie (AC-1). Only `/api/time` (headers of `functions/api/time.ts`, AC-40) and the edge probe door (exact
+   * `Set-Cookie`, SPEC-05 AC-35); neither reads `ctx.device`.
+   */
+  noDeviceCookie?: true;
+  /**
    * The edge probe door (set only by door rows, SPEC-05 W16). Only on a `testDoor` and only with a
    * verified edge secret, `10-origin` accepts a non-loopback `Host` and a non-JSON body.
    */

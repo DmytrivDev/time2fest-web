@@ -48,6 +48,9 @@ const countOf = async (id: string) =>
 
 beforeAll(async () => {
   pool = new pg.Pool({ connectionString: process.env.DATABASE_URI, max: 2 });
+  // The `ops-auth` lease lives 90 min; a process of an earlier file or run that was killed while holding it (the crash
+  // case of the alarm tests) would make this tick `not-held`. This test's process is the only holder it means.
+  await pool.query(`UPDATE scheduler_leases SET expires_at = clock_timestamp() - interval '1 millisecond' WHERE name = 'ops-auth'`);
   h = await buildAuthHarness(redis, (deps) => {
     deps.subjectData = [...subjectDataRegistry, keeper];
   });

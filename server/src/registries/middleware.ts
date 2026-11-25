@@ -22,7 +22,7 @@ import { checkKeyedLimit, checkLimit, type RateLimitRow } from '../platform/rate
 import { assertRegistry } from '../platform/registry';
 import { EDGE_NOW_HEADER, parseEdgeNow } from '../timekeeping/divergence';
 import { idempotencyRegistry } from './idempotency';
-import { rateLimitRegistry } from './rateLimits';
+import { GUEST_CREATE_IP48_ROW, GUEST_CREATE_ROW, rateLimitRegistry } from './rateLimits';
 
 const CLIENT_ID_MAX = 64;
 
@@ -60,9 +60,6 @@ export function rateLimitMiddleware(rows: readonly RateLimitRow[] = rateLimitReg
   };
 }
 
-/** The limit rows of guest creation: per client (`ipDay`) and per IPv6 /48 (IPv4 /24), S10-08. */
-export const GUEST_CREATE_ROW = 'auth-guest-create';
-export const GUEST_CREATE_IP48_ROW = 'auth-guest-create-ip48';
 const USER_AGENT_MAX = 128;
 
 /** The only headers a server-side guest start sends: device cookie, client IP header, user agent. */

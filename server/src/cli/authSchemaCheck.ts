@@ -3,6 +3,7 @@
  * would still have to create and exits 1 listing them (`missing table <t>` / `missing column <t>.<c>`), else 0.
  * Prints names only. DATABASE_URI comes from the environment (`verify-schema.mjs` passes it).
  */
+import { randomBytes } from 'node:crypto';
 import pg from 'pg';
 import { getMigrations } from 'better-auth/db/migration';
 import { authStaticOptions } from '../auth/options';
@@ -22,7 +23,8 @@ async function main(): Promise<number> {
         googleClientId: 'schema-check',
         googleClientSecret: 'schema-check', // check-secrets: allow schema check dummy
       }),
-      secret: 'schema-check-secret-not-real-0123456789abcdef', // check-secrets: allow schema check dummy
+      // A throwaway secret per run: schema work never signs anything, so no literal is needed.
+      secret: randomBytes(32).toString('hex'),
       baseURL: 'http://127.0.0.1:4200',
       database: pool,
     };

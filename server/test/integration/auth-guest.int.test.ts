@@ -8,7 +8,7 @@ import { randomUUID } from 'node:crypto';
 import { decodeJwt } from 'jose';
 import pg from 'pg';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { edgeGateOf } from '../../src/container';
+import { edgeGateOf, payloadOf } from '../../src/container';
 import { createDispatcher } from '../../src/endpoints/pipeline';
 import type { RouteRow } from '../../src/endpoints/types';
 import type { RateLimitRow } from '../../src/platform/rateLimit';
@@ -16,12 +16,15 @@ import { rateLimitMiddleware, subjectMiddleware } from '../../src/registries/mid
 import { rateLimitRegistry } from '../../src/registries/rateLimits';
 import { buildAuthHarness, CookieJar, freshIp, makeCall, SESSION_COOKIE, sessionOf, signIn, writeProbe, type AuthHarness } from '../support/authClient';
 import { testEmail } from '../support/testEmail';
+import { createTinyCatalog, removeTinyCatalog } from './catalog-helpers';
 import { ownRedis } from './helpers';
 
 const redis = ownRedis();
 const started = new Date();
 let pool: pg.Pool;
 let h: AuthHarness;
+/** AC-3 reads `/api/site/state`, which answers 503 without a catalog: an own tiny one, so the file does not depend on order. */
+const run = `auth-guest-${randomUUID().slice(0, 8)}`;
 
 const usersSince = async (): Promise<number> =>
   ((await pool.query('SELECT count(*)::int AS n FROM users WHERE created_at >= $1', [started])).rows[0] as { n: number }).n;
@@ -31,9 +34,11 @@ const probeSubject = async (res: Response): Promise<string | null> => ((await re
 beforeAll(async () => {
   pool = new pg.Pool({ connectionString: process.env.DATABASE_URI, max: 2 });
   h = await buildAuthHarness(redis);
+  await createTinyCatalog(await payloadOf(h.deps)(), run);
 });
 
 afterAll(async () => {
+  if (h) await removeTinyCatalog(await payloadOf(h.deps)(), run);
   await pool.query('DELETE FROM users WHERE created_at >= $1', [started]);
   await pool.end();
   await redis.deleteByPrefix('rl:auth-guest-create:');

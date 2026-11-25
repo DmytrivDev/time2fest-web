@@ -28,6 +28,7 @@ import { importRegistry } from '../../src/registries/imports';
 import { readSnapshot } from '../../src/site/snapshot';
 import { createTinyCatalog, removeTinyCatalog, type TinyCatalog } from './catalog-helpers';
 import { BASE, silent, testDeps } from './helpers';
+import { NON_TEST_GOOGLE } from '../support/nonTestGoogle';
 
 const run = `sr${Date.now()}`;
 const MIN = 60_000;
@@ -119,7 +120,7 @@ describe('GET /api/site/state', { timeout: 120_000 }, () => {
   });
 
   it('AC-18: rehearsal class → the empty products port, no fake, products: [] through its own dispatcher', async () => {
-    const rehearsal = createDeps({ ...process.env, T2F_ENV: 'rehearsal', T2F_EDGE_SECRET: EDGE_SECRET }, { log: silent });
+    const rehearsal = createDeps({ ...process.env, ...NON_TEST_GOOGLE, T2F_ENV: 'rehearsal', T2F_EDGE_SECRET: EDGE_SECRET }, { log: silent });
     const site = siteOf(rehearsal);
     expect(site.testProducts).toBeUndefined();
     expect(site.resetForTests).toBeUndefined();

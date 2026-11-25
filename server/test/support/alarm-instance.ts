@@ -14,6 +14,12 @@ import { createInterface } from 'node:readline';
 import { getDeps, payloadOf } from '../../src/container';
 
 const tag = process.argv[2] ?? 'instance';
+/**
+ * Only the alarm-path jobs. The later jobs take their own long leases (`ops-auth` 90 min, `ops-mail`, `ops-backup`,
+ * `ops-spend`); an instance SIGKILLed as the crash case would leave them held for the rest of the int run, and the
+ * next file that ticks e.g. `auth-guest-prune` would get `not-held`.
+ */
+const ALARM_JOBS = ['heartbeat', 'digest', 'log-prune', 'sender'] as const;
 const print = (line: string) => process.stdout.write(`${line}\n`);
 
 async function main(): Promise<void> {
@@ -29,7 +35,7 @@ async function main(): Promise<void> {
   const timer = setInterval(() => {
     if (running) return;
     running = true;
-    void runner.tick(Date.now() + offset).finally(() => {
+    void runner.tick(Date.now() + offset, ALARM_JOBS).finally(() => {
       running = false;
     });
   }, 250);

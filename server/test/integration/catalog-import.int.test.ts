@@ -16,6 +16,7 @@ import { importRegistry } from '../../src/registries/imports';
 import { IMPORT_CONTEXT, KINDS } from './catalog-helpers';
 import { testDeps } from './helpers';
 import { listKeys, r2Env } from './r2-helpers';
+import { NON_TEST_GOOGLE } from '../support/nonTestGoogle';
 
 const serverDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const dataDir = path.join(serverDir, '../data');
@@ -165,6 +166,7 @@ describe('import catalog', { timeout: 300_000 }, () => {
     const env: NodeJS.ProcessEnv = {
       ...local,
       ...process.env,
+      ...NON_TEST_GOOGLE,
       T2F_ENV: 'rehearsal',
       T2F_ADMIN_HOST: 'admin.example.com',
       T2F_ACCESS_TEAM_DOMAIN: 'https://t2f.example.com',

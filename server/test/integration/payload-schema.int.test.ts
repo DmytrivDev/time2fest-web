@@ -46,11 +46,20 @@ describe('payload schema', () => {
     dbTool(['migcheck', 'drop']);
   });
 
-  it('AC-58: admins and idempotency_records exist, users does not', async () => {
+  it('AC-58: admins and idempotency_records exist; no Payload users collection', async () => {
     const t = await tables(testUri);
     expect(t).toContain('admins');
     expect(t).toContain('idempotency_records');
-    expect(t).not.toContain('users');
+    // SPEC-10 [П-4]/[А1] (AC-57): `users` is now Better Auth's own table (migration *_spec10_auth), never a Payload
+    // collection: it has Better Auth's columns and none of Payload's auth columns, and no Payload relation points at it.
+    const cols = (await query(testUri, "SELECT column_name FROM information_schema.columns WHERE table_schema='public' AND table_name='users'")).map(
+      (r) => String(r.column_name),
+    );
+    expect(cols).toEqual(expect.arrayContaining(['email_verified', 'is_anonymous', 'device_id']));
+    expect(cols).not.toEqual(expect.arrayContaining(['hash']));
+    expect(cols).not.toEqual(expect.arrayContaining(['salt']));
+    const rels = await query(testUri, "SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name LIKE 'payload_%' AND column_name='users_id'");
+    expect(rels).toEqual([]);
   });
 
   it('SPEC-07 NFR-2: lease, runs, run records and clock state tables exist with their unique indexes', async () => {

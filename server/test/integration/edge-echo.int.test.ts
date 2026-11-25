@@ -6,6 +6,7 @@ import { createHash, randomBytes } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
 import { buildDispatcher } from '../../src/container';
 import { BASE, testDeps } from './helpers';
+import { NON_TEST_GOOGLE } from '../support/nonTestGoogle';
 
 // Built at runtime: the gate of the `test` class is active once a secret is set (AC-16).
 const EDGE_SECRET = randomBytes(24).toString('hex');
@@ -144,7 +145,7 @@ describe('echo door (SPEC-05)', () => {
   });
 
   it('AC-36: rehearsal with the valid secret, and test without doors → both methods answer like /api/nope', async () => {
-    const rehearsal = await buildDispatcher(testDeps({}, { T2F_ENV: 'rehearsal', T2F_EDGE_SECRET: EDGE_SECRET }));
+    const rehearsal = await buildDispatcher(testDeps({}, { T2F_ENV: 'rehearsal', ...NON_TEST_GOOGLE, T2F_EDGE_SECRET: EDGE_SECRET }));
     const noDoors = await buildDispatcher(testDeps({}, { T2F_TEST_DOORS: undefined, T2F_EDGE_SECRET: undefined }));
     const cases: [string, Dispatch, (url: string, init?: RequestInit) => Request][] = [
       ['rehearsal', rehearsal, viaEdge],
