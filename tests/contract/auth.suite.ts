@@ -70,8 +70,10 @@ export function describeDomain(name: string, makeService: () => AuthService, ctx
       const first = await svc.verifyCode(email, wrong);
       expect(first).toEqual({ ok: false, error: { code: 'validation', reason: 'wrong-code', attemptsLeft: 4 } });
       if (!first.ok) expect(authCodeError(first.error)).toBe('wrong-code');
-      let burnt = first;
-      for (let i = 0; i < 5 && !(!burnt.ok && burnt.error.reason === 'too-many-attempts'); i++) burnt = await svc.verifyCode(email, wrong);
+      for (const left of [3, 2, 1]) {
+        expect(await svc.verifyCode(email, wrong)).toEqual({ ok: false, error: { code: 'validation', reason: 'wrong-code', attemptsLeft: left } });
+      }
+      const burnt = await svc.verifyCode(email, wrong);
       expect(!burnt.ok && authCodeError(burnt.error)).toBe('too-many-attempts');
       expect(!burnt.ok && burnt.error.code).toBe('rate_limited');
     });
