@@ -9,6 +9,7 @@ import type { AuthWiring } from '../auth/instance';
 import type { CatalogStore } from '../catalog/ports';
 import type { CorrectionDeps } from '../corrections/service';
 import type { ReadinessProbe } from '../health/ports';
+import type { MailService } from '../mail/ports';
 import type { ChannelPublisher, SubjectInvalidator } from '../realtime/ports';
 import type { SubjectResolver } from '../realtime/ports';
 import type { UnattendedDeps } from '../unattended/service';
@@ -49,3 +50,5 @@ export const siteOf = (deps: Deps): SiteWiring => built(deps.site, 'site');
 export const liveOf = (deps: Deps): LiveWiring => built(deps.live, 'live');
 /** Sign-in (SPEC-10): the lazy Better Auth instance and its session rules. */
 export const authOf = (deps: Deps): AuthWiring => built(deps.auth, 'auth');
+/** Mail (SPEC-10): primary SMTP with the fallback, day counters and alarms; absent without `SMTP_HOST`. */
+export const mailOf = (deps: Deps): MailService => built(deps.mail, 'mail');

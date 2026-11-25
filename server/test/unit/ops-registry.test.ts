@@ -59,10 +59,16 @@ const SPEC_TABLE: [domain: string, source: string, code: string, level: OpsAlarm
   ['spend', 'spend', 'cloudflare-50', 'log'],
   ['spend', 'spend', 'mail-50', 'log'],
   ['edge', 'edge', 'origin-down', 'page'],
+  // SPEC-10 AC-46
+  ['mail', 'mail', 'mail/daily-70', 'page'],
+  ['mail', 'mail', 'mail/ceiling-80', 'page'],
+  ['mail', 'mail', 'mail/provider-failover', 'page'],
+  ['mail', 'mail', 'mail/all-providers-down', 'page'],
+  ['mail', 'mail', 'mail/plan-free', 'page'],
 ];
 
-const DOMAINS = ['clock', 'scheduler', 'catalog', 'site', 'live', 'moderation', 'ops', 'telegram', 'spend', 'platform'];
-const RESERVED = ['edge', 'payments', 'chat', 'presence', 'mail', 'toasts'];
+const DOMAINS = ['clock', 'scheduler', 'catalog', 'site', 'live', 'moderation', 'ops', 'telegram', 'spend', 'platform', 'mail'];
+const RESERVED = ['edge', 'payments', 'chat', 'presence', 'toasts'];
 
 const alarm = { source: 'x', code: 'y', level: 'log' as const, meaning: 'Щось сталося.', action: 'Зробити щось.', detailKeys: ['a'] };
 const row = (domain: string, over: Partial<OpsDomainRow> = {}): OpsDomainRow => ({ domain, title: 'Т', ownerWave: 'SPEC-00', alarms: [], metrics: [], ...over });

@@ -11,6 +11,7 @@ import type { ApiError } from '@time2fest/contracts';
 import type { ZodType } from 'zod';
 import type { AlarmService } from '../alarms/service';
 import type { AuthWiring } from '../auth/instance';
+import type { MailService } from '../mail/ports';
 import type { AlarmStore } from '../alarms/ports';
 import type { CatalogCopyDeps } from '../catalog/copy';
 import type { CatalogStore } from '../catalog/ports';
@@ -191,6 +192,8 @@ export interface Deps {
   backupTuning?: { dump?: DumpRunner; partBytes?: number };
   /** Sign-in (SPEC-10): the Better Auth instance (lazy) and its session rules; read through `authOf`. */
   auth?: AuthWiring;
+  /** Mail (SPEC-10 W20): one service over the primary and the fallback SMTP; read through `mailOf`. */
+  mail?: MailService;
 }
 
 export interface Ctx {

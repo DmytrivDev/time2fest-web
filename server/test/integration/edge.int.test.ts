@@ -64,7 +64,9 @@ type ProbeBody = { value: { country: string; ipDay: string } & Record<string, un
 
 describe('edge origin check and client (real Redis)', () => {
   const classes: [string, Record<string, string>][] = [
-    ['AC-15 rehearsal', { T2F_ENV: 'rehearsal', T2F_EDGE_SECRET: SECRET }],
+    // Outside `test` the discovery URL must be https (SPEC-10 AC-47): override the local http fake from `.env.local`.
+    // Never fetched here (Better Auth is built lazily); `.invalid` cannot resolve.
+    ['AC-15 rehearsal', { T2F_ENV: 'rehearsal', T2F_EDGE_SECRET: SECRET, T2F_GOOGLE_DISCOVERY_URL: 'https://oidc.invalid/.well-known/openid-configuration' }],
     ['AC-16 test with a secret', { T2F_EDGE_SECRET: SECRET }],
   ];
   for (const [label, env] of classes) {

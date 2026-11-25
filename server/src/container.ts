@@ -19,6 +19,9 @@ import { createCentrifugoApi } from './adapters/centrifugoApi';
 import { createHs256Signer } from './adapters/centrifugoToken';
 import { noSessionSubjects } from './adapters/noSessionSubjects';
 import { createAuthWiring } from './auth/instance';
+import { createSmtpTransport } from './adapters/smtpMail';
+import type { MailService } from './mail/ports';
+import { createMailService, MAIL_FALLBACK, MAIL_PRIMARY } from './mail/service';
 import { createIdentityMarker } from './adapters/identityMarker';
 import { createPayloadCatalogMeta, createPayloadCatalogStore } from './adapters/payloadCatalog';
 import { createReadinessProbe } from './adapters/readiness';
@@ -86,7 +89,7 @@ import { createR2Meter, r2PrefixOf } from './ops/meter';
 import type { SpendJob } from './ops/spend';
 import { createOpsRunner, startOpsTicker, type OpsRunner, type OpsWiring } from './ops/runner';
 import { buildBackupDeps, buildSpendJob, createOpsWiring, opsRunnerDepsOf } from './opsWiring';
-import type { Alarm, LockState, SeedStore } from './ports';
+import type { Alarm, FastStore, LockState, Logger, SeedStore } from './ports';
 import { envRegistry } from './registries/env';
 import { channelClassesFor } from './registries/channels';
 import { middlewareRegistry } from './registries/middleware';
@@ -208,6 +211,44 @@ export function spendJobOf(deps: Deps, ops: OpsWiring, payload: () => Promise<Pa
 }
 
 /** Builds the dependencies from a raw environment. Throws, naming variables only, when it is invalid. */
+/**
+ * The mail service (SPEC-10 W20) over the primary SMTP (`SMTP_HOST`/`SMTP_PORT`, Resend) and the optional
+ * fallback (`SMTP_FALLBACK_*`, Cloudflare Email); wall clock; `undefined` without `SMTP_HOST`.
+ */
+function mailServiceFor(env: AppEnv, store: FastStore, alarm: Alarm, log: Logger): MailService | undefined {
+  const v = env.vars;
+  const host = typeof v.SMTP_HOST === 'string' && v.SMTP_HOST.trim() !== '' ? v.SMTP_HOST : undefined;
+  if (host === undefined) return undefined;
+  const str = (x: unknown) => (typeof x === 'string' && x !== '' ? x : undefined);
+  const primary = createSmtpTransport({
+    provider: MAIL_PRIMARY,
+    host,
+    port: Number(v.SMTP_PORT ?? 587),
+    ...(str(v.SMTP_USER) !== undefined ? { user: str(v.SMTP_USER), password: str(v.SMTP_PASSWORD) } : {}),
+    log,
+  });
+  const fbHost = str(v.SMTP_FALLBACK_HOST);
+  const fallback =
+    fbHost !== undefined
+      ? createSmtpTransport({
+          provider: MAIL_FALLBACK,
+          host: fbHost,
+          port: Number(v.SMTP_FALLBACK_PORT ?? 587),
+          ...(str(v.SMTP_FALLBACK_USER) !== undefined ? { user: str(v.SMTP_FALLBACK_USER), password: str(v.SMTP_FALLBACK_PASSWORD) } : {}),
+          log,
+        })
+      : undefined;
+  return createMailService({
+    primary,
+    ...(fallback ? { fallback } : {}),
+    store,
+    alarm,
+    clock: realClock,
+    ceilings: { primary: Number(v.T2F_MAIL_DAILY_CEILING ?? 100), fallback: Number(v.SMTP_FALLBACK_DAILY_CEILING ?? 100) },
+    log,
+  });
+}
+
 export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   const loaded = loadEnv(raw, envRegistry);
   if (!loaded.ok) throw new Error(`env: invalid ${loaded.failing.join(', ')}`);
@@ -301,6 +342,9 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   deps.subjects = overrides.subjects ?? noSessionSubjects;
   // Sign-in (SPEC-10): the Better Auth instance is built on first use (no connection, no timer here).
   deps.auth = overrides.auth ?? createAuthWiring({ env, redis: deps.redis });
+  // Mail (SPEC-10 W20): pooled SMTP transports, no connection until the first send; absent without SMTP_HOST.
+  const mail = overrides.mail ?? mailServiceFor(env, deps.redis, alarm, log);
+  if (mail) deps.mail = mail;
   // Text moderation and AI (SPEC-09): built here, timers started only by `startProcessBackground`.
   deps.moderation = overrides.moderation ?? createModeration(env, payload, { clock, alarm, log });
   const tokenSecret = realtime.config.tokenSecret;
