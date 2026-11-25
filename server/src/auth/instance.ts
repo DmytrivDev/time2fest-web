@@ -8,7 +8,7 @@
  * - IP: only `x-t2f-ip`, set by `forward.ts` from the edge fingerprint (S4: fd00::/8 + 120 bits of sha256, so the
  *   whole /128 is the key). Sessions store no IP and a user-agent of ≤128 characters (NFR-5).
  * - Origin check stays on (never `disableOriginCheck` / `disableCSRFCheck`); `trustedOrigins` = `T2F_ALLOWED_ORIGINS`.
- * - Google only when the discovery URL, client id and client secret are all set.
+ * - Google only when the discovery URL, client id and client secret are all set; linking and return paths: `google.ts`.
  * - A guest (anonymous user) stores the device id it was created on (AC-4); a guest's sign-in runs the merge
  *   (`merge.ts`, AC-23); session create/delete publish the `session` event (`events.ts`, AC-29).
  * Secrets are never logged.
@@ -21,8 +21,9 @@ import { sessionExpiresAt } from '../domain/auth/sessionExpiry';
 import type { AppEnv } from '../endpoints/types';
 import { DEVICE_COOKIE, isDeviceId, readCookie } from '../platform/device';
 import type { FastStore } from '../ports';
-import { CODE_REQUEST_PATH, CODE_VERIFY_PATH, markUserCreated, sendSignInCode } from './codeFlow';
+import { CODE_REQUEST_PATH, CODE_VERIFY_PATH, markUserCreated, sendSignInCode, substituteSender } from './codeFlow';
 import { onSessionCreated, onSessionDeleted } from './events';
+import { GOOGLE_ACCOUNT_LINKING, GOOGLE_SIGN_IN_PATH } from './google';
 import { linkGuest, type LinkAccountData } from './merge';
 import { authStaticOptions, type AuthStaticInput } from './options';
 
@@ -47,7 +48,8 @@ export interface AuthInput {
 /**
  * Better Auth's built-in limiter stays only as a safety net under our code limits ([А4], W22/W23): its defaults
  * (`/sign-in/*` 3 per 10 s, email-otp 3 per 60 s per address) would refuse before ours on a shared address, so the two
- * code paths get 20 per 60 s.
+ * code paths get 20 per 60 s. The Google start (`/sign-in/social`, W33) gets the same: it only writes a state row, and
+ * 3 per 10 s per address would refuse people behind one address.
  */
 const CODE_PATH_SAFETY_NET = { window: 60, max: 20 };
 /*
@@ -95,7 +97,7 @@ function buildAuth(input: AuthInput) {
   };
   const googleOn = google.discoveryUrl !== undefined && google.clientId !== undefined && google.clientSecret !== undefined;
   const statics = authStaticOptions({
-    sendOtp: input.sendOtp ?? sendSignInCode,
+    sendOtp: input.sendOtp ? substituteSender(input.sendOtp) : sendSignInCode,
     googleDiscoveryUrl: google.discoveryUrl ?? 'http://127.0.0.1:9/unused',
     googleClientId: google.clientId ?? 'unused',
     googleClientSecret: google.clientSecret ?? 'unused',
@@ -114,6 +116,8 @@ function buildAuth(input: AuthInput) {
     baseURL: authBaseUrl(env),
     secret,
     trustedOrigins: allowedOrigins(env),
+    // Google links to an existing account only with `email_verified=true` ([А12], W33).
+    account: { ...statics.account, accountLinking: GOOGLE_ACCOUNT_LINKING },
     session: {
       ...statics.session,
       expiresIn: SESSION_EXPIRES_IN_S,
@@ -132,6 +136,7 @@ function buildAuth(input: AuthInput) {
       customRules: {
         [CODE_REQUEST_PATH]: CODE_PATH_SAFETY_NET,
         [CODE_VERIFY_PATH]: CODE_PATH_SAFETY_NET,
+        [GOOGLE_SIGN_IN_PATH]: CODE_PATH_SAFETY_NET,
       },
       customStorage: {
         // One atomic counter per key and window (FastStore `incrWindow`); the key holds the hashed address only.

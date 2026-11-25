@@ -38,7 +38,10 @@ export const CODE_ATTEMPTS = 5;
 
 interface CodeRequestState {
   deps: Deps;
-  /** Set by `sendSignInCode`; absent when a substitute sender (tests) delivered the code. */
+  /**
+   * Set by `sendSignInCode` (or `substituteSender`). Absent = the sender never finished: Better Auth's
+   * `runInBackgroundOrAwait` swallows a throw of the callback and still answers 200, so absence means «not delivered».
+   */
   mail?: MailSendResult;
   /** Set by the `user.create.after` hook during a verify. */
   userCreated?: boolean;
@@ -68,6 +71,15 @@ export async function sendSignInCode({ email, otp, type }: { email: string; otp:
     // No mail service (no SMTP_HOST) or an unexpected throw: nothing was delivered.
     state.mail = { ok: false, reason: 'unavailable' };
   }
+}
+
+/** Wraps a substitute sender (tests): its return marks the code as delivered for the request in flight. */
+export function substituteSender(send: (args: { email: string; otp: string; type: string }) => Promise<void>) {
+  return async (args: { email: string; otp: string; type: string }): Promise<void> => {
+    await send(args);
+    const state = requestState.getStore();
+    if (state !== undefined) state.mail = { ok: true, provider: 'substitute' };
+  };
 }
 
 /** The `user.create.after` hook: marks the current verify request as a sign-up (`SignInOutcome.isNew`). */
@@ -137,9 +149,11 @@ export async function requestCode(ctx: Ctx, wiring: AuthWiring, body: string | u
     return unknownError(ctx, res.status);
   }
 
-  if (state.mail?.ok === false) {
+  // No outcome = the sender threw (swallowed by Better Auth): treated as both providers down (AC-40, [А8]).
+  const mail: MailSendResult = state.mail ?? { ok: false, reason: 'unavailable' };
+  if (!mail.ok) {
     await deleteCode(wiring, email);
-    if (state.mail.reason === 'unavailable') {
+    if (mail.reason === 'unavailable') {
       await releaseCode(stores, keys);
       ctx.log.warn({ event: 'auth-code', outcome: 'unavailable', key: keys.email.slice(0, 8) });
       return failure('unavailable');
@@ -152,7 +166,7 @@ export async function requestCode(ctx: Ctx, wiring: AuthWiring, body: string | u
     // The mail went out; the limits are best effort from here (the gap key already holds the 30 s).
     ctx.log.warn({ event: 'auth-code', outcome: 'not-counted', key: keys.email.slice(0, 8) });
   }
-  if (state.mail?.ok === false) return badEmail();
+  if (!mail.ok) return badEmail();
   return {
     ok: true,
     value: {

@@ -11,6 +11,7 @@
  * - JSON success → `{ ok: true, value }` without `token` / `session.token` (spike S6, AC-14, [А13]);
  * - `get-session` → the contracts `Session` with neutral pass fields (AC-35); no cookie → no Better Auth call (AC-3);
  * - the code request / verify paths go through `codeFlow.ts` (validation, our limits, mail, reasons; W23, W24);
+ * - `sign-in/social` and the Google callback's redirect go through `google.ts` (own body, return path, errors; W33);
  * - any other Better Auth error → `ApiError` by status (its limiter's 429 → `rate_limited/too-many`);
  * - the session cookie's `Max-Age` / `Expires` follow `sessionExpiresAt` (AC-26).
  * Emails, codes and tokens are never logged.
@@ -23,6 +24,7 @@ import { failure, newLogId, readBodyBytes } from '../endpoints/pipeline';
 import type { Ctx, Outcome } from '../endpoints/types';
 import { DEVICE_COOKIE } from '../platform/device';
 import { CODE_REQUEST_PATH, CODE_VERIFY_PATH, requestCode, verifyCode, type AuthCall } from './codeFlow';
+import { GOOGLE_CALLBACK_PATH, GOOGLE_SIGN_IN_PATH, googleCallbackLocation, startGoogle } from './google';
 import { AUTH_BASE_PATH, AUTH_IP_HEADER, authBaseUrl, type AuthInstance, type AuthWiring } from './instance';
 
 /** Body limit of every `/api/auth/*` row. */
@@ -149,6 +151,9 @@ async function fromAuthResponse(ctx: Ctx, res: Response, wiring: AuthWiring): Pr
   if (res.status >= 300 && res.status < 400) {
     const headers = new Headers(res.headers);
     headers.delete('set-cookie');
+    if (ctx.url.pathname === `${AUTH_BASE_PATH}${GOOGLE_CALLBACK_PATH}`) {
+      headers.set('location', googleCallbackLocation(res.headers.get('location'), authBaseUrl(ctx.env), AUTH_BASE_PATH));
+    }
     for (const line of cookies.getSetCookie()) headers.append('set-cookie', line);
     return new Response(null, { status: res.status, headers });
   }
@@ -234,6 +239,18 @@ export async function forwardToAuth(ctx: Ctx): Promise<Outcome> {
       },
     };
     return path === CODE_REQUEST_PATH ? requestCode(ctx, wiring, body, call) : verifyCode(ctx, wiring, body, call);
+  }
+  if (ctx.req.method === 'POST' && path === GOOGLE_SIGN_IN_PATH) {
+    headers.set('content-type', 'application/json');
+    return startGoogle(body, {
+      send: (json) => auth.handler(new Request(url, { method: 'POST', headers, body: json })),
+      respond: async (res, value) => {
+        const cookies = new Headers();
+        clampSessionCookies(res.headers, cookies, await sessionCookieName(auth), wiring);
+        return envelope(value, 200, cookies);
+      },
+      fail: (res) => mapError(ctx, res),
+    });
   }
   const res = await auth.handler(new Request(url, { method: ctx.req.method, headers, ...(body !== undefined && body !== '' ? { body } : {}) }));
   return fromAuthResponse(ctx, res, wiring);

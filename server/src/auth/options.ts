@@ -94,6 +94,8 @@ export function authStaticOptions(input: AuthStaticInput) {
             clientSecret: input.googleClientSecret,
             scopes: ['openid', 'email', 'profile'],
             pkce: true,
+            // Runtime only (SPEC-10 W33): the id_token must verify against the discovered JWKS and issuer.
+            requireIdTokenVerification: true,
           },
         ],
       }),

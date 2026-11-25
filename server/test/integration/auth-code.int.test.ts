@@ -280,6 +280,26 @@ describe('mail outcomes and Redis (AC-38, AC-40, NFR-4)', () => {
     expect((await request(email)).res.status).toBe(200);
   });
 
+  it('AC-40: a sender that throws (Better Auth swallows it and answers 200) → unavailable, not counted', async () => {
+    clock.now = Date.now();
+    const deps = testDeps({ redis }, { T2F_EDGE_SECRET: SECRET });
+    deps.auth = createAuthWiring({
+      env: deps.env,
+      redis,
+      now: () => clock.now,
+      sendOtp: async () => {
+        throw new Error('delivery failed');
+      },
+    });
+    const throwing = await buildDispatcher(deps);
+    const email = testEmail('throws');
+    for (let i = 0; i < 6; i += 1) {
+      expect(errorOf((await request(email, undefined, throwing)).body)).toEqual({ code: 'unavailable' });
+    }
+    expect(await codeRow(email)).toBeUndefined();
+    expect((await request(email)).res.status).toBe(200);
+  });
+
   it('AC-38: the recipient refused → validation/email, no code row', async () => {
     clock.now = Date.now();
     const refused = await build({ mail: stub('recipient') });
