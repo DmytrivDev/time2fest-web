@@ -88,9 +88,14 @@ export const bytesToGb = (bytes: number): number => bytes / BYTES_PER_GB;
 /** Години нічного розміру в доларах: `hours × usdPerHour`. */
 export const extraServerUsd = (hours: number, usdPerHour: number): number => hours * usdPerHour;
 
-/** Рядок пошти до SPEC-17 (AC-65). */
-export function mailRow(): { state: 'no-provider' } {
-  return { state: 'no-provider' };
+/**
+ * Рядок пошти (SPEC-10 AC-46): лічильник доби UTC основного постачальника проти його стелі; без поштового сервісу
+ * (немає `SMTP_HOST`) — «немає провайдера».
+ */
+export type MailRow = { state: 'counted'; sentToday: number; ceiling: number } | { state: 'no-provider' };
+
+export function mailRow(counts: { sentToday: number; ceiling: number } | null): MailRow {
+  return counts ? { state: 'counted', ...counts } : { state: 'no-provider' };
 }
 
 export { MS_PER_HOUR };

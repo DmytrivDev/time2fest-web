@@ -1,7 +1,7 @@
 /**
  * Реєстр витрат платних служб (SPEC-13b AC-60 … AC-65, [А18]): рядок на службу, відсортований за `key`.
  * Пороги 50 % (`log`) і 80 % (`page`) — раз на період на весь кластер; рядок `ai` лише показує витрати
- * SPEC-09 і не дублює його тривог (В2), `youtube` — квоту SPEC-12, `mail` — «немає провайдера» (AC-65).
+ * SPEC-09 і не дублює його тривог (В2), `youtube` — квоту SPEC-12, `mail` — лічильник листів за добу UTC (SPEC-10 AC-46; свої тривоги `mail/*` піднімає поштовий сервіс).
  * Лише дані.
  */
 import { assertRegistry } from '../platform/registry';
@@ -20,7 +20,7 @@ export interface SpendRow {
    * Де стеля: поле глобалу `ops-settings` (AC-66) або налаштування хвилі-власника
    * (`moderation-settings` SPEC-09, конфіг ефіру SPEC-12).
    */
-  ceiling: { from: 'live-config' | 'moderation-settings' | 'ops-settings'; keys: readonly string[] };
+  ceiling: { from: 'env' | 'live-config' | 'moderation-settings' | 'ops-settings'; keys: readonly string[] };
   /** Звідки число — українською (показується в моніторингу). */
   source: string;
   /** Чи піднімає ця хвиля тривоги 50 % / 80 % (`spend/<key>-50|80`). */
@@ -55,12 +55,12 @@ export const spendRegistry: readonly SpendRow[] = [
   {
     key: 'mail',
     title: 'Листи',
-    unit: 'usd',
-    period: 'month',
-    ceiling: { from: 'ops-settings', keys: ['mailCeilingUsd'] },
-    source: 'Немає провайдера (лічильник додасть SPEC-17).',
-    alarms: true,
-    ownerWave: 'SPEC-17',
+    unit: 'units',
+    period: 'day',
+    ceiling: { from: 'env', keys: ['T2F_MAIL_DAILY_CEILING'] },
+    source: 'Лічильник листів за добу UTC основного постачальника; без поштового сервісу — немає провайдера.',
+    alarms: false,
+    ownerWave: 'SPEC-10',
   },
   {
     key: 'server',

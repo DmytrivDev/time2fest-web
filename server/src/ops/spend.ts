@@ -2,12 +2,12 @@
  * Лічильники витрат платних служб (SPEC-13b AC-60 … AC-65, W29), ring 3 — лише порти, годинник стінний.
  *
  * Рядки реєстру `registries/spend.ts`: `ai` читає наявний `ai_spend` SPEC-09 (його тривоги — його), `youtube` —
- * квоту SPEC-12, `server` і `cloudflare` рахуються з лічильників і `ops-settings`, `mail` — «немає провайдера».
+ * квоту SPEC-12, `server` і `cloudflare` рахуються з лічильників і `ops-settings`, `mail` — лічильник листів за добу UTC (SPEC-10 AC-46).
  * Раз на хвилину кожен процес скидає свою дельту лічильника R2 у `cloudflare:<yyyy-mm>`; оцінку й пороги
  * 50 % (`log`) / 80 % (`page`) рахує той, хто взяв оренду `ops-spend`, і лише той, хто виграв `claimLevel`,
  * піднімає тривогу `spend/<рядок>-50|80` — раз на період на весь кластер (AC-62).
  */
-import { bytesToGb, cloudflareCost, levelsReached, mailRow, monthPeriod, percent, serverCost, type SpendLevel } from '../domain/ops/spend';
+import { bytesToGb, cloudflareCost, levelsReached, monthPeriod, percent, serverCost, type SpendLevel } from '../domain/ops/spend';
 import type { Alarm } from '../ports';
 import { spendRegistry } from '../registries/spend';
 import type { SpendOver50 } from './digest';
@@ -44,6 +44,8 @@ export interface SpendJobDeps {
   ai(now: number): Promise<{ usd: number; ceilingUsd: number } | null>;
   /** Used and limit of the YouTube `queries` bucket of the quota day, `null` while unreadable. */
   youtube(now: number): Promise<{ used: number; limit: number } | null>;
+  /** Letters sent today by the primary provider and its ceiling; `null` — no mail service in this process. */
+  mail?(): Promise<{ sentToday: number; ceiling: number; fallbackSent: number } | null>;
   /** Bytes of the backups on R2 (estimate). */
   backupStorageBytes(): Promise<number>;
 }
@@ -131,7 +133,10 @@ export function createSpendJob(deps: SpendJobDeps): SpendJob {
         const y = await deps.youtube(now).catch(() => null);
         out.push({ ...base, ...(y ? known(y.used, y.limit) : unknown) });
       } else if (r.key === 'mail') {
-        out.push({ ...base, amount: null, ceiling: st.mailCeilingUsd, percent: null, state: mailRow().state });
+        const mail = await (deps.mail?.() ?? Promise.resolve(null)).catch(() => undefined);
+        if (mail === undefined) out.push({ ...base, ...unknown });
+        else if (mail === null) out.push({ ...base, amount: null, ceiling: null, percent: null, state: 'no-provider' });
+        else out.push({ ...base, ...known(mail.sentToday, mail.ceiling), note: `запасний: ${mail.fallbackSent}` });
       } else if (r.key === 'server') {
         out.push({ ...base, ...known(m.serverUsd, st.serverCeilingUsd) });
       } else {
@@ -159,7 +164,7 @@ export function createSpendJob(deps: SpendJobDeps): SpendJob {
       if (bytes !== undefined) await deps.counters.upsert('cloudflare', period, {}, now, bytes);
       const st = await deps.settings.read();
       const m = await money(now, st);
-      // `ai` and `youtube` raise nothing here (SPEC-09 / SPEC-12 own their alarms); `mail` has no counter (AC-65).
+      // `ai` and `youtube` raise nothing here (SPEC-09 / SPEC-12 own their alarms); `mail` raises its own `mail/*` alarms (SPEC-10).
       const checks = [
         { key: 'server', usd: m.serverUsd, ceiling: st.serverCeilingUsd },
         { key: 'cloudflare', usd: m.cloudflareUsd, ceiling: st.cloudflareCeilingUsd },

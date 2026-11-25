@@ -132,6 +132,11 @@ export function createMailService(o: MailServiceOptions): MailService {
   }
 
   return {
+    async countsToday() {
+      const day = utcDayKey(new Date(o.clock.now()));
+      const [primary, fallback] = await Promise.all([count(MAIL_PRIMARY, day), count(MAIL_FALLBACK, day)]);
+      return { primary: { sent: primary, ceiling: o.ceilings.primary }, fallback: { sent: fallback, ceiling: o.ceilings.fallback } };
+    },
     async send(msg) {
       const now = new Date(o.clock.now());
       const day = utcDayKey(now);

@@ -30,6 +30,19 @@ export type MailSendResult =
   | { readonly ok: true; readonly provider: string }
   | { readonly ok: false; readonly reason: 'recipient' | 'unavailable' };
 
+/** Лічильники доби UTC постачальника: надіслано й добова стеля (AC-46). */
+export interface MailProviderCount {
+  readonly sent: number;
+  readonly ceiling: number;
+}
+
+export interface MailCountsToday {
+  readonly primary: MailProviderCount;
+  readonly fallback: MailProviderCount;
+}
+
 export interface MailService {
   send(msg: MailMessage): Promise<MailSendResult>;
+  /** Лічильники листів за поточну добу UTC (рядок «Листи» моніторингу). Необов'язковий для підмінних сервісів тестів. */
+  countsToday?(): Promise<MailCountsToday>;
 }

@@ -22,52 +22,16 @@ beforeEach(() => {
 afterEach(() => vi.useRealTimers());
 
 describe('sim-адаптер входу', () => {
-  it('код: нова адреса — вхід лише після коду (акаунт створено); наявна — так само', async () => {
+  // Рядки коду (нова/наявна адреса, wrong-code, too-many-attempts, expired, wait, unavailable) — у `tests/contract/auth.suite.ts`.
+  it('sim: адреса нормалізується, відлік повтору — рівно RESEND_GAP_MS', async () => {
     const svc = createSimAuth();
     const sent = await svc.requestCode(' New@Example.com ', 'signup');
     expect(sent.ok && sent.value).toMatchObject({ email: 'new@example.com', attemptsLeft: CODE_MAX_ATTEMPTS });
     expect(sent.ok && sent.value.resendAt - sent.value.sentAt).toBe(RESEND_GAP_MS);
     expect(useAuthStore.getState().user).toBeNull();
     expect(svc.peek()?.code?.email).toBe('new@example.com');
-    expect(await svc.verifyCode('new@example.com', lastCode())).toEqual({ ok: true, value: { isNew: true, email: 'new@example.com' } });
-    expect(svc.peek()?.code).toBeNull();
-    await svc.signOut();
-    useAuthStore.setState({ sends: [] });
-    await svc.requestCode('new@example.com', 'signin');
-    expect(useAuthStore.getState().user).toBeNull();
-    expect(await svc.verifyCode('new@example.com', lastCode())).toEqual({ ok: true, value: { isNew: false, email: 'new@example.com' } });
-  });
-
-  it('помилки коду: wrong-code зі спробами, too-many-attempts, expired; authCodeError їх розрізняє', async () => {
-    const svc = createSimAuth();
-    await svc.requestCode('a@b.co', 'signin');
-    const wrong = wrongOf(lastCode());
-    const first = await svc.verifyCode('a@b.co', wrong);
-    expect(first).toEqual({ ok: false, error: { code: 'validation', reason: 'wrong-code', attemptsLeft: CODE_MAX_ATTEMPTS - 1 } });
-    if (!first.ok) expect(authCodeError(first.error)).toBe('wrong-code');
-    for (let i = 2; i < CODE_MAX_ATTEMPTS; i++) await svc.verifyCode('a@b.co', wrong);
-    const burnt = await svc.verifyCode('a@b.co', wrong);
-    expect(!burnt.ok && authCodeError(burnt.error)).toBe('too-many-attempts');
-    useAuthStore.setState({ sends: [] });
-    await svc.requestCode('a@b.co', 'signin');
-    svc.devCode!.expire();
-    const old = await svc.verifyCode('a@b.co', lastCode());
-    expect(!old.ok && authCodeError(old.error)).toBe('expired');
-  });
-
-  it('ліміт кодів → rate_limited (wait — відлік; сервіс недоступний → unavailable)', async () => {
-    const svc = createSimAuth();
-    await svc.requestCode('a@b.co', 'signin');
-    const wait = await svc.requestCode('a@b.co', 'signin');
-    expect(wait.ok).toBe(false);
-    if (!wait.ok) {
-      expect(wait.error).toMatchObject({ code: 'rate_limited', reason: 'wait' });
-      expect(authCodeError(wait.error)).toBe('cooldown');
-      expect(wait.error.retryAfterMs).toBeGreaterThan(RESEND_GAP_MS - 1000);
-    }
-    useTestControls.setState({ authUnavailable: true });
-    expect(await svc.requestCode('x@y.co', 'signin')).toEqual({ ok: false, error: { code: 'unavailable' } });
-    expect(await svc.verifyCode('x@y.co', '123456')).toEqual({ ok: false, error: { code: 'unavailable' } });
+    const wait = await svc.requestCode('new@example.com', 'signin');
+    expect(!wait.ok && wait.error.retryAfterMs).toBeGreaterThan(RESEND_GAP_MS - 1000);
   });
 
   it('тестова пошта: код видно лише через devCode', async () => {
