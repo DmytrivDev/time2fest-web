@@ -144,7 +144,7 @@ describe('AC-22: discovery down', () => {
     const secret = randomBytes(20).toString('hex');
     // Port 9 (discard) on loopback: nothing listens, the connection is refused at once.
     const deps = testDeps({ redis }, { T2F_EDGE_SECRET: secret, T2F_GOOGLE_DISCOVERY_URL: 'http://127.0.0.1:9/google/.well-known/openid-configuration' });
-    deps.auth = createAuthWiring({ env: deps.env, redis, sendOtp: async () => {} });
+    deps.auth = createAuthWiring({ env: deps.env, getDeps: () => deps, redis, sendOtp: async () => {} });
     const call = makeCall(await buildDispatcher(deps), secret);
     const res = await call('/api/auth/sign-in/social', { body: { returnPath: '/' } });
     expect(res.status).toBe(503);

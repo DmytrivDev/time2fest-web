@@ -1,5 +1,7 @@
 /** Поштові порти (SPEC-10 W17): один сервіс над двома SMTP-транспортами. */
-export type MailClass = 'code' | 'other';
+import type { MailClass, MailSendError } from '../domain/mail/types';
+
+export type { MailClass, MailSendError } from '../domain/mail/types';
 
 export interface MailMessage {
   /** Той самий id на обох спробах (Message-ID, Resend-Idempotency-Key). */
@@ -10,14 +12,6 @@ export interface MailMessage {
   readonly html: string;
   readonly headers: Readonly<Record<string, string>>;
   readonly class: MailClass;
-}
-
-export interface MailSendError {
-  readonly code?: string;
-  readonly responseCode?: number;
-  readonly command?: string;
-  /** Лише для класифікації; не логувати й не зберігати. */
-  readonly response?: string;
 }
 
 export type MailTransportResult = { readonly ok: true } | { readonly ok: false; readonly err: MailSendError };

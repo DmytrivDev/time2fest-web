@@ -6,7 +6,8 @@
 import { randomUUID } from 'node:crypto';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { startFakeSmtp } from '../../../fakes/smtp/server.mjs';
-import { createSmtpTransport, type SmtpTransport } from '../../src/adapters/smtpMail';
+import { createSmtpTransport } from '../../src/adapters/smtpMail';
+import { createMailQueue, type QueuedMailTransport } from '../../src/mail/queue';
 import { utcDayKey } from '../../src/domain/mail/day';
 import type { MailMessage, MailTransport } from '../../src/mail/ports';
 import { createMailService, mailSentKey } from '../../src/mail/service';
@@ -18,14 +19,14 @@ import { ownRedis } from './helpers';
 
 const redis = ownRedis();
 let fake: Awaited<ReturnType<typeof startFakeSmtp>>;
-let open: SmtpTransport[] = [];
+let open: QueuedMailTransport[] = [];
 let raised: AlarmInput[] = [];
 let now = Date.UTC(2026, 11, 31, 12, 0, 0);
 const clock = { now: () => now };
 const alarm = { raise: (a: AlarmInput) => void raised.push(a) };
 
-const smtp = (port: number, provider: string): SmtpTransport => {
-  const t = createSmtpTransport({ provider, host: '127.0.0.1', port });
+const smtp = (port: number, provider: string): QueuedMailTransport => {
+  const t = createMailQueue(createSmtpTransport({ host: '127.0.0.1', port }), { provider });
   open.push(t);
   return t;
 };

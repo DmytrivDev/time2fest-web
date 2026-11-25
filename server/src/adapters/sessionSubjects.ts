@@ -5,7 +5,7 @@
  * Also the guest start of `25-subject` ([П-6], spike S8): `auth.api.signInAnonymous` with the request's device cookie,
  * so the guest is bound to the device (AC-4); its session cookie gets the clamped expiry like any other (AC-26).
  */
-import { sessionCookieName, clampSessionCookies } from '../auth/forward';
+import { clampSessionCookies, sessionCookieName } from '../auth/response';
 import type { AuthWiring } from '../auth/instance';
 import { SUBJECT_ID } from '../domain/realtime/channels';
 import type { RealtimeSubject, SubjectResolver } from '../realtime/ports';

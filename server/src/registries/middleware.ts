@@ -10,8 +10,8 @@
  * A route naming an unknown row is a startup error (the dispatcher is not built).
  */
 import { startGuestSession } from '../adapters/sessionSubjects';
-import { runInAuthScope } from '../auth/events';
-import { ipHeaderValue } from '../auth/forward';
+import { runInAuthScope } from '../auth/scope';
+import { ipHeaderValue } from '../auth/request';
 import { AUTH_BASE_PATH, AUTH_IP_HEADER } from '../auth/instance';
 import { authOf } from '../endpoints/deps';
 import { failure, originMiddleware, toResponse, validateMiddleware } from '../endpoints/pipeline';
@@ -94,7 +94,7 @@ export function subjectMiddleware(rows: readonly RateLimitRow[] = rateLimitRegis
       }
     },
     run(ctx, next) {
-      return runInAuthScope(ctx.deps, async () => {
+      return runInAuthScope(async () => {
         if (ctx.route.public !== true && !ctx.url.pathname.startsWith(`${AUTH_BASE_PATH}/`) && ctx.subject === undefined) {
           const found = await ctx.deps.subjects?.resolve(ctx.req);
           if (found) ctx.subject = found.id;

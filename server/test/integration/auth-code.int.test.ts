@@ -35,7 +35,7 @@ const clock = { now: Date.now() };
 
 async function build(overrides: Parameters<typeof testDeps>[0] = {}): Promise<Dispatch> {
   const deps = testDeps({ redis, ...overrides }, { T2F_EDGE_SECRET: SECRET });
-  deps.auth = createAuthWiring({ env: deps.env, redis: deps.redis, now: () => clock.now });
+  deps.auth = createAuthWiring({ env: deps.env, getDeps: () => deps, redis: deps.redis, now: () => clock.now });
   return buildDispatcher(deps);
 }
 
@@ -306,6 +306,7 @@ describe('mail outcomes and Redis (AC-38, AC-40, NFR-4)', () => {
     const deps = testDeps({ redis }, { T2F_EDGE_SECRET: SECRET });
     deps.auth = createAuthWiring({
       env: deps.env,
+      getDeps: () => deps,
       redis,
       now: () => clock.now,
       sendOtp: async () => {

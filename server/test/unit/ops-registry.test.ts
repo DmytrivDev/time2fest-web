@@ -54,10 +54,8 @@ const SPEC_TABLE: [domain: string, source: string, code: string, level: OpsAlarm
   ['telegram', 'ops', 'telegram-not-configured', 'log'],
   ['spend', 'spend', 'server-80', 'page'],
   ['spend', 'spend', 'cloudflare-80', 'page'],
-  ['spend', 'spend', 'mail-80', 'page'],
   ['spend', 'spend', 'server-50', 'log'],
   ['spend', 'spend', 'cloudflare-50', 'log'],
-  ['spend', 'spend', 'mail-50', 'log'],
   ['edge', 'edge', 'origin-down', 'page'],
   // SPEC-10 AC-46
   ['mail', 'mail', 'mail/daily-70', 'page'],

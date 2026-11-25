@@ -16,7 +16,6 @@ import { realClock } from '../clock';
 import type { Deps } from '../endpoints/types';
 import { isDeviceId } from '../platform/device';
 import { authLinkRegistry, type AuthLinkHandler } from '../registries/authLinks';
-import { authScopeDeps } from './events';
 
 /** How long a link claim is remembered (longer than any guest lives: 30 days without data, AC-5). */
 const CLAIM_TTL_MS = 31 * 24 * 60 * 60 * 1000;
@@ -89,9 +88,11 @@ async function runHandler(deps: Deps, data: LinkAccountData, handler: AuthLinkHa
   }
 }
 
-/** The anonymous plugin's `onLinkAccount`. Never throws. */
-export async function linkGuest(data: LinkAccountData): Promise<void> {
-  const deps = authScopeDeps();
+/**
+ * The anonymous plugin's `onLinkAccount`. `deps` — the hook deps (undefined outside an auth scope: the device still
+ * moves, no handler runs). Never throws.
+ */
+export async function linkGuest(data: LinkAccountData, deps: Deps | undefined): Promise<void> {
   try {
     const from = data.anonymousUser.user.id;
     const to = data.newUser.user.id;

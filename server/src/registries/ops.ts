@@ -719,22 +719,6 @@ export const opsRegistry: readonly OpsDomainRow[] = [
       },
       {
         source: 'spend',
-        code: 'mail-50',
-        level: 'log',
-        meaning: 'Витрати на листи — половина стелі місяця.',
-        action: 'Стежити за витратами.',
-        detailKeys: ['percent', 'period'],
-      },
-      {
-        source: 'spend',
-        code: 'mail-80',
-        level: 'page',
-        meaning: 'Витрати на листи — 80 % стелі місяця.',
-        action: 'Перевірити рахунок постачальника листів.',
-        detailKeys: ['percent', 'period'],
-      },
-      {
-        source: 'spend',
         code: 'server-50',
         level: 'log',
         meaning: 'Витрати на сервер — половина стелі місяця.',

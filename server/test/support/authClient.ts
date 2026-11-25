@@ -59,6 +59,7 @@ export async function buildAuthHarness(redis: RedisStore, prepare?: (deps: Deps)
   const deps = testDeps({ redis }, { T2F_EDGE_SECRET: secret });
   const wiring = createAuthWiring({
     env: deps.env,
+    getDeps: () => deps,
     redis,
     sendOtp: async ({ email, otp }) => {
       otps.set(email, otp);

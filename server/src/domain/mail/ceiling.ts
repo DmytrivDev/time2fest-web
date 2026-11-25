@@ -1,5 +1,5 @@
 /** Добові стелі постачальників (SPEC-10 AC-43/44), ring 1. */
-import type { MailClass } from '../../mail/ports';
+import type { MailClass } from './types';
 
 export type Admission = 'primary' | 'fallback' | 'refuse';
 

@@ -61,7 +61,7 @@ beforeAll(async () => {
   await redis.deleteByPrefix('auth:');
   await redis.deleteByPrefix('mail:');
   const deps = testDeps({ redis }, { T2F_EDGE_SECRET: SECRET, T2F_MAIL_DAILY_CEILING: '100000', SMTP_FALLBACK_DAILY_CEILING: '100000' });
-  deps.auth = createAuthWiring({ env: deps.env, redis: deps.redis });
+  deps.auth = createAuthWiring({ env: deps.env, getDeps: () => deps, redis: deps.redis });
   dispatch = await buildDispatcher(deps);
 });
 

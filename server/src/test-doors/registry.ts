@@ -18,7 +18,7 @@ import { failure } from '../endpoints/pipeline';
 import { accessTokenDoor } from './accessToken';
 import { adminTestSliceDoor } from './adminTestSlice';
 import { alarmDoor } from './alarm';
-import { authDoors, clearAuthTables, mailCounterDoorRow } from './auth';
+import { authDoors, clearAuthTables, mailBreakDeliveryDoorRow, mailCounterDoorRow, restoreDelivery } from './auth';
 import type { Ctx, HttpMethod, Outcome } from '../endpoints/types';
 import { assertRegistry } from '../platform/registry';
 import type { SeedStore } from '../ports';
@@ -96,6 +96,7 @@ export function resetDoor(
       });
       // SPEC-10: users, sessions, accounts and codes of Better Auth (`auth:*`, `mail:*` keys went with the prefix above).
       await clearAuthTables(ctx.deps);
+      restoreDelivery();
       subjects.clear();
       clearRunFault();
       ctx.deps.scheduler?.resume();
@@ -148,6 +149,7 @@ export const doorRegistry: readonly DoorRow[] = [
   ...edgeEchoDoors,
   fixturesDoor(),
   liveDoor,
+  mailBreakDeliveryDoorRow,
   mailCounterDoorRow,
   moderationDoor,
   opsTickDoor,

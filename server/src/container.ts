@@ -21,6 +21,7 @@ import { createSessionSubjects } from './adapters/sessionSubjects';
 import { createAuthWiring } from './auth/instance';
 import { createSmtpTransport } from './adapters/smtpMail';
 import type { MailService } from './mail/ports';
+import { createMailQueue } from './mail/queue';
 import { createMailService, MAIL_FALLBACK, MAIL_PRIMARY } from './mail/service';
 import { createIdentityMarker } from './adapters/identityMarker';
 import { createPayloadCatalogMeta, createPayloadCatalogStore } from './adapters/payloadCatalog';
@@ -220,23 +221,25 @@ function mailServiceFor(env: AppEnv, store: FastStore, alarm: Alarm, log: Logger
   const host = typeof v.SMTP_HOST === 'string' && v.SMTP_HOST.trim() !== '' ? v.SMTP_HOST : undefined;
   if (host === undefined) return undefined;
   const str = (x: unknown) => (typeof x === 'string' && x !== '' ? x : undefined);
-  const primary = createSmtpTransport({
-    provider: MAIL_PRIMARY,
-    host,
-    port: Number(v.SMTP_PORT ?? 587),
-    ...(str(v.SMTP_USER) !== undefined ? { user: str(v.SMTP_USER), password: str(v.SMTP_PASSWORD) } : {}),
-    log,
-  });
+  const primary = createMailQueue(
+    createSmtpTransport({
+      host,
+      port: Number(v.SMTP_PORT ?? 587),
+      ...(str(v.SMTP_USER) !== undefined ? { user: str(v.SMTP_USER), password: str(v.SMTP_PASSWORD) } : {}),
+    }),
+    { provider: MAIL_PRIMARY, log },
+  );
   const fbHost = str(v.SMTP_FALLBACK_HOST);
   const fallback =
     fbHost !== undefined
-      ? createSmtpTransport({
-          provider: MAIL_FALLBACK,
-          host: fbHost,
-          port: Number(v.SMTP_FALLBACK_PORT ?? 587),
-          ...(str(v.SMTP_FALLBACK_USER) !== undefined ? { user: str(v.SMTP_FALLBACK_USER), password: str(v.SMTP_FALLBACK_PASSWORD) } : {}),
-          log,
-        })
+      ? createMailQueue(
+          createSmtpTransport({
+            host: fbHost,
+            port: Number(v.SMTP_FALLBACK_PORT ?? 587),
+            ...(str(v.SMTP_FALLBACK_USER) !== undefined ? { user: str(v.SMTP_FALLBACK_USER), password: str(v.SMTP_FALLBACK_PASSWORD) } : {}),
+          }),
+          { provider: MAIL_FALLBACK, log },
+        )
       : undefined;
   return createMailService({
     primary,
@@ -341,7 +344,7 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   // Realtime (SPEC-06 C5): the subject of the session cookie (SPEC-10 AC-30); `deps.auth` read lazily, tests replace it.
   deps.subjects = overrides.subjects ?? createSessionSubjects(() => deps.auth);
   // Sign-in (SPEC-10): the Better Auth instance is built on first use (no connection, no timer here).
-  deps.auth = overrides.auth ?? createAuthWiring({ env, redis: deps.redis });
+  deps.auth = overrides.auth ?? createAuthWiring({ env, redis: deps.redis, getDeps: () => deps });
   // Mail (SPEC-10 W20): pooled SMTP transports, no connection until the first send; absent without SMTP_HOST.
   const mail = overrides.mail ?? mailServiceFor(env, deps.redis, alarm, log);
   if (mail) deps.mail = mail;

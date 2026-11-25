@@ -47,6 +47,7 @@ beforeAll(async () => {
   const deps = testDeps({ redis });
   deps.auth = createAuthWiring({
     env: deps.env,
+    getDeps: () => deps,
     redis,
     sendOtp: async ({ email, otp }) => {
       otps.set(email, otp);
@@ -64,7 +65,7 @@ afterAll(async () => {
 describe('SPEC-10 auth and mail doors (AC-52)', () => {
   it('registry: the five rows are sorted in and the write probe needs a subject', () => {
     const keys = doorRegistry.map((d) => d.key);
-    for (const k of ['auth-expire-code', 'auth-google-user', 'auth-last-code', 'auth-write-probe', 'mail-counter']) expect(keys).toContain(k);
+    for (const k of ['auth-expire-code', 'auth-free-gap', 'auth-google-user', 'auth-last-code', 'auth-write-probe', 'mail-break-delivery', 'mail-counter']) expect(keys).toContain(k);
     expect(keys.includes('last-code')).toBe(false);
     expect(doorRegistry.find((d) => d.key === 'auth-write-probe')?.subject).toBe('required');
   });

@@ -13,10 +13,9 @@
  *   stored in the code row, spike S7); the 5th wrong try burns the row and answers `rate_limited/too-many-attempts`
  *   (AC-12); `OTP_EXPIRED` → `conflict/expired`; its limiter 429 → `rate_limited/too-many`;
  * - success → `SignInOutcome { isNew, email }` with the session cookie, no token (AC-14).
- * The per-request state (mail outcome, "user created") travels in an `AsyncLocalStorage`, so the Better Auth
- * callbacks reach it without a global. No log line carries the email or the code (AC-48).
+ * The per-request state (mail outcome, "user created") travels in the auth scope (`scope.ts`), so the Better Auth
+ * callbacks reach it without a global; the deps come from the wiring's `getDeps`. No log line carries the email or the code (AC-48).
  */
-import { AsyncLocalStorage } from 'node:async_hooks';
 import { randomUUID } from 'node:crypto';
 import type { ApiError } from '@time2fest/contracts';
 import { requestCodeBody, verifyCodeBody } from '@time2fest/contracts/schemas';
@@ -27,6 +26,7 @@ import type { Ctx, Deps, Outcome } from '../endpoints/types';
 import type { MailSendResult } from '../mail/ports';
 import { signInCodeMail } from '../mail/templates/signInCode';
 import { DependencyUnavailable } from '../ports';
+import { codeRequestState, runCodeRequest, type CodeRequestState } from './scope';
 import { admitCode, CODE_GAP_MS, commitCode, releaseCode, releaseGap, type CodeLimitKeys } from './codeLimits';
 import type { AuthWiring } from './instance';
 
@@ -36,37 +36,23 @@ export const CODE_VERIFY_PATH = '/sign-in/email-otp';
 export const CODE_TTL_MS = 600_000;
 export const CODE_ATTEMPTS = 5;
 
-interface CodeRequestState {
-  deps: Deps;
-  /**
-   * Set by `sendSignInCode` (or `substituteSender`). Absent = the sender never finished: Better Auth's
-   * `runInBackgroundOrAwait` swallows a throw of the callback and still answers 200, so absence means «not delivered».
-   */
-  mail?: MailSendResult;
-  /** Set by the `user.create.after` hook during a verify. */
-  userCreated?: boolean;
-}
-
-// One store per process on `globalThis`: Next bundles this module more than once, and the Better Auth instance (built
-// from the deps singleton) may call `sendSignInCode` of another copy than the one `forwardToAuth` ran in.
-const STATE_KEY = Symbol.for('t2f.auth.codeRequestState');
-const requestState: AsyncLocalStorage<CodeRequestState> = ((globalThis as Record<symbol, unknown>)[STATE_KEY] ??=
-  new AsyncLocalStorage<CodeRequestState>()) as AsyncLocalStorage<CodeRequestState>;
-
 /** How the flow reaches Better Auth: send a JSON body, and build the success answer with the session cookies. */
 export interface AuthCall {
   send(body: string): Promise<Response>;
   respond(res: Response, value: unknown): Promise<Outcome>;
 }
 
-/** Better Auth's `sendVerificationOTP` callback: mails a sign-in code through the mail service (awaited). */
-export async function sendSignInCode({ email, otp, type }: { email: string; otp: string; type: string }): Promise<void> {
-  const state = requestState.getStore();
+/**
+ * Better Auth's `sendVerificationOTP` callback: mails a sign-in code through the mail service of `deps` (the wiring's
+ * `getDeps`), awaited.
+ */
+export async function sendSignInCode({ email, otp, type }: { email: string; otp: string; type: string }, deps: Deps): Promise<void> {
+  const state = codeRequestState();
   if (state === undefined || type !== 'sign-in') throw new Error('auth: code delivery outside the code flow');
-  const from = String(state.deps.env.vars.T2F_MAIL_FROM ?? 'Time2Fest <code@mail.time2fest.com>');
+  const from = String(deps.env.vars.T2F_MAIL_FROM ?? 'Time2Fest <code@mail.time2fest.com>');
   const message = signInCodeMail({ code: otp, id: randomUUID(), from, to: email });
   try {
-    state.mail = await mailOf(state.deps).send(message);
+    state.mail = await mailOf(deps).send(message);
   } catch {
     // No mail service (no SMTP_HOST) or an unexpected throw: nothing was delivered.
     state.mail = { ok: false, reason: 'unavailable' };
@@ -77,14 +63,14 @@ export async function sendSignInCode({ email, otp, type }: { email: string; otp:
 export function substituteSender(send: (args: { email: string; otp: string; type: string }) => Promise<void>) {
   return async (args: { email: string; otp: string; type: string }): Promise<void> => {
     await send(args);
-    const state = requestState.getStore();
+    const state = codeRequestState();
     if (state !== undefined) state.mail = { ok: true, provider: 'substitute' };
   };
 }
 
 /** The `user.create.after` hook: marks the current verify request as a sign-up (`SignInOutcome.isNew`). */
 export function markUserCreated(): void {
-  const state = requestState.getStore();
+  const state = codeRequestState();
   if (state !== undefined) state.userCreated = true;
 }
 
@@ -139,10 +125,10 @@ export async function requestCode(ctx: Ctx, wiring: AuthWiring, body: string | u
   const admitted = await admitCode(stores, keys, now);
   if (!admitted.ok) return { ok: false, error: admitted.error };
 
-  const state: CodeRequestState = { deps: ctx.deps };
+  const state: CodeRequestState = {};
   let res: Response;
   try {
-    res = await requestState.run(state, () => call.send(JSON.stringify({ email, type: 'sign-in' })));
+    res = await runCodeRequest(state, () => call.send(JSON.stringify({ email, type: 'sign-in' })));
   } catch (err) {
     // Unknown whether a mail went out: only the gap is freed, the window hits stay reserved.
     await releaseGap(stores, keys);
@@ -228,8 +214,8 @@ export async function verifyCode(ctx: Ctx, wiring: AuthWiring, body: string | un
     return failure('validation', { reason: 'wrong-code', attemptsLeft: tries === undefined ? 0 : Math.max(0, CODE_ATTEMPTS - tries) });
   }
 
-  const state: CodeRequestState = { deps: ctx.deps };
-  const res = await requestState.run(state, () => call.send(JSON.stringify({ email, otp: parsed.data.otp })));
+  const state: CodeRequestState = {};
+  const res = await runCodeRequest(state, () => call.send(JSON.stringify({ email, otp: parsed.data.otp })));
   if (res.status < 300) return call.respond(res, { isNew: state.userCreated === true, email });
   if (res.status === 429) return failure('rate_limited', { reason: 'too-many', ...retryAfterOf(res) });
   const code = await errorCode(res);

@@ -57,6 +57,7 @@ async function build(now?: () => number): Promise<{ deps: Deps; wiring: AuthWiri
   const deps = testDeps({ redis }, { T2F_EDGE_SECRET: SECRET });
   const wiring = createAuthWiring({
     env: deps.env,
+    getDeps: () => deps,
     redis,
     sendOtp: async ({ email: to, otp }) => {
       otps.set(to, otp);

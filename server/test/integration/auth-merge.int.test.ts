@@ -7,7 +7,7 @@
  */
 import pg from 'pg';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { runInAuthScope } from '../../src/auth/events';
+import { runInAuthScope } from '../../src/auth/scope';
 import { linkGuest, type LinkAccountData } from '../../src/auth/merge';
 import type { AuthLinkHandler } from '../../src/registries/authLinks';
 import { buildAuthHarness, CookieJar, sessionOf, signIn, waitFor, writeProbe, type AuthHarness } from '../support/authClient';
@@ -87,11 +87,11 @@ describe('AC-23 / EC-2: guest merge', () => {
       newUser: { user: { id: to, isAnonymous: false }, session: {} },
       ctx: { context },
     });
-    await runInAuthScope(h.deps, () => linkGuest(data(account)));
+    await runInAuthScope(() => linkGuest(data(account), h.deps));
     const other = new CookieJar();
     expect((await signIn(h, redis, other, testEmail('merge-other'))).status).toBe(200);
     const otherId = (await sessionOf(h, other)).user?.id ?? '';
-    await runInAuthScope(h.deps, () => linkGuest(data(otherId)));
+    await runInAuthScope(() => linkGuest(data(otherId), h.deps));
     expect(calls).toEqual([{ from: guest, to: account }]);
     expect(owner.get(guest)).toBe(account);
   });
@@ -99,11 +99,11 @@ describe('AC-23 / EC-2: guest merge', () => {
   it('guards: the same id or an anonymous target is not a merge', async () => {
     h.deps.authLinks = [moving];
     const context = (await h.wiring.instance().$context) as unknown as LinkAccountData['ctx']['context'];
-    await runInAuthScope(h.deps, () =>
-      linkGuest({ anonymousUser: { user: { id: 'g-same' }, session: {} }, newUser: { user: { id: 'g-same' }, session: {} }, ctx: { context } }),
+    await runInAuthScope(() =>
+      linkGuest({ anonymousUser: { user: { id: 'g-same' }, session: {} }, newUser: { user: { id: 'g-same' }, session: {} }, ctx: { context } }, h.deps),
     );
-    await runInAuthScope(h.deps, () =>
-      linkGuest({ anonymousUser: { user: { id: 'g-a' }, session: {} }, newUser: { user: { id: 'g-b', isAnonymous: true }, session: {} }, ctx: { context } }),
+    await runInAuthScope(() =>
+      linkGuest({ anonymousUser: { user: { id: 'g-a' }, session: {} }, newUser: { user: { id: 'g-b', isAnonymous: true }, session: {} }, ctx: { context } }, h.deps),
     );
     expect(calls).toEqual([]);
   });

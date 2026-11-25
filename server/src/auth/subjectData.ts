@@ -8,14 +8,15 @@
  *   address (`sign-in-otp-<email>`, spike S1: not deleted with the user), then `session` `erased` + invalidation.
  *   The session hooks also publish `signed-out` per removed session (S1).
  * - anonymise = erase (no partial anonymisation of sign-in data).
- * The handler holds no deps: it reads them from the auth scope (`events.ts`), which every caller of the registry
- * must open anyway so Better Auth's hooks see deps — use `runSubjectDataInScope`. Outside a scope it throws.
+ * The handler holds no deps: it reads them from the auth scope (`scope.ts`), which every caller of the registry
+ * must open anyway so Better Auth's hooks act — use `runSubjectDataInScope`. Outside a scope it throws.
  */
 import { authOf } from '../endpoints/deps';
 import type { GuestPruneStore } from '../ops/guestPrune';
 import type { Deps } from '../endpoints/types';
 import { runSubjectData, type SubjectDataHandler, type SubjectDataOp, type SubjectDataResult, type SubjectDataRow } from '../platform/subjectData';
-import { authScopeDeps, publishSessionEvent, runInAuthScope } from './events';
+import { publishSessionEvent } from './events';
+import { requireSubjectDataDeps, runInAuthScope, runInSubjectDataScope } from './scope';
 
 export const AUTH_CAPABILITY = 'auth';
 
@@ -55,12 +56,6 @@ function nameClaimOf(idToken: unknown): string | null {
   } catch {
     return null;
   }
-}
-
-function scopeDeps(): Deps {
-  const deps = authScopeDeps();
-  if (deps === undefined) throw new Error('auth subject data outside runInAuthScope');
-  return deps;
 }
 
 async function exportOf(deps: Deps, subjectId: string): Promise<AuthSubjectExport | null> {
@@ -126,14 +121,14 @@ async function eraseOf(deps: Deps, subjectId: string): Promise<{ erased: boolean
 /** The `auth` row of `registries/subjectData.ts`. */
 export const authSubjectData: SubjectDataHandler = {
   capability: AUTH_CAPABILITY,
-  export: async (subjectId) => exportOf(scopeDeps(), subjectId),
-  erase: async (subjectId) => eraseOf(scopeDeps(), subjectId),
-  anonymise: async (subjectId) => eraseOf(scopeDeps(), subjectId),
+  export: async (subjectId) => exportOf(requireSubjectDataDeps(), subjectId),
+  erase: async (subjectId) => eraseOf(requireSubjectDataDeps(), subjectId),
+  anonymise: async (subjectId) => eraseOf(requireSubjectDataDeps(), subjectId),
 };
 
 /** `runSubjectData` inside the auth scope of `deps` (the `auth` handler and Better Auth's hooks need it). */
 export function runSubjectDataInScope(deps: Deps, op: SubjectDataOp, subjectId: string, rows: readonly SubjectDataRow[]): Promise<SubjectDataResult> {
-  return runInAuthScope(deps, () => runSubjectData(op, subjectId, rows));
+  return runInSubjectDataScope(deps, () => runSubjectData(op, subjectId, rows));
 }
 
 const LAST_ACTIVE = `COALESCE((SELECT max(s.updated_at) FROM user_sessions s WHERE s.user_id = u.id), u.created_at)`;
@@ -168,7 +163,7 @@ export function createAuthGuestStore(deps: () => Deps): GuestPruneStore {
       const r = await pool.query(`SELECT 1 FROM users u WHERE u.id::text = $1 AND u.is_anonymous = true AND ${LAST_ACTIVE} < $2`, [id, new Date(beforeMs)]);
       if (r.rows.length === 0) return false;
       const ctx = await contextOf(d);
-      await runInAuthScope(d, () => ctx.internalAdapter.deleteUser(id));
+      await runInAuthScope(() => ctx.internalAdapter.deleteUser(id));
       return true;
     },
   };

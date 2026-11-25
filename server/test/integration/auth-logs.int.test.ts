@@ -66,7 +66,7 @@ function spyOutput(): void {
 
 async function dispatcher(env: Record<string, string>, sendOtp?: (a: { email: string; otp: string }) => Promise<void>): Promise<Call> {
   const deps = testDeps({ redis, log: logger }, { T2F_EDGE_SECRET: SECRET, T2F_MAIL_DAILY_CEILING: '100000', SMTP_FALLBACK_DAILY_CEILING: '100000', ...env });
-  deps.auth = createAuthWiring({ env: deps.env, redis, ...(sendOtp ? { sendOtp } : {}) });
+  deps.auth = createAuthWiring({ env: deps.env, getDeps: () => deps, redis, ...(sendOtp ? { sendOtp } : {}) });
   return makeCall(await buildDispatcher(deps), SECRET);
 }
 

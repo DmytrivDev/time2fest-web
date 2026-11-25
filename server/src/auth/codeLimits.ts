@@ -33,7 +33,8 @@ export interface CodeLimitKeys {
 
 export type CodeLimitResult = { ok: true } | { ok: false; error: ApiError };
 
-const gapKey = (email: string) => `auth:gap:${email}`;
+/** Redis key of the 30 s gap of an email key (also the `auth-free-gap` test door). */
+export const codeGapKey = (email: string) => `auth:gap:${email}`;
 const dayKey = (email: string, nowMs: number) => `auth:day:${email}:${utcDayKey(new Date(nowMs))}`;
 
 function row(key: string): RateLimitRow {
@@ -91,10 +92,10 @@ export async function admitCode(stores: LimitStores, keys: CodeLimitKeys, nowMs:
   if (Number(day.value ?? '0') >= CODE_DAY_LIMIT) return refuse(tooMany(msToUtcMidnight(new Date(nowMs))));
 
   const until = String(nowMs + CODE_GAP_MS);
-  const claimed = await storeCall(() => stores.fast.setIfAbsent(gapKey(keys.email), until, CODE_GAP_MS));
+  const claimed = await storeCall(() => stores.fast.setIfAbsent(codeGapKey(keys.email), until, CODE_GAP_MS));
   if (!claimed.ok) return refuse(unavailable);
   if (claimed.value) return { ok: true };
-  const held = await storeCall(() => stores.fast.get(gapKey(keys.email)));
+  const held = await storeCall(() => stores.fast.get(codeGapKey(keys.email)));
   if (!held.ok) return refuse(unavailable);
   const retryAfterMs = held.value === null ? 1 : Math.max(1, Math.min(CODE_GAP_MS, Number(held.value) - nowMs));
   return refuse({ ok: false, error: { code: 'rate_limited', reason: 'wait', retryAfterMs } });
@@ -110,7 +111,7 @@ export async function commitCode(stores: LimitStores, keys: CodeLimitKeys, nowMs
 
 /** Frees only the 30 s gap (the outcome of the send is unknown); a store failure is swallowed. */
 export async function releaseGap(stores: LimitStores, keys: CodeLimitKeys): Promise<void> {
-  await storeCall(() => stores.fast.del(gapKey(keys.email)));
+  await storeCall(() => stores.fast.del(codeGapKey(keys.email)));
 }
 
 /**
@@ -118,6 +119,6 @@ export async function releaseGap(stores: LimitStores, keys: CodeLimitKeys): Prom
  * gap and gives back the window hits `admitCode` reserved with the same `nowMs`. Store failures are swallowed.
  */
 export async function releaseCode(stores: LimitStores, keys: CodeLimitKeys, nowMs: number): Promise<void> {
-  await storeCall(() => stores.fast.del(gapKey(keys.email)));
+  await storeCall(() => stores.fast.del(codeGapKey(keys.email)));
   await storeCall(() => giveBack(stores, windows(keys), nowMs));
 }

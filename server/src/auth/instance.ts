@@ -19,7 +19,7 @@ import { betterAuth } from 'better-auth';
 import { realClock } from '../clock';
 import { emailKey } from '../domain/auth/email';
 import { sessionExpiresAt } from '../domain/auth/sessionExpiry';
-import type { AppEnv } from '../endpoints/types';
+import type { AppEnv, Deps } from '../endpoints/types';
 import { DEVICE_COOKIE, isDeviceId, readCookie } from '../platform/device';
 import type { FastStore } from '../ports';
 import { CODE_REQUEST_PATH, CODE_VERIFY_PATH, markUserCreated, sendSignInCode, substituteSender } from './codeFlow';
@@ -27,6 +27,7 @@ import { onSessionCreated, onSessionDeleted } from './events';
 import { GOOGLE_ACCOUNT_LINKING, GOOGLE_SIGN_IN_PATH } from './google';
 import { linkGuest, type LinkAccountData } from './merge';
 import { authStaticOptions, type AuthStaticInput } from './options';
+import { inAuthScope } from './scope';
 
 export const AUTH_BASE_PATH = '/api/auth';
 export const AUTH_IP_HEADER = 'x-t2f-ip';
@@ -40,6 +41,11 @@ export interface AuthInput {
   env: AppEnv;
   /** Rate-limit counters of Better Auth's own limiter. */
   redis: FastStore;
+  /**
+   * The deps Better Auth's callbacks use (mail service, realtime, log, env), read lazily on each call — the process
+   * container (`() => deps`), never the auth scope (A10-03).
+   */
+  getDeps: () => Deps;
   /** Delivers a sign-in code; default `sendSignInCode` (the mail service of the request's deps, W23). */
   sendOtp?: AuthStaticInput['sendOtp'];
   /** Wall clock in epoch ms for the session clamp ([П-9]); default `realClock`. */
@@ -109,12 +115,14 @@ function buildAuth(input: AuthInput) {
     clientSecret: str(env.vars.T2F_GOOGLE_CLIENT_SECRET),
   };
   const googleOn = google.discoveryUrl !== undefined && google.clientId !== undefined && google.clientSecret !== undefined;
+  // Hooks act only inside an auth scope (`scope.ts`); their deps come from the getter.
+  const hookDeps = (): Deps | undefined => (inAuthScope() ? input.getDeps() : undefined);
   const statics = authStaticOptions({
-    sendOtp: input.sendOtp ? substituteSender(input.sendOtp) : sendSignInCode,
+    sendOtp: input.sendOtp ? substituteSender(input.sendOtp) : (args) => sendSignInCode(args, input.getDeps()),
     googleDiscoveryUrl: google.discoveryUrl ?? 'http://127.0.0.1:9/unused',
     googleClientId: google.clientId ?? 'unused',
     googleClientSecret: google.clientSecret ?? 'unused',
-    onLinkAccount: (data) => linkGuest(data as unknown as LinkAccountData),
+    onLinkAccount: (data) => linkGuest(data as unknown as LinkAccountData, hookDeps()),
   });
   // A test process without the secret gets a random one (sessions then live as long as the process).
   const secret = str(env.vars.T2F_AUTH_SECRET) ?? (env.class === 'test' ? randomBytes(32).toString('hex') : undefined);
@@ -191,12 +199,12 @@ function buildAuth(input: AuthInput) {
             };
           },
           async after(session, ctx) {
-            onSessionCreated(session, ctx);
+            onSessionCreated(session, ctx, hookDeps());
           },
         },
         delete: {
           async after(session) {
-            onSessionDeleted(session);
+            onSessionDeleted(session, hookDeps());
           },
         },
         update: {

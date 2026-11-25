@@ -121,6 +121,14 @@ const ctx: AuthSuiteCtx = {
     const r = await door('/api/_test/auth/expire-code', { email });
     if (r.status !== 200) throw new Error(`expire-code door ${r.status}`);
   },
+  async freeGap(email) {
+    const r = await door('/api/_test/auth/free-gap', { email });
+    if (r.status !== 200) throw new Error(`free-gap door ${r.status}`);
+  },
+  async breakDelivery() {
+    const r = await door('/api/_test/mail/break-delivery', {});
+    if (r.status !== 200) throw new Error(`break-delivery door ${r.status}`);
+  },
   google,
 };
 

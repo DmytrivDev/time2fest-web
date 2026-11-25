@@ -13,7 +13,8 @@ import {
 } from '../src/schemas';
 
 const ok = 'a@b.co';
-describe('auth wire schemas', () => {
+// SPEC-10 AC-51: additive auth reasons, body schemas and the session event.
+describe('auth wire schemas (AC-51)', () => {
   it('AUTH_REASONS members', () => {
     expect([...AUTH_REASONS]).toEqual(['cancelled', 'email', 'expired', 'too-many', 'too-many-attempts', 'wait', 'wrong-code']);
   });

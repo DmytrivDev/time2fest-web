@@ -2,7 +2,7 @@
  * Класифікація відмови SMTP (SPEC-10 [П-7], AC-37/38), ring 1.
  * Текст відповіді лише читається; ні він, ні адреса не повертаються.
  */
-import type { MailSendError } from '../../mail/ports';
+import type { MailSendError } from './types';
 
 export type MailFailure =
   | { readonly kind: 'recipient' }

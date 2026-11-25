@@ -9,7 +9,12 @@
  *   the past (AC-13). No row → `not_found`.
  * - `POST /api/_test/auth/google-user {sub,email,emailVerified,name?}` — the form fields the fake OIDC login page
  *   posts for that user (spike S5); the door itself calls nobody.
+ * - `POST /api/_test/auth/free-gap {email}` — frees the 30 s gap of the address, so a second code can be asked at once
+ *   (AC-54 http column). The day counter and the windows stay.
  * - `POST /api/_test/mail/counter {provider,count}` — sets today's (UTC, wall clock) sent counter of the provider.
+ * - `POST /api/_test/mail/break-delivery` — the NEXT send of this process's mail service answers «both providers
+ *   down» (`unavailable`) without touching a provider; one send only, undone by `reset` (AC-54 http column, AC-40).
+ *   The shared `mailpit-chaos` lock cannot break a served server's primary, hence this door.
  * - `POST /api/_test/auth/write-probe` — a route that needs a subject (`subject: 'required'`, [П-6]); answers it.
  *
  * The code and the address are never logged.
@@ -25,9 +30,11 @@ import type { z } from 'zod';
 import { realClock } from '../clock';
 import { normalizeEmail } from '../domain/auth/email';
 import { msToUtcMidnight, utcDayKey } from '../domain/mail/day';
-import { authOf } from '../endpoints/deps';
+import { codeGapKey } from '../auth/codeLimits';
+import { authOf, mailOf } from '../endpoints/deps';
 import { failure } from '../endpoints/pipeline';
 import type { Deps } from '../endpoints/types';
+import type { MailService } from '../mail/ports';
 import { mailSentKey } from '../mail/service';
 import type { DoorRow } from './registry';
 
@@ -91,6 +98,30 @@ export async function clearAuthTables(deps: Deps): Promise<void> {
   );
 }
 
+/** The undo of a pending `break-delivery` (one per process). */
+let pendingBreak: (() => void) | undefined;
+
+/** Makes the next `send` of `mail` answer `unavailable` (both providers down); the one after it is real again. */
+export function breakNextDelivery(mail: MailService): void {
+  pendingBreak?.();
+  const real = Object.prototype.hasOwnProperty.call(mail, 'send') ? mail.send : undefined;
+  const restore = () => {
+    if (real !== undefined) mail.send = real;
+    else delete (mail as { send?: unknown }).send;
+    pendingBreak = undefined;
+  };
+  mail.send = async () => {
+    restore();
+    return { ok: false, reason: 'unavailable' };
+  };
+  pendingBreak = restore;
+}
+
+/** Undoes a `break-delivery` that no send consumed (reset door). */
+export function restoreDelivery(): void {
+  pendingBreak?.();
+}
+
 export const authDoors: readonly DoorRow[] = [
   {
     key: 'auth-expire-code',
@@ -106,6 +137,19 @@ export const authDoors: readonly DoorRow[] = [
         [`sign-in-otp-${email}`],
       );
       return (r.rowCount ?? 0) > 0 ? { ok: true, value: {} } : failure('not_found');
+    },
+  },
+  {
+    key: 'auth-free-gap',
+    method: 'POST',
+    path: '/api/_test/auth/free-gap',
+    // Same body as `expire-code`: `{email}`, strict.
+    body: authExpireCodeDoor,
+    async handler(ctx) {
+      const email = normalizeEmail((ctx.body as z.infer<typeof authExpireCodeDoor>).email);
+      if (!email) return failure('validation', { reason: 'invalid-input' });
+      await ctx.deps.redis.del(codeGapKey(authOf(ctx.deps).emailKey(email)));
+      return { ok: true, value: {} };
     },
   },
   {
@@ -146,6 +190,17 @@ export const authDoors: readonly DoorRow[] = [
     },
   },
 ];
+
+/** `POST /api/_test/mail/break-delivery` (sorted apart from the `auth-*` rows). */
+export const mailBreakDeliveryDoorRow: DoorRow = {
+  key: 'mail-break-delivery',
+  method: 'POST',
+  path: '/api/_test/mail/break-delivery',
+  async handler(ctx) {
+    breakNextDelivery(mailOf(ctx.deps));
+    return { ok: true, value: {} };
+  },
+};
 
 /** `POST /api/_test/mail/counter` (sorted apart from the `auth-*` rows). */
 export const mailCounterDoorRow: DoorRow = {
