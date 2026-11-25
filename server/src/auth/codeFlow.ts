@@ -44,7 +44,11 @@ interface CodeRequestState {
   userCreated?: boolean;
 }
 
-const requestState = new AsyncLocalStorage<CodeRequestState>();
+// One store per process on `globalThis`: Next bundles this module more than once, and the Better Auth instance (built
+// from the deps singleton) may call `sendSignInCode` of another copy than the one `forwardToAuth` ran in.
+const STATE_KEY = Symbol.for('t2f.auth.codeRequestState');
+const requestState: AsyncLocalStorage<CodeRequestState> = ((globalThis as Record<symbol, unknown>)[STATE_KEY] ??=
+  new AsyncLocalStorage<CodeRequestState>()) as AsyncLocalStorage<CodeRequestState>;
 
 /** How the flow reaches Better Auth: send a JSON body, and build the success answer with the session cookies. */
 export interface AuthCall {

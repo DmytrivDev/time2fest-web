@@ -9,6 +9,8 @@
  *   whole /128 is the key). Sessions store no IP and a user-agent of ≤128 characters (NFR-5).
  * - Origin check stays on (never `disableOriginCheck` / `disableCSRFCheck`); `trustedOrigins` = `T2F_ALLOWED_ORIGINS`.
  * - Google only when the discovery URL, client id and client secret are all set.
+ * - A guest (anonymous user) stores the device id it was created on (AC-4); a guest's sign-in runs the merge
+ *   (`merge.ts`, AC-23); session create/delete publish the `session` event (`events.ts`, AC-29).
  * Secrets are never logged.
  */
 import { randomBytes } from 'node:crypto';
@@ -20,6 +22,8 @@ import type { AppEnv } from '../endpoints/types';
 import { DEVICE_COOKIE, isDeviceId, readCookie } from '../platform/device';
 import type { FastStore } from '../ports';
 import { CODE_REQUEST_PATH, CODE_VERIFY_PATH, markUserCreated, sendSignInCode } from './codeFlow';
+import { onSessionCreated, onSessionDeleted } from './events';
+import { linkGuest, type LinkAccountData } from './merge';
 import { authStaticOptions, type AuthStaticInput } from './options';
 
 export const AUTH_BASE_PATH = '/api/auth';
@@ -46,6 +50,11 @@ export interface AuthInput {
  * code paths get 20 per 60 s.
  */
 const CODE_PATH_SAFETY_NET = { window: 60, max: 20 };
+/*
+ * `/sign-in/anonymous` keeps Better Auth's default `/sign-in/*` rule (3 per 10 s per address) on top of our row
+ * `auth-guest-create` (60 per 10 min per client, [Q2]): the site never calls that path — guests are created
+ * server-side by `25-subject` through `auth.api`, which Better Auth's limiter does not count.
+ */
 
 function str(value: unknown): string | undefined {
   return typeof value === 'string' && value !== '' ? value : undefined;
@@ -90,6 +99,7 @@ function buildAuth(input: AuthInput) {
     googleDiscoveryUrl: google.discoveryUrl ?? 'http://127.0.0.1:9/unused',
     googleClientId: google.clientId ?? 'unused',
     googleClientSecret: google.clientSecret ?? 'unused',
+    onLinkAccount: (data) => linkGuest(data as unknown as LinkAccountData),
   });
   // A test process without the secret gets a random one (sessions then live as long as the process).
   const secret = str(env.vars.T2F_AUTH_SECRET) ?? (env.class === 'test' ? randomBytes(32).toString('hex') : undefined);
@@ -135,6 +145,13 @@ function buildAuth(input: AuthInput) {
     databaseHooks: {
       user: {
         create: {
+          // A guest is bound to the device it was created on (AC-4); the device cookie is always forwarded.
+          async before(user, ctx) {
+            if ((user as { isAnonymous?: unknown }).isAnonymous !== true) return;
+            const device = readCookie(cookieOf(ctx), DEVICE_COOKIE);
+            if (!isDeviceId(device)) return;
+            return { data: { ...user, deviceId: device } };
+          },
           // `SignInOutcome.isNew` of the verify request that created the user (W24).
           async after() {
             markUserCreated();
@@ -154,6 +171,14 @@ function buildAuth(input: AuthInput) {
                 expiresAt: clamp(),
               },
             };
+          },
+          async after(session, ctx) {
+            onSessionCreated(session, ctx);
+          },
+        },
+        delete: {
+          async after(session) {
+            onSessionDeleted(session);
           },
         },
         update: {

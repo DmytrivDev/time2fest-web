@@ -7,12 +7,13 @@
 import { AUTH_MAX_BODY_BYTES, forwardToAuth } from '../auth/forward';
 import type { HttpMethod, RouteRow } from './types';
 
-const row = (key: string, method: HttpMethod, path: string): RouteRow => ({
+const row = (key: string, method: HttpMethod, path: string, rateLimit?: string): RouteRow => ({
   key,
   method,
   path: `/api/auth${path}`,
   needs: ['db'],
   maxBodyBytes: AUTH_MAX_BODY_BYTES,
+  ...(rateLimit !== undefined ? { rateLimit } : {}),
   handler: forwardToAuth,
 });
 
@@ -21,7 +22,8 @@ export const authRoutes: readonly RouteRow[] = [
   row('auth-callback-google', 'GET', '/callback/google'),
   row('auth-get-session', 'GET', '/get-session'),
   row('auth-send-otp', 'POST', '/email-otp/send-verification-otp'),
-  row('auth-sign-in-anonymous', 'POST', '/sign-in/anonymous'),
+  // Shares the guest limit with `25-subject` (SPEC-10 AC-4, [П-6]).
+  row('auth-sign-in-anonymous', 'POST', '/sign-in/anonymous', 'auth-guest-create'),
   row('auth-sign-in-email-otp', 'POST', '/sign-in/email-otp'),
   row('auth-sign-in-social', 'POST', '/sign-in/social'),
   row('auth-sign-out', 'POST', '/sign-out'),

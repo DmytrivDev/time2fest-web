@@ -45,6 +45,22 @@ const CHECK_LOG = 'Подивитися журнал сервера біля ч�
 
 export const opsRegistry: readonly OpsDomainRow[] = [
   {
+    domain: 'auth',
+    title: 'Вхід',
+    ownerWave: 'SPEC-10',
+    alarms: [
+      {
+        source: 'auth',
+        code: 'auth/link-retry',
+        level: 'log',
+        meaning: 'Перенесення даних гостя на акаунт після входу не вдалося — вхід відбувся, задачу повтору записано.',
+        action: 'Подивитися журнал сервера й таблицю повторів злиття; якщо повторюється — розібратися з обробником.',
+        detailKeys: ['handler'],
+      },
+    ],
+    metrics: [],
+  },
+  {
     domain: 'catalog',
     title: 'Каталог',
     ownerWave: 'SPEC-04',

@@ -28,6 +28,7 @@ import type { ChannelSource, LiveEventSource, LiveLease, LiveStore, PlaylistSour
 import type { ClientContext } from '../platform/edge';
 import type { EnvClass } from '../platform/env';
 import type { Alarm, Clock, FastStore, IdempotencyStore, LockState, Logger } from '../ports';
+import type { AuthLinkHandler } from '../registries/authLinks';
 import type { ChannelPublisher, RandomSource, SubjectInvalidator, SubjectResolver, TokenSigner } from '../realtime/ports';
 import type { SchedulerHandle } from '../scheduler/service';
 import type { FanOutDeps } from '../site/fanout';
@@ -194,6 +195,8 @@ export interface Deps {
   auth?: AuthWiring;
   /** Mail (SPEC-10 W20): one service over the primary and the fallback SMTP; read through `mailOf`. */
   mail?: MailService;
+  /** Guest-merge handlers (SPEC-10 W30); absent → `authLinkRegistry`. Tests inject their own rows here. */
+  authLinks?: readonly AuthLinkHandler[];
 }
 
 export interface Ctx {
@@ -217,6 +220,7 @@ export interface Ctx {
   body?: unknown;
   /** The parsed query, set by `20-validate` when the row has a `query` schema. */
   query?: unknown;
+  /** The session's subject id (account or guest), set by `25-subject` (SPEC-10 AC-30). */
   subject?: string;
 }
 
@@ -245,7 +249,7 @@ export interface RouteRow {
   maxBodyBytes?: number;
   rateLimit?: string;
   idempotency?: string;
-  /** SPEC-10 [П-6]: the route needs a subject — without a session `25-subject` creates a guest (wired in P10). */
+  /** SPEC-10 [П-6]: the route needs a subject — without a session `25-subject` creates a guest (AC-4). */
   subject?: 'required';
   handler(ctx: Ctx): Promise<Outcome>;
 }

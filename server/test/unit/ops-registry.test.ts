@@ -65,9 +65,11 @@ const SPEC_TABLE: [domain: string, source: string, code: string, level: OpsAlarm
   ['mail', 'mail', 'mail/provider-failover', 'page'],
   ['mail', 'mail', 'mail/all-providers-down', 'page'],
   ['mail', 'mail', 'mail/plan-free', 'page'],
+  // SPEC-10 AC-24
+  ['auth', 'auth', 'auth/link-retry', 'log'],
 ];
 
-const DOMAINS = ['clock', 'scheduler', 'catalog', 'site', 'live', 'moderation', 'ops', 'telegram', 'spend', 'platform', 'mail'];
+const DOMAINS = ['clock', 'scheduler', 'catalog', 'site', 'live', 'moderation', 'ops', 'telegram', 'spend', 'platform', 'mail', 'auth'];
 const RESERVED = ['edge', 'payments', 'chat', 'presence', 'toasts'];
 
 const alarm = { source: 'x', code: 'y', level: 'log' as const, meaning: 'Щось сталося.', action: 'Зробити щось.', detailKeys: ['a'] };

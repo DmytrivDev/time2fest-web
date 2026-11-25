@@ -71,7 +71,7 @@ async function forwardHeaders(ctx: Ctx): Promise<Headers> {
   return headers;
 }
 
-async function sessionCookieName(auth: AuthInstance): Promise<string> {
+export async function sessionCookieName(auth: AuthInstance): Promise<string> {
   return (await auth.$context).authCookies.sessionToken.name;
 }
 
@@ -88,7 +88,7 @@ async function dropDeadSession(auth: AuthInstance, headers: Headers): Promise<vo
 }
 
 /** Rewrites `Max-Age` / `Expires` of a non-deleting session cookie to the clamped expiry (AC-26). */
-function clampSessionCookies(from: Headers, to: Headers, name: string, wiring: AuthWiring): void {
+export function clampSessionCookies(from: Headers, to: Headers, name: string, wiring: AuthWiring): void {
   const now = wiring.now();
   const expires = sessionExpiresAt(now, wiring.seasonEnd);
   const maxAge = Math.max(0, Math.floor((expires - now) / 1000));

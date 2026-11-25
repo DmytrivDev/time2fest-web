@@ -17,7 +17,7 @@ import type { IdentityMarker } from './access/ports';
 import { createAccessVerifier, localKeys, remoteKeys } from './adapters/accessJwt';
 import { createCentrifugoApi } from './adapters/centrifugoApi';
 import { createHs256Signer } from './adapters/centrifugoToken';
-import { noSessionSubjects } from './adapters/noSessionSubjects';
+import { createSessionSubjects } from './adapters/sessionSubjects';
 import { createAuthWiring } from './auth/instance';
 import { createSmtpTransport } from './adapters/smtpMail';
 import type { MailService } from './mail/ports';
@@ -95,7 +95,7 @@ import { channelClassesFor } from './registries/channels';
 import { middlewareRegistry } from './registries/middleware';
 import { createChannelPublisher } from './realtime/publisher';
 import { createSubjectInvalidator } from './realtime/invalidate';
-import type { CentrifugoPresenceApi, ChannelPublisher, Scheduler, SubscriptionSigner } from './realtime/ports';
+import type { CentrifugoPresenceApi, ChannelPublisher, Scheduler, SubjectResolver, SubscriptionSigner } from './realtime/ports';
 import { channelName } from './domain/realtime/channels';
 import { createViewersAggregator, VIEWERS_PASS_MS, viewerCatalogFrom } from './live/viewers';
 import { isRevertible } from './registries/revertHandlers';
@@ -338,8 +338,8 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   // The ops jobs (SPEC-13b W18): built here without a timer; ticked by `startProcessBackground` and the `ops-tick` door.
   if (overrides.backupTuning) deps.backupTuning = overrides.backupTuning;
   if (ops && !deps.opsRunner) deps.opsRunner = createOpsRunner(opsRunnerDepsOf(deps, ops, payload, backupDepsOf(deps)));
-  // Realtime (SPEC-06): no session yet (C5); the signer only with the token secret (else AC-19 in `test`).
-  deps.subjects = overrides.subjects ?? noSessionSubjects;
+  // Realtime (SPEC-06 C5): the subject of the session cookie (SPEC-10 AC-30); `deps.auth` read lazily, tests replace it.
+  deps.subjects = overrides.subjects ?? createSessionSubjects(() => deps.auth);
   // Sign-in (SPEC-10): the Better Auth instance is built on first use (no connection, no timer here).
   deps.auth = overrides.auth ?? createAuthWiring({ env, redis: deps.redis });
   // Mail (SPEC-10 W20): pooled SMTP transports, no connection until the first send; absent without SMTP_HOST.
@@ -1025,11 +1025,23 @@ export function edgeGateOf(deps: Deps): EdgeGate {
   });
 }
 
+/** `first`, and when it finds nobody, the resolver `second()` (read per call). */
+function withFallback(first: SubjectResolver, second: () => SubjectResolver | undefined): SubjectResolver {
+  return {
+    async resolve(req) {
+      return (await first.resolve(req)) ?? (await second()?.resolve(req)) ?? null;
+    },
+  };
+}
+
 /** The dispatcher for `deps`: production routes, plus the doors when `shouldLoadDoors`. */
 export async function buildDispatcher(deps: Deps, routes: readonly RouteRow[] = routeRegistry): Promise<Dispatcher> {
   const doors = shouldLoadDoors(deps.env) ? (await import('./test-doors/index')).createDoors(deps, seedStoreOf(deps)) : undefined;
-  // With the doors only: the routes see `deps` plus the doors' own subject resolver (AC-57); `deps` itself stays as built.
-  const served: Deps = doors ? Object.create(deps, { subjects: { value: doors.subjects, enumerable: true } }) : deps;
+  // With the doors only: the routes see `deps` plus the doors' own subject resolver (AC-57) — the remembered test
+  // subject first, else the session's (SPEC-10 AC-30); `deps` itself stays as built.
+  const served: Deps = doors
+    ? Object.create(deps, { subjects: { value: withFallback(doors.subjects, () => deps.subjects), enumerable: true } })
+    : deps;
   return createDispatcher({ routes: [...routes, ...(doors?.routes ?? [])], middleware: middlewareRegistry, deps: served, edge: edgeGateOf(deps) });
 }
 

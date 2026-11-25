@@ -14,6 +14,8 @@ export interface AuthStaticInput {
   googleDiscoveryUrl: string;
   googleClientId: string;
   googleClientSecret: string;
+  /** Runtime only (SPEC-10 W30): the guest merge; never changes the schema. */
+  onLinkAccount?: NonNullable<Parameters<typeof anonymous>[0]>['onLinkAccount'];
 }
 
 /** Plain-object options (no `as const`, so Better Auth infers the plugin endpoints). */
@@ -71,7 +73,10 @@ export function authStaticOptions(input: AuthStaticInput) {
       },
     },
     plugins: [
-      anonymous({ schema: { user: { fields: { isAnonymous: 'is_anonymous' } } } }),
+      anonymous({
+        schema: { user: { fields: { isAnonymous: 'is_anonymous' } } },
+        ...(input.onLinkAccount ? { onLinkAccount: input.onLinkAccount } : {}),
+      }),
       emailOTP({
         otpLength: 6,
         expiresIn: 600,

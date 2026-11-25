@@ -77,7 +77,8 @@ function cleanError(e: ApiError): ApiError {
   return out;
 }
 
-function toResponse(outcome: Outcome): Response {
+/** The wire `Response` of an outcome (also used by `25-subject` to add the guest cookie). */
+export function toResponse(outcome: Outcome): Response {
   if (outcome instanceof Response) return outcome;
   if (outcome.ok) return json({ ok: true, value: outcome.value }, 200);
   const error = cleanError(outcome.error);
