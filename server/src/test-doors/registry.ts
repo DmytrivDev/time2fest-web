@@ -1,6 +1,8 @@
 /**
  * Test-door registry (AC-32, AC-35 … AC-38, AC-62; SPEC-07 AC-67, AC-68): sorted, unique rows under
- * `/api/_test/*` — 20 rows (SPEC-12 W38: the `video-status` stub became the `live` door; SPEC-13b W18: + `ops-tick`). Evaluated only in the `test` class with `T2F_TEST_DOORS=1` (see
+ * `/api/_test/*` — 24 rows (SPEC-12 W38: the `video-status` stub became the `live` door; SPEC-13b W18: + `ops-tick`;
+ * SPEC-10 W26–W27: the `last-code` stub became `auth-last-code` under `/api/_test/auth/`, + `auth-expire-code`,
+ * `auth-google-user`, `auth-write-probe`, `mail-counter`). Evaluated only in the `test` class with `T2F_TEST_DOORS=1` (see
  * `shouldLoadDoors`). `reset` empties this worktree's data (run records and scheduler runs included)
  * and seeds it (AC-47); `fixtures` applies one named fixture row of the seed registry.
  */
@@ -16,6 +18,7 @@ import { failure } from '../endpoints/pipeline';
 import { accessTokenDoor } from './accessToken';
 import { adminTestSliceDoor } from './adminTestSlice';
 import { alarmDoor } from './alarm';
+import { authDoors, clearAuthTables, mailBreakDeliveryDoorRow, mailCounterDoorRow, restoreDelivery } from './auth';
 import type { Ctx, HttpMethod, Outcome } from '../endpoints/types';
 import { assertRegistry } from '../platform/registry';
 import type { SeedStore } from '../ports';
@@ -49,6 +52,8 @@ export interface DoorRow {
   dependencyBreaking?: true;
   /** The edge probe door only (SPEC-05 W16): copied to the route row, see `RouteRow.edgeProbe`. */
   edgeProbe?: true;
+  /** Copied to the route row, see `RouteRow.subject` (SPEC-10 write probe). */
+  subject?: 'required';
   handler(ctx: Ctx, tools: DoorTools): Promise<Outcome>;
 }
 
@@ -89,6 +94,9 @@ export function resetDoor(
         collections,
         rows: rows.filter((r) => !r.fixture),
       });
+      // SPEC-10: users, sessions, accounts and codes of Better Auth (`auth:*`, `mail:*` keys went with the prefix above).
+      await clearAuthTables(ctx.deps);
+      restoreDelivery();
       subjects.clear();
       clearRunFault();
       ctx.deps.scheduler?.resume();
@@ -119,6 +127,7 @@ export const doorRegistry: readonly DoorRow[] = [
   accessTokenDoor,
   adminTestSliceDoor,
   alarmDoor,
+  ...authDoors,
   {
     key: 'clock-get',
     method: 'GET',
@@ -139,8 +148,9 @@ export const doorRegistry: readonly DoorRow[] = [
   },
   ...edgeEchoDoors,
   fixturesDoor(),
-  stub('last-code', '/api/_test/last-code'),
   liveDoor,
+  mailBreakDeliveryDoorRow,
+  mailCounterDoorRow,
   moderationDoor,
   opsTickDoor,
   stub('paypro-webhook', '/api/_test/paypro-webhook'),

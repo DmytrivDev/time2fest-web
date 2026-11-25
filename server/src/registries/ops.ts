@@ -45,6 +45,22 @@ const CHECK_LOG = 'Подивитися журнал сервера біля ч�
 
 export const opsRegistry: readonly OpsDomainRow[] = [
   {
+    domain: 'auth',
+    title: 'Вхід',
+    ownerWave: 'SPEC-10',
+    alarms: [
+      {
+        source: 'auth',
+        code: 'auth/link-retry',
+        level: 'log',
+        meaning: 'Перенесення даних гостя на акаунт після входу не вдалося — вхід відбувся, задачу повтору записано.',
+        action: 'Подивитися журнал сервера й таблицю повторів злиття; якщо повторюється — розібратися з обробником.',
+        detailKeys: ['handler'],
+      },
+    ],
+    metrics: [],
+  },
+  {
     domain: 'catalog',
     title: 'Каталог',
     ownerWave: 'SPEC-04',
@@ -236,10 +252,50 @@ export const opsRegistry: readonly OpsDomainRow[] = [
   {
     domain: 'mail',
     title: 'Листи',
-    ownerWave: 'SPEC-17',
-    reserved: true,
-    alarms: [],
-    metrics: [{ key: 'mail.sent', title: 'Надіслані листи', pendingNote: 'SPEC-17' }],
+    ownerWave: 'SPEC-10',
+    alarms: [
+      {
+        source: 'mail',
+        code: 'mail/all-providers-down',
+        level: 'page',
+        meaning: 'Обидва постачальники пошти відмовили — коди входу не доходять, люди бачать «спробуйте пізніше».',
+        action: 'Перевірити стан Resend і Cloudflare Email, ключі SMTP і журнал сервера; повідомити, якщо збій довгий.',
+        detailKeys: [],
+      },
+      {
+        source: 'mail',
+        code: 'mail/ceiling-80',
+        level: 'page',
+        meaning: 'Постачальник пошти надіслав 80 % своєї добової стелі (доба UTC); листи «інше» на основному вже не йдуть.',
+        action: 'Перевірити, чи це справжній наплив; за потреби підняти стелю або план постачальника.',
+        detailKeys: ['provider'],
+      },
+      {
+        source: 'mail',
+        code: 'mail/daily-70',
+        level: 'page',
+        meaning: 'Основний постачальник надіслав 70 листів за добу UTC — ліміт безплатного плану Resend близько.',
+        action: 'Перевести Resend на Pro або стежити, щоб коди йшли через запасного.',
+        detailKeys: [],
+      },
+      {
+        source: 'mail',
+        code: 'mail/plan-free',
+        level: 'page',
+        meaning: 'Новорічна ніч близько, а Resend ще на безплатному плані.',
+        action: 'Перевести Resend на Pro і змінити T2F_MAIL_PLAN на pro.',
+        detailKeys: [],
+      },
+      {
+        source: 'mail',
+        code: 'mail/provider-failover',
+        level: 'page',
+        meaning: 'Основний постачальник відмовив — листи йдуть через запасного (квота — до 00:00 UTC, інше — 5 хвилин).',
+        action: 'Перевірити стан і квоту Resend; коди тим часом доходять через запасного.',
+        detailKeys: ['provider'],
+      },
+    ],
+    metrics: [{ key: 'mail.sent', title: 'Надіслані листи за добу UTC (за постачальниками)' }],
   },
   {
     domain: 'moderation',
@@ -659,22 +715,6 @@ export const opsRegistry: readonly OpsDomainRow[] = [
         level: 'page',
         meaning: 'Витрати Cloudflare (нижня межа) — 80 % стелі місяця.',
         action: 'Перевірити рахунок Cloudflare; вирішити, чи піднімати стелю.',
-        detailKeys: ['percent', 'period'],
-      },
-      {
-        source: 'spend',
-        code: 'mail-50',
-        level: 'log',
-        meaning: 'Витрати на листи — половина стелі місяця.',
-        action: 'Стежити за витратами.',
-        detailKeys: ['percent', 'period'],
-      },
-      {
-        source: 'spend',
-        code: 'mail-80',
-        level: 'page',
-        meaning: 'Витрати на листи — 80 % стелі місяця.',
-        action: 'Перевірити рахунок постачальника листів.',
         detailKeys: ['percent', 'period'],
       },
       {

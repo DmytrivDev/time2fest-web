@@ -32,6 +32,10 @@ import { createBackupJob, type BackupDeps } from './ops/backup';
 import { keyIdOf, parseBackupKey } from './ops/backupFormat';
 import type { OpsRunnerDeps, OpsWiring } from './ops/runner';
 import { createSpendJob, type SpendJob } from './ops/spend';
+import { createMailPlanJob } from './ops/mailPlan';
+import { createGuestPruneJob } from './ops/guestPrune';
+import { AUTH_CAPABILITY, createAuthGuestStore, runSubjectDataInScope } from './auth/subjectData';
+import { subjectDataRegistry } from './registries/subjectData';
 import type { Logger } from './ports';
 import { isRevertible } from './registries/revertHandlers';
 
@@ -118,6 +122,10 @@ export function buildSpendJob(deps: Deps, ops: OpsWiring, payload: () => Promise
       return { used: counterOf(state, 'queries', now, live.cfg).used, limit: live.cfg.buckets.queries.perDay };
     },
     backupStorageBytes: () => createPayloadBackupStorage(payload).bytes(),
+    mail: async () => {
+      const counts = await deps.mail?.countsToday?.();
+      return counts ? { sentToday: counts.primary.sent, ceiling: counts.primary.ceiling, fallbackSent: counts.fallback.sent } : null;
+    },
   });
 }
 
@@ -134,6 +142,15 @@ export function opsRunnerDepsOf(deps: Deps, ops: OpsWiring, payload: () => Promi
     log: deps.log,
     backup: createBackupJob({ ...backupDeps, lease: ops.lease }),
     spend,
+    mailPlan: createMailPlanJob({ lease: ops.lease, store: deps.redis, alarm: deps.alarm, plan: deps.env.vars.T2F_MAIL_PLAN === 'pro' ? 'pro' : 'free' }),
+    // Guest cleanup (SPEC-10 AC-5): `deps.auth` and `deps.subjectData` read per run (tests replace them after createDeps).
+    guestPrune: createGuestPruneJob({
+      lease: ops.lease,
+      guests: createAuthGuestStore(() => deps),
+      exportSubject: (id) => runSubjectDataInScope(deps, 'export', id, deps.subjectData ?? subjectDataRegistry),
+      ownCapability: AUTH_CAPABILITY,
+      log: deps.log,
+    }),
     sources: {
       async zones() {
         const stored = await catalogStoreOf(deps).read();

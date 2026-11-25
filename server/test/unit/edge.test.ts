@@ -41,6 +41,7 @@ function admitted(g: EdgeGate, headers: Record<string, string>): ClientContext {
 const downStore: FastStore = {
   incrWindow: () => Promise.reject(new DependencyUnavailable('redis')),
   setIfAbsent: () => Promise.reject(new DependencyUnavailable('redis')),
+  decrIfPresent: () => Promise.reject(new DependencyUnavailable('redis')),
   get: () => Promise.reject(new DependencyUnavailable('redis')),
   set: () => Promise.reject(new DependencyUnavailable('redis')),
   del: () => Promise.reject(new DependencyUnavailable('redis')),
@@ -75,6 +76,7 @@ describe('edge secret in the env registry', () => {
       REDIS_URL: 'redis://localhost:6380/4',
       T2F_REDIS_PREFIX: 't2f:edge_unit:',
       PAYLOAD_SECRET: payloadSecret,
+      T2F_AUTH_SECRET: 'auth-secret-value-for-the-env-unit-tests-000', // check-secrets: allow test fake (SPEC-10 requires it outside test)
       // SPEC-04 blocks `access` and `catalog` are required in rehearsal too; present so only the edge secret is missing.
       T2F_ADMIN_HOST: 'admin.localhost:3100',
       T2F_ACCESS_TEAM_DOMAIN: 'https://t2f-test.invalid',
@@ -198,10 +200,10 @@ describe('edge gate', () => {
   });
 
   it('AC-23: the client context has no address field', () => {
-    expectTypeOf<keyof ClientContext>().toEqualTypeOf<'country' | 'edgeVerified' | 'addressPresent' | 'ipDay'>();
+    expectTypeOf<keyof ClientContext>().toEqualTypeOf<'country' | 'edgeVerified' | 'addressPresent' | 'ipDay' | 'ip48Day'>();
     const client = admitted(gate(), edge('198.51.100.7;UA'));
     const keys = Object.keys(client).filter((k) => /ip|addr/i.test(k));
-    expect(keys.sort()).toEqual(['addressPresent', 'ipDay']);
+    expect(keys.sort()).toEqual(['addressPresent', 'ip48Day', 'ipDay']);
     expect(JSON.stringify(client)).not.toContain('198.51.100.7');
   });
 

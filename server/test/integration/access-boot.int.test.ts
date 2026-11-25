@@ -7,6 +7,7 @@ import { randomBytes } from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { NON_TEST_GOOGLE } from '../support/nonTestGoogle';
 
 const serverDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const tsx = path.join(serverDir, 'node_modules', 'tsx', 'dist', 'cli.mjs');
@@ -14,6 +15,7 @@ const tsx = path.join(serverDir, 'node_modules', 'tsx', 'dist', 'cli.mjs');
 const TEAM = 'https://t2f.cloudflareaccess.com';
 const PRODUCTION: Record<string, string> = {
   T2F_ENV: 'production',
+  ...NON_TEST_GOOGLE,
   T2F_ALLOWED_ORIGINS: 'https://time2fest.com',
   T2F_ADMIN_HOST: 'admin.time2fest.com',
   T2F_ACCESS_TEAM_DOMAIN: TEAM,

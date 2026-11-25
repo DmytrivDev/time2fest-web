@@ -38,7 +38,17 @@ describe('edge privacy, static (SPEC-05)', () => {
   });
 
   it('AC-30: fingerprintOf, daySalts and ipDay() are called only from the allowed files; the echo door never reads ipDay', () => {
-    const allowed = new Set(['platform/edge.ts', 'platform/fingerprint.ts', 'container.ts', 'registries/middleware.ts', 'test-doors/edgeEcho.ts']);
+    // SPEC-10 adds two readers of the daily fingerprint (never the raw IP): `auth/codeFlow.ts` keys the code limits on
+    // it (AC-9), `auth/request.ts` turns it into the hashed `x-t2f-ip` Better Auth limits on (AC-32).
+    const allowed = new Set([
+      'platform/edge.ts',
+      'platform/fingerprint.ts',
+      'container.ts',
+      'registries/middleware.ts',
+      'test-doors/edgeEcho.ts',
+      'auth/codeFlow.ts',
+      'auth/request.ts',
+    ]);
     const calls = /\b(fingerprintOf|daySalts)\(|\.ipDay\(/;
     const found = files(SRC).filter((f) => calls.test(readFileSync(f, 'utf8'))).map(rel);
     expect(found.filter((f) => !allowed.has(f))).toEqual([]);

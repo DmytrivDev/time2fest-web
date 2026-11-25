@@ -133,6 +133,8 @@ describe('GET /api/realtime/token and the realtime test door', () => {
       T2F_BACKUP_KEY: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=', // check-secrets: allow test fake backup key
       T2F_TELEGRAM_BOT_TOKEN: 'test-telegram-token-not-real', // check-secrets: allow test fake
       T2F_TELEGRAM_CHAT_ID: '-1001234567890',
+      // SPEC-10: outside `test` the discovery URL must be https (the slot's `.env.local` carries the http fake).
+      T2F_GOOGLE_DISCOVERY_URL: 'https://oidc.invalid/.well-known/openid-configuration',
     };
     const production = await buildDispatcher(
       testDeps({ redis }, { T2F_ENV: 'production', T2F_EDGE_SECRET: EDGE_SECRET, ...productionNames }),

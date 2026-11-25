@@ -54,15 +54,21 @@ const SPEC_TABLE: [domain: string, source: string, code: string, level: OpsAlarm
   ['telegram', 'ops', 'telegram-not-configured', 'log'],
   ['spend', 'spend', 'server-80', 'page'],
   ['spend', 'spend', 'cloudflare-80', 'page'],
-  ['spend', 'spend', 'mail-80', 'page'],
   ['spend', 'spend', 'server-50', 'log'],
   ['spend', 'spend', 'cloudflare-50', 'log'],
-  ['spend', 'spend', 'mail-50', 'log'],
   ['edge', 'edge', 'origin-down', 'page'],
+  // SPEC-10 AC-46
+  ['mail', 'mail', 'mail/daily-70', 'page'],
+  ['mail', 'mail', 'mail/ceiling-80', 'page'],
+  ['mail', 'mail', 'mail/provider-failover', 'page'],
+  ['mail', 'mail', 'mail/all-providers-down', 'page'],
+  ['mail', 'mail', 'mail/plan-free', 'page'],
+  // SPEC-10 AC-24
+  ['auth', 'auth', 'auth/link-retry', 'log'],
 ];
 
-const DOMAINS = ['clock', 'scheduler', 'catalog', 'site', 'live', 'moderation', 'ops', 'telegram', 'spend', 'platform'];
-const RESERVED = ['edge', 'payments', 'chat', 'presence', 'mail', 'toasts'];
+const DOMAINS = ['clock', 'scheduler', 'catalog', 'site', 'live', 'moderation', 'ops', 'telegram', 'spend', 'platform', 'mail', 'auth'];
+const RESERVED = ['edge', 'payments', 'chat', 'presence', 'toasts'];
 
 const alarm = { source: 'x', code: 'y', level: 'log' as const, meaning: 'Щось сталося.', action: 'Зробити щось.', detailKeys: ['a'] };
 const row = (domain: string, over: Partial<OpsDomainRow> = {}): OpsDomainRow => ({ domain, title: 'Т', ownerWave: 'SPEC-00', alarms: [], metrics: [], ...over });
@@ -145,7 +151,9 @@ describe('spend registry (AC-60)', () => {
     const by = new Map(spendRegistry.map((r) => [r.key, r]));
     expect(by.get('ai')?.period).toBe('night+month');
     expect(by.get('youtube')?.period).toBe('day');
-    for (const k of ['cloudflare', 'mail', 'server']) {
+    expect(by.get('mail')?.period).toBe('day');
+    expect(by.get('mail')?.alarms).toBe(false);
+    for (const k of ['cloudflare', 'server']) {
       expect(by.get(k)?.period, k).toBe('month');
       expect(by.get(k)?.ceiling.from, k).toBe('ops-settings');
       expect(by.get(k)?.alarms, k).toBe(true);

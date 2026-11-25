@@ -14,14 +14,20 @@ const DOORS: Array<[string, string]> = [
   ['POST', '/api/_test/access-token'],
   ['POST', '/api/_test/admin-test-slice'],
   ['POST', '/api/_test/alarm'],
+  ['POST', '/api/_test/auth/expire-code'],
+  ['POST', '/api/_test/auth/free-gap'],
+  ['POST', '/api/_test/auth/google-user'],
+  ['POST', '/api/_test/auth/last-code'],
+  ['POST', '/api/_test/auth/write-probe'],
   ['POST', '/api/_test/reset'],
   ['POST', '/api/_test/fixtures'],
   ['GET', '/api/_test/clock'],
   ['POST', '/api/_test/clock'],
   ['GET', '/api/_test/edge-echo'],
   ['POST', '/api/_test/edge-echo'],
-  ['POST', '/api/_test/last-code'],
   ['POST', '/api/_test/live'],
+  ['POST', '/api/_test/mail/break-delivery'],
+  ['POST', '/api/_test/mail/counter'],
   ['POST', '/api/_test/moderation'],
   ['POST', '/api/_test/ops-tick'],
   ['POST', '/api/_test/paypro-webhook'],
@@ -53,8 +59,8 @@ async function probe(request: APIRequestContext, method: string, path: string, q
   return { status: res.status(), body: await res.text(), names };
 }
 
-test('AC-30/31, SPEC-07 AC-68, SPEC-08 W19, SPEC-12 W38, SPEC-13b W18: the registry has 20 door rows', () => {
-  expect(DOORS).toHaveLength(20);
+test('AC-30/31, SPEC-07 AC-68, SPEC-08 W19, SPEC-12 W38, SPEC-13b W18, SPEC-10 (+6): the registry has 26 door rows', () => {
+  expect(DOORS).toHaveLength(26);
 });
 
 for (const v of VARIANTS) {

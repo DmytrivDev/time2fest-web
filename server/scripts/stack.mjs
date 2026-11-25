@@ -58,7 +58,7 @@ function up() {
   }
   const r = run(
     'docker',
-    ['compose', '-p', 't2f', '-f', composeFile, 'up', '-d', '--wait', 'postgres', 'redis', 'centrifugo', 'mailpit', 'r2'],
+    ['compose', '-p', 't2f', '-f', composeFile, 'up', '-d', '--wait', 'postgres', 'redis', 'centrifugo', 'mailpit', 'mailpit-chaos', 'oidc', 'fake-smtp', 'r2'],
     { encoding: 'utf8', stdio: 'inherit', env: composeEnv() },
   );
   if (r.status !== 0) process.exit(r.status ?? 1);
@@ -213,6 +213,27 @@ async function smoke() {
       async () => {
         const r = await fetch('http://127.0.0.1:8025/api/v1/info');
         if (!r.ok) throw new Error(String(r.status));
+      },
+    ],
+    [
+      'mailpit-chaos info',
+      async () => {
+        const r = await fetch('http://127.0.0.1:8026/api/v1/info');
+        if (!r.ok) throw new Error(String(r.status));
+      },
+    ],
+    [
+      'oidc discovery',
+      async () => {
+        const r = await fetch('http://127.0.0.1:8091/google/.well-known/openid-configuration');
+        if (!r.ok) throw new Error(String(r.status));
+      },
+    ],
+    [
+      'fake-smtp banner',
+      async () => {
+        const r = await redisPing(2525, 'QUIT\r\n');
+        if (!String(r).startsWith('220')) throw new Error('no 220 banner');
       },
     ],
     [

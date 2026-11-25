@@ -5,7 +5,24 @@
 import type { RateLimitRow } from '../platform/rateLimit';
 import { assertRegistry } from '../platform/registry';
 
+/** The limit rows of guest creation: per client (`ipDay`) and per IPv6 /48 (IPv4 /24), S10-08. */
+export const GUEST_CREATE_ROW = 'auth-guest-create';
+export const GUEST_CREATE_IP48_ROW = 'auth-guest-create-ip48';
+
 export const rateLimitRegistry: readonly RateLimitRow[] = [
+  // Sign-in codes (SPEC-10 AC-9, [А4], [П-8], EC-7): 5 codes per 10 min per email key / device / client (ipDay) /
+  // IPv6 /48. Keyed rows (`checkKeyedLimit` in `auth/codeLimits.ts`, no route names them): `keys: []` because the
+  // caller passes the key value. Reserved atomically before the send, given back only when nothing was sent (S10-01).
+  // Refused if Redis is down (NFR-4).
+  { key: 'auth-code-device', limit: 5, windowMs: 600_000, keys: [], onStoreDown: 'fail-closed' },
+  { key: 'auth-code-email', limit: 5, windowMs: 600_000, keys: [], onStoreDown: 'fail-closed' },
+  { key: 'auth-code-ip', limit: 5, windowMs: 600_000, keys: ['ipDay'], onStoreDown: 'fail-closed' },
+  { key: 'auth-code-ip48', limit: 5, windowMs: 600_000, keys: [], onStoreDown: 'fail-closed' },
+  // Guests created on the first write (SPEC-10 AC-4, [Q2], [П-6]): 60 per 10 min per client; refused if Redis is down.
+  { key: GUEST_CREATE_ROW, limit: 60, windowMs: 600_000, keys: ['ipDay'], onStoreDown: 'fail-closed' },
+  // The same guests counted per IPv6 /48 (IPv4: /24) too, so rotating /64s inside one /48 does not multiply them
+  // (S10-08). 10x the per-client limit: an IPv4 /24 (mobile CGNAT) carries many people. Keyed row (`25-subject`).
+  { key: GUEST_CREATE_IP48_ROW, limit: 600, windowMs: 600_000, keys: [], onStoreDown: 'fail-closed' },
   // The public build-time read of the catalog (AC-63): 30 a minute per client (SPEC-05 daily fingerprint),
   // counted in this process if Redis is down.
   { key: 'catalog-read', limit: 30, windowMs: 60_000, keys: ['ipDay'], onStoreDown: 'memory' },

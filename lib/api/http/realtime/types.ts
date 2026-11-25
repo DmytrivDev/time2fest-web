@@ -26,4 +26,10 @@ export interface RealtimeTransport {
   subscribe(channel: string, listener: RealtimeListener, options?: SubscribeOptions): Unsubscribe;
   state(): ConnectionState;
   onStateChange(listener: (state: ConnectionState) => void): Unsubscribe;
+  /**
+   * The session owner may have changed (SPEC-10 AC-31): ask the token endpoint once and, if the subject differs
+   * (or the connection is anonymous), reconnect with the new token; channels resubscribe. One request while a
+   * renewal runs; nothing happens without an open connection (its next connect asks anyway).
+   */
+  renewToken(): Promise<void>;
 }

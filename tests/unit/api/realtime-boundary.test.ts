@@ -18,6 +18,12 @@ describe('межі хвилі realtime', () => {
     const anyImport = /from\s+['"]\.\/realtime(\/[^'"]*)?['"]|import\(\s*['"]\.\/realtime/g;
     for (const f of files) {
       const src = fs.readFileSync(path.join(dir, f), 'utf8');
+      if (f === 'auth.ts') {
+        // SPEC-10: only the transport type; the transport itself is handed in by the caller.
+        const typeOnly = /^import type \{[^}]*\} from '\.\/realtime\/types';$/m;
+        expect(src.replace(typeOnly, ''), f).not.toMatch(anyImport);
+        continue;
+      }
       if (f !== 'site.ts' && f !== 'live.ts') {
         expect(src, f).not.toMatch(anyImport);
         continue;

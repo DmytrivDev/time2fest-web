@@ -106,6 +106,18 @@ export const envRegistry: readonly EnvBlock[] = [
     ],
   },
   {
+    // SPEC-10: sign-in. Google is off while T2F_GOOGLE_DISCOVERY_URL is unset. In `test` the discovery URL must be
+    // loopback (the fake OIDC), elsewhere `https:` (platform/env.ts, AC-47).
+    key: 'auth',
+    vars: [
+      { name: 'T2F_AUTH_SECRET', schema: z.string().min(32).optional(), secret: true, requiredIn: REQ },
+      { name: 'T2F_GOOGLE_CLIENT_ID', schema: z.string().min(1).optional() },
+      { name: 'T2F_GOOGLE_CLIENT_SECRET', schema: z.string().min(1).optional(), secret: true },
+      { name: 'T2F_GOOGLE_DISCOVERY_URL', schema: z.url().optional(), isolated: true },
+      { name: 'T2F_SEASON_END', schema: z.iso.datetime().default('2027-01-15T00:00:00Z') },
+    ],
+  },
+  {
     key: 'catalog',
     vars: [
       { name: 'T2F_CATALOG_RATE_PER_MIN', schema: intIn(1, 10_000).default(30) },
@@ -130,6 +142,23 @@ export const envRegistry: readonly EnvBlock[] = [
       { name: 'T2F_LIVE_CONFIG', schema: z.string().min(1).optional() },
       { name: 'T2F_YOUTUBE_API_KEY', schema: z.string().min(1).optional(), secret: true },
       { name: 'T2F_YOUTUBE_BASE_URL', schema: z.url().optional() },
+    ],
+  },
+  {
+    // SPEC-10: mail. Main transport = SMTP_HOST / SMTP_PORT (block `platform`) + SMTP_USER / SMTP_PASSWORD (Resend);
+    // fallback = SMTP_FALLBACK_* (Cloudflare Email Service). In `test` both hosts must be loopback (AC-47).
+    key: 'mail',
+    vars: [
+      { name: 'SMTP_FALLBACK_DAILY_CEILING', schema: intIn(1, 1_000_000).default(100) },
+      { name: 'SMTP_FALLBACK_HOST', schema: z.string().min(1).optional(), isolated: true },
+      { name: 'SMTP_FALLBACK_PASSWORD', schema: z.string().min(1).optional(), secret: true },
+      { name: 'SMTP_FALLBACK_PORT', schema: port.optional() },
+      { name: 'SMTP_FALLBACK_USER', schema: z.string().min(1).optional() },
+      { name: 'SMTP_PASSWORD', schema: z.string().min(1).optional(), secret: true },
+      { name: 'SMTP_USER', schema: z.string().min(1).optional() },
+      { name: 'T2F_MAIL_DAILY_CEILING', schema: intIn(1, 1_000_000).default(100) },
+      { name: 'T2F_MAIL_FROM', schema: z.string().min(3).default('Time2Fest <code@mail.time2fest.com>') },
+      { name: 'T2F_MAIL_PLAN', schema: z.enum(['free', 'pro']).default('free') },
     ],
   },
   {

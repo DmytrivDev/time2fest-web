@@ -175,6 +175,23 @@ function tokenOf(body: unknown): string | undefined {
   return typeof token === 'string' && token.length > 0 ? token : undefined;
 }
 
+/**
+ * Subject of a connection token: `null` for `''` (anonymous); the JWT `sub` claim otherwise, `undefined` when it
+ * cannot be read (then it counts as different). Only the claim is kept, never the token.
+ */
+function subjectOf(token: string): string | null | undefined {
+  if (token === '') return null;
+  try {
+    const part = token.split('.')[1];
+    if (!part) return undefined;
+    const json = globalThis.atob(part.replace(/-/g, '+').replace(/_/g, '/'));
+    const claims: unknown = JSON.parse(json);
+    return isRecord(claims) && typeof claims.sub === 'string' && claims.sub ? claims.sub : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 /** Calls every listener even when one throws; the first error is rethrown afterwards. */
 function notifyAll<T>(items: Iterable<T>, call: (item: T) => void): void {
   let failure: { error: unknown } | undefined;
@@ -212,6 +229,13 @@ export function createRealtimeTransport(options: RealtimeTransportOptions): Real
    * teardown — the next first `subscribe` asks again.
    */
   let anonymous = false;
+  /**
+   * Subject of the token the client last got (`null` anonymous, `undefined` unknown); only the claim, never the token.
+   * `renewToken` compares against it (SPEC-10 AC-31).
+   */
+  let subject: string | null | undefined;
+  /** The running `renewToken`, so a renewal during a renewal makes no second request. */
+  let renewal: Promise<void> | null = null;
   /** Number of the next reconnect attempt (AC-59); back to 0 once connected. */
   let attempt = 0;
   /** Own reconnect scheduled by the transport (drop, failed attempt or refusal). */
@@ -284,7 +308,10 @@ export function createRealtimeTransport(options: RealtimeTransportOptions): Real
     for (let failures = 0; ; ) {
       const token = await requestToken();
       if (typeof token === 'string') {
-        if (started === generation) anonymous = token === '';
+        if (started === generation) {
+          anonymous = token === '';
+          subject = subjectOf(token);
+        }
         return token;
       }
       const ms = token === REFUSED ? refusalDelay(random) : tokenRetryDelay(failures++, token.retryAfter);
@@ -480,6 +507,7 @@ export function createRealtimeTransport(options: RealtimeTransportOptions): Real
   function teardown(): void {
     generation += 1;
     anonymous = false;
+    subject = undefined;
     attempt = 0;
     cancelRetry();
     for (const pending of [...pauses]) {
@@ -490,7 +518,58 @@ export function createRealtimeTransport(options: RealtimeTransportOptions): Real
     client?.disconnect();
   }
 
+  /**
+   * Reconnect with `token` (SPEC-10 AC-31): stop the client quietly, hand it the token, connect again. Subscriptions
+   * stay on the client and resubscribe on `connect()`. `''` drops the token, so the client asks `getToken` itself
+   * (with the AC-50 retries) — used when the one renewal request failed.
+   */
+  function reconnectWith(centrifuge: CentrifugeClientLike, token: string): void {
+    // A token loop of the abandoned attempt stops at its next pause.
+    generation += 1;
+    cancelRetry();
+    attempt = 0;
+    quiet = true;
+    try {
+      centrifuge.disconnect();
+    } finally {
+      quiet = false;
+    }
+    centrifuge.setToken(token);
+    setState('connecting');
+    centrifuge.connect();
+  }
+
+  async function renew(): Promise<void> {
+    // Whatever happens, the next token request is no longer the memoised anonymous answer.
+    anonymous = false;
+    const centrifuge = client;
+    if (!url || !centrifuge || channels.size === 0) return;
+    const started = generation;
+    const token = await requestToken();
+    if (client !== centrifuge || channels.size === 0 || started !== generation) return;
+    if (typeof token !== 'string') {
+      subject = undefined;
+      reconnectWith(centrifuge, '');
+      return;
+    }
+    const next = subjectOf(token);
+    if (next !== undefined && next === subject) {
+      // Same owner (or still anonymous): the open connection stays as it is.
+      anonymous = token === '';
+      return;
+    }
+    reconnectWith(centrifuge, token);
+    anonymous = token === '';
+    subject = next;
+  }
+
   return {
+    renewToken(): Promise<void> {
+      renewal ??= renew().finally(() => {
+        renewal = null;
+      });
+      return renewal;
+    },
     subscribe(channel, listener, options): Unsubscribe {
       if (!url) return () => {};
       const record: ListenerRecord = { listener };

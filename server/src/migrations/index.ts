@@ -6,6 +6,7 @@ import * as migration_20261120_165256_site_state from './20261120_165256_site_st
 import * as migration_20261123_105845_live from './20261123_105845_live';
 import * as migration_20261124_060324_ops from './20261124_060324_ops';
 import * as migration_20261124_141222_stream_sources from './20261124_141222_stream_sources';
+import * as migration_20261125_001708_spec10_auth from './20261125_001708_spec10_auth';
 
 export const migrations = [
   {
@@ -46,6 +47,11 @@ export const migrations = [
   {
     up: migration_20261124_141222_stream_sources.up,
     down: migration_20261124_141222_stream_sources.down,
-    name: '20261124_141222_stream_sources'
+    name: '20261124_141222_stream_sources',
+  },
+  {
+    up: migration_20261125_001708_spec10_auth.up,
+    down: migration_20261125_001708_spec10_auth.down,
+    name: '20261125_001708_spec10_auth'
   },
 ];

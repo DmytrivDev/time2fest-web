@@ -1,6 +1,7 @@
 /**
  * Route registry (AC-62): sorted, unique rows. A domain wave adds its row here and nowhere else.
  */
+import { authRoutes } from '../endpoints/auth';
 import { catalogRoute } from '../endpoints/catalog';
 import { healthRoute } from '../endpoints/health';
 import { liveChainsRoute } from '../endpoints/liveChains';
@@ -15,6 +16,7 @@ import type { RouteRow } from '../endpoints/types';
 import { assertRegistry } from '../platform/registry';
 
 export const routeRegistry: readonly RouteRow[] = [
+  ...authRoutes,
   catalogRoute,
   healthRoute,
   liveChainsRoute,

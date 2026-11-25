@@ -14,7 +14,7 @@ import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import { isIP } from 'node:net';
 import type { Clock } from '../ports';
 import type { EnvClass } from './env';
-import { fingerprintOf, networkOf, utcDay, type DaySalts } from './fingerprint';
+import { fingerprintOf, network48Of, networkOf, utcDay, type DaySalts } from './fingerprint';
 
 const EDGE_HEADER = 'x-t2f-edge';
 const CLIENT_HEADER = 'x-t2f-client';
@@ -32,6 +32,11 @@ export interface ClientContext {
   addressPresent: boolean;
   /** The `ipDay` rate-limit value: `fp:<hex>` of the address, or the no-address bucket (AC-22). */
   ipDay(): Promise<string>;
+  /**
+   * The /48 key of the sign-in code limits (SPEC-10 AC-9, EC-6): `fp48:<hex>` of the IPv6 /48 (IPv4 as is), or the
+   * same no-address bucket as `ipDay`.
+   */
+  ip48Day(): Promise<string>;
 }
 
 export interface EdgeGate {
@@ -50,12 +55,8 @@ export interface EdgeGateDeps {
 }
 
 function noAddress(edgeVerified: boolean, country: string, clock: Clock): ClientContext {
-  return {
-    country,
-    edgeVerified,
-    addressPresent: false,
-    ipDay: async () => `noaddr:${utcDay(clock.now())}`,
-  };
+  const bucket = async () => `noaddr:${utcDay(clock.now())}`;
+  return { country, edgeVerified, addressPresent: false, ipDay: bucket, ip48Day: bucket };
 }
 
 function countryOf(part: string): string {
@@ -97,12 +98,15 @@ export function createEdgeGate({ envClass, secret, previousSecret, salts, clock 
       const network = isIP(ip) === 4 || isIP(ip) === 6 ? networkOf(ip) : undefined;
       if (network === undefined) return noAddress(true, country, clock);
 
+      const network48 = network48Of(ip) ?? network;
       let pending: Promise<string> | undefined;
+      let pending48: Promise<string> | undefined;
       return {
         country,
         edgeVerified: true,
         addressPresent: true,
         ipDay: () => (pending ??= salts.saltFor().then((salt) => `fp:${fingerprintOf(network, salt)}`)),
+        ip48Day: () => (pending48 ??= salts.saltFor().then((salt) => `fp48:${fingerprintOf(network48, salt)}`)),
       };
     },
   };

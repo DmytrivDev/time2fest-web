@@ -11,6 +11,7 @@ import { alarmDeliveries } from '../collections/alarmDeliveries';
 import { alarms } from '../collections/alarms';
 import { backupRuns } from '../collections/backupRuns';
 import { auditLog } from '../collections/auditLog';
+import { authLinkRetries } from '../collections/authLinkRetries';
 import { cities } from '../collections/catalog/cities';
 import { countries } from '../collections/catalog/countries';
 import { events } from '../collections/catalog/events';
@@ -47,6 +48,7 @@ export const collectionRegistry: readonly CollectionRow[] = [
   { key: 'alarm-deliveries', collection: alarmDeliveries, resettable: true },
   { key: 'alarms', collection: alarms, resettable: false, audited: true },
   { key: 'audit-log', collection: auditLog, resettable: false },
+  { key: 'auth-link-retries', collection: authLinkRetries, resettable: true },
   { key: 'backup-runs', collection: backupRuns, resettable: false },
   { key: 'cities', collection: cities, resettable: true, audited: true },
   { key: 'countries', collection: countries, resettable: true, audited: true },

@@ -10,6 +10,8 @@ import type { OpsRunner, OpsWiring } from '../ops/runner';
 import type { ApiError } from '@time2fest/contracts';
 import type { ZodType } from 'zod';
 import type { AlarmService } from '../alarms/service';
+import type { AuthWiring } from '../auth/instance';
+import type { MailService } from '../mail/ports';
 import type { AlarmStore } from '../alarms/ports';
 import type { CatalogCopyDeps } from '../catalog/copy';
 import type { CatalogStore } from '../catalog/ports';
@@ -26,6 +28,8 @@ import type { ChannelSource, LiveEventSource, LiveLease, LiveStore, PlaylistSour
 import type { ClientContext } from '../platform/edge';
 import type { EnvClass } from '../platform/env';
 import type { Alarm, Clock, FastStore, IdempotencyStore, LockState, Logger } from '../ports';
+import type { AuthLinkHandler } from '../registries/authLinks';
+import type { SubjectDataRow } from '../platform/subjectData';
 import type { ChannelPublisher, RandomSource, SubjectInvalidator, SubjectResolver, TokenSigner } from '../realtime/ports';
 import type { SchedulerHandle } from '../scheduler/service';
 import type { FanOutDeps } from '../site/fanout';
@@ -188,6 +192,14 @@ export interface Deps {
    * multipart part size (default 16 MB). Never set in production code.
    */
   backupTuning?: { dump?: DumpRunner; partBytes?: number };
+  /** Sign-in (SPEC-10): the Better Auth instance (lazy) and its session rules; read through `authOf`. */
+  auth?: AuthWiring;
+  /** Mail (SPEC-10 W20): one service over the primary and the fallback SMTP; read through `mailOf`. */
+  mail?: MailService;
+  /** Guest-merge handlers (SPEC-10 W30); absent → `authLinkRegistry`. Tests inject their own rows here. */
+  authLinks?: readonly AuthLinkHandler[];
+  /** Subject-data rows (SPEC-10 W41); absent → `subjectDataRegistry`. Tests inject their own rows here. */
+  subjectData?: readonly SubjectDataRow[];
 }
 
 export interface Ctx {
@@ -200,10 +212,18 @@ export interface Ctx {
   route: RouteRow;
   /** The client as admitted by the edge gate: country and daily fingerprint, never the address (AC-23). */
   client: ClientContext;
+  /**
+   * The device id (SPEC-10 [П-3]): from a valid `__Host-t2f_device` cookie, or fresh. A fresh id is set as a cookie on a
+   * non-public response (`deviceIsNew`, AC-1).
+   */
+  device: string;
+  /** The request carried no valid `__Host-t2f_device` cookie: `finalize` sets one on a non-public response. */
+  deviceIsNew: boolean;
   /** The parsed body, set by `20-validate` when the row has a `body` schema. */
   body?: unknown;
   /** The parsed query, set by `20-validate` when the row has a `query` schema. */
   query?: unknown;
+  /** The session's subject id (account or guest), set by `25-subject` (SPEC-10 AC-30). */
   subject?: string;
 }
 
@@ -224,6 +244,12 @@ export interface RouteRow {
   /** A public route: cacheable at the edge, its `Set-Cookie` stripped (SPEC-05 W15). */
   public?: true;
   /**
+   * A non-public route whose response headers are fixed by an earlier contract: `finalize` does not add the SPEC-10 device
+   * cookie (AC-1). Only `/api/time` (headers of `functions/api/time.ts`, AC-40) and the edge probe door (exact
+   * `Set-Cookie`, SPEC-05 AC-35); neither reads `ctx.device`.
+   */
+  noDeviceCookie?: true;
+  /**
    * The edge probe door (set only by door rows, SPEC-05 W16). Only on a `testDoor` and only with a
    * verified edge secret, `10-origin` accepts a non-loopback `Host` and a non-JSON body.
    */
@@ -232,6 +258,8 @@ export interface RouteRow {
   maxBodyBytes?: number;
   rateLimit?: string;
   idempotency?: string;
+  /** SPEC-10 [П-6]: the route needs a subject — without a session `25-subject` creates a guest (AC-4). */
+  subject?: 'required';
   handler(ctx: Ctx): Promise<Outcome>;
 }
 

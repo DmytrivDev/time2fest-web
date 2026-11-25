@@ -48,6 +48,7 @@ function rawEnv(cls: 'test' | 'rehearsal' | 'production', over: Record<string, s
     T2F_CENTRIFUGO_TOKEN_SECRET: randomBytes(24).toString('hex'),
     PAYLOAD_SECRET: randomBytes(24).toString('hex'),
     T2F_EDGE_SECRET: randomBytes(24).toString('hex'),
+    T2F_AUTH_SECRET: 'auth-secret-value-for-the-env-unit-tests-000', // check-secrets: allow test fake (SPEC-10 requires it outside test)
     T2F_ALLOWED_ORIGINS: 'https://time2fest.com',
     T2F_ACCESS_TEAM_DOMAIN: 'https://t2f-test.invalid',
     T2F_ACCESS_AUD: 't2f-test-aud',

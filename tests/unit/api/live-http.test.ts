@@ -63,6 +63,7 @@ function fakeTransport(initial: ConnectionState) {
       stateListeners.add(l);
       return () => stateListeners.delete(l);
     },
+    renewToken: async () => {},
   };
   const on = (channel: string) => listeners.get(channel) ?? [];
   return {

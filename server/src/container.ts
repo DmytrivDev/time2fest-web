@@ -17,7 +17,12 @@ import type { IdentityMarker } from './access/ports';
 import { createAccessVerifier, localKeys, remoteKeys } from './adapters/accessJwt';
 import { createCentrifugoApi } from './adapters/centrifugoApi';
 import { createHs256Signer } from './adapters/centrifugoToken';
-import { noSessionSubjects } from './adapters/noSessionSubjects';
+import { createSessionSubjects } from './adapters/sessionSubjects';
+import { createAuthWiring } from './auth/instance';
+import { createSmtpTransport } from './adapters/smtpMail';
+import type { MailService } from './mail/ports';
+import { createMailQueue } from './mail/queue';
+import { createMailService, MAIL_FALLBACK, MAIL_PRIMARY } from './mail/service';
 import { createIdentityMarker } from './adapters/identityMarker';
 import { createPayloadCatalogMeta, createPayloadCatalogStore } from './adapters/payloadCatalog';
 import { createReadinessProbe } from './adapters/readiness';
@@ -85,13 +90,13 @@ import { createR2Meter, r2PrefixOf } from './ops/meter';
 import type { SpendJob } from './ops/spend';
 import { createOpsRunner, startOpsTicker, type OpsRunner, type OpsWiring } from './ops/runner';
 import { buildBackupDeps, buildSpendJob, createOpsWiring, opsRunnerDepsOf } from './opsWiring';
-import type { Alarm, LockState, SeedStore } from './ports';
+import type { Alarm, FastStore, LockState, Logger, SeedStore } from './ports';
 import { envRegistry } from './registries/env';
 import { channelClassesFor } from './registries/channels';
 import { middlewareRegistry } from './registries/middleware';
 import { createChannelPublisher } from './realtime/publisher';
 import { createSubjectInvalidator } from './realtime/invalidate';
-import type { CentrifugoPresenceApi, ChannelPublisher, Scheduler, SubscriptionSigner } from './realtime/ports';
+import type { CentrifugoPresenceApi, ChannelPublisher, Scheduler, SubjectResolver, SubscriptionSigner } from './realtime/ports';
 import { channelName } from './domain/realtime/channels';
 import { createViewersAggregator, VIEWERS_PASS_MS, viewerCatalogFrom } from './live/viewers';
 import { isRevertible } from './registries/revertHandlers';
@@ -207,6 +212,46 @@ export function spendJobOf(deps: Deps, ops: OpsWiring, payload: () => Promise<Pa
 }
 
 /** Builds the dependencies from a raw environment. Throws, naming variables only, when it is invalid. */
+/**
+ * The mail service (SPEC-10 W20) over the primary SMTP (`SMTP_HOST`/`SMTP_PORT`, Resend) and the optional
+ * fallback (`SMTP_FALLBACK_*`, Cloudflare Email); wall clock; `undefined` without `SMTP_HOST`.
+ */
+function mailServiceFor(env: AppEnv, store: FastStore, alarm: Alarm, log: Logger): MailService | undefined {
+  const v = env.vars;
+  const host = typeof v.SMTP_HOST === 'string' && v.SMTP_HOST.trim() !== '' ? v.SMTP_HOST : undefined;
+  if (host === undefined) return undefined;
+  const str = (x: unknown) => (typeof x === 'string' && x !== '' ? x : undefined);
+  const primary = createMailQueue(
+    createSmtpTransport({
+      host,
+      port: Number(v.SMTP_PORT ?? 587),
+      ...(str(v.SMTP_USER) !== undefined ? { user: str(v.SMTP_USER), password: str(v.SMTP_PASSWORD) } : {}),
+    }),
+    { provider: MAIL_PRIMARY, log },
+  );
+  const fbHost = str(v.SMTP_FALLBACK_HOST);
+  const fallback =
+    fbHost !== undefined
+      ? createMailQueue(
+          createSmtpTransport({
+            host: fbHost,
+            port: Number(v.SMTP_FALLBACK_PORT ?? 587),
+            ...(str(v.SMTP_FALLBACK_USER) !== undefined ? { user: str(v.SMTP_FALLBACK_USER), password: str(v.SMTP_FALLBACK_PASSWORD) } : {}),
+          }),
+          { provider: MAIL_FALLBACK, log },
+        )
+      : undefined;
+  return createMailService({
+    primary,
+    ...(fallback ? { fallback } : {}),
+    store,
+    alarm,
+    clock: realClock,
+    ceilings: { primary: Number(v.T2F_MAIL_DAILY_CEILING ?? 100), fallback: Number(v.SMTP_FALLBACK_DAILY_CEILING ?? 100) },
+    log,
+  });
+}
+
 export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   const loaded = loadEnv(raw, envRegistry);
   if (!loaded.ok) throw new Error(`env: invalid ${loaded.failing.join(', ')}`);
@@ -296,8 +341,13 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   // The ops jobs (SPEC-13b W18): built here without a timer; ticked by `startProcessBackground` and the `ops-tick` door.
   if (overrides.backupTuning) deps.backupTuning = overrides.backupTuning;
   if (ops && !deps.opsRunner) deps.opsRunner = createOpsRunner(opsRunnerDepsOf(deps, ops, payload, backupDepsOf(deps)));
-  // Realtime (SPEC-06): no session yet (C5); the signer only with the token secret (else AC-19 in `test`).
-  deps.subjects = overrides.subjects ?? noSessionSubjects;
+  // Realtime (SPEC-06 C5): the subject of the session cookie (SPEC-10 AC-30); `deps.auth` read lazily, tests replace it.
+  deps.subjects = overrides.subjects ?? createSessionSubjects(() => deps.auth);
+  // Sign-in (SPEC-10): the Better Auth instance is built on first use (no connection, no timer here).
+  deps.auth = overrides.auth ?? createAuthWiring({ env, redis: deps.redis, getDeps: () => deps });
+  // Mail (SPEC-10 W20): pooled SMTP transports, no connection until the first send; absent without SMTP_HOST.
+  const mail = overrides.mail ?? mailServiceFor(env, deps.redis, alarm, log);
+  if (mail) deps.mail = mail;
   // Text moderation and AI (SPEC-09): built here, timers started only by `startProcessBackground`.
   deps.moderation = overrides.moderation ?? createModeration(env, payload, { clock, alarm, log });
   const tokenSecret = realtime.config.tokenSecret;
@@ -978,11 +1028,23 @@ export function edgeGateOf(deps: Deps): EdgeGate {
   });
 }
 
+/** `first`, and when it finds nobody, the resolver `second()` (read per call). */
+function withFallback(first: SubjectResolver, second: () => SubjectResolver | undefined): SubjectResolver {
+  return {
+    async resolve(req) {
+      return (await first.resolve(req)) ?? (await second()?.resolve(req)) ?? null;
+    },
+  };
+}
+
 /** The dispatcher for `deps`: production routes, plus the doors when `shouldLoadDoors`. */
 export async function buildDispatcher(deps: Deps, routes: readonly RouteRow[] = routeRegistry): Promise<Dispatcher> {
   const doors = shouldLoadDoors(deps.env) ? (await import('./test-doors/index')).createDoors(deps, seedStoreOf(deps)) : undefined;
-  // With the doors only: the routes see `deps` plus the doors' own subject resolver (AC-57); `deps` itself stays as built.
-  const served: Deps = doors ? Object.create(deps, { subjects: { value: doors.subjects, enumerable: true } }) : deps;
+  // With the doors only: the routes see `deps` plus the doors' own subject resolver (AC-57) — the remembered test
+  // subject first, else the session's (SPEC-10 AC-30); `deps` itself stays as built.
+  const served: Deps = doors
+    ? Object.create(deps, { subjects: { value: withFallback(doors.subjects, () => deps.subjects), enumerable: true } })
+    : deps;
   return createDispatcher({ routes: [...routes, ...(doors?.routes ?? [])], middleware: middlewareRegistry, deps: served, edge: edgeGateOf(deps) });
 }
 

@@ -44,6 +44,7 @@ function baseEnv(): RawEnv {
     T2F_REDIS_PREFIX: 't2f:spec_06_realtime:',
     PAYLOAD_SECRET: 'payload-secret-value-that-is-32-chars-long', // check-secrets: allow test fake
     T2F_EDGE_SECRET: 'edge-secret-value-for-the-realtime-unit-test', // check-secrets: allow test fake
+    T2F_AUTH_SECRET: 'auth-secret-value-for-the-env-unit-tests-000', // check-secrets: allow test fake (SPEC-10 requires it outside test)
     T2F_ALLOWED_ORIGINS: 'https://time2fest.com',
     T2F_ADMIN_HOST: 'admin.localhost:3100',
     T2F_ACCESS_TEAM_DOMAIN: 'https://t2f-test.invalid',

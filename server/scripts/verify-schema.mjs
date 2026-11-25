@@ -75,6 +75,20 @@ for (const [rel, args] of generated) {
   }
 }
 
+// (d) Better Auth tables/columns (SPEC-10 AC-57): `getMigrations` must have nothing left to create or add.
+if (uri) {
+  const tsx = path.join(serverDir, 'node_modules', 'tsx', 'dist', 'cli.mjs');
+  const r = spawnSync(process.execPath, [tsx, 'src/cli/authSchemaCheck.ts'], {
+    cwd: serverDir,
+    encoding: 'utf8',
+    env: { ...process.env, DATABASE_URI: uri },
+  });
+  if (r.status !== 0) {
+    const lines = (r.stderr || r.stdout).split(/\r?\n/).filter((l) => l.startsWith('auth schema:'));
+    problems.push(...(lines.length > 0 ? lines : [`auth schema check failed: ${(r.stderr || r.stdout).slice(-300)}`]));
+  }
+}
+
 if (problems.length > 0) {
   for (const p of problems) console.error(`schema: ${p}`);
   process.exit(1);

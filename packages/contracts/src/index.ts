@@ -12,3 +12,4 @@ export * from './live';
 export * from './liveRules';
 export * from './liveGuard';
 export * from './streams';
+export * from './auth';

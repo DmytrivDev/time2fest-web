@@ -7,6 +7,7 @@ import { randomBytes } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { buildDispatcher, payloadOf } from '../../src/container';
 import { BASE, ownRedis, testDeps } from './helpers';
+import { NON_TEST_GOOGLE } from '../support/nonTestGoogle';
 
 // Built at runtime: no secret-looking literal in the test.
 const CURRENT = randomBytes(24).toString('hex');
@@ -34,7 +35,7 @@ async function shape(res: Response) {
 describe('edge secret rotation (SPEC-13a AC-35, real Redis)', () => {
   for (const [label, cls] of [
     ['test with a secret', {}],
-    ['rehearsal', { T2F_ENV: 'rehearsal' }],
+    ['rehearsal', { T2F_ENV: 'rehearsal', ...NON_TEST_GOOGLE }],
   ] as const) {
     it(`${label}: GET /api/time with the current or the previous secret → 200; a third value → the single 404`, async () => {
       const dispatch = await buildDispatcher(

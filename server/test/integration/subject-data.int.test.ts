@@ -35,10 +35,13 @@ describe('subject-data registry', () => {
 
   it('AC-57: no handlers → an empty result', async () => {
     expect(await runSubjectData('anonymise', 'subj-3', [])).toEqual({ ok: true, results: {}, declarative: [] });
-    expect(await runSubjectData('export', 'subj-3', subjectDataRegistry)).toEqual({
+    // SPEC-10 W40: the registry's only handler is `auth`, which runs only inside the auth scope
+    // (`runSubjectDataInScope`; covered by `auth-subject-data.int`) — here only the declarative rows are named.
+    const declarations = subjectDataRegistry.filter((r) => 'declarative' in r);
+    expect(await runSubjectData('export', 'subj-3', declarations)).toEqual({
       ok: true,
       results: {},
-      declarative: ['ip-day-fingerprint'],
+      declarative: ['auth-codes', 'ip-day-fingerprint'],
     });
   });
 });

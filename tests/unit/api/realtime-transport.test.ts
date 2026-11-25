@@ -720,3 +720,164 @@ describe('SPEC-12 W44 — a subscription with a token', () => {
     expect(l.onForbidden).not.toHaveBeenCalled();
   });
 });
+
+describe('SPEC-10 W45a — renewToken after a change of the session owner (AC-31)', () => {
+  /** An unsigned JWT-shaped fake whose payload carries `sub`. */
+  function fakeJwt(sub: string): string {
+    const part = (value: unknown) => Buffer.from(JSON.stringify(value)).toString('base64url');
+    return `${part({ alg: 'none' })}.${part({ sub })}.sig`;
+  }
+  function subjectBody(sub: string) {
+    return { ok: true, value: { token: fakeJwt(sub), expiresAt: '2026-12-31T23:00:00.000Z' } };
+  }
+
+  it('the fake subject body is a real C1 response', () => {
+    expect(RealtimeTokenResponseSchema.safeParse(subjectBody('u1')).success).toBe(true);
+  });
+
+  it('anonymous connection → one token request, reconnect with the token, channels kept', async () => {
+    let body: unknown = ANONYMOUS;
+    const h = harness({ fetch: async () => response(200, body) });
+    const l = listener();
+    h.transport.subscribe('site:state', l);
+    await flush();
+    const c = h.client();
+    await expect(c.connectWith()).resolves.toBe('');
+    const sub = c.sub('site:state');
+    body = subjectBody('u1');
+    await h.transport.renewToken();
+    expect(h.fetch).toHaveBeenCalledTimes(2);
+    expect(c.disconnectCalls).toBe(1);
+    expect(c.tokensSet).toEqual([fakeJwt('u1')]);
+    expect(c.connectCalls).toBe(2);
+    expect(h.transport.state()).toBe('connecting');
+    expect(h.clients).toHaveLength(1);
+    expect(c.sub('site:state')).toBe(sub);
+    c.emit('state', { newState: 'connected', oldState: 'connecting' });
+    expect(h.transport.state()).toBe('connected');
+    sub.emit('publication', { data: { type: 'site.state', id: 'e1', data: {} } });
+    expect(l.events.map((e) => e.id)).toEqual(['e1']);
+  });
+
+  it('a renewal during a renewal → one request', async () => {
+    let release: () => void = () => {};
+    let calls = 0;
+    const h = harness({
+      fetch: async () => {
+        calls += 1;
+        if (calls === 1) return response(200, ANONYMOUS);
+        await new Promise<void>((resolve) => {
+          release = resolve;
+        });
+        return response(200, subjectBody('u1'));
+      },
+    });
+    h.transport.subscribe('site:state', listener());
+    await flush();
+    const c = h.client();
+    await c.connectWith();
+    const first = h.transport.renewToken();
+    const second = h.transport.renewToken();
+    await flush();
+    release();
+    await Promise.all([first, second]);
+    expect(h.fetch).toHaveBeenCalledTimes(2);
+    expect(c.tokensSet).toEqual([fakeJwt('u1')]);
+    expect(c.connectCalls).toBe(2);
+  });
+
+  it('the same subject → no reconnect; another subject → reconnect', async () => {
+    let body: unknown = subjectBody('u1');
+    const h = harness({ fetch: async () => response(200, body) });
+    h.transport.subscribe('site:state', listener());
+    await flush();
+    const c = h.client();
+    await c.connectWith();
+    await h.transport.renewToken();
+    expect(h.fetch).toHaveBeenCalledTimes(2);
+    expect(c.disconnectCalls).toBe(0);
+    expect(c.tokensSet).toEqual([]);
+    body = subjectBody('u2');
+    await h.transport.renewToken();
+    expect(c.disconnectCalls).toBe(1);
+    expect(c.tokensSet).toEqual([fakeJwt('u2')]);
+  });
+
+  it('signed out (token:null after a subject) → anonymous reconnect; later reconnects ask nothing', async () => {
+    let body: unknown = subjectBody('u1');
+    const h = harness({ fetch: async () => response(200, body) });
+    h.transport.subscribe('site:state', listener());
+    await flush();
+    const c = h.client();
+    await c.connectWith();
+    body = ANONYMOUS;
+    await h.transport.renewToken();
+    expect(c.tokensSet).toEqual(['']);
+    expect(c.connectCalls).toBe(2);
+    await expect(c.connectWith()).resolves.toBe('');
+    expect(h.fetch).toHaveBeenCalledTimes(2);
+  });
+
+  it('anonymous stays anonymous → no reconnect, the anonymous answer is kept', async () => {
+    const h = harness();
+    h.transport.subscribe('site:state', listener());
+    await flush();
+    const c = h.client();
+    await c.connectWith();
+    await h.transport.renewToken();
+    expect(h.fetch).toHaveBeenCalledTimes(2);
+    expect(c.disconnectCalls).toBe(0);
+    await expect(c.connectWith()).resolves.toBe('');
+    expect(h.fetch).toHaveBeenCalledTimes(2);
+  });
+
+  it('a failed renewal request drops the token: the client asks getToken again on reconnect', async () => {
+    let status = 200;
+    const h = harness({ fetch: async () => response(status, status === 200 ? ANONYMOUS : {}) });
+    h.transport.subscribe('site:state', listener());
+    await flush();
+    const c = h.client();
+    await c.connectWith();
+    status = 503;
+    await h.transport.renewToken();
+    expect(h.fetch).toHaveBeenCalledTimes(2);
+    expect(c.tokensSet).toEqual(['']);
+    expect(c.connectCalls).toBe(2);
+    status = 200;
+    await expect(c.connectWith()).resolves.toBe('');
+    expect(h.fetch).toHaveBeenCalledTimes(3);
+  });
+
+  it('no open connection → no request', async () => {
+    const h = harness();
+    await h.transport.renewToken();
+    const off = h.transport.subscribe('site:state', listener());
+    off();
+    await h.transport.renewToken();
+    expect(h.fetch).not.toHaveBeenCalled();
+    const none = harness({ url: '' });
+    await none.transport.renewToken();
+    expect(none.fetch).not.toHaveBeenCalled();
+  });
+
+  it('the token is never logged', async () => {
+    const spies = (['log', 'info', 'warn', 'error', 'debug'] as const).map((m) =>
+      vi.spyOn(console, m).mockImplementation(() => {}),
+    );
+    try {
+      let body: unknown = ANONYMOUS;
+      const h = harness({ fetch: async () => response(200, body) });
+      h.transport.subscribe('site:state', listener());
+      await flush();
+      await h.client().connectWith();
+      body = subjectBody('u1');
+      await h.transport.renewToken();
+      const token = fakeJwt('u1');
+      for (const spy of spies) {
+        for (const args of spy.mock.calls) expect(JSON.stringify(args)).not.toContain(token);
+      }
+    } finally {
+      for (const spy of spies) spy.mockRestore();
+    }
+  });
+});

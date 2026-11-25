@@ -177,6 +177,29 @@ function aiUrlAllowed(value: unknown, cls: EnvClass): boolean {
   }
 }
 
+/** True when a bare host (optionally `host:port`) is loopback: `127.0.0.1`, `localhost`, `::1`, `[::1]`. */
+export function isLoopbackHost(value: unknown): boolean {
+  if (typeof value !== 'string') return false;
+  const v = value.trim().toLowerCase();
+  return LOOPBACK_HOSTS.has(v) || LOOPBACK_HOSTS.has(bareHost(v));
+}
+
+/**
+ * SPEC-10 AC-47 (NFR-6): the mail hosts and the Google discovery URL may only point at this machine in `test`
+ * (Mailpit, the fake SMTP, the fake OIDC); outside `test` the discovery URL is `https:` only. Names only.
+ */
+export function authMailFailures(env: Readonly<Record<string, unknown>>, cls: EnvClass): string[] {
+  const failing: string[] = [];
+  if (cls === 'test') {
+    for (const name of ['SMTP_HOST', 'SMTP_FALLBACK_HOST']) {
+      if (env[name] !== undefined && !isLoopbackHost(env[name])) failing.push(name);
+    }
+  }
+  const discovery = env.T2F_GOOGLE_DISCOVERY_URL;
+  if (discovery !== undefined && !aiUrlAllowed(discovery, cls)) failing.push('T2F_GOOGLE_DISCOVERY_URL');
+  return failing;
+}
+
 /**
  * SPEC-13b AC-13: in `test` the Telegram base address may only be loopback (the fake). Anything else
  * switches the sink off — never a refusal, so a stray value cannot block a test stack.
@@ -260,6 +283,8 @@ export function loadEnv(
   for (const name of ['T2F_AI_ANTHROPIC_URL', 'T2F_AI_DEEPSEEK_URL']) {
     if (!aiUrlAllowed(env[name], cls) && !failing.includes(name)) failing.push(name);
   }
+
+  for (const name of authMailFailures(env, cls)) if (!failing.includes(name)) failing.push(name);
 
   if (cls === 'test') {
     for (const name of testIsolationFailures(env)) if (!failing.includes(name)) failing.push(name);

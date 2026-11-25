@@ -31,6 +31,8 @@ export interface FastStore {
   incrWindow(key: string, windowMs: number): Promise<{ count: number; ttlMs: number }>;
   /** Sets the key only when absent; true when it was set. */
   setIfAbsent(key: string, value: string, ttlMs: number): Promise<boolean>;
+  /** Takes one back from an existing counter (never creates the key, never below 0, keeps its expiry). */
+  decrIfPresent(key: string): Promise<void>;
   get(key: string): Promise<string | null>;
   set(key: string, value: string, ttlMs: number): Promise<void>;
   /** Deletes one key (no-op when absent). */
