@@ -20,6 +20,7 @@ function rawEnv(over: Record<string, string | undefined> = {}) {
     PAYLOAD_SECRET: SECRET,
     // Required in rehearsal/production since SPEC-05 AC-14; present so those cases stay valid.
     T2F_EDGE_SECRET: EDGE_SECRET,
+    T2F_AUTH_SECRET: 'auth-secret-value-for-the-env-unit-tests-000', // check-secrets: allow test fake (SPEC-10 requires it outside test)
     // SPEC-04 blocks `access` and `catalog` are required in rehearsal and production.
     T2F_ADMIN_HOST: 'admin.localhost:3100',
     T2F_ACCESS_TEAM_DOMAIN: 'https://t2f-test.invalid',

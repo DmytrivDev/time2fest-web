@@ -20,6 +20,7 @@ function rawEnv(cls: 'test' | 'rehearsal' | 'production', over: Record<string, s
   const team = 'https://t2f-test.invalid';
   const deployed = {
     T2F_EDGE_SECRET: randomBytes(24).toString('hex'),
+    T2F_AUTH_SECRET: 'auth-secret-value-for-the-env-unit-tests-000', // check-secrets: allow test fake (SPEC-10 requires it outside test)
     T2F_CENTRIFUGO_API_KEY: randomBytes(24).toString('hex'),
     T2F_CENTRIFUGO_TOKEN_SECRET: randomBytes(24).toString('hex'),
     T2F_ACCESS_TEAM_DOMAIN: team,

@@ -75,6 +75,7 @@ describe('edge secret in the env registry', () => {
       REDIS_URL: 'redis://localhost:6380/4',
       T2F_REDIS_PREFIX: 't2f:edge_unit:',
       PAYLOAD_SECRET: payloadSecret,
+      T2F_AUTH_SECRET: 'auth-secret-value-for-the-env-unit-tests-000', // check-secrets: allow test fake (SPEC-10 requires it outside test)
       // SPEC-04 blocks `access` and `catalog` are required in rehearsal too; present so only the edge secret is missing.
       T2F_ADMIN_HOST: 'admin.localhost:3100',
       T2F_ACCESS_TEAM_DOMAIN: 'https://t2f-test.invalid',

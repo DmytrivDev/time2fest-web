@@ -78,6 +78,13 @@ function writeEnv(wt) {
     `T2F_CENTRIFUGO_PREFIX=${wt.channelPrefix}`,
     'SMTP_HOST=127.0.0.1',
     'SMTP_PORT=1025',
+    // SPEC-10: fallback = Mailpit chaos, Google = fake OIDC; loopback only (AC-47).
+    'SMTP_FALLBACK_HOST=127.0.0.1',
+    'SMTP_FALLBACK_PORT=1026',
+    'T2F_GOOGLE_DISCOVERY_URL=http://127.0.0.1:8091/google/.well-known/openid-configuration',
+    'T2F_GOOGLE_CLIENT_ID=t2f-test',
+    'T2F_GOOGLE_CLIENT_SECRET=t2f-test-google-secret', // check-secrets: allow test fake
+    `T2F_AUTH_SECRET=${crypto.randomBytes(36).toString('base64url')}`,
     `T2F_LOCK_DIR=${lockDir(serverDir, {})}`,
     `T2F_ALLOWED_ORIGINS=http://127.0.0.1:${web},http://localhost:${web},http://localhost:3000`,
     `PAYLOAD_SECRET=${secret}`,
