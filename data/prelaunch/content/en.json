@@ -6590,5 +6590,33 @@
       "description": "Guadeloupe greets 2027 at 04:00 UTC with a Creole supper of yam and boudin, fireworks over the bays and, on 1 January, a cleansing ben démaré bath in the sea."
     },
     "kit": "gp"
+  },
+  "BO": {
+    "text": "Bolivians wear their underwear inside out tonight — red for love, yellow for money — and turn it right side out as soon as midnight strikes. The evening of 31 December is spent around a generous family table, where the main dish is often pork: it is said to lead you forward. With each chime of the clock people eat a grape — twelve wishes for twelve months. Over a glass of champagne suitcases come out to bring a year full of travel, while some run up and down the stairs or count money for prosperity.\n\nAbove La Paz, which lies in a mountain bowl about 3,650 metres high, and neighbouring El Alto, fireworks thunder at midnight — so loudly that city services publish advice in advance on calming dogs and cats. Parties in La Paz are more and more often themed: from metal to the eighties and fancy dress.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "coin",
+        "title": "Yellow underwear inside out",
+        "text": "Yellow underwear for money, red for love — worn inside out and turned right side out at midnight for good fortune."
+      },
+      {
+        "id": "t2",
+        "iconId": "grapes",
+        "title": "Twelve grapes",
+        "text": "Eat a grape for each chime at midnight and make a wish for every month of the new year."
+      },
+      {
+        "id": "t3",
+        "iconId": "suitcase",
+        "title": "A suitcase for travel",
+        "text": "Suitcases come out during the toast so the year brings journeys, and over the summer holidays many travel to Lake Titicaca to renew their energy."
+      }
+    ],
+    "meta": {
+      "title": "New Year 2027 in Bolivia: La Paz | Time2Fest",
+      "description": "Bolivia greets 2027 at local midnight (04:00 UTC): yellow underwear worn inside out, twelve grapes, suitcases for travel and fireworks over the La Paz bowl."
+    },
+    "kit": "bo"
   }
 }

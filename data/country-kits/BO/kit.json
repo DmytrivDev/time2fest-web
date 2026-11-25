@@ -1,0 +1,103 @@
+{
+  "code": "BO",
+  "zone": "UTC-4",
+  "zoneId": "utc-0400",
+  "cityId": "la-paz",
+  "names": {
+    "uk": {
+      "name": "Болівія",
+      "city": "Ла-Пас",
+      "cityIn": "у Ла-Пасі",
+      "countryIn": "у Болівії",
+      "caps": "БОЛІВІЯ"
+    },
+    "en": {
+      "name": "Bolivia",
+      "city": "La Paz",
+      "cityIn": "in La Paz",
+      "countryIn": "in Bolivia",
+      "caps": "BOLIVIA"
+    },
+    "es": {
+      "name": "Bolivia",
+      "city": "La Paz",
+      "cityIn": "en La Paz",
+      "countryIn": "en Bolivia",
+      "caps": "BOLIVIA"
+    },
+    "fr": {
+      "name": "Bolivie",
+      "city": "La Paz",
+      "cityIn": "à La Paz",
+      "countryIn": "en Bolivie",
+      "caps": "BOLIVIE"
+    }
+  },
+  "picto": "M1 32 Q20 24 39 6 M17 39.5 L19 22.6 H21 L23 39.5 M15.8 22.6 H24.2 M8.5 28.4 V30.8 M3.5 30.8 H13.5 V39 H3.5 Z M3.5 34 H13.5 M31 13.2 V15.6 M26 15.6 H36 V23.8 H26 Z M26 18.8 H36",
+  "flagColors": [
+    "#D52B1E",
+    "#F9E300",
+    "#007934"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "у Болівії"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Bolivia"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Bolivia"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "en Bolivie"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

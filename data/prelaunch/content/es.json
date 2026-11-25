@@ -6590,5 +6590,33 @@
       "description": "Guadalupe recibe 2027 a las 04:00 UTC con cena criolla de ñame y boudin, fuegos sobre las bahías y, el 1 de enero, el baño purificador ben démaré en el mar."
     },
     "kit": "gp"
+  },
+  "BO": {
+    "text": "Esta noche los bolivianos se ponen la ropa interior al revés —roja para el amor, amarilla para el dinero— y le dan la vuelta en cuanto llega la medianoche. La noche del 31 de diciembre transcurre en una mesa familiar abundante, donde el plato principal suele ser de cerdo: dicen que hace avanzar. Con cada campanada se come una uva: doce deseos para doce meses. Con el brindis de champán se sacan las maletas para atraer un año de viajes, y hay quien sube y baja gradas o cuenta dinero para la prosperidad.\n\nSobre La Paz, que se extiende en una hoyada de montaña a unos 3.650 metros, y la vecina El Alto, la pirotecnia truena a medianoche, tan fuerte que los servicios municipales publican antes consejos para calmar a perros y gatos. Las fiestas paceñas son cada vez más temáticas: del metal a los ochenta y los disfraces.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "coin",
+        "title": "Ropa interior amarilla al revés",
+        "text": "Ropa interior amarilla para el dinero, roja para el amor, puesta al revés y volteada a medianoche para la buena suerte."
+      },
+      {
+        "id": "t2",
+        "iconId": "grapes",
+        "title": "Doce uvas",
+        "text": "Cómete una uva con cada campanada de medianoche y pide un deseo para cada mes del año nuevo."
+      },
+      {
+        "id": "t3",
+        "iconId": "suitcase",
+        "title": "Maletas para viajar",
+        "text": "En el brindis se sacan las maletas para que el año traiga viajes, y en las vacaciones de verano muchos van al lago Titicaca a renovar energías."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo 2027 en Bolivia: La Paz | Time2Fest",
+      "description": "Bolivia recibe 2027 a medianoche local (04:00 UTC): ropa interior amarilla al revés, doce uvas, maletas para viajar y pirotecnia sobre la hoyada de La Paz."
+    },
+    "kit": "bo"
   }
 }

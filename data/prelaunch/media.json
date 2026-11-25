@@ -3981,6 +3981,22 @@
         "x": 33,
         "y": 45
       }
+    },
+    "country:BO": {
+      "src": "/media/photos/la-paz.webp",
+      "alt": {
+        "uk": "Новорічна ніч у Ла-Пасі: салюти над освітленими схилами міста",
+        "en": "New Year’s night in La Paz: fireworks over the lit slopes of the city",
+        "es": "Noche de Año Nuevo en La Paz: fuegos artificiales sobre las laderas iluminadas de la ciudad",
+        "fr": "Nuit du Nouvel An à La Paz : feux d’artifice au-dessus des pentes illuminées de la ville"
+      },
+      "author": "Jail ibañez",
+      "license": "CC BY 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:A%C3%B1o_nuevo_la_paz_2024.jpg",
+      "position": {
+        "x": 58,
+        "y": 55
+      }
     }
   }
 }

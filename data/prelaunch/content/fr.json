@@ -6590,5 +6590,33 @@
       "description": "La Guadeloupe fête 2027 à 04:00 UTC : réveillon créole d’igname et de boudin, feux d’artifice sur les baies et, le 1er janvier, bain démarré dans la mer."
     },
     "kit": "gp"
+  },
+  "BO": {
+    "text": "Cette nuit, les Boliviens portent leurs sous-vêtements à l’envers — rouges pour l’amour, jaunes pour l’argent — et les remettent à l’endroit dès que sonne minuit. La soirée du 31 décembre se passe autour d’une table familiale généreuse, où le plat principal est souvent du porc : on dit qu’il fait aller de l’avant. À chaque coup de l’horloge, on mange un grain de raisin — douze vœux pour douze mois. Au moment de trinquer au champagne, on sort les valises pour attirer une année de voyages, et certains montent et descendent les escaliers ou comptent de l’argent pour la prospérité.\n\nAu-dessus de La Paz, nichée dans une cuvette de montagne à environ 3 650 mètres, et de sa voisine El Alto, les feux d’artifice tonnent à minuit — si fort que les services municipaux publient d’avance des conseils pour calmer chiens et chats. Les fêtes à La Paz sont de plus en plus thématiques : du metal aux années quatre-vingt et aux déguisements.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "coin",
+        "title": "Dessous jaunes à l’envers",
+        "text": "Des dessous jaunes pour l’argent, rouges pour l’amour, portés à l’envers puis retournés à minuit pour la chance."
+      },
+      {
+        "id": "t2",
+        "iconId": "grapes",
+        "title": "Douze raisins",
+        "text": "Mange un grain de raisin à chaque coup de minuit et fais un vœu pour chaque mois de la nouvelle année."
+      },
+      {
+        "id": "t3",
+        "iconId": "suitcase",
+        "title": "Une valise pour voyager",
+        "text": "On sort les valises pendant le toast pour que l’année apporte des voyages, et pendant les vacances d’été beaucoup partent au lac Titicaca refaire le plein d’énergie."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An 2027 en Bolivie : La Paz | Time2Fest",
+      "description": "La Bolivie fête 2027 à minuit heure locale (04:00 UTC) : dessous jaunes à l’envers, douze raisins, valises pour voyager et feux d’artifice sur La Paz."
+    },
+    "kit": "bo"
   }
 }

@@ -1434,6 +1434,12 @@
       "wide": true,
       "sky": "#151a36",
       "water": "#232f52"
+    },
+    "BO": {
+      "src": "/scenes/BO-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#232733"
     }
   }
 }

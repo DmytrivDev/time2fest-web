@@ -3978,6 +3978,24 @@
         "title": "Nouvel An en Guadeloupe : Basse-Terre | Time2Fest",
         "description": "La Guadeloupe fête 2027 à 04:00 UTC : réveillon créole d’igname et de boudin, feux d’artifice sur les baies et, le 1er janvier, bain démarré dans la mer."
       }
+    },
+    "BO": {
+      "uk": {
+        "title": "Болівія: Новий рік 2027 у Ла-Пасі | Time2Fest",
+        "description": "Болівія зустрічає 2027-й опівночі за місцевим часом (04:00 UTC): жовта білизна навиворіт, дванадцять виноградин, валізи на подорожі й піротехніка над Ла-Пасом."
+      },
+      "en": {
+        "title": "New Year in Bolivia: La Paz | Time2Fest",
+        "description": "Bolivia greets 2027 at local midnight (04:00 UTC): yellow underwear worn inside out, twelve grapes, suitcases for travel and fireworks over the La Paz bowl."
+      },
+      "es": {
+        "title": "Año Nuevo en Bolivia: La Paz | Time2Fest",
+        "description": "Bolivia recibe 2027 a medianoche local (04:00 UTC): ropa interior amarilla al revés, doce uvas, maletas para viajar y pirotecnia sobre la hoyada de La Paz."
+      },
+      "fr": {
+        "title": "Nouvel An en Bolivie : La Paz | Time2Fest",
+        "description": "La Bolivie fête 2027 à minuit heure locale (04:00 UTC) : dessous jaunes à l’envers, douze raisins, valises pour voyager et feux d’artifice sur La Paz."
+      }
     }
   }
 }
