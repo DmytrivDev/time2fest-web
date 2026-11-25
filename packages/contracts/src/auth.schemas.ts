@@ -79,3 +79,23 @@ export const authGoogleUserDoor = z
 export const mailCounterDoor = z
   .object({ provider: z.enum(['primary', 'fallback']), count: z.number().int().nonnegative() })
   .strict();
+
+/** Test doors of the rights wave (SPEC-11): `/api/_test/rights/*`. */
+const doorEmail = z.string().min(3).max(254).regex(/^[^\s@]+@[^\s@]+$/);
+export const rightsPassGrantDoor = z
+  .object({
+    holder: z.union([
+      z.object({ account: z.string().min(1).max(64) }).strict(),
+      z.object({ device: z.string().min(1).max(64), paymentEmail: doorEmail }).strict(),
+    ]),
+    source: z.string().min(1).max(32),
+    grantRef: z.string().min(1).max(128),
+    issuedAt: z.number().int().nonnegative().optional(),
+  })
+  .strict();
+export const rightsPassRevokeDoor = z.object({ grantRef: z.string().min(1).max(128) }).strict();
+export const rightsBanDoor = z
+  .object({ kind: z.enum(['account', 'guest', 'device', 'ip-day']), subject: z.string().min(1).max(128) })
+  .strict();
+export const rightsFixtureDoor = z.object({ name: z.string().min(1).max(64) }).strict();
+export const rightsLinkFaultDoor = z.object({ handler: z.string().min(1).max(64) }).strict();

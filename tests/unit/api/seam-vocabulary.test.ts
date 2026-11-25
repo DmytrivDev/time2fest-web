@@ -12,7 +12,7 @@ import {
 } from '@/lib/api/contracts/checkout';
 import { applyStreamEvent } from '@/lib/api/contracts/live';
 import type { PassportClaimReason } from '@/lib/api/contracts/passport';
-import type { LinkGoogleReason, ProfileSettings } from '@/lib/api/contracts/profile';
+import type { ChangeEmailReason, LinkGoogleReason, ProfileSettings, ScheduleReason, UnlinkGoogleReason } from '@/lib/api/contracts/profile';
 import type { RatingVoteReason } from '@/lib/api/contracts/rating';
 import type { ToastCheckReason } from '@/lib/api/contracts/toasts';
 import { createSimProfile } from '@/lib/api/sim/profile';
@@ -35,6 +35,9 @@ export const cancelReason: CheckoutCancelReason = 'already-paid';
 export const claimReasons: readonly PassportClaimReason[] = ['claim-closed', 'unknown-event'];
 export const toastReason: ToastCheckReason = 'moderation';
 export const googleReason: LinkGoogleReason = 'google-taken';
+export const scheduleReason: ScheduleReason = 'schedule-full';
+export const changeEmailReasons: readonly ChangeEmailReason[] = ['email', 'same-email', 'taken'];
+export const unlinkReason: UnlinkGoogleReason = 'last-method';
 export const voteReason: RatingVoteReason = 'not-rated';
 
 export const systemKinds: readonly SystemPayload[] = [

@@ -37,6 +37,10 @@ export interface CodeInfo {
   attemptsLeft: number;
 }
 
+/**
+ * Події `session` на `user:#<id>` (SPEC-11): причини `signed-in`, `signed-out`, `erased`, `pass-granted`, `pass-attached`,
+ * `pass-revoked`, `email-changed` — тип `Session` не змінюється, клієнт перечитує сесію на будь-яку.
+ */
 export interface Session {
   /** `null` — гість (анонімна сесія: штампи, графік, сповіщення прив’язані до неї й переносяться при вході). */
   user: SessionUser | null;
