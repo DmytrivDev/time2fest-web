@@ -1,6 +1,7 @@
 /**
  * SPEC-10 W39 (NFR-1): the code mail reaches the provider within 5 s for 95 % of requests at 20 requests per second.
- * Two runs: 200 code requests over 10 s (the NFR; the observed numbers are printed and recorded in the ledger) and 80
+ * Two runs: 200 code requests over 10 s (the NFR, asserted since F1: queue wait is not a provider failure, a saturated
+ * primary spills codes to the fallback) and 80
  * over 10 s (8 per second = the per-provider rate, the load one provider carries). Each run:  through the real flow (in-process dispatcher, real mail service, pooled SMTP into the
  * shared Mailpit primary 1025 and the fallback 1026), distinct addresses, each request from its own client address (own /24: the address windows also count per network)
  * (edge header), daily ceilings raised so only the rate limit and the failover are under test. Receipt time = the
@@ -89,6 +90,7 @@ interface Outcome {
   missing: number;
   duplicates: number;
   okWithoutMail: number;
+  primaryBroken: boolean;
 }
 
 async function run(label: string, total: number, spanMs: number): Promise<Outcome> {
@@ -142,7 +144,7 @@ async function run(label: string, total: number, spanMs: number): Promise<Outcom
     `T2F_MEASURE_P95 mail.code.receipt.${label} n=${receipt.length} p50=${rs.p50} p95=${p95} p99=${rs.p99} max=${rs.max} | response p95=${rp95} | ` +
       `primaryMails=${primary.size} fallbackMails=${fallback.size} sentToBoth=${duplicates} missing=${missing} ok200WithoutMail=${okWithoutMail} primaryBroken=${broken !== null}`,
   );
-  return { statuses, receipt, p95, missing, duplicates, okWithoutMail };
+  return { statuses, receipt, p95, missing, duplicates, okWithoutMail, primaryBroken: broken !== null };
 }
 
 describe('code mail under load (NFR-1)', () => {
@@ -153,10 +155,14 @@ describe('code mail under load (NFR-1)', () => {
     expect(o.p95).toBeLessThanOrEqual(5000);
   });
 
-  it('20 per second (200 in 10 s, NFR-1): numbers printed; a 200 always has its mail; only 200 and 503 unavailable', { timeout: 180_000 }, async () => {
+  it('20 per second (200 in 10 s, NFR-1): all 200, p95 receipt <= 5 s, no duplicates, primary not broken', { timeout: 180_000 }, async () => {
+    // Both fakes (Mailpit 1025 / 1026) are healthy; each provider runs at the production rate of 8/s (NFR-3), so the
+    // burst is shared by spill-over ([А14]): 16/s combined, the backlog of the last second waits ~2.5 s.
     const o = await run('r20', 200, 10_000);
-    expect([...o.statuses.keys()].every((s) => s === 200 || s === 503)).toBe(true);
-    expect(o.okWithoutMail).toBe(0);
-    // NFR-1 itself (p95 <= 5 s for all 200 requests) is reported, not asserted: see the P16 ledger section.
+    expect(o.statuses.get(200)).toBe(200);
+    expect(o.missing).toBe(0);
+    expect(o.duplicates).toBe(0);
+    expect(o.primaryBroken).toBe(false);
+    expect(o.p95).toBeLessThanOrEqual(5000);
   });
 });

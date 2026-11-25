@@ -5,26 +5,26 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { startFakeSmtp } from '../../../fakes/smtp/server.mjs';
 import { createSmtpTransport, smtpErrorOf, type SmtpTransport } from '../../src/adapters/smtpMail';
-import type { MailMessage } from '../../src/mail/ports';
+import { MAIL_QUEUE_OVERFLOW, type MailMessage } from '../../src/mail/ports';
 
 let fake: Awaited<ReturnType<typeof startFakeSmtp>>;
 const lines: Record<string, unknown>[] = [];
 const log = { info: (f: Record<string, unknown>) => lines.push(f), warn: () => {}, error: () => {} };
 const open: SmtpTransport[] = [];
 
-const transport = () => {
-  const t = createSmtpTransport({ provider: 'primary', host: '127.0.0.1', port: fake.port, user: 'fake-user', password: 'fake-pass', log }); // check-secrets: allow test fake
+const transport = (extra: { queueMaxWaitMs?: number } = {}) => {
+  const t = createSmtpTransport({ provider: 'primary', host: '127.0.0.1', port: fake.port, user: 'fake-user', password: 'fake-pass', log, ...extra }); // check-secrets: allow test fake
   open.push(t);
   return t;
 };
 
-const msg = (to: string, id = 'id-1'): MailMessage => ({
+const msg = (to: string, id = 'id-1', cls: MailMessage['class'] = 'code'): MailMessage => ({
   id,
   to,
   subject: 'Код',
   text: 'Ваш код: 123456',
   html: '<p>123456</p>',
-  class: 'code',
+  class: cls,
   headers: { From: 'Time2Fest <code@example.test>', 'Message-ID': `<${id}@mail.time2fest.com>`, 'X-Entity-Ref-ID': id },
 });
 
@@ -81,5 +81,40 @@ describe('SMTP transport', () => {
     expect(at).toHaveLength(30);
     // Any 9 consecutive arrivals span close to a second (rate window 1 s; ~100 ms for handshakes and timer jitter).
     for (let i = 0; i + 8 < at.length; i += 1) expect(at[i + 8]! - at[i]!).toBeGreaterThanOrEqual(900);
+  }, 15_000);
+
+  it('F1: queue wait is not part of the 4 s race — 40 mails at once all go (the last waits ~4.9 s)', async () => {
+    const t = transport();
+    const sends = Array.from({ length: 40 }, (_, i) => t.send(msg(`burst-${i}@example.test`, `b${i}`)));
+    expect(t.backlog()).toBeGreaterThan(25);
+    const res = await Promise.all(sends);
+    expect(res.every((r) => r.ok)).toBe(true);
+    expect(t.backlog()).toBe(0);
+  }, 15_000);
+
+  it('F1: codes leave the queue before other mail', async () => {
+    const t = transport();
+    const before = fake.messages().length;
+    const sends = [
+      ...Array.from({ length: 12 }, (_, i) => t.send(msg(`oth-${i}@example.test`, `o${i}`, 'other'))),
+      ...Array.from({ length: 3 }, (_, i) => t.send(msg(`cod-${i}@example.test`, `c${i}`))),
+    ];
+    await Promise.all(sends);
+    const order = fake.messages().slice(before).map((m) => (/^Message-ID: <(\w+)@/im.exec(m.raw) ?? [])[1]);
+    const lastCode = Math.max(...['c0', 'c1', 'c2'].map((id) => order.indexOf(id)));
+    expect(lastCode).toBeGreaterThanOrEqual(0);
+    expect(lastCode).toBeLessThan(10);
+  }, 15_000);
+
+  it('F1: a mail that waits past the queue limit returns EQUEUE and never reaches the server', async () => {
+    const t = transport({ queueMaxWaitMs: 300 });
+    const before = fake.messages().length;
+    const res = await Promise.all(Array.from({ length: 20 }, (_, i) => t.send(msg(`ovf-${i}@example.test`, `v${i}`))));
+    const ok = res.filter((r) => r.ok).length;
+    expect(ok).toBeGreaterThanOrEqual(5);
+    expect(ok).toBeLessThanOrEqual(8);
+    expect(res.filter((r) => !r.ok && r.err.code === MAIL_QUEUE_OVERFLOW)).toHaveLength(20 - ok);
+    await new Promise((r) => setTimeout(r, 300));
+    expect(fake.messages().length - before).toBe(ok);
   }, 15_000);
 });

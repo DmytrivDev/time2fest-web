@@ -22,8 +22,16 @@ export interface MailSendError {
 
 export type MailTransportResult = { readonly ok: true } | { readonly ok: false; readonly err: MailSendError };
 
+/**
+ * Код відмови «лист так і не вийшов із черги транспорту» (черга переповнена / закрита). Це не збій постачальника:
+ * запобіжник не спрацьовує, тривоги `provider-failover` немає; лист постачальнику не передавався (без дубля).
+ */
+export const MAIL_QUEUE_OVERFLOW = 'EQUEUE';
+
 export interface MailTransport {
   send(msg: MailMessage): Promise<MailTransportResult>;
+  /** Скільки листів чекає в черзі транспорту (ще не передані постачальнику). Без методу — 0. */
+  backlog?(): number;
 }
 
 export type MailSendResult =

@@ -7,7 +7,11 @@
  *   100 % основного, далі запасний до його стелі; обидві вичерпано → `unavailable` (AC-44).
  * - Запобіжник (`mail:broken:<provider>`, значення — мс епохи кінця): квота — до 00:00 UTC, інше — 5 хв; поки
  *   основний зламаний, листи йдуть одразу в запасний (AC-39). Порівнюється з годинником сервісу (тестовий годинник
- *   працює), TTL ключа — лише прибирання.
+ *   працює), TTL ключа — лише прибирання. Очікування в черзі транспорту — не збій ([А14]): `MAIL_QUEUE_OVERFLOW`
+ *   запобіжник не чіпає, лист іде запасному (основний його не бачив — дубля немає).
+ * - Перетікання ([А14]): черга основного ≥ `MAIL_SPILL_BACKLOG` і довша за чергу запасного → лист одразу запасному
+ *   (лічильник запасного, без запобіжника й тривоги, лише рядок логу `mail-spill`); якщо запасний не взяв не через
+ *   адресу — звичайний шлях основного.
  * - Лічильники доби UTC `mail:sent:<provider>:<yyyymmdd>` після кожного успіху; тривоги `page` (один раз за період,
  *   захоплення `setIfAbsent`): `mail/provider-failover` (на період «зламаний», AC-41), `mail/all-providers-down`
  *   (раз на 5 хв, AC-40), `mail/daily-70` (основний, раз на добу, AC-42), `mail/ceiling-80` (на постачальника,
@@ -20,7 +24,7 @@ import { admit } from '../domain/mail/ceiling';
 import { classifyMailError } from '../domain/mail/classify';
 import { msToUtcMidnight, utcDayKey } from '../domain/mail/day';
 import type { Alarm, Clock, FastStore, Logger } from '../ports';
-import type { MailMessage, MailSendResult, MailService, MailTransport } from './ports';
+import { MAIL_QUEUE_OVERFLOW, type MailMessage, type MailSendResult, type MailService, type MailTransport } from './ports';
 
 export const MAIL_PRIMARY = 'primary';
 export const MAIL_FALLBACK = 'fallback';
@@ -29,6 +33,8 @@ export type MailProvider = typeof MAIL_PRIMARY | typeof MAIL_FALLBACK;
 /** AC-42: тривога, коли основний за добу UTC досяг стількох листів. */
 export const MAIL_DAILY_ALARM_AT = 70;
 export const ALL_DOWN_ALARM_MS = 5 * 60 * 1000;
+/** [А14] Перетікання: черга основного ≥ темп (8/с, NFR-3) × 2 с. */
+export const MAIL_SPILL_BACKLOG = 16;
 
 export const mailSentKey = (provider: MailProvider, day: string): string => `mail:sent:${provider}:${day}`;
 export const mailBrokenKey = (provider: MailProvider): string => `mail:broken:${provider}`;
@@ -43,10 +49,15 @@ export interface MailServiceOptions {
   clock: Clock;
   ceilings: { primary: number; fallback: number };
   log?: Logger;
+  /** Лише тести: довжина черги основного, від якої лист перетікає до запасного (типово `MAIL_SPILL_BACKLOG`). */
+  spillAt?: number;
 }
+
+const backlogOf = (t: MailTransport): number => t.backlog?.() ?? 0;
 
 export function createMailService(o: MailServiceOptions): MailService {
   const { store, alarm } = o;
+  const spillAt = o.spillAt ?? MAIL_SPILL_BACKLOG;
   const warn = (what: string, err: unknown) =>
     o.log?.warn({ event: 'mail-store-failed', what, error: err instanceof Error ? err.name : 'unknown' });
 
@@ -153,14 +164,28 @@ export function createMailService(o: MailServiceOptions): MailService {
       if (admission === 'fallback' || (await isBroken(MAIL_PRIMARY, now.getTime()))) {
         return viaFallback(msg, now, day, fallbackRoom);
       }
+      // [А14] Перетікання: черга основного така, що лист чекав би понад ~2 с, а в запасного черга коротша → лист
+      // одразу запасному (без запобіжника й тривоги). Не вийшло не через адресу → звичайний шлях основного.
+      let fallbackTried = false;
+      const primaryBacklog = backlogOf(o.primary);
+      if (o.fallback && fallbackRoom && primaryBacklog >= spillAt && backlogOf(o.fallback) < primaryBacklog) {
+        o.log?.info({ event: 'mail-spill', provider: MAIL_FALLBACK });
+        fallbackTried = true;
+        const spilled = await o.fallback.send(msg);
+        if (spilled.ok) return counted(MAIL_FALLBACK, now, day);
+        if (classifyMailError(spilled.err).kind === 'recipient') return { ok: false, reason: 'recipient' };
+      }
       const res = await o.primary.send(msg);
       if (res.ok) return counted(MAIL_PRIMARY, now, day);
-      const failure = classifyMailError(res.err);
-      if (failure.kind === 'recipient') return { ok: false, reason: 'recipient' };
-      if (await markBroken(MAIL_PRIMARY, failure.broken, now)) {
-        alarm.raise({ level: 'page', source: 'mail', code: 'mail/provider-failover', details: { provider: MAIL_PRIMARY } });
+      // Лист не вийшов із черги основного: постачальник його не бачив — не збій, без запобіжника й тривоги.
+      if (res.err.code !== MAIL_QUEUE_OVERFLOW) {
+        const failure = classifyMailError(res.err);
+        if (failure.kind === 'recipient') return { ok: false, reason: 'recipient' };
+        if (await markBroken(MAIL_PRIMARY, failure.broken, now)) {
+          alarm.raise({ level: 'page', source: 'mail', code: 'mail/provider-failover', details: { provider: MAIL_PRIMARY } });
+        }
       }
-      return viaFallback(msg, now, day, fallbackRoom);
+      return fallbackTried ? allDown() : viaFallback(msg, now, day, fallbackRoom);
     },
   };
 }
