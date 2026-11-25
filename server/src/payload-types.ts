@@ -73,6 +73,7 @@ export interface Config {
     'alarm-deliveries': AlarmDelivery;
     alarms: Alarm;
     'audit-log': AuditLog;
+    'auth-link-retries': AuthLinkRetry;
     'backup-runs': BackupRun;
     cities: City;
     countries: Country;
@@ -107,6 +108,7 @@ export interface Config {
     'alarm-deliveries': AlarmDeliveriesSelect<false> | AlarmDeliveriesSelect<true>;
     alarms: AlarmsSelect<false> | AlarmsSelect<true>;
     'audit-log': AuditLogSelect<false> | AuditLogSelect<true>;
+    'auth-link-retries': AuthLinkRetriesSelect<false> | AuthLinkRetriesSelect<true>;
     'backup-runs': BackupRunsSelect<false> | BackupRunsSelect<true>;
     cities: CitiesSelect<false> | CitiesSelect<true>;
     countries: CountriesSelect<false> | CountriesSelect<true>;
@@ -332,6 +334,21 @@ export interface AuditLog {
     | null;
   revertOf?: string | null;
   revertible: boolean;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "auth-link-retries".
+ */
+export interface AuthLinkRetry {
+  id: number;
+  userId: string;
+  fromSubject: string;
+  handler: string;
+  attempts: number;
+  nextAt: string;
+  lastErrorCode?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -887,6 +904,10 @@ export interface PayloadLockedDocument {
         value: number | AuditLog;
       } | null)
     | ({
+        relationTo: 'auth-link-retries';
+        value: number | AuthLinkRetry;
+      } | null)
+    | ({
         relationTo: 'backup-runs';
         value: number | BackupRun;
       } | null)
@@ -1125,6 +1146,20 @@ export interface AuditLogSelect<T extends boolean = true> {
   after?: T;
   revertOf?: T;
   revertible?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "auth-link-retries_select".
+ */
+export interface AuthLinkRetriesSelect<T extends boolean = true> {
+  userId?: T;
+  fromSubject?: T;
+  handler?: T;
+  attempts?: T;
+  nextAt?: T;
+  lastErrorCode?: T;
   updatedAt?: T;
   createdAt?: T;
 }
