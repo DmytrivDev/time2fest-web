@@ -6,7 +6,7 @@ export default defineConfig({
   test: {
     environment: 'node',
     include: process.env.T2F_EXCLUSIVE ? ['test/exclusive/**/*.test.ts'] : ['test/integration/**/*.int.test.ts'],
-    setupFiles: ['./test/support/noYoutubeNetwork.ts', './test/support/noTelegramNetwork.ts'],
+    setupFiles: ['./test/support/noYoutubeNetwork.ts', './test/support/noTelegramNetwork.ts', './test/support/noMailNetwork.ts'],
     fileParallelism: false,
     maxWorkers: 1,
     globalSetup: './test/integration/global-setup.ts',
