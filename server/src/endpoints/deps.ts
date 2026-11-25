@@ -12,6 +12,9 @@ import { createBanMarks } from '../rights/banMarks';
 import { createBanService, type BanService } from '../rights/bans';
 import { publishPassEvent, publishProfileEvent } from '../rights/events';
 import { createPassService, type PassService } from '../rights/passes';
+import { createScheduleService, type ScheduleService } from '../rights/schedule';
+import { scheduleCatalogFrom } from '../domain/rights/schedule';
+import type { ScheduleCatalog } from '@time2fest/rules/schedule';
 import { createProfileService, type CatalogRefs, type ProfileService } from '../rights/profiles';
 import type { CatalogStore } from '../catalog/ports';
 import type { CorrectionDeps } from '../corrections/service';
@@ -65,6 +68,7 @@ export interface RightsServices {
   passes: PassService;
   bans: BanService;
   profiles: ProfileService;
+  schedule: ScheduleService;
 }
 const rightsCache = new WeakMap<Deps, RightsServices>();
 
@@ -92,6 +96,18 @@ async function catalogRefsOf(deps: Deps): Promise<CatalogRefs> {
   return refs;
 }
 
+const scheduleCatCache = new WeakMap<Deps, { at: number; cat: ScheduleCatalog }>();
+
+/** The schedule rule's catalog (SPEC-11 W23), rebuilt from the stored catalog at most every 30 s per `deps`. */
+async function scheduleCatalogOf(deps: Deps): Promise<ScheduleCatalog> {
+  const hit = scheduleCatCache.get(deps);
+  const now = deps.clock.now();
+  if (hit !== undefined && now - hit.at < REFS_TTL_MS && now >= hit.at) return hit.cat;
+  const cat = scheduleCatalogFrom(await catalogStoreOf(deps).read());
+  scheduleCatCache.set(deps, { at: now, cat });
+  return cat;
+}
+
 /** Passes, bans, profiles (SPEC-11 [П-2]); "now" is the server's season clock `deps.clock`. */
 export function rightsOf(deps: Deps): RightsServices {
   let built = rightsCache.get(deps);
@@ -114,6 +130,12 @@ export function rightsOf(deps: Deps): RightsServices {
         db: () => rightsDbOf(deps),
         verdict: () => moderationOf(deps).verdict,
         refs: () => catalogRefsOf(deps),
+        publish: (subject) => publishProfileEvent(deps, subject),
+      }),
+      schedule: createScheduleService({
+        db: () => rightsDbOf(deps),
+        hasPass: (subject, device) => built!.passes.hasPass(subject, device),
+        catalog: () => scheduleCatalogOf(deps),
         publish: (subject) => publishProfileEvent(deps, subject),
       }),
     };
