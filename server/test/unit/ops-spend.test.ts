@@ -83,8 +83,9 @@ describe('levels and the mail row (AC-62, AC-65)', () => {
     expect(levelsCrossed(55, 85)).toEqual([80]);
     expect(levelsCrossed(85, 90)).toEqual([]);
   });
-  it('mail has no provider', () => {
-    expect(mailRow()).toEqual({ state: 'no-provider' });
+  it('mail has no provider without counts, and is counted with them', () => {
+    expect(mailRow(null)).toEqual({ state: 'no-provider' });
+    expect(mailRow({ sentToday: 3, ceiling: 100 })).toEqual({ state: 'counted', sentToday: 3, ceiling: 100 });
   });
 });
 

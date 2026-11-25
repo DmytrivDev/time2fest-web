@@ -153,7 +153,9 @@ describe('spend registry (AC-60)', () => {
     const by = new Map(spendRegistry.map((r) => [r.key, r]));
     expect(by.get('ai')?.period).toBe('night+month');
     expect(by.get('youtube')?.period).toBe('day');
-    for (const k of ['cloudflare', 'mail', 'server']) {
+    expect(by.get('mail')?.period).toBe('day');
+    expect(by.get('mail')?.alarms).toBe(false);
+    for (const k of ['cloudflare', 'server']) {
       expect(by.get(k)?.period, k).toBe('month');
       expect(by.get(k)?.ceiling.from, k).toBe('ops-settings');
       expect(by.get(k)?.alarms, k).toBe(true);
