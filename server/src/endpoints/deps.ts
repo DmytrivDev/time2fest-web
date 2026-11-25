@@ -10,8 +10,9 @@ import { rightsDbOf } from '../auth/pool';
 import { seasonKeyOfEnd, type SeasonCtx } from '../domain/rights/passSeason';
 import { createBanMarks } from '../rights/banMarks';
 import { createBanService, type BanService } from '../rights/bans';
-import { publishPassEvent } from '../rights/events';
+import { publishPassEvent, publishProfileEvent } from '../rights/events';
 import { createPassService, type PassService } from '../rights/passes';
+import { createProfileService, type CatalogRefs, type ProfileService } from '../rights/profiles';
 import type { CatalogStore } from '../catalog/ports';
 import type { CorrectionDeps } from '../corrections/service';
 import type { ReadinessProbe } from '../health/ports';
@@ -63,6 +64,7 @@ export const mailOf = (deps: Deps): MailService => built(deps.mail, 'mail');
 export interface RightsServices {
   passes: PassService;
   bans: BanService;
+  profiles: ProfileService;
 }
 const rightsCache = new WeakMap<Deps, RightsServices>();
 
@@ -70,6 +72,24 @@ const rightsCache = new WeakMap<Deps, RightsServices>();
 export function seasonCtxOf(deps: Deps): SeasonCtx {
   const end = authOf(deps).seasonEnd;
   return { currentKey: seasonKeyOfEnd(end), currentEndMs: end };
+}
+
+const REFS_TTL_MS = 30_000;
+const refsCache = new WeakMap<Deps, { at: number; refs: CatalogRefs }>();
+
+/** Country ISOs and zone ids of the stored catalog, read at most every 30 s per `deps` (profile validation). */
+async function catalogRefsOf(deps: Deps): Promise<CatalogRefs> {
+  const hit = refsCache.get(deps);
+  const now = deps.clock.now();
+  if (hit !== undefined && now - hit.at < REFS_TTL_MS && now >= hit.at) return hit.refs;
+  const stored = await catalogStoreOf(deps).read();
+  const str = (v: unknown): string[] => (typeof v === 'string' ? [v] : []);
+  const refs: CatalogRefs = {
+    countryIsos: new Set(stored.countries.flatMap((c) => str(c.iso))),
+    zoneIds: new Set(stored.zones.flatMap((z) => str(z.zoneId))),
+  };
+  refsCache.set(deps, { at: now, refs });
+  return refs;
 }
 
 /** Passes, bans, profiles (SPEC-11 [П-2]); "now" is the server's season clock `deps.clock`. */
@@ -89,6 +109,12 @@ export function rightsOf(deps: Deps): RightsServices {
         marks: createBanMarks(() => deps.redis),
         alarm: { raise: (a) => deps.alarm.raise(a) },
         now: () => deps.clock.now(),
+      }),
+      profiles: createProfileService({
+        db: () => rightsDbOf(deps),
+        verdict: () => moderationOf(deps).verdict,
+        refs: () => catalogRefsOf(deps),
+        publish: (subject) => publishProfileEvent(deps, subject),
       }),
     };
     rightsCache.set(deps, built);

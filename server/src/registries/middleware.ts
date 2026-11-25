@@ -95,7 +95,10 @@ export function subjectMiddleware(rows: readonly RateLimitRow[] = rateLimitRegis
       return runInAuthScope(async () => {
         if (ctx.route.public !== true && !ctx.url.pathname.startsWith(`${AUTH_BASE_PATH}/`) && ctx.subject === undefined) {
           const found = await ctx.deps.subjects?.resolve(ctx.req);
-          if (found) ctx.subject = found.id;
+          if (found) {
+            ctx.subject = found.id;
+            ctx.subjectKind = found.kind;
+          }
         }
         if (ctx.route.subject !== 'required' || ctx.subject !== undefined) return next();
         if (!guestRow) return failure('unknown');
@@ -109,6 +112,7 @@ export function subjectMiddleware(rows: readonly RateLimitRow[] = rateLimitRegis
         }
         const guest = await startGuestSession(authOf(ctx.deps), await guestHeaders(ctx));
         ctx.subject = guest.id;
+        ctx.subjectKind = 'guest';
         // The guest's creation fingerprint (Redis only): the daily-fingerprint block reads it (SPEC-11 AC-24).
         await rightsOf(ctx.deps).bans.guestCreated(guest.id, await ctx.client.ipDay());
         const res = toResponse(await next());

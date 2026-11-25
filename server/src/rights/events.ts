@@ -5,7 +5,8 @@
  * lookup of the device's subjects is logged and swallowed — a pass write never fails on an event.
  * Emails are never logged.
  */
-import type { SessionEventReason } from '@time2fest/contracts';
+import { randomUUID } from 'node:crypto';
+import type { ProfileEvent, SessionEventReason } from '@time2fest/contracts';
 import { publishSessionEvent } from '../auth/events';
 import type { Deps } from '../endpoints/types';
 import type { RightsQuery } from './ports';
@@ -47,4 +48,25 @@ export async function publishPassEvent(
     }
   }
   await Promise.all([...subjects].map((id) => publishSessionEvent(deps, id, reason)));
+}
+
+/**
+ * `profile` (SPEC-11 AC-35, EC-5): to the subject's channel `user:#<id>`; the client re-reads the profile. No data in
+ * the envelope; never throws (a failed publish is logged without any profile content).
+ */
+export async function publishProfileEvent(deps: Deps, subjectId: string): Promise<void> {
+  const envelope: ProfileEvent = { type: 'profile', id: randomUUID(), data: {} };
+  let result: string;
+  try {
+    result = deps.realtime?.publisher ? (await deps.realtime.publisher.publish('user', subjectId, envelope)).status : 'not-configured';
+  } catch {
+    result = 'unavailable';
+  }
+  if (result !== 'ok') {
+    try {
+      deps.log.warn({ event: 'profile-publish', result });
+    } catch {
+      // A logger never throws.
+    }
+  }
 }

@@ -4494,6 +4494,9 @@
         }
       }
     },
+    "packages/contracts/src/profile.schemas.ts#NickCheckBody": {
+      "text": "z.infer<typeof nickCheckBody>"
+    },
     "packages/contracts/src/profile.schemas.ts#ProfilePatchBody": {
       "text": "z.infer<typeof profilePatchBody>"
     },

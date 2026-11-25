@@ -26,6 +26,9 @@ export const rateLimitRegistry: readonly RateLimitRow[] = [
   // The public build-time read of the catalog (AC-63): 30 a minute per client (SPEC-05 daily fingerprint),
   // counted in this process if Redis is down.
   { key: 'catalog-read', limit: 30, windowMs: 60_000, keys: ['ipDay'], onStoreDown: 'memory' },
+  // Own-subject writes of SPEC-11 (nick check, profile, schedule): 30 a minute per subject, counted in this process
+  // if Redis is down (not a security boundary; the email change uses the fail-closed code rows).
+  { key: 'chat-nick-check', limit: 30, windowMs: 60_000, keys: ['subject'], onStoreDown: 'memory' },
   // The public live chains (SPEC-12 AC-3): mostly answered by the edge cache; 600 a minute per client, counted in
   // this process if Redis is down (a public read never fails closed on the fast store).
   { key: 'live-read', limit: 600, windowMs: 60_000, keys: ['ipDay'], onStoreDown: 'memory' },
@@ -35,6 +38,8 @@ export const rateLimitRegistry: readonly RateLimitRow[] = [
   // Viewer subscription tokens (SPEC-12 [П-2]): 30 a minute per client, as the connection tokens; counted in this
   // process if Redis is down.
   { key: 'live-viewer-token', limit: 30, windowMs: 60_000, keys: ['ipDay'], onStoreDown: 'memory' },
+  { key: 'me-profile', limit: 30, windowMs: 60_000, keys: ['subject'], onStoreDown: 'memory' },
+  { key: 'me-schedule', limit: 30, windowMs: 60_000, keys: ['subject'], onStoreDown: 'memory' },
   // Realtime connection tokens (SPEC-06 AC-16): 30 a minute per client, counted in this process if Redis is down.
   { key: 'realtime-token', limit: 30, windowMs: 60_000, keys: ['ipDay'], onStoreDown: 'memory' },
   // The public site snapshot (SPEC-08 AC-3, AC-37): mostly answered by the edge cache, so the origin sees few

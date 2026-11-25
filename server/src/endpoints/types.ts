@@ -225,6 +225,8 @@ export interface Ctx {
   query?: unknown;
   /** The session's subject id (account or guest), set by `25-subject` (SPEC-10 AC-30). */
   subject?: string;
+  /** What the session's subject is (set with `subject` by `25-subject`, SPEC-11). */
+  subjectKind?: 'guest' | 'account';
 }
 
 export interface RouteRow {

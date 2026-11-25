@@ -74,3 +74,4 @@ export const rightsProfileSeedDoor = z
     settings: profileSettingsSchema.partial().strict().optional(),
   })
   .strict();
+export type NickCheckBody = z.infer<typeof nickCheckBody>;
