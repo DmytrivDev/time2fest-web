@@ -6,70 +6,81 @@
  * Слоти поясу (рішення власника 2026-11-06, концепція `schedule-concept-2026-11-06.md`): у поясі до 4 країн — стільки
  * слотів, скільки країн у поясі, але не більше 4. П’ята країна не додається — вікно «Замінити в графіку?».
  * Порядок країн поясу — порядок додавання (перша додана — «вузол» на мапі шляху).
+ * Саму логіку тримає спільний пакет правил (`@time2fest/rules/schedule`) — її викликають і сайт, і сервер (SPEC-11 AC-37);
+ * тут лише перехід від набору даних сайту до каталогу правила.
  */
 import { getData } from '@/lib/data/load';
 import type { Dataset } from '@/lib/data/types';
+import * as rule from '@time2fest/rules/schedule';
+import type { ScheduleCatalog, ScheduleToggle } from '@time2fest/rules/schedule';
+
+export type { ScheduleToggle };
 
 /** Скільки країн поясу можна мати в графіку щонайбільше. */
-export const ZONE_SLOT_LIMIT = 4;
+export const ZONE_SLOT_LIMIT = rule.ZONE_SLOT_LIMIT;
+
+const catalogs = new WeakMap<Dataset, ScheduleCatalog>();
+/** Каталог правила з набору даних сайту (події; країни поясу — за містами поясу). Один на набір даних. */
+function catalogOf(data: Dataset): ScheduleCatalog {
+  let cat = catalogs.get(data);
+  if (!cat) {
+    const zoneCountries = new Map<string, string[]>();
+    for (const c of data.cities) {
+      const list = zoneCountries.get(c.zoneId);
+      if (!list) zoneCountries.set(c.zoneId, [c.countryIso]);
+      else if (!list.includes(c.countryIso)) list.push(c.countryIso);
+    }
+    cat = {
+      events: data.events.map((e) => ({ eventId: e.id, zoneId: e.zoneId, countryIso: e.countryIso })),
+      zoneCountryIsos: (zoneId) => zoneCountries.get(zoneId) ?? [],
+    };
+    catalogs.set(data, cat);
+  }
+  return cat;
+}
 
 /** Усі події країни в поясі цієї події (сама подія — теж); невідома подія — лише вона. */
 export function countryZoneEvents(eventId: string, data: Dataset = getData()): string[] {
-  const e = data.eventsById.get(eventId);
-  if (!e) return [eventId];
-  return data.events.filter((x) => x.zoneId === e.zoneId && x.countryIso === e.countryIso).map((x) => x.id);
+  return rule.countryZoneEvents(eventId, catalogOf(data));
 }
 
 /** Країни поясу (за містами поясу, як у списку «Країни й міста»). */
 export function zoneCountryIsos(zoneId: string, data: Dataset = getData()): string[] {
-  return [...new Set(data.cities.filter((c) => c.zoneId === zoneId).map((c) => c.countryIso))];
+  return [...catalogOf(data).zoneCountryIsos(zoneId)];
 }
 
 /** Скільки слотів у поясі: стільки, скільки країн, але не більше 4. */
 export function zoneSlotCount(zoneId: string, data: Dataset = getData()): number {
-  return Math.min(ZONE_SLOT_LIMIT, zoneCountryIsos(zoneId, data).length);
+  return rule.zoneSlotCount(zoneId, catalogOf(data));
 }
 
 /** Країни поясу в графіку — у порядку додавання (за першою подією країни в масиві графіка). */
 export function scheduledCountries(schedule: readonly string[], zoneId: string, data: Dataset = getData()): string[] {
-  const out: string[] = [];
-  for (const id of schedule) {
-    const e = data.eventsById.get(id);
-    if (e && e.zoneId === zoneId && !out.includes(e.countryIso)) out.push(e.countryIso);
-  }
-  return out;
+  return rule.scheduledCountries(schedule, zoneId, catalogOf(data));
 }
-
-export type ScheduleToggle = 'added' | 'removed' | 'full';
 
 /** Що станеться після натиску календарика: прибрати, додати чи пояс уже повний (тоді графік не змінюється). */
 export function scheduleToggleResult(schedule: readonly string[], eventId: string, data: Dataset = getData()): ScheduleToggle {
-  const group = countryZoneEvents(eventId, data);
-  if (group.some((id) => schedule.includes(id))) return 'removed';
-  const e = data.eventsById.get(eventId);
-  if (!e) return 'added';
-  return scheduledCountries(schedule, e.zoneId, data).length >= zoneSlotCount(e.zoneId, data) ? 'full' : 'added';
+  return rule.scheduleToggleResult(schedule, eventId, catalogOf(data));
 }
 
 /** Новий графік після натискання календарика: був хоч один запис країни в поясі — прибрати всі, інакше — додати всі
  *  (якщо в поясі є вільний слот; повний пояс — без змін). */
 export function toggleCountryZone(schedule: readonly string[], eventId: string, data: Dataset = getData()): string[] {
-  const group = countryZoneEvents(eventId, data);
-  const result = scheduleToggleResult(schedule, eventId, data);
-  if (result === 'removed') return schedule.filter((id) => !group.includes(id));
-  if (result === 'full') return [...schedule];
-  return [...new Set([...schedule, ...group])];
+  return rule.toggleCountryZone(schedule, eventId, catalogOf(data));
 }
 
 /** Замінити країну `outIso` у поясі події `eventId` на країну цієї події — на тому самому місці (слоті). */
 export function replaceCountryZone(schedule: readonly string[], outIso: string, eventId: string, data: Dataset = getData()): string[] {
-  const e = data.eventsById.get(eventId);
-  if (!e) return [...schedule];
-  const out = new Set(data.events.filter((x) => x.zoneId === e.zoneId && x.countryIso === outIso).map((x) => x.id));
-  const group = countryZoneEvents(eventId, data).filter((id) => !schedule.includes(id));
-  const at = schedule.findIndex((id) => out.has(id));
-  const kept = schedule.filter((id) => !out.has(id));
-  if (at < 0) return [...new Set([...kept, ...group])];
-  const pos = schedule.slice(0, at).filter((id) => !out.has(id)).length;
-  return [...kept.slice(0, pos), ...group, ...kept.slice(pos)];
+  return rule.replaceCountryZone(schedule, outIso, eventId, catalogOf(data));
+}
+
+/** Злиття графіків гостя й акаунта: події акаунта, далі країни гостя, доки в поясі є місце. */
+export function mergeSchedules(accountIds: readonly string[], guestIds: readonly string[], data: Dataset = getData()): string[] {
+  return rule.mergeSchedules(accountIds, guestIds, catalogOf(data));
+}
+
+/** Усі id — відомі й не приховані події? */
+export function validateScheduleIds(ids: readonly string[], data: Dataset = getData()): boolean {
+  return rule.validateScheduleIds(ids, catalogOf(data));
 }
