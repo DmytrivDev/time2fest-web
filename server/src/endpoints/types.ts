@@ -245,6 +245,8 @@ export interface RouteRow {
   maxBodyBytes?: number;
   rateLimit?: string;
   idempotency?: string;
+  /** SPEC-10 [П-6]: the route needs a subject — without a session `25-subject` creates a guest (wired in P10). */
+  subject?: 'required';
   handler(ctx: Ctx): Promise<Outcome>;
 }
 

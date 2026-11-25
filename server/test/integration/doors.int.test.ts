@@ -32,7 +32,11 @@ const silent = { info: () => {}, warn: () => {}, error: () => {} };
 const EDGE_SECRET = randomBytes(24).toString('hex');
 
 function depsFor(cls: 'test' | 'rehearsal', overrides: Partial<Omit<Deps, 'env'>> = {}): Deps {
-  const edge = cls === 'rehearsal' ? { T2F_EDGE_SECRET: EDGE_SECRET } : {};
+  // SPEC-10 P3: outside `test` the Google discovery URL must be https; `.env.local` carries the http fake one.
+  const edge =
+    cls === 'rehearsal'
+      ? { T2F_EDGE_SECRET: EDGE_SECRET, T2F_GOOGLE_DISCOVERY_URL: 'https://oidc.invalid/.well-known/openid-configuration' }
+      : {};
   return createDeps({ ...process.env, T2F_ENV: cls, T2F_TEST_DOORS: '1', T2F_SLUG: SLUG, ...edge }, { log: silent, ...overrides });
 }
 
@@ -117,9 +121,9 @@ describe('test doors', () => {
     expect(await clockState(dispatch)).toEqual(before);
   });
 
-  it('AC-32: the stub doors → 501 with the exact body (moderation is real since SPEC-09, video-status is the live door since SPEC-12)', async () => {
+  it('AC-32: the stub doors → 501 with the exact body (moderation is real since SPEC-09, video-status is the live door since SPEC-12, last-code is the auth door since SPEC-10)', async () => {
     const dispatch = await buildDispatcher(depsFor('test'));
-    for (const door of ['last-code', 'paypro-webhook']) {
+    for (const door of ['paypro-webhook']) {
       const res = await dispatch(new Request(`${BASE}/api/_test/${door}`, { method: 'POST', body: '{}', headers: JSON_TYPE }));
       expect(res.status, door).toBe(501);
       expect(await res.text()).toBe('{"ok":false,"error":{"code":"unavailable"}}');

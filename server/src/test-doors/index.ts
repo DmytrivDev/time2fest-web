@@ -52,6 +52,7 @@ export function doorRoutes(
     path: door.path,
     ...(door.body ? { body: door.body } : {}),
     ...(door.edgeProbe ? { edgeProbe: true as const } : {}),
+    ...(door.subject ? { subject: door.subject } : {}),
     testDoor: true,
     async handler(ctx) {
       if (door.dependencyBreaking && !(typeof slug === 'string' && deps.lockState.holdsExclusive(slug))) {
