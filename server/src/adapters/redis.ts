@@ -21,6 +21,8 @@ export interface RedisStoreVars {
 }
 
 const SCAN_BATCH = 500;
+/** DECR only an existing counter above 0 (a missing key stays missing; DECR keeps the TTL). */
+const DECR_IF_PRESENT = "local v = tonumber(redis.call('GET', KEYS[1]) or '0') if v and v > 0 then redis.call('DECR', KEYS[1]) end return 0";
 const CONNECTION_TEXT = /Stream isn't writeable|Connection is closed|ECONNREFUSED|ETIMEDOUT|ECONNRESET|connect/i;
 
 /** `*`, `?`, `[`, `]` and `\` are literal in the match pattern. */
@@ -76,6 +78,10 @@ export function createRedisStore(vars: RedisStoreVars, opts: { onError?: (err: u
         return { count: Number(res[0]?.[1]), ttlMs: Number(res[2]?.[1]) };
       }),
     setIfAbsent: (key, value, ttlMs) => op(async () => (await client.set(key, value, 'PX', ttlMs, 'NX')) === 'OK'),
+    decrIfPresent: (key) =>
+      op(async () => {
+        await client.eval(DECR_IF_PRESENT, 1, key);
+      }),
     get: (key) => op(() => client.get(key)),
     set: (key, value, ttlMs) =>
       op(async () => {
@@ -139,6 +145,10 @@ export function createMemoryStore(clock: Clock): FastStore {
       }
       e.value = String(Number(e.value) + 1);
       return { count: Number(e.value), ttlMs: e.expiresAt - now };
+    },
+    async decrIfPresent(key) {
+      const e = live(key);
+      if (e && Number(e.value) > 0) e.value = String(Number(e.value) - 1);
     },
     async setIfAbsent(key, value, ttlMs) {
       if (live(key)) return false;

@@ -1,7 +1,7 @@
 /**
  * SPEC-10 W31 — the subject of a request and the guest on first write, over the real pipeline (this slot's Postgres,
  * Redis; edge secret set). AC-3 (reads create no user), AC-4 (a `subject: 'required'` route creates one guest bound
- * to the device; the 61st from one client in 10 min → `rate_limited`, shared with `/api/auth/sign-in/anonymous`),
+ * to the device; the 61st from one client in 10 min → `rate_limited`; `/api/auth/sign-in/anonymous` is not mounted),
  * AC-30 (the subject comes from the session cookie: `ctx.subject`, the realtime token; `device` key reaches limits).
  */
 import { randomUUID } from 'node:crypto';
@@ -63,7 +63,7 @@ describe('AC-4: guest on first write', () => {
     const subject = await probeSubject(first);
     expect(subject).toMatch(/^[0-9a-f-]{36}$/);
     expect(jar.get(SESSION_COOKIE)).toBeTruthy();
-    const device = jar.get('t2f_device');
+    const device = jar.get('__Host-t2f_device');
     expect(device).toMatch(/^[A-Za-z0-9_-]{22}$/);
 
     const row = (await pool.query('SELECT is_anonymous, device_id FROM users WHERE id = $1', [subject])).rows[0] as { is_anonymous: boolean; device_id: string };
@@ -80,7 +80,7 @@ describe('AC-4: guest on first write', () => {
     expect(await sessionOf(h, jar)).toMatchObject({ user: null, guestId: subject });
   });
 
-  it('60 guests per client in 10 min; the 61st → rate_limited with retryAfterMs, also on /api/auth/sign-in/anonymous', { timeout: 120_000 }, async () => {
+  it('60 guests per client in 10 min; the 61st → rate_limited with retryAfterMs; /api/auth/sign-in/anonymous is not mounted', { timeout: 120_000 }, async () => {
     const ip = freshIp();
     const ids = new Set<string>();
     for (let i = 0; i < 60; i += 1) {
@@ -97,7 +97,7 @@ describe('AC-4: guest on first write', () => {
     expect(body.error.retryAfterMs).toBeGreaterThan(0);
     expect(body.error.retryAfterMs).toBeLessThanOrEqual(600_000);
     const viaAuth = await h.call('/api/auth/sign-in/anonymous', { body: {}, jar: new CookieJar(), ip });
-    expect(viaAuth.status).toBe(429);
+    expect(viaAuth.status).toBe(404);
     expect(await usersSince()).toBe(before);
     // Another client is not affected.
     expect((await writeProbe(h, { jar: new CookieJar() })).status).toBe(200);
@@ -145,8 +145,8 @@ describe('AC-30: the subject comes from the session cookie', () => {
     const secret = String(h.deps.env.vars.T2F_EDGE_SECRET);
     const call = makeCall(dispatch, secret);
     const ip = freshIp();
-    const a = new CookieJar().set('t2f_device', 'AAAAAAAAAAAAAAAAAAAAAA');
-    const b = new CookieJar().set('t2f_device', 'BBBBBBBBBBBBBBBBBBBBBB');
+    const a = new CookieJar().set('__Host-t2f_device', 'AAAAAAAAAAAAAAAAAAAAAA');
+    const b = new CookieJar().set('__Host-t2f_device', 'BBBBBBBBBBBBBBBBBBBBBB');
     expect((await call('/api/it-device', { jar: a, ip })).status).toBe(200);
     expect((await call('/api/it-device', { jar: b, ip })).status).toBe(200);
     expect((await call('/api/it-device', { jar: a, ip })).status).toBe(429);

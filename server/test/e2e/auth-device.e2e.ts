@@ -2,7 +2,7 @@
  * SPEC-10 W31 — device and sessions end to end against the served worktree server (`node scripts/stack.mjs serve`,
  * test class, doors on, mail to Mailpit). Playwright `request` contexts keep the cookies.
  * - AC-2: sign in as A → sign out → sign in as B on the same device: both session rows carry the same device id
- *   (read straight from the database) and `t2f_device` never changes.
+ *   (read straight from the database) and `__Host-t2f_device` never changes.
  * - AC-25: a revoked session cookie on a new sign-in (revoked by a sign-out from another context holding the same
  *   cookie): the new session cookie survives and `get-session` has the user.
  * Codes come from Mailpit through the test door `POST /api/_test/auth/last-code`.
@@ -66,11 +66,11 @@ async function sessionUser(ctx: APIRequestContext): Promise<{ id: string; email:
 const sessionDevices = async (userId: string): Promise<(string | null)[]> =>
   ((await pool.query(`SELECT device_id FROM user_sessions WHERE user_id = $1`, [userId])).rows as { device_id: string | null }[]).map((r) => r.device_id);
 
-test('AC-2: in as A → out → in as B on one device: same device id in both sessions, t2f_device unchanged', async () => {
+test('AC-2: in as A → out → in as B on one device: same device id in both sessions, __Host-t2f_device unchanged', async () => {
   const ctx = await request.newContext();
   try {
     expect((await ctx.get(`${server}/api/auth/get-session`, { timeout: COLD_MS })).status()).toBe(200);
-    const device = await cookie(ctx, 't2f_device');
+    const device = await cookie(ctx, '__Host-t2f_device');
     expect(device, 'the request context keeps the Secure device cookie').toMatch(/^[A-Za-z0-9_-]{22}$/);
 
     await signIn(ctx, email('a'));
@@ -86,7 +86,7 @@ test('AC-2: in as A → out → in as B on one device: same device id in both se
     expect(b?.email).toBe(email('b'));
     expect(b?.id).not.toBe(a?.id);
     expect(await sessionDevices(b!.id)).toEqual([device]);
-    expect(await cookie(ctx, 't2f_device')).toBe(device);
+    expect(await cookie(ctx, '__Host-t2f_device')).toBe(device);
   } finally {
     await ctx.dispose();
   }

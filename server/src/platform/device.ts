@@ -1,12 +1,14 @@
 /**
- * Device cookie `t2f_device` (SPEC-10 W14, [П-3], AC-1, AC-2), ring 3.
+ * Device cookie `__Host-t2f_device` (SPEC-10 W14, [П-3], AC-1, AC-2), ring 3.
  * - 128 random bits as 22 base64url characters; a cookie of any other shape is treated as missing.
  * - Attributes: `Max-Age` 400 days, `Path=/`, `Secure; HttpOnly; SameSite=Lax`, no `Domain`.
  * - Not under Better Auth's cookie prefix, so signing out never touches it (AC-2).
+ * - `__Host-` name (S10-04): a sibling subdomain cannot plant it with `Domain=`; the browser requires `Secure`, `Path=/`
+ *   and no `Domain`, which it already has.
  */
 import { randomBytes } from 'node:crypto';
 
-export const DEVICE_COOKIE = 't2f_device';
+export const DEVICE_COOKIE = '__Host-t2f_device';
 export const DEVICE_MAX_AGE_S = 400 * 24 * 60 * 60;
 const DEVICE_ID = /^[A-Za-z0-9_-]{22}$/;
 
@@ -26,7 +28,7 @@ export function isDeviceId(value: unknown): value is string {
   return typeof value === 'string' && DEVICE_ID.test(value);
 }
 
-/** The device id of a valid `t2f_device` cookie of `req`, or `undefined`. */
+/** The device id of a valid `__Host-t2f_device` cookie of `req`, or `undefined`. */
 export function readDevice(req: Request): string | undefined {
   const value = readCookie(req.headers.get('cookie'), DEVICE_COOKIE);
   return isDeviceId(value) ? value : undefined;

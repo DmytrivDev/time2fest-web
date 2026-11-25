@@ -68,7 +68,7 @@ describe('AC-23 / EC-2: guest merge', () => {
     h.deps.authLinks = [moving];
     const jar = new CookieJar();
     const guest = await guestOf(jar);
-    const device = jar.get('t2f_device');
+    const device = jar.get('__Host-t2f_device');
     expect((await userRow(guest))?.is_anonymous).toBe(true);
 
     expect((await signIn(h, redis, jar, testEmail('merge'))).status).toBe(200);

@@ -4,7 +4,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { authSubjectData } from '../../src/auth/subjectData';
-import { GUEST_STALE_MS, holdsOtherData, isEmptySubjectData, isStale } from '../../src/domain/auth/guestPrune';
+import { GUEST_PRUNE_BATCH, GUEST_STALE_MS, holdsOtherData, isEmptySubjectData, isStale } from '../../src/domain/auth/guestPrune';
 import { createGuestPruneJob, GUEST_PRUNE_EVERY_MS } from '../../src/ops/guestPrune';
 import type { OpsLease } from '../../src/ops/ports';
 import type { SubjectDataResult } from '../../src/platform/subjectData';
@@ -85,5 +85,36 @@ describe('guest cleanup job', () => {
     expect(await j.run(now + GUEST_PRUNE_EVERY_MS - 1)).toEqual({ result: 'idle' });
     expect((await j.run(now + GUEST_PRUNE_EVERY_MS)).result).toBe('pruned');
     expect(await job({}, false).j.run(now)).toEqual({ result: 'not-held' });
+  });
+
+  it('S10-09: kept guests never starve the rest — the next run continues after the last batch, then wraps', async () => {
+    const ids = Array.from({ length: GUEST_PRUNE_BATCH + 1 }, (_, i) => `g${String(i).padStart(4, '0')}`);
+    const afters: (string | undefined)[] = [];
+    const deleted: string[] = [];
+    const j = createGuestPruneJob({
+      lease: lease(),
+      guests: {
+        staleGuests: async (_before, limit, after) => {
+          afters.push(after);
+          return ids
+            .filter((id) => after === undefined || id > after)
+            .slice(0, limit)
+            .map((id) => ({ id, lastActiveAtMs: now - GUEST_STALE_MS - 1, cursor: id }));
+        },
+        deleteIfStale: async (id) => {
+          deleted.push(id);
+          return true;
+        },
+      },
+      // Every guest but the last holds other data (kept).
+      exportSubject: async (id) => (id === ids[ids.length - 1] ? ok({ auth: null }) : ok({ chat: ['x'] })),
+      ownCapability: 'auth',
+      log: silent,
+    });
+    expect(await j.run(now)).toEqual({ result: 'pruned', removed: 0, kept: GUEST_PRUNE_BATCH, failed: 0 });
+    expect(await j.run(now + GUEST_PRUNE_EVERY_MS)).toEqual({ result: 'pruned', removed: 1, kept: 0, failed: 0 });
+    expect(deleted).toEqual([ids[ids.length - 1]]);
+    await j.run(now + 2 * GUEST_PRUNE_EVERY_MS);
+    expect(afters).toEqual([undefined, ids[GUEST_PRUNE_BATCH - 1], undefined]);
   });
 });

@@ -12,7 +12,7 @@ const lines: Record<string, unknown>[] = [];
 const log = { info: (f: Record<string, unknown>) => lines.push(f), warn: () => {}, error: () => {} };
 const open: SmtpTransport[] = [];
 
-const transport = (extra: { queueMaxWaitMs?: number } = {}) => {
+const transport = (extra: { queueMaxWaitMs?: number; queueMaxLength?: number } = {}) => {
   const t = createSmtpTransport({ provider: 'primary', host: '127.0.0.1', port: fake.port, user: 'fake-user', password: 'fake-pass', log, ...extra }); // check-secrets: allow test fake
   open.push(t);
   return t;
@@ -116,5 +116,18 @@ describe('SMTP transport', () => {
     expect(res.filter((r) => !r.ok && r.err.code === MAIL_QUEUE_OVERFLOW)).toHaveLength(20 - ok);
     await new Promise((r) => setTimeout(r, 300));
     expect(fake.messages().length - before).toBe(ok);
+  }, 15_000);
+
+  it('S10-11: a mail that finds the queue full returns EQUEUE at once', async () => {
+    const t = transport({ queueMaxLength: 3 });
+    const before = fake.messages().length;
+    // 5 leave the queue at once (in flight), 3 wait; the 9th and 10th find it full.
+    const pending = Array.from({ length: 8 }, (_, i) => t.send(msg(`full-${i}@example.test`, `f${i}`)));
+    const started = Date.now();
+    const refused = await Promise.all([t.send(msg('full-8@example.test', 'f8')), t.send(msg('full-9@example.test', 'f9'))]);
+    expect(Date.now() - started).toBeLessThan(100);
+    for (const r of refused) expect(!r.ok && r.err.code).toBe(MAIL_QUEUE_OVERFLOW);
+    expect((await Promise.all(pending)).every((r) => r.ok)).toBe(true);
+    expect(fake.messages().length - before).toBe(8);
   }, 15_000);
 });

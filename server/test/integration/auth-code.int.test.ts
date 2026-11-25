@@ -11,7 +11,7 @@ import { codeInfoSchema, signInOutcomeSchema } from '@time2fest/contracts/schema
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createAuthWiring } from '../../src/auth/instance';
 import { buildDispatcher } from '../../src/container';
-import { emailKey } from '../../src/domain/auth/email';
+import { testEmailKey } from '../support/testEmailKey';
 import type { MailService } from '../../src/mail/ports';
 import { DependencyUnavailable, type FastStore } from '../../src/ports';
 import { MAILPIT_API, countMessages } from '../support/mailpit';
@@ -57,7 +57,7 @@ const request = (email: string, ip?: string, d: Dispatch = dispatch) =>
 const verify = (email: string, otp: string, ip?: string) => post(dispatch, '/api/auth/sign-in/email-otp', { email, otp }, ip);
 const errorOf = (b: Body) => (b.ok ? undefined : b.error);
 /** Frees the 30 s gap of an address (only where a test needs a second code at once). */
-const dropGap = (email: string) => redis.del(`auth:gap:${emailKey(email)}`);
+const dropGap = (email: string) => redis.del(`auth:gap:${testEmailKey(email)}`);
 
 /** The newest code mailed to `to` (door), polled until it differs from `not`. */
 async function lastCode(to: string, not?: string): Promise<string> {
@@ -186,6 +186,27 @@ describe('code request (AC-6 … AC-10, EC-1, EC-8)', () => {
     expect(errorOf((await request(testEmail('v6'), `${net}:6::7`)).body)).toMatchObject({ code: 'rate_limited', reason: 'too-many' });
   });
 
+  it('S10-01: 12 parallel requests from one client for 12 addresses → exactly 5 × 200, 7 × too-many; same for one /48', async () => {
+    clock.now = aligned();
+    const ip = freshIp();
+    const one = await Promise.all(Array.from({ length: 12 }, () => request(testEmail('par'), ip)));
+    expect(one.filter((r) => r.res.status === 200)).toHaveLength(5);
+    for (const r of one.filter((x) => x.res.status !== 200)) expect(errorOf(r.body)).toMatchObject({ code: 'rate_limited', reason: 'too-many' });
+    const net = `2001:db8:${randomBytes(2).toString('hex')}`;
+    const wide = await Promise.all(Array.from({ length: 12 }, (_, i) => request(testEmail('par48'), `${net}:${i + 1}::7`)));
+    expect(wide.filter((r) => r.res.status === 200)).toHaveLength(5);
+    expect(wide.filter((r) => r.res.status === 429)).toHaveLength(7);
+  });
+
+  it('S10-01: both providers down gives the reserved hits back — the client still has its 5 codes', async () => {
+    clock.now = aligned();
+    const down = await build({ mail: { send: async () => ({ ok: false, reason: 'unavailable' }) } });
+    const ip = freshIp();
+    for (let i = 0; i < 6; i += 1) expect(errorOf((await request(testEmail('dn'), ip, down)).body)).toEqual({ code: 'unavailable' });
+    for (let i = 0; i < 5; i += 1) expect((await request(testEmail('dn'), ip)).res.status).toBe(200);
+    expect(errorOf((await request(testEmail('dn'), ip)).body)).toMatchObject({ code: 'rate_limited', reason: 'too-many' });
+  });
+
   it('AC-10 / NFR-7: 10 codes per UTC day per email → the 11th is too-many until 00:00 UTC; 10 mails in Mailpit', async () => {
     const dayStart = Math.floor(Date.now() / DAY) * DAY;
     const email = testEmail('day10');
@@ -311,7 +332,7 @@ describe('mail outcomes and Redis (AC-38, AC-40, NFR-4)', () => {
   it('NFR-4: Redis unreachable → unavailable, no code row, no mail', async () => {
     clock.now = Date.now();
     const fail = (): Promise<never> => Promise.reject(new DependencyUnavailable('redis'));
-    const broken: FastStore = { incrWindow: fail, setIfAbsent: fail, get: fail, set: fail, del: fail, deleteByPrefix: fail };
+    const broken: FastStore = { incrWindow: fail, setIfAbsent: fail, decrIfPresent: fail, get: fail, set: fail, del: fail, deleteByPrefix: fail };
     const noRedis = await build({ redis: broken });
     const email = testEmail('noredis');
     expect(errorOf((await request(email, undefined, noRedis)).body)).toEqual({ code: 'unavailable' });

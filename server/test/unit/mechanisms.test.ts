@@ -85,6 +85,7 @@ describe('platform mechanisms', () => {
     const down: FastStore = {
       incrWindow: () => Promise.reject(new DependencyUnavailable('redis')),
       setIfAbsent: () => Promise.reject(new DependencyUnavailable('redis')),
+      decrIfPresent: () => Promise.reject(new DependencyUnavailable('redis')),
       get: () => Promise.reject(new DependencyUnavailable('redis')),
       set: () => Promise.reject(new DependencyUnavailable('redis')),
       del: () => Promise.reject(new DependencyUnavailable('redis')),

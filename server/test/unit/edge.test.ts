@@ -41,6 +41,7 @@ function admitted(g: EdgeGate, headers: Record<string, string>): ClientContext {
 const downStore: FastStore = {
   incrWindow: () => Promise.reject(new DependencyUnavailable('redis')),
   setIfAbsent: () => Promise.reject(new DependencyUnavailable('redis')),
+  decrIfPresent: () => Promise.reject(new DependencyUnavailable('redis')),
   get: () => Promise.reject(new DependencyUnavailable('redis')),
   set: () => Promise.reject(new DependencyUnavailable('redis')),
   del: () => Promise.reject(new DependencyUnavailable('redis')),

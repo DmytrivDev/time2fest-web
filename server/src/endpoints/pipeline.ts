@@ -94,7 +94,7 @@ function hasNoStore(value: string | null): boolean {
  * `toResponse`. The response is rebuilt, because a handler's `Response` may have immutable headers.
  * - Non-public route: `Cache-Control` always carries `no-store`; missing or without it → `private, no-store`.
  * - Public route: `Cache-Control` is kept; any `Set-Cookie` is dropped with a warning.
- * - Non-public route and a request without a valid `t2f_device`: the device cookie is appended (SPEC-10 AC-1).
+ * - Non-public route and a request without a valid `__Host-t2f_device`: the device cookie is appended (SPEC-10 AC-1).
  */
 function finalize(res: Response, route: RouteRow, log: Logger, newDeviceId?: string): Response {
   const headers = new Headers(res.headers);

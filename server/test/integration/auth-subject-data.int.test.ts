@@ -15,7 +15,7 @@ import { subjectDataRegistry } from '../../src/registries/subjectData';
 import { buildAuthHarness, CookieJar, freshIp, sessionOf, signIn, waitFor, type AuthHarness } from '../support/authClient';
 import { fakeGoogleLogin } from '../support/fakeOidc';
 import { testEmail } from '../support/testEmail';
-import { emailKey } from '../../src/domain/auth/email';
+import { testEmailKey } from '../support/testEmailKey';
 import { ownRedis } from './helpers';
 import { api, centrifugeClient, connectAndWait, describeRealtime, name } from './realtime-support';
 
@@ -49,7 +49,7 @@ async function accountWithGoogle(email: string, googleName: string): Promise<{ i
 
 /** A pending (unused) code of `email`. */
 async function pendingCode(email: string): Promise<void> {
-  await redis.del(`auth:gap:${emailKey(email)}`);
+  await redis.del(`auth:gap:${testEmailKey(email)}`);
   const res = await h.call('/api/auth/email-otp/send-verification-otp', { body: { email, intent: 'signin' }, ip: freshIp() });
   expect(res.status).toBe(200);
 }
@@ -85,7 +85,8 @@ describe('auth subject data (AC-49, AC-50, EC-10)', () => {
     if (!r.ok) return;
     expect(r.declarative).toEqual(expect.arrayContaining(['auth-codes']));
     const out = r.results.auth as AuthSubjectExport;
-    expect(Object.keys(out).sort()).toEqual(['devices', 'email', 'googleName', 'methods', 'sessions']);
+    expect(Object.keys(out).sort()).toEqual(['devices', 'email', 'googleName', 'methods', 'pendingLinks', 'sessions']);
+    expect(out.pendingLinks).toEqual([]);
     expect(out.email).toBe(email);
     expect(out.googleName).toBe('Subject Name');
     const providers = ((await pool.query('SELECT DISTINCT provider_id FROM user_accounts WHERE user_id = $1', [id])).rows as { provider_id: string }[]).map((p) => p.provider_id);
@@ -113,6 +114,13 @@ describe('auth subject data (AC-49, AC-50, EC-10)', () => {
     const email = testEmail('sd-erase');
     const { id } = await accountWithGoogle(email, 'Erase Me');
     await pendingCode(email);
+    // A guest-data move still waiting for a retry, to and from the subject (S10-10).
+    await pool.query(
+      `INSERT INTO auth_link_retries (user_id, from_subject, handler, attempts, next_at) VALUES ($1, 'guest-x', 'h', 1, now()), ('acc-y', $1, 'h', 1, now())`,
+      [id],
+    );
+    const exported = await runSubjectDataInScope(h.deps, 'export', id, subjectDataRegistry);
+    expect(exported.ok && (exported.results.auth as AuthSubjectExport).pendingLinks.map((l) => l.direction).sort()).toEqual(['from', 'to']);
     const before = await rowsOf(id, email);
     expect(before.u).toBe(1);
     expect(before.a).toBeGreaterThanOrEqual(1);
@@ -121,6 +129,8 @@ describe('auth subject data (AC-49, AC-50, EC-10)', () => {
     const r = await runSubjectDataInScope(h.deps, 'erase', id, [...subjectDataRegistry, failing]);
     expect(r).toEqual({ ok: false, failed: ['zz-failing'], declarative: expect.arrayContaining(['auth-codes']) });
     expect(await rowsOf(id, email)).toEqual({ u: 0, a: 0, s: 0, v: 0 });
+    const retries = await pool.query('SELECT 1 FROM auth_link_retries WHERE user_id = $1 OR from_subject = $1', [id]);
+    expect(retries.rows).toHaveLength(0);
     // Idempotent: a second erase finds nothing; export of the erased subject is empty.
     expect(await runSubjectDataInScope(h.deps, 'erase', id, subjectDataRegistry)).toMatchObject({ ok: true, results: { auth: { erased: false } } });
     expect(await runSubjectDataInScope(h.deps, 'export', id, subjectDataRegistry)).toMatchObject({ ok: true, results: { auth: null } });

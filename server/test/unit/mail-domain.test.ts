@@ -81,6 +81,9 @@ describe('mail service: queue wait is not a failure, spill-over ([А14], F1)', (
         m.set(k, String(n));
         return { count: n, ttlMs: 1000 };
       },
+      async decrIfPresent(k: string) {
+        if (m.has(k)) m.set(k, String(Math.max(0, Number(m.get(k)) - 1)));
+      },
       async setIfAbsent(k: string, v: string) {
         if (m.has(k)) return false;
         m.set(k, v);

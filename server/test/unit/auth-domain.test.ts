@@ -1,8 +1,8 @@
 /** SPEC-10 W13 — pure auth rules: email (EC-8), return path (AC-17, AC-18), session expiry (AC-26, EC-9). */
-import { createHash } from 'node:crypto';
+import { createHash, createHmac } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
 import { emailKey, normalizeEmail } from '../../src/domain/auth/email';
-import { safeReturnPath, withSignInMarks } from '../../src/domain/auth/returnPath';
+import { safeReturnPath, withoutSignInMarks, withSignInMarks } from '../../src/domain/auth/returnPath';
 import { SESSION_TTL_MS, sessionExpiresAt } from '../../src/domain/auth/sessionExpiry';
 
 describe('normalizeEmail / emailKey (EC-8)', () => {
@@ -20,11 +20,13 @@ describe('normalizeEmail / emailKey (EC-8)', () => {
   it('accepts the test-door domain @t2f.test', () => {
     expect(normalizeEmail('user+1@t2f.test')).toBe('user+1@t2f.test');
   });
-  it('emailKey is the sha256 hex of the normalized address and never contains it', () => {
+  it('emailKey is the HMAC-SHA256 hex of the normalized address under the pepper and never contains it (S10-06)', () => {
     const e = normalizeEmail(' A@Example.com ')!;
-    expect(emailKey(e)).toBe(createHash('sha256').update('a@example.com').digest('hex'));
-    expect(emailKey(e)).toMatch(/^[0-9a-f]{64}$/);
-    expect(emailKey(e)).toBe(emailKey(normalizeEmail('a@EXAMPLE.com')!));
+    expect(emailKey(e, 'p')).toBe(createHmac('sha256', 'p').update('a@example.com').digest('hex'));
+    expect(emailKey(e, 'p')).not.toBe(createHash('sha256').update('a@example.com').digest('hex'));
+    expect(emailKey(e, 'p')).not.toBe(emailKey(e, 'q'));
+    expect(emailKey(e, 'p')).toMatch(/^[0-9a-f]{64}$/);
+    expect(emailKey(e, 'p')).toBe(emailKey(normalizeEmail('a@EXAMPLE.com')!, 'p'));
   });
 });
 
@@ -66,6 +68,15 @@ describe('withSignInMarks (AC-17)', () => {
     expect(withSignInMarks('/countries/ua', { isNew: false })).toBe('/countries/ua?signin=google');
     expect(withSignInMarks('/', { isNew: true })).toBe('/?signin=google&new=1');
     expect(withSignInMarks('/a#h', { isNew: false })).toBe('/a?signin=google#h');
+  });
+});
+
+describe('withoutSignInMarks (S10-05)', () => {
+  it('drops signin, new, error, error_description and t2f_google a client put in the path; keeps the rest and the hash', () => {
+    expect(withoutSignInMarks('/a?x=1&new=1&signin=google&t2f_google=error&error=failed&error_description=z#h')).toBe('/a?x=1#h');
+    expect(withoutSignInMarks('/a?new=1')).toBe('/a');
+    expect(withoutSignInMarks('/a?x=1#new=1')).toBe('/a?x=1#new=1');
+    expect(withoutSignInMarks('/')).toBe('/');
   });
 });
 

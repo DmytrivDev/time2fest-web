@@ -16,7 +16,7 @@
  * `mapProfileToUser`); same email only; the account's name is not overwritten.
  */
 import { googleBody } from '@time2fest/contracts/schemas';
-import { safeReturnPath, withSignInMarks } from '../domain/auth/returnPath';
+import { safeReturnPath, withoutSignInMarks, withSignInMarks } from '../domain/auth/returnPath';
 import { failure } from '../endpoints/pipeline';
 import type { Outcome } from '../endpoints/types';
 
@@ -53,7 +53,8 @@ export function googleSignInBody(body: string | undefined): string | undefined {
   }
   const parsed = googleBody.safeParse(raw);
   if (!parsed.success) return undefined;
-  const path = safeReturnPath(parsed.data.returnPath);
+  // A client-supplied `signin` / `new` / `error` / `t2f_google` is dropped: only the server sets them (S10-05).
+  const path = withoutSignInMarks(safeReturnPath(parsed.data.returnPath));
   return JSON.stringify({
     provider: GOOGLE_PROVIDER_ID,
     callbackURL: withSignInMarks(path, { isNew: false }),

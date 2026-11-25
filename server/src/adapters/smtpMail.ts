@@ -4,7 +4,8 @@
  * Власна черга перед пулом Nodemailer (SPEC-10 F1, [А14]): не більше 5 листів одночасно й не більше 8 листів за
  * будь-яке вікно 1 с (NFR-3: ліміт Resend 10/с); коди виходять із черги раніше за інші листи. Перегони 4 с на спробу
  * починаються лише з виходу з черги — очікування в черзі не є збоєм постачальника. Лист, що пролежав у черзі
- * понад 15 с (або транспорт закрито), повертає `MAIL_QUEUE_OVERFLOW` без передачі постачальнику. `backlog()` —
+ * понад 15 с (або транспорт закрито), повертає `MAIL_QUEUE_OVERFLOW` без передачі постачальнику; так само одразу —
+ * лист, що застав чергу повною (120 = 8/с × 15 с, S10-11). `backlog()` —
  * довжина черги (для перетікання навантаження в `mail/service.ts`). Тайм-аути з'єднання й привітання 3 с, сокета
  * 5 с, DNS 2 с, `secure` лише на 465. Поза loopback STARTTLS обов'язковий; на loopback (Mailpit, фейк) TLS не вмикається.
  *
@@ -26,6 +27,8 @@ export const SMTP_RATE_DELTA_MS = 1000;
 export const SMTP_MAX_CONNECTIONS = 5;
 /** Найдовше очікування в черзі транспорту; далі — `MAIL_QUEUE_OVERFLOW`. */
 export const SMTP_QUEUE_MAX_WAIT_MS = 15_000;
+/** Найдовша черга (S10-11): більше листів за 15 с однаково не вийде; новий лист понад це — одразу `MAIL_QUEUE_OVERFLOW`. */
+export const SMTP_QUEUE_MAX_LENGTH = (SMTP_RATE_LIMIT * SMTP_QUEUE_MAX_WAIT_MS) / SMTP_RATE_DELTA_MS;
 
 export interface SmtpTransportOptions {
   /** Мітка для логу й лічильників (`primary` / `fallback`). */
@@ -40,6 +43,8 @@ export interface SmtpTransportOptions {
   attemptTimeoutMs?: number;
   /** Лише тести: найдовше очікування в черзі (типово 15 с). */
   queueMaxWaitMs?: number;
+  /** Лише тести: найдовша черга (типово `SMTP_QUEUE_MAX_LENGTH`). */
+  queueMaxLength?: number;
 }
 
 export interface SmtpTransport extends MailTransport {
@@ -91,6 +96,7 @@ export function createSmtpTransport(opts: SmtpTransportOptions): SmtpTransport {
   });
   const timeoutMs = opts.attemptTimeoutMs ?? SMTP_ATTEMPT_TIMEOUT_MS;
   const queueMaxWaitMs = opts.queueMaxWaitMs ?? SMTP_QUEUE_MAX_WAIT_MS;
+  const queueMaxLength = opts.queueMaxLength ?? SMTP_QUEUE_MAX_LENGTH;
   const codes: Job[] = [];
   const others: Job[] = [];
   /** Моменти виходу з черги за останнє вікно темпу. */
@@ -182,7 +188,7 @@ export function createSmtpTransport(opts: SmtpTransportOptions): SmtpTransport {
 
   return {
     send(msg: MailMessage): Promise<MailTransportResult> {
-      if (closed) return Promise.resolve({ ok: false, err: { code: MAIL_QUEUE_OVERFLOW } });
+      if (closed || codes.length + others.length >= queueMaxLength) return Promise.resolve({ ok: false, err: { code: MAIL_QUEUE_OVERFLOW } });
       return new Promise<MailTransportResult>((resolve) => {
         const job: Job = { msg, resolve };
         const queue = msg.class === 'code' ? codes : others;

@@ -91,6 +91,20 @@ export async function checkKeyedLimit(row: RateLimitRow, key: string, stores: Li
   return keyedIn(stores, row, async (s) => (await s.incrWindow(storeKey, row.windowMs)).count, retryAfterMs, row.limit);
 }
 
+/**
+ * Takes back one hit counted by `checkKeyedLimit` with the same `nowMs` (a reservation whose work did not happen).
+ * Best effort: a store outage is swallowed (the window simply expires). The memory store is used for `memory` rows.
+ */
+export async function releaseKeyedLimit(row: RateLimitRow, key: string, stores: LimitStores, nowMs: number): Promise<void> {
+  const { storeKey } = keyedKey(row, key, nowMs);
+  try {
+    await stores.fast.decrIfPresent(storeKey);
+  } catch (err) {
+    if (!(err instanceof DependencyUnavailable)) throw err;
+    if (row.onStoreDown === 'memory') await stores.memory.decrIfPresent(storeKey);
+  }
+}
+
 /** Whether one more hit of `key` would pass, without counting it (the window already holds `row.limit` → refused). */
 export async function peekKeyedLimit(row: RateLimitRow, key: string, stores: LimitStores, nowMs: number): Promise<LimitResult> {
   const { storeKey, retryAfterMs } = keyedKey(row, key, nowMs);

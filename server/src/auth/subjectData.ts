@@ -26,6 +26,8 @@ export interface AuthSubjectExport {
   methods: string[];
   sessions: { createdAt: string; expiresAt: string; deviceId: string | null }[];
   devices: string[];
+  /** Guest-data moves still waiting for a retry (`auth_link_retries`) to or from this subject (S10-10). */
+  pendingLinks: { handler: string; direction: 'to' | 'from'; createdAt: string }[];
 }
 
 interface SqlPool {
@@ -81,6 +83,15 @@ async function exportOf(deps: Deps, subjectId: string): Promise<AuthSubjectExpor
   if (typeof user.device_id === 'string' && user.device_id !== '') devices.add(user.device_id);
   for (const s of sessionRows) if (s.deviceId !== null) devices.add(s.deviceId);
   const name = typeof user.name === 'string' ? user.name : '';
+  const links = await pool.query(
+    'SELECT handler, user_id, created_at FROM auth_link_retries WHERE user_id = $1 OR from_subject = $1 ORDER BY created_at, id',
+    [subjectId],
+  );
+  const pendingLinks = links.rows.map((r) => ({
+    handler: String(r.handler),
+    direction: (String(r.user_id) === subjectId ? 'to' : 'from') as 'to' | 'from',
+    createdAt: iso(r.created_at),
+  }));
   return {
     email: guest ? null : String(user.email),
     // A Google-made account keeps the Google name on the user; a linked one only in the id token (no update on link).
@@ -88,6 +99,7 @@ async function exportOf(deps: Deps, subjectId: string): Promise<AuthSubjectExpor
     methods: guest ? providers : [...new Set(['email', ...providers])],
     sessions: sessionRows,
     devices: [...devices].sort(),
+    pendingLinks,
   };
 }
 
@@ -95,11 +107,19 @@ async function eraseOf(deps: Deps, subjectId: string): Promise<{ erased: boolean
   const pool = await poolOf(deps);
   const found = await pool.query('SELECT email, is_anonymous FROM users WHERE id::text = $1', [subjectId]);
   const user = found.rows[0];
-  if (user === undefined) return { erased: false };
+  if (user === undefined) {
+    await pool.query('DELETE FROM auth_link_retries WHERE user_id = $1 OR from_subject = $1', [subjectId]);
+    return { erased: false };
+  }
+  // No foreign key on `auth_link_retries` (Payload table): its rows of the subject go explicitly (S10-10).
+  await pool.query('DELETE FROM auth_link_retries WHERE user_id = $1 OR from_subject = $1', [subjectId]);
+  // `erased` goes out BEFORE the deletion: the session-delete hooks publish `signed-out` and disconnect the subject's
+  // connections, so a later `erased` would reach the history only, not an open tab (Better Auth 1.7.27 runs those
+  // hooks inside `deleteUser`).
+  await publishSessionEvent(deps, subjectId, 'erased');
   const ctx = await contextOf(deps);
   await ctx.internalAdapter.deleteUser(subjectId);
   if (user.is_anonymous !== true) await ctx.internalAdapter.deleteVerificationByIdentifier(`sign-in-otp-${String(user.email)}`);
-  await publishSessionEvent(deps, subjectId, 'erased');
   return { erased: true };
 }
 
@@ -121,16 +141,26 @@ const LAST_ACTIVE = `COALESCE((SELECT max(s.updated_at) FROM user_sessions s WHE
 /** The guest store over Better Auth's pool; deletion through its internal adapter inside the auth scope. */
 export function createAuthGuestStore(deps: () => Deps): GuestPruneStore {
   return {
-    async staleGuests(beforeMs, limit) {
+    async staleGuests(beforeMs, limit, after) {
       // Sign-in not wired into these deps → no guests to look at.
       if (deps().auth === undefined) return [];
       const pool = await poolOf(deps());
+      // Keyset cursor `<last as text>|<id>` (text keeps the full timestamp precision), S10-09.
+      const bar = after?.lastIndexOf('|') ?? -1;
+      const [afterLast, afterId] = after !== undefined && bar > 0 ? [after.slice(0, bar), after.slice(bar + 1)] : [null, null];
       const r = await pool.query(
-        `SELECT u.id::text AS id, ${LAST_ACTIVE} AS last FROM users u
-          WHERE u.is_anonymous = true AND ${LAST_ACTIVE} < $1 ORDER BY last LIMIT $2`,
-        [new Date(beforeMs), limit],
+        `SELECT id, last, last::text AS last_text FROM (
+           SELECT u.id::text AS id, ${LAST_ACTIVE} AS last FROM users u WHERE u.is_anonymous = true
+         ) g
+          WHERE last < $1 AND ($3::timestamptz IS NULL OR (last, id) > ($3::timestamptz, $4::text))
+          ORDER BY last, id LIMIT $2`,
+        [new Date(beforeMs), limit, afterLast, afterId],
       );
-      return r.rows.map((row) => ({ id: String(row.id), lastActiveAtMs: row.last instanceof Date ? row.last.getTime() : Date.parse(String(row.last)) }));
+      return r.rows.map((row) => ({
+        id: String(row.id),
+        lastActiveAtMs: row.last instanceof Date ? row.last.getTime() : Date.parse(String(row.last)),
+        cursor: `${String(row.last_text)}|${String(row.id)}`,
+      }));
     },
     async deleteIfStale(id, beforeMs) {
       const d = deps();

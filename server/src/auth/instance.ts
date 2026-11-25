@@ -13,10 +13,11 @@
  *   (`merge.ts`, AC-23); session create/delete publish the `session` event (`events.ts`, AC-29).
  * Secrets are never logged.
  */
-import { randomBytes } from 'node:crypto';
+import { createHmac, randomBytes } from 'node:crypto';
 import pg from 'pg';
 import { betterAuth } from 'better-auth';
 import { realClock } from '../clock';
+import { emailKey } from '../domain/auth/email';
 import { sessionExpiresAt } from '../domain/auth/sessionExpiry';
 import type { AppEnv } from '../endpoints/types';
 import { DEVICE_COOKIE, isDeviceId, readCookie } from '../platform/device';
@@ -53,9 +54,8 @@ export interface AuthInput {
  */
 const CODE_PATH_SAFETY_NET = { window: 60, max: 20 };
 /*
- * `/sign-in/anonymous` keeps Better Auth's default `/sign-in/*` rule (3 per 10 s per address) on top of our row
- * `auth-guest-create` (60 per 10 min per client, [Q2]): the site never calls that path — guests are created
- * server-side by `25-subject` through `auth.api`, which Better Auth's limiter does not count.
+ * `/sign-in/anonymous` is not mounted on `/api/auth` (S10-08): guests are created only server-side by `25-subject`
+ * through `auth.api` (rows `auth-guest-create` per client and `auth-guest-create-ip48` per /48).
  */
 
 function str(value: unknown): string | undefined {
@@ -74,6 +74,19 @@ export function authBaseUrl(env: AppEnv): string {
   const loopback = `http://127.0.0.1:${port}`;
   if (env.class === 'test') return loopback;
   return allowedOrigins(env)[0] ?? loopback;
+}
+
+/** Pepper of a `test` process without `T2F_AUTH_SECRET` (its auth secret is random, its email keys must not be). */
+const TEST_EMAIL_SECRET = 't2f-test-email-key-secret';
+
+/**
+ * The email-key pepper (S10-06): an HMAC of `T2F_AUTH_SECRET` with a fixed label, so the auth secret itself never
+ * keys anything else. `test` without the secret uses a fixed one (tests compute the same keys).
+ */
+export function emailPepperOf(vars: Record<string, unknown>, envClass: string): string {
+  const secret = str(vars.T2F_AUTH_SECRET) ?? (envClass === 'test' ? TEST_EMAIL_SECRET : undefined);
+  if (secret === undefined) throw new Error('env: invalid T2F_AUTH_SECRET');
+  return createHmac('sha256', secret).update('t2f:email-key:v1').digest('hex');
 }
 
 /** The season end in epoch ms (`T2F_SEASON_END`, default 2027-01-15). */
@@ -209,11 +222,15 @@ export interface AuthWiring {
   now(): number;
   /** Session refresh age in ms (Better Auth `updateAge`). */
   readonly updateAgeMs: number;
+  /** Limit / Redis key of a normalized address (HMAC under the server pepper, S10-06). */
+  emailKey(email: string): string;
 }
 
 export function createAuthWiring(input: AuthInput): AuthWiring {
   let built: AuthInstance | undefined;
+  let pepper: string | undefined;
   return {
+    emailKey: (email) => emailKey(email, (pepper ??= emailPepperOf(input.env.vars, input.env.class))),
     instance: () => (built ??= buildAuth(input)),
     seasonEnd: seasonEndOf(input.env),
     now: input.now ?? (() => realClock.now()),

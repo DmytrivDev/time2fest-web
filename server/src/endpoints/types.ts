@@ -213,11 +213,11 @@ export interface Ctx {
   /** The client as admitted by the edge gate: country and daily fingerprint, never the address (AC-23). */
   client: ClientContext;
   /**
-   * The device id (SPEC-10 [П-3]): from a valid `t2f_device` cookie, or fresh. A fresh id is set as a cookie on a
+   * The device id (SPEC-10 [П-3]): from a valid `__Host-t2f_device` cookie, or fresh. A fresh id is set as a cookie on a
    * non-public response (`deviceIsNew`, AC-1).
    */
   device: string;
-  /** The request carried no valid `t2f_device` cookie: `finalize` sets one on a non-public response. */
+  /** The request carried no valid `__Host-t2f_device` cookie: `finalize` sets one on a non-public response. */
   deviceIsNew: boolean;
   /** The parsed body, set by `20-validate` when the row has a `body` schema. */
   body?: unknown;

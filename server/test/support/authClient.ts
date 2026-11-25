@@ -7,7 +7,7 @@ import { randomBytes } from 'node:crypto';
 import { expect } from 'vitest';
 import { createAuthWiring, type AuthWiring } from '../../src/auth/instance';
 import { buildDispatcher } from '../../src/container';
-import { emailKey } from '../../src/domain/auth/email';
+import { testEmailKey } from './testEmailKey';
 import type { Deps } from '../../src/endpoints/types';
 import type { RedisStore } from '../../src/adapters/redis';
 import { BASE, ORIGIN, testDeps } from '../integration/helpers';
@@ -73,7 +73,7 @@ export async function buildAuthHarness(redis: RedisStore, prepare?: (deps: Deps)
 /** Code sign-in of `to` with the cookies of `jar` (the 30 s gap of the address is freed first). */
 export async function signIn(h: AuthHarness, redis: RedisStore, jar: CookieJar, to: string): Promise<Response> {
   const ip = freshIp();
-  await redis.del(`auth:gap:${emailKey(to)}`);
+  await redis.del(`auth:gap:${testEmailKey(to)}`);
   const sent = await h.call('/api/auth/email-otp/send-verification-otp', { body: { email: to, intent: 'signin' }, jar, ip });
   expect(sent.status).toBe(200);
   const otp = h.otps.get(to);

@@ -203,7 +203,7 @@ describe('edge origin check and client (real Redis)', () => {
     const fail = async (): Promise<never> => {
       throw new DependencyUnavailable('redis');
     };
-    const down: FastStore = { incrWindow: fail, setIfAbsent: fail, get: fail, set: fail, del: fail, deleteByPrefix: fail };
+    const down: FastStore = { incrWindow: fail, setIfAbsent: fail, decrIfPresent: fail, get: fail, set: fail, del: fail, deleteByPrefix: fail };
     const closed = limited(testDeps({ redis: down }), [row], routes);
     const unavailable = await closed(get('/api/cc/rl'));
     expect(unavailable.status).toBe(503);

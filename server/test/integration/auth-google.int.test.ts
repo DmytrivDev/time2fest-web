@@ -159,7 +159,7 @@ describe('AC-23: guest → Google', () => {
     const probe = await writeProbe(h, { jar });
     expect(probe.status).toBe(200);
     const guest = ((await probe.json()) as Value<{ subject: string }>).value.subject;
-    const device = jar.get('t2f_device');
+    const device = jar.get('__Host-t2f_device');
 
     const loc = await google(jar, { sub: `g-${RUN}-guest`, email: testEmail('gguest'), emailVerified: true });
     expect(loc).toBe('/countries/ua?x=1&signin=google&new=1#a');

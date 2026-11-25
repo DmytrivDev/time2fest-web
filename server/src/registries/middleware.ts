@@ -18,7 +18,7 @@ import { failure, originMiddleware, toResponse, validateMiddleware } from '../en
 import type { Ctx, Middleware, Outcome } from '../endpoints/types';
 import { DEVICE_COOKIE } from '../platform/device';
 import { fastIdempotencyStore, idemKey, runOnce, type IdempotencyRow } from '../platform/idempotency';
-import { checkLimit, type RateLimitRow } from '../platform/rateLimit';
+import { checkKeyedLimit, checkLimit, type RateLimitRow } from '../platform/rateLimit';
 import { assertRegistry } from '../platform/registry';
 import { EDGE_NOW_HEADER, parseEdgeNow } from '../timekeeping/divergence';
 import { idempotencyRegistry } from './idempotency';
@@ -60,8 +60,9 @@ export function rateLimitMiddleware(rows: readonly RateLimitRow[] = rateLimitReg
   };
 }
 
-/** The limit row of guest creation (shared with `POST /api/auth/sign-in/anonymous`). */
+/** The limit rows of guest creation: per client (`ipDay`) and per IPv6 /48 (IPv4 /24), S10-08. */
 export const GUEST_CREATE_ROW = 'auth-guest-create';
+export const GUEST_CREATE_IP48_ROW = 'auth-guest-create-ip48';
 const USER_AGENT_MAX = 128;
 
 /** The only headers a server-side guest start sends: device cookie, client IP header, user agent. */
@@ -82,6 +83,7 @@ async function guestHeaders(ctx: Ctx): Promise<Headers> {
  */
 export function subjectMiddleware(rows: readonly RateLimitRow[] = rateLimitRegistry): Middleware {
   const guestRow = rows.find((r) => r.key === GUEST_CREATE_ROW);
+  const ip48Row = rows.find((r) => r.key === GUEST_CREATE_IP48_ROW);
   return {
     key: '25-subject',
     check(routes) {
@@ -99,8 +101,14 @@ export function subjectMiddleware(rows: readonly RateLimitRow[] = rateLimitRegis
         }
         if (ctx.route.subject !== 'required' || ctx.subject !== undefined) return next();
         if (!guestRow) return failure('unknown');
-        const verdict = await checkLimit(guestRow, { ipDay: await ctx.client.ipDay() }, { fast: ctx.deps.redis, memory: ctx.deps.memory });
+        const stores = { fast: ctx.deps.redis, memory: ctx.deps.memory };
+        const verdict = await checkLimit(guestRow, { ipDay: await ctx.client.ipDay() }, stores);
         if (!verdict.ok) return { ok: false, error: verdict.error };
+        const ip48 = await ctx.client.ip48Day();
+        if (ip48Row && !ip48.startsWith('noaddr:')) {
+          const wide = await checkKeyedLimit(ip48Row, ip48, stores, ctx.clock.now());
+          if (!wide.ok) return { ok: false, error: wide.error };
+        }
         const guest = await startGuestSession(authOf(ctx.deps), await guestHeaders(ctx));
         ctx.subject = guest.id;
         const res = toResponse(await next());

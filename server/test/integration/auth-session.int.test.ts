@@ -9,7 +9,7 @@ import { sessionSchema } from '@time2fest/contracts/schemas';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createAuthWiring, type AuthWiring } from '../../src/auth/instance';
 import { buildDispatcher } from '../../src/container';
-import { emailKey } from '../../src/domain/auth/email';
+import { testEmailKey } from '../support/testEmailKey';
 import { SESSION_TTL_MS } from '../../src/domain/auth/sessionExpiry';
 import type { Deps } from '../../src/endpoints/types';
 import { DEVICE_MAX_AGE_S } from '../../src/platform/device';
@@ -74,7 +74,7 @@ async function signIn(call: ReturnType<typeof makeCall>, jar: CookieJar, to: str
   const ip = freshIp();
   const headers = ua ? { 'user-agent': ua } : undefined;
   // Several sign-ins of one address within 30 s: free the code gap of SPEC-10 AC-8 (tested in auth-code.int).
-  await redis.del(`auth:gap:${emailKey(to)}`);
+  await redis.del(`auth:gap:${testEmailKey(to)}`);
   const sent = await call('/api/auth/email-otp/send-verification-otp', { body: { email: to, intent: 'signin' }, jar, ip, ...(headers ? { headers } : {}) });
   expect(sent.status).toBe(200);
   const otp = otps.get(to);
@@ -105,22 +105,22 @@ afterAll(async () => {
 });
 
 describe('device cookie (AC-1)', () => {
-  it('a non-public response to a request without t2f_device sets it with the required attributes; the next request gets none', async () => {
+  it('a non-public response to a request without __Host-t2f_device sets it with the required attributes; the next request gets none', async () => {
     const jar = new CookieJar();
     const first = await main.call('/api/auth/get-session', { jar });
-    const line = first.headers.getSetCookie().find((l) => l.startsWith('t2f_device='));
+    const line = first.headers.getSetCookie().find((l) => l.startsWith('__Host-t2f_device='));
     expect(line).toBeDefined();
     const attrs = line!.split(';').map((p) => p.trim());
-    expect(attrs[0]).toMatch(/^t2f_device=[A-Za-z0-9_-]{22}$/);
+    expect(attrs[0]).toMatch(/^__Host-t2f_device=[A-Za-z0-9_-]{22}$/);
     expect(attrs.slice(1).sort()).toEqual(['HttpOnly', `Max-Age=${DEVICE_MAX_AGE_S}`, 'Path=/', 'SameSite=Lax', 'Secure'].sort());
     expect(DEVICE_MAX_AGE_S).toBe(400 * 86400);
     expect(line!.toLowerCase()).not.toContain('domain=');
 
     const second = await main.call('/api/time', { jar });
-    expect(second.headers.getSetCookie().some((l) => l.startsWith('t2f_device='))).toBe(false);
+    expect(second.headers.getSetCookie().some((l) => l.startsWith('__Host-t2f_device='))).toBe(false);
     // A forged cookie of another shape is ignored and replaced.
-    const forged = await main.call('/api/time', { jar: new CookieJar().set('t2f_device', 'short') });
-    expect(forged.headers.getSetCookie().some((l) => /^t2f_device=[A-Za-z0-9_-]{22};/.test(l))).toBe(true);
+    const forged = await main.call('/api/time', { jar: new CookieJar().set('__Host-t2f_device', 'short') });
+    expect(forged.headers.getSetCookie().some((l) => /^__Host-t2f_device=[A-Za-z0-9_-]{22};/.test(l))).toBe(true);
   });
 
   it('a public route never sets it', async () => {
@@ -140,7 +140,7 @@ describe('no row without a session (AC-3)', () => {
     for (let i = 0; i < 5; i++) await main.call('/api/site/state');
     expect(await userCount()).toBe(before);
     const s = await session(main.call, jar);
-    expect(s).toEqual({ user: null, guestId: jar.get('t2f_device'), hasPass: false, passOn: null, passSince: null, devicePass: null, code: null });
+    expect(s).toEqual({ user: null, guestId: jar.get('__Host-t2f_device'), hasPass: false, passOn: null, passSince: null, devicePass: null, code: null });
   });
 });
 
@@ -168,11 +168,11 @@ describe('sign-in session (AC-14, AC-26, AC-35, NFR-5)', () => {
     ).rows[0] as { ip_address: string | null; user_agent: string; device_id: string; expires_at: Date };
     expect(row.ip_address ?? '').toBe('');
     expect(row.user_agent).toHaveLength(128);
-    expect(row.device_id).toBe(jar.get('t2f_device'));
+    expect(row.device_id).toBe(jar.get('__Host-t2f_device'));
 
     const s = await session(main.call, jar);
     expect(s.user).toMatchObject({ email: to, via: 'email' });
-    expect(s.guestId).toBe(jar.get('t2f_device'));
+    expect(s.guestId).toBe(jar.get('__Host-t2f_device'));
     expect(s.hasPass).toBe(false);
     const gs = await main.call('/api/auth/get-session', { jar });
     expect(JSON.stringify(await gs.json())).not.toContain('token');
@@ -227,13 +227,13 @@ describe('revoke and sign-out (AC-25, AC-27, AC-28)', () => {
     const b = new CookieJar();
     expect((await signIn(main.call, a, to)).status).toBe(200);
     expect((await signIn(main.call, b, to)).status).toBe(200);
-    expect(a.get('t2f_device')).not.toBe(b.get('t2f_device'));
+    expect(a.get('__Host-t2f_device')).not.toBe(b.get('__Host-t2f_device'));
     const out = await main.call('/api/auth/sign-out', { method: 'POST', body: {}, jar: a });
     expect(out.status).toBe(200);
     expect((await session(main.call, a)).user).toBeNull();
     expect((await session(main.call, b)).user?.email).toBe(to);
     // The device cookie survives the sign-out (AC-2 precondition).
-    expect(a.get('t2f_device')).toMatch(/^[A-Za-z0-9_-]{22}$/);
+    expect(a.get('__Host-t2f_device')).toMatch(/^[A-Za-z0-9_-]{22}$/);
   });
 });
 
@@ -246,29 +246,22 @@ describe('edge, origin and mounted paths (AC-32 … AC-34)', () => {
       { 'x-t2f-ip': 'fd00::1', forwarded: 'for=4.4.4.4' },
       { 'x-forwarded-for': '5.5.5.5', 'x-t2f-ip': 'fd00::2' },
     ];
+    // `/sign-in/anonymous` is not mounted (S10-08): Better Auth's limiter is probed on the verify path (20 per 60 s
+    // per address). Wrong codes for one address with rotating forged headers: all 21 count against the one edge address.
+    const addr = email('ac32');
+    const verifyWith = (h: Record<string, string>, from = ip) =>
+      main.call('/api/auth/sign-in/email-otp', { method: 'POST', body: { email: addr, otp: '000000' }, ip: from, headers: h });
     const statuses: number[] = [];
-    for (const headers of forged) {
-      const res = await main.call('/api/auth/sign-in/anonymous', { method: 'POST', body: {}, ip, headers });
-      statuses.push(res.status);
-      if (res.status === 200) {
-        const body = (await res.json()) as { value: { user: { id: string }; token?: string } };
-        expect(body.value.token).toBeUndefined();
-        anonIds.push(body.value.user.id);
-      } else {
-        const body = (await res.json()) as { error: { code: string; retryAfterMs?: number } };
-        expect(body.error.code).toBe('rate_limited');
-        expect(body.error.retryAfterMs).toBeGreaterThan(0);
-      }
-    }
-    // Better Auth's sign-in rule: 3 per 10 s per address — all four count against the one edge address.
-    expect(statuses).toEqual([200, 200, 200, 429]);
+    for (let i = 0; i < 21; i += 1) statuses.push((await verifyWith(forged[i % forged.length]!)).status);
+    expect(statuses.slice(0, 20).every((s) => s !== 429)).toBe(true);
+    const last = await verifyWith(forged[0]!);
+    expect(statuses[20]).toBe(429);
+    expect(last.status).toBe(429);
+    const body = (await last.json()) as { error: { code: string; retryAfterMs?: number } };
+    expect(body.error.code).toBe('rate_limited');
+    expect(body.error.retryAfterMs).toBeGreaterThan(0);
     // Control: another edge address is a separate bucket.
-    const other = await main.call('/api/auth/sign-in/anonymous', { method: 'POST', body: {}, ip: freshIp(), headers: forged[0] });
-    expect(other.status).toBe(200);
-    anonIds.push(((await other.json()) as { value: { user: { id: string } } }).value.user.id);
-    const ips = (await pool.query('SELECT ip_address FROM user_sessions WHERE user_id = ANY($1::uuid[])', [anonIds])).rows as { ip_address: string | null }[];
-    expect(ips.length).toBeGreaterThan(0);
-    for (const r of ips) expect(r.ip_address ?? '').toBe('');
+    expect((await verifyWith(forged[0]!, freshIp())).status).not.toBe(429);
   });
 
   it('AC-33 a foreign Origin (or none) on a POST → 403', async () => {
@@ -292,7 +285,7 @@ describe('edge, origin and mounted paths (AC-32 … AC-34)', () => {
   });
 
   it('AC-34 paths outside the list → 404', async () => {
-    for (const path of ['/api/auth/sign-up/email', '/api/auth/delete-user', '/api/auth/change-email', '/api/auth/list-sessions', '/api/auth/ok']) {
+    for (const path of ['/api/auth/sign-in/anonymous', '/api/auth/sign-up/email', '/api/auth/delete-user', '/api/auth/change-email', '/api/auth/list-sessions', '/api/auth/ok']) {
       const res = await main.call(path, { method: 'POST', body: {} });
       expect(res.status, path).toBe(404);
       expect(await res.json()).toEqual({ ok: false, error: { code: 'not_found' } });

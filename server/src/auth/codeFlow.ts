@@ -2,7 +2,7 @@
  * The email-code sign-in flow (SPEC-10 W23, W24; AC-6 … AC-16, AC-38, AC-40, AC-48, NFR-4, NFR-7, EC-1, EC-8).
  * Request (`POST /api/auth/email-otp/send-verification-otp`, body `requestCodeBody`):
  * - the email is validated and normalized here (bad → `validation/email`, no mail);
- * - our limits are peeked and the 30 s gap claimed (`codeLimits.ts`); Better Auth then stores the hashed code
+ * - our windows are reserved atomically and the 30 s gap claimed (`codeLimits.ts`); Better Auth then stores the hashed code
  *   (replacing the previous one, AC-15, AC-16) and calls `sendSignInCode`, which mails it through the mail service
  *   (awaited; same message, same code on the fallback);
  * - delivered → counted, `CodeInfo` from the server's wall clock, identical for a new and an existing email (AC-6);
@@ -20,14 +20,14 @@ import { AsyncLocalStorage } from 'node:async_hooks';
 import { randomUUID } from 'node:crypto';
 import type { ApiError } from '@time2fest/contracts';
 import { requestCodeBody, verifyCodeBody } from '@time2fest/contracts/schemas';
-import { emailKey, normalizeEmail } from '../domain/auth/email';
+import { normalizeEmail } from '../domain/auth/email';
 import { mailOf } from '../endpoints/deps';
 import { failure, newLogId } from '../endpoints/pipeline';
 import type { Ctx, Deps, Outcome } from '../endpoints/types';
 import type { MailSendResult } from '../mail/ports';
 import { signInCodeMail } from '../mail/templates/signInCode';
 import { DependencyUnavailable } from '../ports';
-import { admitCode, CODE_GAP_MS, commitCode, releaseCode, type CodeLimitKeys } from './codeLimits';
+import { admitCode, CODE_GAP_MS, commitCode, releaseCode, releaseGap, type CodeLimitKeys } from './codeLimits';
 import type { AuthWiring } from './instance';
 
 export const CODE_REQUEST_PATH = '/email-otp/send-verification-otp';
@@ -130,7 +130,12 @@ export async function requestCode(ctx: Ctx, wiring: AuthWiring, body: string | u
 
   const now = wiring.now();
   const stores = { fast: ctx.deps.redis, memory: ctx.deps.memory };
-  const keys: CodeLimitKeys = { email: emailKey(email), ipDay: await ctx.client.ipDay(), ip48Day: await ctx.client.ip48Day() };
+  const keys: CodeLimitKeys = {
+    email: wiring.emailKey(email),
+    device: ctx.device,
+    ipDay: await ctx.client.ipDay(),
+    ip48Day: await ctx.client.ip48Day(),
+  };
   const admitted = await admitCode(stores, keys, now);
   if (!admitted.ok) return { ok: false, error: admitted.error };
 
@@ -139,11 +144,13 @@ export async function requestCode(ctx: Ctx, wiring: AuthWiring, body: string | u
   try {
     res = await requestState.run(state, () => call.send(JSON.stringify({ email, type: 'sign-in' })));
   } catch (err) {
-    await releaseCode(stores, keys);
+    // Unknown whether a mail went out: only the gap is freed, the window hits stay reserved.
+    await releaseGap(stores, keys);
     throw err;
   }
   if (res.status >= 400) {
-    await releaseCode(stores, keys);
+    // Better Auth refused before the send: nothing went out.
+    await releaseCode(stores, keys, now);
     if (res.status === 429) return failure('rate_limited', { reason: 'too-many', ...retryAfterOf(res) });
     if (res.status === 400) return badEmail();
     return unknownError(ctx, res.status);
@@ -154,8 +161,8 @@ export async function requestCode(ctx: Ctx, wiring: AuthWiring, body: string | u
   if (!mail.ok) {
     await deleteCode(wiring, email);
     if (mail.reason === 'unavailable') {
-      await releaseCode(stores, keys);
-      ctx.log.warn({ event: 'auth-code', outcome: 'unavailable', key: keys.email.slice(0, 8) });
+      await releaseCode(stores, keys, now);
+      ctx.log.warn({ event: 'auth-code', outcome: 'unavailable' });
       return failure('unavailable');
     }
   }
@@ -163,8 +170,8 @@ export async function requestCode(ctx: Ctx, wiring: AuthWiring, body: string | u
     await commitCode(stores, keys, now);
   } catch (err) {
     if (!(err instanceof DependencyUnavailable)) throw err;
-    // The mail went out; the limits are best effort from here (the gap key already holds the 30 s).
-    ctx.log.warn({ event: 'auth-code', outcome: 'not-counted', key: keys.email.slice(0, 8) });
+    // The mail went out; the day counter is best effort from here (the windows and the 30 s gap are already held).
+    ctx.log.warn({ event: 'auth-code', outcome: 'not-counted' });
   }
   if (!mail.ok) return badEmail();
   return {

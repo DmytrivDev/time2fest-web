@@ -7,7 +7,8 @@ import { createMemoryStore } from '../../src/adapters/redis';
 import { realClock } from '../../src/clock';
 import { createEdgeGate } from '../../src/platform/edge';
 import { daySalts, network48Of } from '../../src/platform/fingerprint';
-import { checkKeyedLimit, peekKeyedLimit, type RateLimitRow } from '../../src/platform/rateLimit';
+import { admitCode, releaseCode, type CodeLimitKeys } from '../../src/auth/codeLimits';
+import { checkKeyedLimit, peekKeyedLimit, releaseKeyedLimit, type RateLimitRow } from '../../src/platform/rateLimit';
 import { DependencyUnavailable, type FastStore } from '../../src/ports';
 import { rateLimitRegistry } from '../../src/registries/rateLimits';
 
@@ -78,15 +79,65 @@ describe('SPEC-10 W22 — /48 key and keyed limits', () => {
     const broken: FastStore = {
       incrWindow: down,
       setIfAbsent: down,
+      decrIfPresent: down,
       get: down,
       set: down,
       del: down,
       deleteByPrefix: down,
     };
     const stores = { fast: broken, memory: createMemoryStore(clock) };
-    for (const key of ['auth-code-email', 'auth-code-ip', 'auth-code-ip48']) {
+    for (const key of ['auth-code-device', 'auth-code-email', 'auth-code-ip', 'auth-code-ip48']) {
       expect(await peekKeyedLimit(row(key), 'k', stores, Date.now())).toEqual({ ok: false, error: { code: 'unavailable' } });
       expect(await checkKeyedLimit(row(key), 'k', stores, Date.now())).toEqual({ ok: false, error: { code: 'unavailable' } });
     }
+  });
+});
+
+describe('S10-01 — code windows are reserved before the send', () => {
+  const now = 1_800_000_000_000 + 60_000;
+  const stores = () => ({ fast: createMemoryStore(clock), memory: createMemoryStore(clock) });
+  const keys = (email: string, over: Partial<CodeLimitKeys> = {}): CodeLimitKeys => ({
+    email,
+    device: 'dev-1',
+    ipDay: 'fp:client',
+    ip48Day: 'fp48:net',
+    ...over,
+  });
+
+  it('12 parallel requests from one client for 12 addresses: exactly 5 admitted, the rest too-many', async () => {
+    const s = stores();
+    const results = await Promise.all(Array.from({ length: 12 }, (_, i) => admitCode(s, keys(`e${i}`), now)));
+    expect(results.filter((r) => r.ok)).toHaveLength(5);
+    for (const r of results.filter((x) => !x.ok)) expect(r).toMatchObject({ ok: false, error: { code: 'rate_limited', reason: 'too-many' } });
+    // A refused request gave its hits back: a new address from another client is not charged for them.
+    expect((await admitCode(s, keys('e0b', { device: 'dev-2', ipDay: 'fp:other', ip48Day: 'fp48:other' }), now)).ok).toBe(true);
+  });
+
+  it('EC-7: without an address the device window still applies', async () => {
+    const s = stores();
+    const noaddr = { ipDay: 'noaddr:2027-01-01', ip48Day: 'noaddr:2027-01-01' };
+    const results = await Promise.all(Array.from({ length: 7 }, (_, i) => admitCode(s, keys(`n${i}`, noaddr), now)));
+    expect(results.filter((r) => r.ok)).toHaveLength(5);
+    expect((await admitCode(s, keys('n9', { ...noaddr, device: 'dev-9' }), now)).ok).toBe(true);
+  });
+
+  it('releaseCode (nothing sent) gives the hits and the gap back; a wait refusal does not consume a hit', async () => {
+    const s = stores();
+    for (let i = 0; i < 5; i += 1) expect((await admitCode(s, keys(`r${i}`), now)).ok).toBe(true);
+    expect((await admitCode(s, keys('r5'), now)).ok).toBe(false);
+    await releaseCode(s, keys('r4'), now);
+    expect((await admitCode(s, keys('r4'), now)).ok).toBe(true);
+    await releaseCode(s, keys('r3'), now);
+    // Same address again inside the gap: `wait`, and the hit it reserved is given back (r3 still fits).
+    expect(await admitCode(s, keys('r4'), now)).toMatchObject({ ok: false, error: { reason: 'wait' } });
+    expect(await admitCode(s, keys('r3'), now)).toEqual({ ok: true });
+  });
+
+  it('releaseKeyedLimit never goes below zero and never creates a key', async () => {
+    const s = stores();
+    const r = row('auth-code-email');
+    await releaseKeyedLimit(r, 'none', s, now);
+    for (let i = 0; i < 5; i += 1) expect((await checkKeyedLimit(r, 'none', s, now)).ok).toBe(true);
+    expect((await checkKeyedLimit(r, 'none', s, now)).ok).toBe(false);
   });
 });
