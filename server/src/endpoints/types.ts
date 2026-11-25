@@ -29,6 +29,7 @@ import type { ClientContext } from '../platform/edge';
 import type { EnvClass } from '../platform/env';
 import type { Alarm, Clock, FastStore, IdempotencyStore, LockState, Logger } from '../ports';
 import type { AuthLinkHandler } from '../registries/authLinks';
+import type { SubjectDataRow } from '../platform/subjectData';
 import type { ChannelPublisher, RandomSource, SubjectInvalidator, SubjectResolver, TokenSigner } from '../realtime/ports';
 import type { SchedulerHandle } from '../scheduler/service';
 import type { FanOutDeps } from '../site/fanout';
@@ -197,6 +198,8 @@ export interface Deps {
   mail?: MailService;
   /** Guest-merge handlers (SPEC-10 W30); absent → `authLinkRegistry`. Tests inject their own rows here. */
   authLinks?: readonly AuthLinkHandler[];
+  /** Subject-data rows (SPEC-10 W41); absent → `subjectDataRegistry`. Tests inject their own rows here. */
+  subjectData?: readonly SubjectDataRow[];
 }
 
 export interface Ctx {
