@@ -1428,6 +1428,12 @@
       "wide": true,
       "sky": "#1d2846",
       "water": "#20364a"
+    },
+    "GP": {
+      "src": "/scenes/GP-wide.svg",
+      "wide": true,
+      "sky": "#151a36",
+      "water": "#232f52"
     }
   }
 }

@@ -3960,6 +3960,24 @@
         "title": "Nouvel An à Saint-Martin : Marigot | Time2Fest",
         "description": "Saint-Martin fête 2027 à 04:00 UTC : à minuit, feu d’artifice tiré de la plage de la Baie Orientale, puis le 1er janvier à 21 h, feu sur la baie de Marigot."
       }
+    },
+    "GP": {
+      "uk": {
+        "title": "Новий рік на Гваделупі: Бас-Тер | Time2Fest",
+        "description": "Гваделупа зустрічає 2027 рік о 04:00 UTC: креольська вечеря з ямсом і буденом, салют над затоками, а 1 січня — очисна купіль «бен демаре» в морі чи річці."
+      },
+      "en": {
+        "title": "New Year in Guadeloupe: Basse-Terre | Time2Fest",
+        "description": "Guadeloupe greets 2027 at 04:00 UTC with a Creole supper of yam and boudin, fireworks over the bays and, on 1 January, a cleansing ben démaré bath in the sea."
+      },
+      "es": {
+        "title": "Año Nuevo en Guadalupe: Basse-Terre | Time2Fest",
+        "description": "Guadalupe recibe 2027 a las 04:00 UTC con cena criolla de ñame y boudin, fuegos sobre las bahías y, el 1 de enero, el baño purificador ben démaré en el mar."
+      },
+      "fr": {
+        "title": "Nouvel An en Guadeloupe : Basse-Terre | Time2Fest",
+        "description": "La Guadeloupe fête 2027 à 04:00 UTC : réveillon créole d’igname et de boudin, feux d’artifice sur les baies et, le 1er janvier, bain démarré dans la mer."
+      }
     }
   }
 }

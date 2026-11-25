@@ -6562,5 +6562,33 @@
       "description": "San Martín recibe 2027 a las 04:00 UTC: a medianoche los fuegos salen de la playa de Baie Orientale y el 1 de enero a las 21:00 brillan en la bahía de Marigot."
     },
     "kit": "mf"
+  },
+  "GP": {
+    "text": "La mesa de la última noche del año en Guadalupe se llena de productos locales: ñame, chayote, morcilla boudin y jamón, y los mercados de Pointe-à-Pitre rebosan de frutas y verduras de temporada la víspera. Unos reciben la medianoche en casa y otros en restaurantes, mientras los DJ mantienen el baile hasta la mañana. A medianoche se lanzan fuegos artificiales en muchos puntos de la isla; sobre la bahía de Le Gosier los disparan los hoteles y se ven mejor desde el agua.\n\nMuchos empiezan la primera mañana de enero con un «ben démaré», un baño purificador en el mar, un río o en casa con hojas de siete plantas para quitarse lo malo del año viejo. En Basse-Terre, capital administrativa al pie del volcán La Soufrière, toca esperar el carnaval: empieza el primer domingo de enero y el desfile del Martes de Carnaval se celebra precisamente aquí.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Cena criolla",
+        "text": "En la mesa hay ñame, chayote, boudin y jamón de los mercados locales. Unos cenan en casa en familia y otros reservan en un restaurante."
+      },
+      {
+        "id": "t2",
+        "iconId": "wave",
+        "title": "El baño «ben démaré»",
+        "text": "El 1 de enero la gente se mete en el mar o en un río, o prepara en casa un baño con hojas de siete plantas para lavar los males del año viejo."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fuegos sobre la bahía",
+        "text": "A medianoche los hoteles de Le Gosier lanzan fuegos sobre la bahía, que se ven mejor desde un barco. En las fiestas, los DJ mantienen el baile hasta la mañana."
+      }
+    ],
+    "meta": {
+      "title": "Año Nuevo en Guadalupe: Basse-Terre | Time2Fest",
+      "description": "Guadalupe recibe 2027 a las 04:00 UTC con cena criolla de ñame y boudin, fuegos sobre las bahías y, el 1 de enero, el baño purificador ben démaré en el mar."
+    },
+    "kit": "gp"
   }
 }

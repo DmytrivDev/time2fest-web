@@ -3965,6 +3965,22 @@
         "x": 62,
         "y": 55
       }
+    },
+    "country:GP": {
+      "src": "/media/photos/basse-terre.webp",
+      "alt": {
+        "uk": "Маяк Вьє-Фор на південному краю острова Бас-Тер у синю годину: біла башта зі світлом над скелями й Карибське море",
+        "en": "The Vieux-Fort lighthouse at the southern tip of Basse-Terre in the blue hour: a white tower with its light above the rocks and the Caribbean Sea",
+        "es": "El faro de Vieux-Fort, en el extremo sur de Basse-Terre, a la hora azul: una torre blanca con su luz sobre las rocas y el mar Caribe",
+        "fr": "Le phare du Vieux-Fort, à la pointe sud de Basse-Terre, à l’heure bleue : tour blanche et son feu au-dessus des rochers, mer des Caraïbes"
+      },
+      "author": "Tiomax80",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:One_more_night_(49111201987).jpg",
+      "position": {
+        "x": 33,
+        "y": 45
+      }
     }
   }
 }

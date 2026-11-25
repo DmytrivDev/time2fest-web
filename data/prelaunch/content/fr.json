@@ -6562,5 +6562,33 @@
       "description": "Saint-Martin fête 2027 à 04:00 UTC : à minuit, feu d’artifice tiré de la plage de la Baie Orientale, puis le 1er janvier à 21 h, feu sur la baie de Marigot."
     },
     "kit": "mf"
+  },
+  "GP": {
+    "text": "La table du réveillon en Guadeloupe se garnit de produits locaux : igname, christophine, boudin et jambon, et la veille les marchés de Pointe-à-Pitre débordent de fruits et légumes de saison. Les uns passent minuit à la maison, les autres au restaurant, et les DJ font danser jusqu’au matin. À minuit, des feux d’artifice partent en bien des endroits de l’île ; au-dessus de la baie du Gosier ce sont les hôtels qui les tirent, et on les voit le mieux depuis la mer.\n\nBeaucoup commencent le premier matin de janvier par un « ben démaré », un bain purificateur dans la mer, une rivière ou à la maison avec les feuilles de sept plantes, pour laver tout le mauvais de l’année écoulée. À Basse-Terre, chef-lieu au pied de la Soufrière, on attend le carnaval : il s’ouvre le premier dimanche de janvier, et la parade du mardi gras se déroule ici même.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "Un réveillon créole",
+        "text": "Igname, christophine, boudin et jambon des marchés locaux garnissent la table. Certains dînent en famille, d’autres réservent au restaurant."
+      },
+      {
+        "id": "t2",
+        "iconId": "wave",
+        "title": "Le bain démarré",
+        "text": "Le 1er janvier, on entre dans la mer ou une rivière, ou l’on prépare chez soi un bain aux feuilles de sept plantes pour chasser l’année écoulée."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Feu d’artifice sur la baie",
+        "text": "À minuit, les hôtels du Gosier tirent un feu d’artifice sur la baie, plus beau vu d’un bateau. Dans les soirées, les DJ font danser jusqu’au matin."
+      }
+    ],
+    "meta": {
+      "title": "Nouvel An en Guadeloupe : Basse-Terre | Time2Fest",
+      "description": "La Guadeloupe fête 2027 à 04:00 UTC : réveillon créole d’igname et de boudin, feux d’artifice sur les baies et, le 1er janvier, bain démarré dans la mer."
+    },
+    "kit": "gp"
   }
 }

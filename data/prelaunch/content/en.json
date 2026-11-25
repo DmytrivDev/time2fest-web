@@ -6562,5 +6562,33 @@
       "description": "Saint Martin greets 2027 at 04:00 UTC: at midnight fireworks rise from the beach at Baie Orientale, and on 1 January at 9 pm Marigot bay gets its own show."
     },
     "kit": "mf"
+  },
+  "GP": {
+    "text": "The table on the last night of the year in Guadeloupe is set with local food: yam, christophine, blood sausage known as boudin and ham, and the markets of Pointe-à-Pitre fill up with seasonal produce the day before. Some greet midnight at home, others in restaurants, while DJs keep people dancing until morning. At midnight fireworks go up in many places on the island; over the bay at Le Gosier the hotels launch them, and the best view is from the water.\n\nMany start the first morning of January with a ‘ben démaré’, a cleansing bath in the sea, a river or at home with leaves of seven plants to wash away the bad of the old year. In Basse-Terre, the administrative capital beneath La Soufrière volcano, carnival is next: it opens on the first Sunday of January, and the Mardi Gras parade takes place right here.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "feast",
+        "title": "A Creole New Year supper",
+        "text": "Yam, christophine, boudin and ham from local markets fill the table. Some eat at home with family, others book a restaurant table."
+      },
+      {
+        "id": "t2",
+        "iconId": "wave",
+        "title": "The ‘ben démaré’ bath",
+        "text": "On 1 January people step into the sea or a river, or prepare a bath at home with leaves of seven plants, to wash off the old year’s troubles."
+      },
+      {
+        "id": "t3",
+        "iconId": "fireworks",
+        "title": "Fireworks over the bay",
+        "text": "At midnight the hotels at Le Gosier send fireworks up over the bay, best seen from a boat. At the parties, DJs keep people dancing until morning."
+      }
+    ],
+    "meta": {
+      "title": "New Year in Guadeloupe: Basse-Terre | Time2Fest",
+      "description": "Guadeloupe greets 2027 at 04:00 UTC with a Creole supper of yam and boudin, fireworks over the bays and, on 1 January, a cleansing ben démaré bath in the sea."
+    },
+    "kit": "gp"
   }
 }

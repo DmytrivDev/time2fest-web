@@ -1,0 +1,103 @@
+{
+  "code": "GP",
+  "zone": "UTC-4",
+  "zoneId": "utc-0400",
+  "cityId": "basse-terre",
+  "names": {
+    "uk": {
+      "name": "Гваделупа",
+      "city": "Бас-Тер",
+      "cityIn": "у Бас-Тері",
+      "countryIn": "на Гваделупі",
+      "caps": "ГВАДЕЛУПА"
+    },
+    "en": {
+      "name": "Guadeloupe",
+      "city": "Basse-Terre",
+      "cityIn": "in Basse-Terre",
+      "countryIn": "in Guadeloupe",
+      "caps": "GUADELOUPE"
+    },
+    "es": {
+      "name": "Guadalupe",
+      "city": "Basse-Terre",
+      "cityIn": "en Basse-Terre",
+      "countryIn": "en Guadalupe",
+      "caps": "GUADALUPE"
+    },
+    "fr": {
+      "name": "Guadeloupe",
+      "city": "Basse-Terre",
+      "cityIn": "à Basse-Terre",
+      "countryIn": "en Guadeloupe",
+      "caps": "GUADELOUPE"
+    }
+  },
+  "picto": "M3 33 Q11.6 31.6 14.6 17 H17.8 L19.2 19 H21.6 L23 17 H26.2 Q29.2 31.6 37.8 33 M3 33 H37.8 M18.6 17.6 A2 2 0 0 1 20.4 14.2 A2.6 2.6 0 0 1 25 12.4 A2.2 2.2 0 0 1 26.4 16.4 Q25.4 17.2 23.6 17 M17.2 11.6 A2.4 2.4 0 0 1 20.6 8.6 A2.8 2.8 0 0 1 25.8 8.2 A2 2 0 0 1 25.2 11.8 Q21 12.8 17.2 11.6 Z",
+  "flagColors": [
+    "#0055A4",
+    "#FFFFFF",
+    "#EF4135"
+  ],
+  "palette": 2,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "на Гваделупі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in Guadeloupe"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Guadalupe"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "en Guadeloupe"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}
