@@ -6,6 +6,10 @@
 import type { AlarmService } from '../alarms/service';
 import type { AlarmStore } from '../alarms/ports';
 import type { AuthWiring } from '../auth/instance';
+import { rightsDbOf } from '../auth/pool';
+import { seasonKeyOfEnd, type SeasonCtx } from '../domain/rights/passSeason';
+import { publishPassEvent } from '../rights/events';
+import { createPassService, type PassService } from '../rights/passes';
 import type { CatalogStore } from '../catalog/ports';
 import type { CorrectionDeps } from '../corrections/service';
 import type { ReadinessProbe } from '../health/ports';
@@ -52,3 +56,32 @@ export const liveOf = (deps: Deps): LiveWiring => built(deps.live, 'live');
 export const authOf = (deps: Deps): AuthWiring => built(deps.auth, 'auth');
 /** Mail (SPEC-10): primary SMTP with the fallback, day counters and alarms; absent without `SMTP_HOST`. */
 export const mailOf = (deps: Deps): MailService => built(deps.mail, 'mail');
+
+/** The rights services (SPEC-11): built lazily per `deps` over Better Auth's pool, the season clock and the events. */
+export interface RightsServices {
+  passes: PassService;
+}
+const rightsCache = new WeakMap<Deps, RightsServices>();
+
+/** The season of the passes: the current key from the season end (`T2F_SEASON_END`, `2027-01-15` → `2026-27`). */
+export function seasonCtxOf(deps: Deps): SeasonCtx {
+  const end = authOf(deps).seasonEnd;
+  return { currentKey: seasonKeyOfEnd(end), currentEndMs: end };
+}
+
+/** Passes, bans, profiles (SPEC-11 [П-2]); "now" is the server's season clock `deps.clock`. */
+export function rightsOf(deps: Deps): RightsServices {
+  let built = rightsCache.get(deps);
+  if (built === undefined) {
+    built = {
+      passes: createPassService({
+        db: () => rightsDbOf(deps),
+        now: () => deps.clock.now(),
+        season: () => seasonCtxOf(deps),
+        publish: (db, targets, reason) => publishPassEvent(deps, db, targets, reason),
+      }),
+    };
+    rightsCache.set(deps, built);
+  }
+  return built;
+}

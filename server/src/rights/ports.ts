@@ -21,9 +21,8 @@ export interface RightsDb extends RightsQuery {
   tx<T>(fn: (db: RightsQuery) => Promise<T>): Promise<T>;
 }
 
-/** Pass storage (filled in by P5). */
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface PassStore {}
+/** Pass storage: the service of `rights/passes.ts` (P5). */
+export type { PassService as PassStore } from './passes';
 
 /** Ban storage (filled in by P8). */
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type

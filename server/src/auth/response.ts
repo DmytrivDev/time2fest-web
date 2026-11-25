@@ -1,7 +1,7 @@
 /**
  * Response shaping between Better Auth and our pipeline (SPEC-10 W15, [П-2]; split from `forward.ts`, A10-04):
  * - JSON success → `{ ok: true, value }` without `token` / `session.token` (spike S6, AC-14, [А13]);
- * - `get-session` → the contracts `Session` with neutral pass fields (AC-35);
+ * - `get-session` → the contracts `Session`; pass fields from the server's pass records (SPEC-11 W12, AC-1);
  * - the Google callback's redirect goes through `google.ts` (return path, errors; W33);
  * - any other Better Auth error → `ApiError` by status (its limiter's 429 → `rate_limited/too-many`);
  * - the session cookie's `Max-Age` / `Expires` follow `sessionExpiresAt` (AC-26).
@@ -9,6 +9,7 @@
  */
 import type { SessionWire } from '@time2fest/contracts/schemas';
 import { sessionExpiresAt } from '../domain/auth/sessionExpiry';
+import type { PassView } from '../domain/rights/passView';
 import { failure, newLogId } from '../endpoints/pipeline';
 import type { Ctx, Outcome } from '../endpoints/types';
 import { GOOGLE_CALLBACK_PATH, googleCallbackLocation } from './google';
@@ -107,18 +108,26 @@ export type BaSession = { session: { createdAt: Date | string; expiresAt: Date |
 
 export const ms = (d: Date | string): number => (d instanceof Date ? d.getTime() : Date.parse(d));
 
-/** The contracts `Session` of a Better Auth session (pass fields neutral until SPEC-11). */
-export async function toSession(auth: AuthInstance, found: BaSession | null, device: string): Promise<SessionWire> {
-  const neutral = { hasPass: false, passOn: null, passSince: null, devicePass: null, code: null } as const;
-  if (found === null) return { user: null, guestId: device, ...neutral };
+/** The pass fields of a session (`rights/passes.ts` `view`; SPEC-11 W12). */
+export type PassViewPort = { view(input: { accountId: string | null; device: string }): Promise<PassView> };
+
+/**
+ * The contracts `Session` of a Better Auth session. The pass fields come only from the server's pass records
+ * (`passes.view`, FR-ID-14, AC-1); `passNight` only with a pass; `code` stays `null`.
+ */
+export async function toSession(auth: AuthInstance, found: BaSession | null, device: string, passes: PassViewPort): Promise<SessionWire> {
+  const anonymous = found === null || found.user.isAnonymous === true;
+  const pass = await passes.view({ accountId: anonymous ? null : found.user.id, device });
+  const fields = { ...pass, code: null };
+  if (found === null) return { user: null, guestId: device, ...fields };
   const { user, session } = found;
-  if (user.isAnonymous === true) return { user: null, guestId: user.id, ...neutral };
+  if (user.isAnonymous === true) return { user: null, guestId: user.id, ...fields };
   const accounts = await (await auth.$context).internalAdapter.findAccounts(user.id);
   const via = accounts.some((a) => a.providerId === 'google') ? 'google' : 'email';
   const name = typeof user.name === 'string' && user.name.trim() !== '' ? user.name : undefined;
   return {
     user: { id: user.id, email: String(user.email), via, signedInAt: ms(session.createdAt), ...(name ? { name } : {}) },
     guestId: device,
-    ...neutral,
+    ...fields,
   };
 }

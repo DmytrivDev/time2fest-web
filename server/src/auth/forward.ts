@@ -8,7 +8,7 @@
  * Emails, codes and tokens are never logged.
  */
 import { sessionExpiresAt } from '../domain/auth/sessionExpiry';
-import { authOf } from '../endpoints/deps';
+import { authOf, rightsOf } from '../endpoints/deps';
 import { failure, readBodyBytes } from '../endpoints/pipeline';
 import type { Ctx, Outcome } from '../endpoints/types';
 import { CODE_REQUEST_PATH, CODE_VERIFY_PATH, requestCode, verifyCode, type AuthCall } from './codeFlow';
@@ -28,17 +28,18 @@ export const AUTH_MAX_BODY_BYTES = 4096;
 async function getSession(ctx: Ctx, wiring: AuthWiring, headers: Headers): Promise<Outcome> {
   const auth = wiring.instance();
   const name = await sessionCookieName(auth);
-  if (!hasCookie(headers, name)) return envelope(await toSession(auth, null, ctx.device), 200, new Headers());
+  const passes = rightsOf(ctx.deps).passes;
+  if (!hasCookie(headers, name)) return envelope(await toSession(auth, null, ctx.device, passes), 200, new Headers());
   const found = (await auth.api.getSession({ headers, query: { disableRefresh: true } })) as BaSession | null;
   const due = found !== null && sessionExpiresAt(wiring.now(), wiring.seasonEnd) - ms(found.session.expiresAt) >= wiring.updateAgeMs;
-  if (found !== null && !due) return envelope(await toSession(auth, found, ctx.device), 200, new Headers());
+  if (found !== null && !due) return envelope(await toSession(auth, found, ctx.device, passes), 200, new Headers());
   // Dead cookie (Better Auth deletes it) or a due refresh (Better Auth writes and re-sets it).
   const res = await auth.handler(new Request(new URL(`${AUTH_BASE_PATH}/get-session`, authBaseUrl(ctx.env)), { headers }));
   if (res.status >= 400) return mapError(ctx, res);
   const cookies = new Headers();
   clampSessionCookies(res.headers, cookies, name, wiring);
   const body = (await res.json()) as BaSession | null;
-  return envelope(await toSession(auth, body, ctx.device), 200, cookies);
+  return envelope(await toSession(auth, body, ctx.device, passes), 200, cookies);
 }
 
 /** The handler of every `/api/auth/*` row. */

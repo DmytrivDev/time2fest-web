@@ -8,6 +8,8 @@
  * The hooks get `deps` from the wiring's `getDeps` (`instance.ts`) only inside an auth scope (`scope.ts`): every
  * request runs inside `runInAuthScope` (middleware `25-subject`), a job that touches sessions must wrap its work the
  * same way (P13: erase, guest cleanup). Outside a scope the hooks publish nothing.
+ * SPEC-11: the pass reasons `pass-granted` / `pass-attached` / `pass-revoked` go through `publishSessionEvent` from
+ * `rights/events.ts` (to the account or every subject of the pass's device).
  * A failed publication is logged (`event:'session-publish'`) and never fails the sign-in; nothing here throws.
  */
 import { randomUUID } from 'node:crypto';
