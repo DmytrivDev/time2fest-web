@@ -5,6 +5,7 @@
  */
 import type { AlarmService } from '../alarms/service';
 import type { AlarmStore } from '../alarms/ports';
+import type { AuthWiring } from '../auth/instance';
 import type { CatalogStore } from '../catalog/ports';
 import type { CorrectionDeps } from '../corrections/service';
 import type { ReadinessProbe } from '../health/ports';
@@ -46,3 +47,5 @@ export const moderationOf = (deps: Deps): ModerationDeps => built(deps.moderatio
 export const siteOf = (deps: Deps): SiteWiring => built(deps.site, 'site');
 /** The live air (SPEC-12): stores, lease, configuration, the status source when configured. */
 export const liveOf = (deps: Deps): LiveWiring => built(deps.live, 'live');
+/** Sign-in (SPEC-10): the lazy Better Auth instance and its session rules. */
+export const authOf = (deps: Deps): AuthWiring => built(deps.auth, 'auth');

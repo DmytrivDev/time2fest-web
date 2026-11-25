@@ -10,6 +10,7 @@
  */
 import { randomBytes } from 'node:crypto';
 import type { ApiError, ApiErrorCode } from '@time2fest/contracts';
+import { deviceCookie, newDevice, readDevice } from '../platform/device';
 import type { EdgeGate } from '../platform/edge';
 import { DependencyUnavailable, type Logger } from '../ports';
 import type { ApiFailure, Ctx, Deps, HttpMethod, Middleware, Outcome, RouteRow } from './types';
@@ -92,16 +93,18 @@ function hasNoStore(value: string | null): boolean {
  * `toResponse`. The response is rebuilt, because a handler's `Response` may have immutable headers.
  * - Non-public route: `Cache-Control` always carries `no-store`; missing or without it → `private, no-store`.
  * - Public route: `Cache-Control` is kept; any `Set-Cookie` is dropped with a warning.
+ * - Non-public route and a request without a valid `t2f_device`: the device cookie is appended (SPEC-10 AC-1).
  */
-function finalize(res: Response, route: RouteRow, log: Logger): Response {
+function finalize(res: Response, route: RouteRow, log: Logger, newDeviceId?: string): Response {
   const headers = new Headers(res.headers);
   if (route.public) {
     if (headers.has('set-cookie')) {
       headers.delete('set-cookie');
       log.warn({ event: 'public-set-cookie', route: route.key });
     }
-  } else if (!hasNoStore(headers.get('cache-control'))) {
-    headers.set('cache-control', PRIVATE_NO_STORE);
+  } else {
+    if (!hasNoStore(headers.get('cache-control'))) headers.set('cache-control', PRIVATE_NO_STORE);
+    if (newDeviceId !== undefined) headers.append('set-cookie', deviceCookie(newDeviceId));
   }
   return new Response(res.body, { status: res.status, statusText: res.statusText, headers });
 }
@@ -257,7 +260,9 @@ export function createDispatcher({ routes, middleware, deps, edge }: DispatcherI
     const route = METHODS.has(req.method) ? table.get(`${req.method} ${url.pathname}`) : undefined;
     if (!route) return notFoundResponse();
 
-    const ctx: Ctx = { req, url, env: deps.env, clock: deps.clock, deps, log: deps.log, route, client };
+    const known = readDevice(req);
+    const device = known ?? newDevice();
+    const ctx: Ctx = { req, url, env: deps.env, clock: deps.clock, deps, log: deps.log, route, client, device, deviceIsNew: known === undefined };
     const run = (i: number): Promise<Outcome> => {
       const mw = middleware[i];
       return mw ? mw.run(ctx, () => run(i + 1)) : route.handler(ctx);
@@ -276,6 +281,6 @@ export function createDispatcher({ routes, middleware, deps, edge }: DispatcherI
         outcome = failure('unknown', { message: logId });
       }
     }
-    return finalize(toResponse(outcome), route, deps.log);
+    return finalize(toResponse(outcome), route, deps.log, ctx.deviceIsNew ? device : undefined);
   };
 }

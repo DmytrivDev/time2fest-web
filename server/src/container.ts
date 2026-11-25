@@ -18,6 +18,7 @@ import { createAccessVerifier, localKeys, remoteKeys } from './adapters/accessJw
 import { createCentrifugoApi } from './adapters/centrifugoApi';
 import { createHs256Signer } from './adapters/centrifugoToken';
 import { noSessionSubjects } from './adapters/noSessionSubjects';
+import { createAuthWiring } from './auth/instance';
 import { createIdentityMarker } from './adapters/identityMarker';
 import { createPayloadCatalogMeta, createPayloadCatalogStore } from './adapters/payloadCatalog';
 import { createReadinessProbe } from './adapters/readiness';
@@ -298,6 +299,8 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   if (ops && !deps.opsRunner) deps.opsRunner = createOpsRunner(opsRunnerDepsOf(deps, ops, payload, backupDepsOf(deps)));
   // Realtime (SPEC-06): no session yet (C5); the signer only with the token secret (else AC-19 in `test`).
   deps.subjects = overrides.subjects ?? noSessionSubjects;
+  // Sign-in (SPEC-10): the Better Auth instance is built on first use (no connection, no timer here).
+  deps.auth = overrides.auth ?? createAuthWiring({ env, redis: deps.redis });
   // Text moderation and AI (SPEC-09): built here, timers started only by `startProcessBackground`.
   deps.moderation = overrides.moderation ?? createModeration(env, payload, { clock, alarm, log });
   const tokenSecret = realtime.config.tokenSecret;

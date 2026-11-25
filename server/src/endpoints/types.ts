@@ -10,6 +10,7 @@ import type { OpsRunner, OpsWiring } from '../ops/runner';
 import type { ApiError } from '@time2fest/contracts';
 import type { ZodType } from 'zod';
 import type { AlarmService } from '../alarms/service';
+import type { AuthWiring } from '../auth/instance';
 import type { AlarmStore } from '../alarms/ports';
 import type { CatalogCopyDeps } from '../catalog/copy';
 import type { CatalogStore } from '../catalog/ports';
@@ -188,6 +189,8 @@ export interface Deps {
    * multipart part size (default 16 MB). Never set in production code.
    */
   backupTuning?: { dump?: DumpRunner; partBytes?: number };
+  /** Sign-in (SPEC-10): the Better Auth instance (lazy) and its session rules; read through `authOf`. */
+  auth?: AuthWiring;
 }
 
 export interface Ctx {
@@ -200,6 +203,13 @@ export interface Ctx {
   route: RouteRow;
   /** The client as admitted by the edge gate: country and daily fingerprint, never the address (AC-23). */
   client: ClientContext;
+  /**
+   * The device id (SPEC-10 [П-3]): from a valid `t2f_device` cookie, or fresh. A fresh id is set as a cookie on a
+   * non-public response (`deviceIsNew`, AC-1).
+   */
+  device: string;
+  /** The request carried no valid `t2f_device` cookie: `finalize` sets one on a non-public response. */
+  deviceIsNew: boolean;
   /** The parsed body, set by `20-validate` when the row has a `body` schema. */
   body?: unknown;
   /** The parsed query, set by `20-validate` when the row has a `query` schema. */
