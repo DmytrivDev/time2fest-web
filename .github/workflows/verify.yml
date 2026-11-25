@@ -69,6 +69,20 @@ jobs:
           CENTRIFUGO_ENGINE_REDIS_PREFIX: t2f_centrifugo
           CENTRIFUGO_CLIENT_TOKEN_HMAC_SECRET_KEY: ci-hmac-${{ github.run_id }}-${{ github.run_attempt }}-0123456789abcdef
           CENTRIFUGO_HTTP_API_KEY: ci-api-${{ github.run_id }}-${{ github.run_attempt }}-0123456789abcdef
+      # Mail and sign-in fakes (SPEC-10 AC-53, NFR-6): same images/env as docker-compose.yml; no real providers.
+      mailpit:
+        image: axllent/mailpit:v1.33.1
+        ports: ['1025:1025', '8025:8025']
+      mailpit-chaos:
+        image: axllent/mailpit:v1.33.1
+        ports: ['1026:1025', '8026:8025']
+        env:
+          MP_ENABLE_CHAOS: 'true'
+      oidc:
+        image: ghcr.io/navikt/mock-oauth2-server:7.0.2
+        ports: ['8091:8080']
+        env:
+          JSON_CONFIG: '{"interactiveLogin":true}'
     steps:
       # `runner` context is not available in job-level `env`, so set it in a step.
       - name: Lock dir

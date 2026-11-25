@@ -96,6 +96,60 @@ services:
         limits:
           memory: 256m
 
+  # Second Mailpit whose chaos triggers tests may change (SPEC-10 [П-10]); the main `mailpit` is never touched.
+  mailpit-chaos:
+    image: axllent/mailpit:v1.33.1
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:1026:1025'
+      - '127.0.0.1:8026:8025'
+    environment:
+      MP_ENABLE_CHAOS: 'true'
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -qO- http://127.0.0.1:8025/livez']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    mem_limit: 256m
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+
+  # Fake Google sign-in (OIDC issuer http://127.0.0.1:8091/google), interactive login form (SPEC-10 AC-53).
+  oidc:
+    image: ghcr.io/navikt/mock-oauth2-server:7.0.2
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:8091:8080'
+    environment:
+      JSON_CONFIG: '{"interactiveLogin":true}'
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -qO- http://127.0.0.1:8080/google/.well-known/openid-configuration']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    mem_limit: 384m
+    deploy:
+      resources:
+        limits:
+          memory: 384m
+
+  # Zero-dependency fake SMTP that fails by recipient tag (fakes/smtp/README.md, SPEC-10 W3).
+  fake-smtp:
+    image: node:22-bookworm-slim@sha256:e9f565d32859f0cbfb52125eafe8be39390f24dac302dc3cdf566e8ba3ab21ee
+    restart: unless-stopped
+    command: ['node', '/app/server.mjs', '--port', '2525', '--host', '0.0.0.0']
+    volumes:
+      - ./fakes/smtp:/app:ro
+    ports:
+      - '127.0.0.1:2525:2525'
+    mem_limit: 128m
+    deploy:
+      resources:
+        limits:
+          memory: 128m
+
   r2:
     image: adobe/s3mock:5.2.3
     restart: unless-stopped
