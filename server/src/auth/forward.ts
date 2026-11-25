@@ -10,7 +10,8 @@
  * Response:
  * - JSON success → `{ ok: true, value }` without `token` / `session.token` (spike S6, AC-14, [А13]);
  * - `get-session` → the contracts `Session` with neutral pass fields (AC-35); no cookie → no Better Auth call (AC-3);
- * - a Better Auth error → `ApiError` by status (the code flow refines reasons later, W24);
+ * - the code request / verify paths go through `codeFlow.ts` (validation, our limits, mail, reasons; W23, W24);
+ * - any other Better Auth error → `ApiError` by status (its limiter's 429 → `rate_limited/too-many`);
  * - the session cookie's `Max-Age` / `Expires` follow `sessionExpiresAt` (AC-26).
  * Emails, codes and tokens are never logged.
  */
@@ -21,6 +22,7 @@ import { authOf } from '../endpoints/deps';
 import { failure, newLogId, readBodyBytes } from '../endpoints/pipeline';
 import type { Ctx, Outcome } from '../endpoints/types';
 import { DEVICE_COOKIE } from '../platform/device';
+import { CODE_REQUEST_PATH, CODE_VERIFY_PATH, requestCode, verifyCode, type AuthCall } from './codeFlow';
 import { AUTH_BASE_PATH, AUTH_IP_HEADER, authBaseUrl, type AuthInstance, type AuthWiring } from './instance';
 
 /** Body limit of every `/api/auth/*` row. */
@@ -126,7 +128,10 @@ function envelope(value: unknown, status: number, cookies: Headers): Response {
 async function mapError(ctx: Ctx, res: Response): Promise<Outcome> {
   if (res.status === 429) {
     const seconds = Number(res.headers.get('x-retry-after'));
-    return failure('rate_limited', Number.isFinite(seconds) && seconds > 0 ? { retryAfterMs: Math.ceil(seconds * 1000) } : {});
+    return failure('rate_limited', {
+      reason: 'too-many',
+      ...(Number.isFinite(seconds) && seconds > 0 ? { retryAfterMs: Math.ceil(seconds * 1000) } : {}),
+    });
   }
   if (res.status === 400 || res.status === 422) return failure('validation', { reason: 'invalid-input' });
   if (res.status === 401) return failure('unauthorized');
@@ -217,6 +222,19 @@ export async function forwardToAuth(ctx: Ctx): Promise<Outcome> {
   }
   if (SESSION_STARTING.test(path)) await dropDeadSession(auth, headers);
   const url = new URL(ctx.url.pathname + ctx.url.search, authBaseUrl(ctx.env));
+  if (ctx.req.method === 'POST' && (path === CODE_REQUEST_PATH || path === CODE_VERIFY_PATH)) {
+    // The code flow validates, limits and maps errors itself (W23, W24); Better Auth gets the normalized body.
+    headers.set('content-type', 'application/json');
+    const call: AuthCall = {
+      send: (json) => auth.handler(new Request(url, { method: 'POST', headers, body: json })),
+      respond: async (res, value) => {
+        const cookies = new Headers();
+        clampSessionCookies(res.headers, cookies, await sessionCookieName(auth), wiring);
+        return envelope(value, 200, cookies);
+      },
+    };
+    return path === CODE_REQUEST_PATH ? requestCode(ctx, wiring, body, call) : verifyCode(ctx, wiring, body, call);
+  }
   const res = await auth.handler(new Request(url, { method: ctx.req.method, headers, ...(body !== undefined && body !== '' ? { body } : {}) }));
   return fromAuthResponse(ctx, res, wiring);
 }

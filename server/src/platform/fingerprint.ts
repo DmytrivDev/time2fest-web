@@ -58,6 +58,23 @@ export function networkOf(ip: string): string | undefined {
   return `${prefix.join(':')}::/64`;
 }
 
+/**
+ * The wider network of the sign-in code limits (SPEC-10 AC-9, EC-6): IPv4 (and IPv4-mapped IPv6) unchanged; any other
+ * IPv6 → `xxxx:xxxx:xxxx::/48`, so a client hopping between /64s of one /48 stays one key. `undefined` for a non-IP.
+ */
+export function network48Of(ip: string): string | undefined {
+  const kind = isIP(ip);
+  if (kind === 4) return ip;
+  if (kind !== 6) return undefined;
+  const network = networkOf(ip);
+  if (network === undefined || !network.endsWith('::/64')) return network;
+  const groups = ipv6Groups(ip.toLowerCase()) as number[];
+  return `${groups
+    .slice(0, 3)
+    .map((g) => g.toString(16).padStart(4, '0'))
+    .join(':')}::/48`;
+}
+
 /** Hex HMAC-SHA-256 of `network` under `salt`; contains no part of the address. */
 export function fingerprintOf(network: string, salt: string): string {
   return createHmac('sha256', salt).update(network).digest('hex');

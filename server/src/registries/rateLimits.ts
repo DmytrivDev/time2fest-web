@@ -6,6 +6,14 @@ import type { RateLimitRow } from '../platform/rateLimit';
 import { assertRegistry } from '../platform/registry';
 
 export const rateLimitRegistry: readonly RateLimitRow[] = [
+  // Sign-in codes (SPEC-10 AC-9, [А4], [П-8]): 5 codes per 10 min per email hash / per client (ipDay) / per IPv6 /48.
+  // Keyed rows (`checkKeyedLimit` / `peekKeyedLimit` in `auth/codeLimits.ts`, no route names them): `keys: []`
+  // because the caller passes the key value. Refused if Redis is down (NFR-4).
+  { key: 'auth-code-email', limit: 5, windowMs: 600_000, keys: [], onStoreDown: 'fail-closed' },
+  { key: 'auth-code-ip', limit: 5, windowMs: 600_000, keys: ['ipDay'], onStoreDown: 'fail-closed' },
+  { key: 'auth-code-ip48', limit: 5, windowMs: 600_000, keys: [], onStoreDown: 'fail-closed' },
+  // Guests created on the first write (SPEC-10 AC-4, [Q2], [П-6]): 60 per 10 min per client; refused if Redis is down.
+  { key: 'auth-guest-create', limit: 60, windowMs: 600_000, keys: ['ipDay'], onStoreDown: 'fail-closed' },
   // The public build-time read of the catalog (AC-63): 30 a minute per client (SPEC-05 daily fingerprint),
   // counted in this process if Redis is down.
   { key: 'catalog-read', limit: 30, windowMs: 60_000, keys: ['ipDay'], onStoreDown: 'memory' },

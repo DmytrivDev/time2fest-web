@@ -199,10 +199,10 @@ describe('edge gate', () => {
   });
 
   it('AC-23: the client context has no address field', () => {
-    expectTypeOf<keyof ClientContext>().toEqualTypeOf<'country' | 'edgeVerified' | 'addressPresent' | 'ipDay'>();
+    expectTypeOf<keyof ClientContext>().toEqualTypeOf<'country' | 'edgeVerified' | 'addressPresent' | 'ipDay' | 'ip48Day'>();
     const client = admitted(gate(), edge('198.51.100.7;UA'));
     const keys = Object.keys(client).filter((k) => /ip|addr/i.test(k));
-    expect(keys.sort()).toEqual(['addressPresent', 'ipDay']);
+    expect(keys.sort()).toEqual(['addressPresent', 'ip48Day', 'ipDay']);
     expect(JSON.stringify(client)).not.toContain('198.51.100.7');
   });
 

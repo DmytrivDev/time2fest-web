@@ -19,6 +19,7 @@ import { sessionExpiresAt } from '../domain/auth/sessionExpiry';
 import type { AppEnv } from '../endpoints/types';
 import { DEVICE_COOKIE, isDeviceId, readCookie } from '../platform/device';
 import type { FastStore } from '../ports';
+import { CODE_REQUEST_PATH, CODE_VERIFY_PATH, markUserCreated, sendSignInCode } from './codeFlow';
 import { authStaticOptions, type AuthStaticInput } from './options';
 
 export const AUTH_BASE_PATH = '/api/auth';
@@ -33,15 +34,18 @@ export interface AuthInput {
   env: AppEnv;
   /** Rate-limit counters of Better Auth's own limiter. */
   redis: FastStore;
-  /** Delivers a sign-in code. Until the code flow is wired (P9) the default refuses. */
+  /** Delivers a sign-in code; default `sendSignInCode` (the mail service of the request's deps, W23). */
   sendOtp?: AuthStaticInput['sendOtp'];
   /** Wall clock in epoch ms for the session clamp ([П-9]); default `realClock`. */
   now?: () => number;
 }
 
-const notWired: AuthStaticInput['sendOtp'] = async () => {
-  throw new Error('auth: code delivery not wired');
-};
+/**
+ * Better Auth's built-in limiter stays only as a safety net under our code limits ([А4], W22/W23): its defaults
+ * (`/sign-in/*` 3 per 10 s, email-otp 3 per 60 s per address) would refuse before ours on a shared address, so the two
+ * code paths get 20 per 60 s.
+ */
+const CODE_PATH_SAFETY_NET = { window: 60, max: 20 };
 
 function str(value: unknown): string | undefined {
   return typeof value === 'string' && value !== '' ? value : undefined;
@@ -82,7 +86,7 @@ function buildAuth(input: AuthInput) {
   };
   const googleOn = google.discoveryUrl !== undefined && google.clientId !== undefined && google.clientSecret !== undefined;
   const statics = authStaticOptions({
-    sendOtp: input.sendOtp ?? notWired,
+    sendOtp: input.sendOtp ?? sendSignInCode,
     googleDiscoveryUrl: google.discoveryUrl ?? 'http://127.0.0.1:9/unused',
     googleClientId: google.clientId ?? 'unused',
     googleClientSecret: google.clientSecret ?? 'unused',
@@ -115,6 +119,10 @@ function buildAuth(input: AuthInput) {
     },
     rateLimit: {
       enabled: true,
+      customRules: {
+        [CODE_REQUEST_PATH]: CODE_PATH_SAFETY_NET,
+        [CODE_VERIFY_PATH]: CODE_PATH_SAFETY_NET,
+      },
       customStorage: {
         // One atomic counter per key and window (FastStore `incrWindow`); the key holds the hashed address only.
         async consume(key: string, rule: { window: number; max: number }) {
@@ -125,6 +133,14 @@ function buildAuth(input: AuthInput) {
       },
     },
     databaseHooks: {
+      user: {
+        create: {
+          // `SignInOutcome.isNew` of the verify request that created the user (W24).
+          async after() {
+            markUserCreated();
+          },
+        },
+      },
       session: {
         create: {
           async before(session, ctx) {

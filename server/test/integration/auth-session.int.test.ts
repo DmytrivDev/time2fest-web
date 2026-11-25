@@ -9,6 +9,7 @@ import { sessionSchema } from '@time2fest/contracts/schemas';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createAuthWiring, type AuthWiring } from '../../src/auth/instance';
 import { buildDispatcher } from '../../src/container';
+import { emailKey } from '../../src/domain/auth/email';
 import { SESSION_TTL_MS } from '../../src/domain/auth/sessionExpiry';
 import type { Deps } from '../../src/endpoints/types';
 import { DEVICE_MAX_AGE_S } from '../../src/platform/device';
@@ -72,7 +73,9 @@ let main: Awaited<ReturnType<typeof build>>;
 async function signIn(call: ReturnType<typeof makeCall>, jar: CookieJar, to: string, ua?: string): Promise<Response> {
   const ip = freshIp();
   const headers = ua ? { 'user-agent': ua } : undefined;
-  const sent = await call('/api/auth/email-otp/send-verification-otp', { body: { email: to, type: 'sign-in' }, jar, ip, ...(headers ? { headers } : {}) });
+  // Several sign-ins of one address within 30 s: free the code gap of SPEC-10 AC-8 (tested in auth-code.int).
+  await redis.del(`auth:gap:${emailKey(to)}`);
+  const sent = await call('/api/auth/email-otp/send-verification-otp', { body: { email: to, intent: 'signin' }, jar, ip, ...(headers ? { headers } : {}) });
   expect(sent.status).toBe(200);
   const otp = otps.get(to);
   expect(otp).toMatch(/^\d{6}$/);
@@ -281,7 +284,7 @@ describe('edge, origin and mounted paths (AC-32 … AC-34)', () => {
       expect(res.status).toBe(403);
     }
     const otp = await main.call('/api/auth/email-otp/send-verification-otp', {
-      body: { email: email('evil'), type: 'sign-in' },
+      body: { email: email('evil'), intent: 'signin' },
       headers: { origin: 'https://evil.example' },
     });
     expect(otp.status).toBe(403);

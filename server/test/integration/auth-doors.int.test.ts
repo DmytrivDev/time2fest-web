@@ -99,7 +99,7 @@ describe('SPEC-10 auth and mail doors (AC-52)', () => {
     const sent = await dispatch(
       new Request(`${BASE}/api/auth/email-otp/send-verification-otp`, {
         method: 'POST',
-        body: JSON.stringify({ email, type: 'sign-in' }),
+        body: JSON.stringify({ email, intent: 'signin' }),
         headers: { 'content-type': 'application/json', origin: ORIGIN },
       }),
     );
