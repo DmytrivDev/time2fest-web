@@ -2827,6 +2827,118 @@
         }
       }
     },
+    "packages/contracts/src/auth.schemas.ts#AuthCodeIntentSchema": {
+      "text": "ZodEnum<{ signin: \"signin\"; signup: \"signup\"; }>"
+    },
+    "packages/contracts/src/auth.schemas.ts#CodeInfoWire": {
+      "text": "z.infer<typeof codeInfoSchema>"
+    },
+    "packages/contracts/src/auth.schemas.ts#GoogleBody": {
+      "text": "z.infer<typeof googleBody>"
+    },
+    "packages/contracts/src/auth.schemas.ts#GoogleRedirectWire": {
+      "text": "z.infer<typeof googleRedirectSchema>"
+    },
+    "packages/contracts/src/auth.schemas.ts#RequestCodeBody": {
+      "text": "z.infer<typeof requestCodeBody>"
+    },
+    "packages/contracts/src/auth.schemas.ts#SessionWire": {
+      "text": "z.infer<typeof sessionSchema>"
+    },
+    "packages/contracts/src/auth.schemas.ts#SignInOutcomeWire": {
+      "text": "z.infer<typeof signInOutcomeSchema>"
+    },
+    "packages/contracts/src/auth.schemas.ts#VerifyCodeBody": {
+      "text": "z.infer<typeof verifyCodeBody>"
+    },
+    "packages/contracts/src/auth.schemas.ts#authExpireCodeDoor": {
+      "text": "ZodObject<{ email: ZodString; }, $strict>"
+    },
+    "packages/contracts/src/auth.schemas.ts#authGoogleUserDoor": {
+      "text": "ZodObject<{ email: ZodString; emailVerified: ZodBoolean; name: ZodOptional<ZodString>; sub: ZodString; }, $strict>"
+    },
+    "packages/contracts/src/auth.schemas.ts#authLastCodeDoor": {
+      "text": "ZodObject<{ to: ZodString; }, $strict>"
+    },
+    "packages/contracts/src/auth.schemas.ts#codeInfoSchema": {
+      "text": "ZodObject<{ attemptsLeft: ZodNumber; email: ZodString; expiresAt: ZodNumber; intent: ZodEnum<{ signin: \"signin\"; signup: \"signup\"; }>; resendAt: ZodNumber; sentAt: ZodNumber; }, $strict>"
+    },
+    "packages/contracts/src/auth.schemas.ts#googleBody": {
+      "text": "ZodObject<{ returnPath: ZodString; }, $strict>"
+    },
+    "packages/contracts/src/auth.schemas.ts#googleRedirectSchema": {
+      "text": "ZodObject<{ kind: ZodLiteral<\"redirect\">; url: ZodString; }, $strict>"
+    },
+    "packages/contracts/src/auth.schemas.ts#mailCounterDoor": {
+      "text": "ZodObject<{ count: ZodNumber; provider: ZodEnum<{ fallback: \"fallback\"; primary: \"primary\"; }>; }, $strict>"
+    },
+    "packages/contracts/src/auth.schemas.ts#requestCodeBody": {
+      "text": "ZodObject<{ email: ZodString; intent: ZodEnum<{ signin: \"signin\"; signup: \"signup\"; }>; }, $strict>"
+    },
+    "packages/contracts/src/auth.schemas.ts#sessionEventSchema": {
+      "text": "ZodObject<{ data: ZodObject<{ reason: ZodEnum<{ \"signed-in\": \"signed-in\"; \"signed-out\": \"signed-out\"; erased: \"erased\"; }>; }, $strict>; id: ZodString; type: ZodLiteral<\"session\">; }, $strict>"
+    },
+    "packages/contracts/src/auth.schemas.ts#sessionSchema": {
+      "text": "ZodObject<{ code: ZodNullable<ZodObject<{ attemptsLeft: ZodNumber; email: ZodString; expiresAt: ZodNumber; intent: ZodEnum<{ signin: \"signin\"; signup: \"signup\"; }>; resendAt: ZodNumber; sentAt: ZodNumber; }, $strict>>; devicePass: ZodNullable<ZodObject<{ email: ZodString; since: ZodNumber; }, $strict>>; guestId: ZodString; hasPass: ZodBoolean; passNight: ZodOptional<ZodString>; passOn: ZodNullable<ZodEnum<{ account: \"account\"; device: \"device\"; }>>; passSince: ZodNullable<ZodNumber>; user: ZodNullable<ZodObject<{ email: ZodString; id: ZodString; name: ZodOptional<ZodString>; signedInAt: ZodNumber; via: ZodEnum<{ email: \"email\"; google: \"google\"; }>; }, $strict>>; }, $strict>"
+    },
+    "packages/contracts/src/auth.schemas.ts#sessionUserSchema": {
+      "text": "ZodObject<{ email: ZodString; id: ZodString; name: ZodOptional<ZodString>; signedInAt: ZodNumber; via: ZodEnum<{ email: \"email\"; google: \"google\"; }>; }, $strict>"
+    },
+    "packages/contracts/src/auth.schemas.ts#signInOutcomeSchema": {
+      "text": "ZodObject<{ email: ZodString; isNew: ZodBoolean; }, $strict>"
+    },
+    "packages/contracts/src/auth.schemas.ts#verifyCodeBody": {
+      "text": "ZodObject<{ email: ZodString; otp: ZodString; }, $strict>"
+    },
+    "packages/contracts/src/auth.ts#AUTH_REASONS": {
+      "text": "readonly [\"cancelled\", \"email\", \"expired\", \"too-many\", \"too-many-attempts\", \"wait\", \"wrong-code\"]"
+    },
+    "packages/contracts/src/auth.ts#AuthCodeIntent": {
+      "union": [
+        "'signin'",
+        "'signup'"
+      ]
+    },
+    "packages/contracts/src/auth.ts#AuthReason": {
+      "text": "(typeof AUTH_REASONS)[number]"
+    },
+    "packages/contracts/src/auth.ts#SESSION_EVENT_REASONS": {
+      "text": "readonly [\"signed-in\", \"signed-out\", \"erased\"]"
+    },
+    "packages/contracts/src/auth.ts#SessionEvent": {
+      "props": {
+        "data": {
+          "optional": false,
+          "type": {
+            "props": {
+              "reason": {
+                "optional": false,
+                "type": {
+                  "ref": "packages/contracts/src/auth.ts#SessionEventReason"
+                }
+              }
+            }
+          }
+        },
+        "id": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "type": {
+          "optional": false,
+          "type": {
+            "union": [
+              "'session'"
+            ]
+          }
+        }
+      }
+    },
+    "packages/contracts/src/auth.ts#SessionEventReason": {
+      "text": "(typeof SESSION_EVENT_REASONS)[number]"
+    },
     "packages/contracts/src/catalog.schemas.ts#CatalogChanged": {
       "text": "z.infer<typeof CatalogChangedSchema>"
     },
@@ -3562,7 +3674,7 @@
       "text": "ZodDiscriminatedUnion<[ZodObject<{ door: ZodLiteral<\"video-status\">; state: ZodEnum<{ \"not-embeddable\": \"not-embeddable\"; ended: \"ended\"; live: \"live\"; missing: \"missing\"; private: \"private\"; upcoming: \"upcoming\"; }>; videoId: ZodString; }, $strict>, ZodObject<{ bucket: ZodOptional<ZodEnum<{ candidates: \"candidates\"; playlists: \"playlists\"; queries: \"queries\"; search: \"search\"; }>>; door: ZodLiteral<\"quota\">; exceeded: ZodOptional<ZodBoolean>; used: ZodNumber; }, $strict>, ZodObject<{ countries: ZodArray<ZodString>; door: ZodLiteral<\"viewers\">; people: ZodNumber; }, $strict>, ZodObject<{ door: ZodLiteral<\"hide\">; eventId: ZodString; sourceId: ZodString; }, $strict>, ZodObject<{ door: ZodLiteral<\"reset-live\">; }, $strict>, ZodObject<{ channels: ZodArray<ZodObject<{ deleted: ZodOptional<ZodLiteral<true>>; id: ZodString; uploads: ZodOptional<ZodString>; videos: ZodOptional<ZodArray<ZodString>>; }, $strict>>; door: ZodLiteral<\"channels\">; }, $strict>, ZodObject<{ channelId: ZodString; door: ZodLiteral<\"search-results\">; ids: ZodArray<ZodString>; }, $strict>], \"door\">"
     },
     "packages/contracts/src/live.schemas.ts#SourceErrorReportSchema": {
-      "text": "ZodObject<{ code: ZodNumber & ZodType<100 | 2 | 5 | 101 | 150 | 153, number, $ZodTypeInternals<100 | 2 | 5 | 101 | 150 | 153, number>>; eventId: ZodString; sourceId: ZodString; }, $strict>"
+      "text": "ZodObject<{ code: ZodNumber & ZodType<2 | 5 | 100 | 101 | 150 | 153, number, $ZodTypeInternals<2 | 5 | 100 | 101 | 150 | 153, number>>; eventId: ZodString; sourceId: ZodString; }, $strict>"
     },
     "packages/contracts/src/live.schemas.ts#StreamChainSchema": {
       "text": "ZodObject<{ eventId: ZodString; sources: ZodArray<ZodObject<{ alwaysOn: ZodOptional<ZodBoolean>; embeddable: ZodBoolean; id: ZodString; isLive: ZodBoolean; isRecording: ZodOptional<ZodBoolean>; kind: ZodEnum<{ main: \"main\"; tv: \"tv\"; webcam: \"webcam\"; }>; lastChecked: ZodString; order: ZodNumber; override: ZodOptional<ZodBoolean>; platform: ZodEnum<{ facebook: \"facebook\"; twitch: \"twitch\"; youtube: \"youtube\"; }>; replay: ZodOptional<ZodObject<{ url: ZodString; videoId: ZodOptional<ZodString>; }, $strict>>; startsAt: ZodOptional<ZodString>; status: ZodEnum<{ expected: \"expected\"; live: \"live\"; possible: \"possible\"; }>; sync: ZodOptional<ZodObject<{ durationSec: ZodOptional<ZodNumber>; midnightSec: ZodNumber; }, $strict>>; test: ZodOptional<ZodBoolean>; testNote: ZodOptional<ZodString>; title: ZodObject<{ uk: ZodString; }, $strict>; url: ZodString; verified: ZodBoolean; videoId: ZodOptional<ZodString>; }, $strict>>; version: ZodOptional<ZodNumber>; }, $strict>"
@@ -5836,6 +5948,12 @@
       "changes": [
         "packages/contracts/src/live.schemas.ts#LiveDoorBodySchema: text changed (\"ZodDiscriminatedUnion<[ZodObject<{ door: ZodLiteral<\\\"video-status\\\">; state: ZodEnum<{ \\\"not-embeddable\\\": \\\"not-embeddable\\\"; ended: \\\"ended\\\"; live: \\\"live\\\"; missing: \\\"missing\\\"; private: \\\"private\\\"; upcoming: \\\"upcoming\\\"; }>; videoId: ZodString; }, $strict>, ZodObject<{ door: ZodLiteral<\\\"quota\\\">; exceeded: ZodOptional<ZodBoolean>; used: ZodNumber; }, $strict>, ZodObject<{ countries: ZodArray<ZodString>; door: ZodLiteral<\\\"viewers\\\">; people: ZodNumber; }, $strict>, ZodObject<{ door: ZodLiteral<\\\"hide\\\">; eventId: ZodString; sourceId: ZodString; }, $strict>, ZodObject<{ door: ZodLiteral<\\\"reset-live\\\">; }, $strict>], \\\"door\\\">\" -> \"ZodDiscriminatedUnion<[ZodObject<{ door: ZodLiteral<\\\"video-status\\\">; state: ZodEnum<{ \\\"not-embeddable\\\": \\\"not-embeddable\\\"; ended: \\\"ended\\\"; live: \\\"live\\\"; missing: \\\"missing\\\"; private: \\\"private\\\"; upcoming: \\\"upcoming\\\"; }>; videoId: ZodString; }, $strict>, ZodObject<{ bucket: ZodOptional<ZodEnum<{ candidates: \\\"candidates\\\"; playlists: \\\"playlists\\\"; queries: \\\"queries\\\"; search: \\\"search\\\"; }>>; door: ZodLiteral<\\\"quota\\\">; exceeded: ZodOptional<ZodBoolean>; used: ZodNumber; }, $strict>, ZodObject<{ countries: ZodArray<ZodString>; door: ZodLiteral<\\\"viewers\\\">; people: ZodNumber; }, $strict>, ZodObject<{ door: ZodLiteral<\\\"hide\\\">; eventId: ZodString; sourceId: ZodString; }, $strict>, ZodObject<{ door: ZodLiteral<\\\"reset-live\\\">; }, $strict>, ZodObject<{ channels: ZodArray<ZodObject<{ deleted: ZodOptional<ZodLiteral<true>>; id: ZodString; uploads: ZodOptional<ZodString>; videos: ZodOptional<ZodArray<ZodString>>; }, $strict>>; door: ZodLiteral<\\\"channels\\\">; }, $strict>, ZodObject<{ channelId: ZodString; door: ZodLiteral<\\\"search-results\\\">; ids: ZodArray<ZodString>; }, $strict>], \\\"door\\\">\")",
         "packages/contracts/src/live.ts#LiveDoorBody: union member {\"props\":{\"door\":{\"optional\":false,\"type\":{\"union\":[\"'quota'\"]}},\"exceeded\":{\"optional\":true,\"type\":{\"text\":\"boolean\"}},\"used\":{\"optional\":false,\"type\":{\"text\":\"number\"}}}} removed"
+      ]
+    },
+    {
+      "recordedAt": "2026-11-25T00:08:07.559Z",
+      "changes": [
+        "packages/contracts/src/live.schemas.ts#SourceErrorReportSchema: text changed (\"ZodObject<{ code: ZodNumber & ZodType<100 | 2 | 5 | 101 | 150 | 153, number, $ZodTypeInternals<100 | 2 | 5 | 101 | 150 | 153, number>>; eventId: ZodString; sourceId: ZodString; }, $strict>\" -> \"ZodObject<{ code: ZodNumber & ZodType<2 | 5 | 100 | 101 | 150 | 153, number, $ZodTypeInternals<2 | 5 | 100 | 101 | 150 | 153, number>>; eventId: ZodString; sourceId: ZodString; }, $strict>\")"
       ]
     }
   ]
