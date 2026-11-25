@@ -9,10 +9,17 @@
  *   і `renewToken()`.
  * - `subscribe` — події `session` каналу `user:#<id>` → перечитування сесії; зміна власника — перепідписка.
  * - Помилки сервера проходять як `ApiError` (ті самі причини, що в `sim`, див. `authCodeError`). Токенів не зберігаємо:
- *   лише cookie (`credentials: 'include'`). `devCode` / `devReset` немає. До `HTTP_DOMAINS` не підключено (SPEC-11).
+ *   лише cookie (`credentials: 'include'`). `devCode` / `devReset` немає. Розбір відповідей — безzod-охоронці `@time2fest/contracts` (`authGuard`, П-14).
  */
-import { codeInfoSchema, googleRedirectSchema, sessionSchema, signInOutcomeSchema } from '@time2fest/contracts/schemas';
-import type { ApiError, ApiErrorCode } from '@time2fest/contracts';
+import {
+  isSessionEvent,
+  parseCodeInfo,
+  parseGoogleRedirect,
+  parseSession,
+  parseSignInOutcome,
+  type ApiError,
+  type ApiErrorCode,
+} from '@time2fest/contracts';
 import type { AuthIntent, AuthService, CodeInfo, GoogleOutcome, Session, SignInOutcome } from '../contracts/auth';
 import { fail, ok, type ApiResult } from '../result';
 import type { RealtimeTransport } from './realtime/types';
@@ -42,7 +49,7 @@ export interface HttpAuthOptions {
   transport?: RealtimeTransport | (() => Promise<RealtimeTransport>) | null;
 }
 
-const ERROR_CODES: readonly ApiErrorCode[] = [
+export const ERROR_CODES: readonly ApiErrorCode[] = [
   'network',
   'unavailable',
   'unauthorized',
@@ -66,7 +73,7 @@ function errorFromStatus(status: number): ApiError {
 }
 
 /** `{ok:false, error}` сервера → `ApiError` (лише відомі поля). */
-function errorOf(body: unknown, status: number): ApiError {
+export function errorOf(body: unknown, status: number): ApiError {
   const e = (body as { error?: unknown } | null)?.error;
   if (!e || typeof e !== 'object') return errorFromStatus(status);
   const raw = e as Record<string, unknown>;
@@ -136,13 +143,6 @@ export function createHttpAuth(options: HttpAuthOptions = {}): AuthService {
     return value === null ? fail('unavailable', { message: `invalid ${url} response` }) : ok(value);
   }
 
-  const parseWith =
-    <T>(schema: { safeParse(v: unknown): { success: true; data: T } | { success: false } }) =>
-    (v: unknown): T | null => {
-      const r = schema.safeParse(v);
-      return r.success ? r.data : null;
-    };
-
   function withCode(s: Session): Session {
     return { ...s, code: heldCode };
   }
@@ -160,9 +160,9 @@ export function createHttpAuth(options: HttpAuthOptions = {}): AuthService {
   }
 
   const readSession = async (): Promise<ApiResult<Session>> => {
-    const r = await call(AUTH_URLS.session, 'GET', undefined, parseWith(sessionSchema));
+    const r = await call(AUTH_URLS.session, 'GET', undefined, parseSession as (v: unknown) => Session | null);
     if (!r.ok) return r;
-    return ok(apply(withCode(r.value as unknown as Session)));
+    return ok(apply(withCode(r.value)));
   };
 
   function start(): { stop(): void } {
@@ -179,7 +179,7 @@ export function createHttpAuth(options: HttpAuthOptions = {}): AuthService {
       channel = next;
       off = transport.subscribe(next, {
         onEvent: (envelope) => {
-          if (envelope.type === 'session') void readSession().then((r) => r.ok && attach(r.value));
+          if (isSessionEvent(envelope)) void readSession().then((r) => r.ok && attach(r.value));
         },
         onResync: () => void readSession().then((r) => r.ok && attach(r.value)),
       });
@@ -214,14 +214,14 @@ export function createHttpAuth(options: HttpAuthOptions = {}): AuthService {
       };
     },
     async requestCode(email: string, intent: AuthIntent) {
-      const r = await call(AUTH_URLS.requestCode, 'POST', { email, intent }, parseWith(codeInfoSchema));
+      const r = await call(AUTH_URLS.requestCode, 'POST', { email, intent }, parseCodeInfo as (v: unknown) => CodeInfo | null);
       if (!r.ok) return r;
-      heldCode = r.value as CodeInfo;
+      heldCode = r.value;
       if (last) apply(withCode(last));
       return ok(heldCode);
     },
     async verifyCode(email: string, code: string): Promise<ApiResult<SignInOutcome>> {
-      const r = await call(AUTH_URLS.verifyCode, 'POST', { email, otp: code }, parseWith(signInOutcomeSchema));
+      const r = await call(AUTH_URLS.verifyCode, 'POST', { email, otp: code }, parseSignInOutcome as (v: unknown) => SignInOutcome | null);
       if (!r.ok) {
         const e = r.error;
         if (heldCode && heldCode.email === email.trim().toLowerCase()) {
@@ -234,12 +234,12 @@ export function createHttpAuth(options: HttpAuthOptions = {}): AuthService {
       const before = last ? subjectOf(last) : undefined;
       const s = await readSession();
       if (!s.ok || before === undefined || subjectOf(s.value) !== before) await renewToken();
-      return ok(r.value as SignInOutcome);
+      return ok(r.value);
     },
     async google({ returnPath, signal }): Promise<ApiResult<GoogleOutcome>> {
       if (signal?.aborted) return fail('conflict', { reason: 'cancelled' });
-      const r = await call(AUTH_URLS.google, 'POST', { returnPath }, parseWith(googleRedirectSchema));
-      return r.ok ? ok(r.value as GoogleOutcome) : r;
+      const r = await call(AUTH_URLS.google, 'POST', { returnPath }, parseGoogleRedirect as (v: unknown) => GoogleOutcome | null);
+      return r;
     },
     async signOut(): Promise<ApiResult<void>> {
       const r = await call(AUTH_URLS.signOut, 'POST', {}, () => ({}));

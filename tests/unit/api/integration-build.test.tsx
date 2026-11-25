@@ -14,7 +14,7 @@ import { apiDomains, domainSource, faultControls, MIGRATED_DOMAINS, missingDomai
 import messages from '@/messages/uk.json';
 
 /** In `MIGRATED_DOMAINS` order: `live` over http since SPEC-12 (W41). */
-const HTTP_NOW = ['live', 'catalog', 'site'];
+const HTTP_NOW = ['live', 'auth', 'profile', 'catalog', 'site'];
 const SIM_REST = MIGRATED_DOMAINS.filter((d) => !HTTP_NOW.includes(d));
 
 describe('who serves a domain — three build kinds', () => {

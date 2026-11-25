@@ -16,6 +16,7 @@ import { getData } from '@/lib/data/load';
 import type { Stamp } from '@/lib/data/types';
 import { emit } from '@/lib/events/bus';
 import { clearPresenceRegistry, surfacePresence } from '@/lib/presence/surfaces';
+import { useAuthStore } from '@/stores/auth';
 import { useGuestStore } from '@/stores/guest';
 
 const london = getData().events.find((e) => e.cityId.includes('london')) ?? getData().events[0]!;
@@ -128,6 +129,8 @@ describe('хуки паспорта', () => {
   });
 
   it('графік — через профіль: toggle/replace/set тим самим правилом, синхронно в sim', async () => {
+    expect((await profileActions.toggleSchedule(london.id)).ok).toBe(false); // без паса — `forbidden` (SPEC-11)
+    useAuthStore.setState({ devicePass: { id: 'p', email: 'a@b.co', since: 0 } });
     await profileActions.toggleSchedule(london.id);
     expect(useGuestStore.getState().schedule).toContain(london.id);
     await profileActions.setSchedule([]);
