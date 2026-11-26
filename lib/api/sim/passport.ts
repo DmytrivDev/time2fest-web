@@ -8,14 +8,14 @@
  * - Події: зміна `guest.stamps` → `granted` (нові) чи `snapshot` (скидання).
  */
 import { ok, fail } from '../result';
-import type { PassportEvent, PassportService, PresenceClock, PresenceSurfaceInput } from '../contracts/passport';
+import type { PassportEvent, PassportService } from '../contracts/passport';
 import { patchedData } from '../hooks/site';
-import { getData } from '@/lib/data/load';
-import type { Ms, PresenceSource, Stamp } from '@/lib/data/types';
+import type { PresenceSource, Stamp } from '@/lib/data/types';
 import { buildStamp } from '@/lib/engine/stamp';
-import { presenceMoment, presenceOf, type PresenceSurface } from '@time2fest/rules/time';
+import { ratingCloseAt } from '@time2fest/rules/time';
 import type { MomentStamp } from '@/lib/events/types';
-import { registerSurface } from '@/lib/presence/surfaces';
+import { surfacePresence } from '@/lib/presence/surfaces';
+import { trackSurfaceLocally } from '@/lib/presence/trackSurface';
 import { useGuestStore } from '@/stores/guest';
 
 /** Видати штампи за кожну подію з `moment:stamp`, де гість був присутній (тести; на сайті — `claim` з клієнта). Повертає id виданих. */
@@ -50,51 +50,6 @@ export function grantStamp(eventId: string, source: PresenceSource): Stamp | nul
   return stamp;
 }
 
-function trackPresence(surface: PresenceSurfaceInput | null, clock: PresenceClock): () => void {
-  const release = () => undefined;
-  if (!surface || !surface.eventIds.length) return release;
-
-  const now = clock.now() || clock.fallbackNow();
-  const entries: PresenceSurface[] = [];
-  const unregister: (() => void)[] = [];
-  const keep = new Map<string, Ms>();
-  for (const id of surface.eventIds) {
-    const openedAt = surface.openedAt.get(id) ?? now;
-    keep.set(id, openedAt);
-    const entry: PresenceSurface = { source: surface.source, eventIds: [id], openedAt };
-    entries.push(entry);
-    unregister.push(registerSurface(entry));
-  }
-  surface.openedAt.clear();
-  keep.forEach((v, k) => surface.openedAt.set(k, v));
-
-  const data = getData();
-  const mark = () => {
-    const t = clock.now();
-    const { pendingPresence, markPresence } = useGuestStore.getState();
-    for (const entry of entries) {
-      const id = entry.eventIds[0]!;
-      // Машина часу перемотала назад: сторінка була відкрита весь цей час, тож «відкрита» не пізніше за `t`.
-      if (t < entry.openedAt) {
-        entry.openedAt = t;
-        surface.openedAt.set(id, t);
-      }
-      if (pendingPresence[id]) continue;
-      const event = data.eventsById.get(id);
-      if (!event || !presenceOf(entry, t, event)) continue;
-      markPresence(id, presenceMoment(entry, event), entry.source);
-    }
-  };
-  mark();
-  const unsubscribe = clock.subscribe(mark);
-  return () => {
-    mark();
-    unsubscribe();
-    unregister.forEach((u) => u());
-    release();
-  };
-}
-
 export function createSimPassport(): PassportService {
   return {
     async stamps() {
@@ -111,10 +66,19 @@ export function createSimPassport(): PassportService {
         else onEvent({ type: 'snapshot', stamps: s.stamps });
       });
     },
-    trackPresence,
+    trackPresence: trackSurfaceLocally,
     async claim(req) {
+      const data = patchedData();
+      const event = data.eventsById.get(req.eventId);
+      if (!event) return fail('not_found', { reason: 'unknown-event' });
+      // Уже виданий штамп повертаємо той самий (ідемпотентно), навіть коли вікно закрите.
+      const had = useGuestStore.getState().stamps.find((x) => x.eventId === req.eventId);
+      if (had) return ok(had);
+      if (req.at >= ratingCloseAt(data)) return fail('conflict', { reason: 'claim-closed' });
+      // Без присутності на пристрої (реєстр поверхонь + запис гостя) «сервер» штампа не видає.
+      if (!surfacePresence([req.eventId], req.at)[req.eventId]) return fail('forbidden', { reason: 'no-presence' });
       const stamp = grantStamp(req.eventId, req.source);
-      return stamp ? ok(stamp) : fail('not_found');
+      return stamp ? ok(stamp) : fail('not_found', { reason: 'unknown-event' });
     },
     async beat() {
       // `sim` не шле пульсів — присутність рахує `trackPresence` на кожному такті.

@@ -24,12 +24,19 @@ export interface PendingClaim {
   since: Ms;
   /** Скільки спроб уже зроблено. */
   attempts: number;
+  /** Сервер дав остаточну відповідь, що не знімає штамп (`claim-closed`, `unknown-event`, `validation`…): штамп лишається, спроб більше немає (переживає перезавантаження). */
+  settled?: true;
 }
 
 /** Пауза після `attempts` невдалих спроб. */
 export function claimDelay(attempts: number): number {
   const i = Math.min(Math.max(attempts, 1), CLAIM_BACKOFF_MS.length) - 1;
   return CLAIM_BACKOFF_MS[i]!;
+}
+
+/** Єдина відмова, що знімає штамп з пристрою: сервер певен, що присутності не було (AC-60). */
+export function removesStamp(e: ApiError): boolean {
+  return e.code === 'forbidden' && e.reason === 'no-presence';
 }
 
 /** Відмова, після якої пробуємо ще (мережа, сервер недоступний, ліміт, невідома). Решта — рішення сервера. */
@@ -79,6 +86,8 @@ export function createStampClaimer(deps: ClaimerDeps): StampClaimer {
   const retryTimers = new Map<string, unknown>();
   const noticeTimers = new Map<string, unknown>();
   const inFlight = new Set<string>();
+  /** Не раніше цього часу (мс пристрою): `retryAfterMs` сервера. */
+  const notBefore = new Map<string, Ms>();
   const listeners = new Set<() => void>();
   let snap: ClaimsSnapshot = { pending: [], unconfirmed: [] };
 
@@ -122,7 +131,9 @@ export function createStampClaimer(deps: ClaimerDeps): StampClaimer {
 
   const attempt = (id: string) => {
     const p = find(id);
-    if (!p || inFlight.has(id)) return;
+    if (!p || p.settled || inFlight.has(id)) return;
+    // Сервер просив зачекати: ні `online`, ні `resume` не обганяють його `retryAfterMs`.
+    if (deps.now() < (notBefore.get(id) ?? 0) && retryTimers.has(id)) return;
     const r = retryTimers.get(id);
     if (r !== undefined) deps.clearTimer(r);
     retryTimers.delete(id);
@@ -134,13 +145,23 @@ export function createStampClaimer(deps: ClaimerDeps): StampClaimer {
       const cur = find(id);
       if (!cur) return;
       if (res.ok) return remove(id);
-      if (!retryableClaimError(res.error)) return remove(id);
+      if (removesStamp(res.error)) return remove(id);
+      if (!retryableClaimError(res.error)) {
+        // Остаточна відповідь без «присутності не було»: штамп лишається на пристрої, більше не питаємо.
+        cur.settled = true;
+        persist();
+        emit();
+        return;
+      }
+      const wait = Math.max(claimDelay(cur.attempts), res.error.retryAfterMs ?? 0);
+      if (res.error.retryAfterMs) notBefore.set(id, deps.now() + wait);
+      else notBefore.delete(id);
       retryTimers.set(
         id,
         deps.setTimer(() => {
           retryTimers.delete(id);
           attempt(id);
-        }, claimDelay(cur.attempts)),
+        }, wait),
       );
     };
     let pending: Promise<ApiResult<unknown>>;
@@ -156,7 +177,8 @@ export function createStampClaimer(deps: ClaimerDeps): StampClaimer {
     if (loaded) return;
     loaded = true;
     const saved = deps.load();
-    for (const p of saved) if (p && p.stamp && typeof p.stamp.eventId === 'string' && !find(p.stamp.eventId)) list = [...list, { ...p }];
+    // Формат v1 читаємо як є: `settled` — необов’язкове поле.
+    for (const p of saved) if (p && p.stamp && typeof p.stamp.eventId === 'string' && !find(p.stamp.eventId)) list = [...list, { ...p, ...(p.settled === true ? { settled: true as const } : {}) }];
   };
 
   return {
@@ -194,6 +216,7 @@ export function createStampClaimer(deps: ClaimerDeps): StampClaimer {
     reset() {
       [...retryTimers.keys(), ...noticeTimers.keys()].forEach(clearTimers);
       inFlight.clear();
+      notBefore.clear();
       list = [];
       loaded = true;
       persist();

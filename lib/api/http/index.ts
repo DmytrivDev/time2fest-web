@@ -7,6 +7,7 @@ import type { ServiceFactories, Services } from '../services';
 import { createHttpAuth } from '@/lib/api/http/auth';
 import { createHttpCatalog } from './catalog';
 import { createHttpLive } from './live';
+import { createHttpPassport } from './passport';
 import { createHttpProfile } from '@/lib/api/http/profile';
 import { createHttpSite } from './site';
 import { buildSnapshot } from '../site/buildSnapshot';
@@ -22,6 +23,7 @@ const factories: { [K in HttpDomain]: () => Services[K] } = {
   auth: () => createHttpAuth({ transport: realtimeLoader }),
   profile: () => createHttpProfile({ transport: realtimeLoader }),
   catalog: () => createHttpCatalog(),
+  passport: () => createHttpPassport({ transport: realtimeLoader }),
   // Запасний знімок збірки (FR-EDGE-06 крок 5) впорскуємо тут, щоб адаптер не тягнув `lib/data`.
   site: () => createHttpSite({ buildSnapshot: () => buildSnapshot(getData().meta) }),
   // Ланцюжки збірки — для передстартової збірки (без мережі); так само впорскуємо, щоб адаптер не тягнув `lib/data`.
