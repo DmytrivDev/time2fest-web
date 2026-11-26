@@ -36,6 +36,8 @@ import { createProofWriter, createSqlProofStore, type ProofWriter } from '../pre
 import { createDowntimeNotifier, createDowntimeService, createSqlDowntimeStore, PRESENCE_DOWNTIME_TOPIC, type DowntimeService } from '../presence/downtime';
 import { createFinaliser, createSqlHealthStore, type Finaliser } from '../presence/health';
 import { createSampler, createSqlSampleStore, type Sampler } from '../presence/samples';
+import { createSqlStampStore, createStampService, type StampService } from '../presence/stamps';
+import { stampCatalogOf, type StampCatalog } from '../domain/passport/stampView';
 
 function built<T>(value: T | undefined, name: string): T {
   if (value === undefined) throw new Error(`deps: ${name} missing (deps not built by createDeps)`);
@@ -188,6 +190,8 @@ export interface PresenceServices {
   finaliser: Finaliser;
   /** Manual and edge-region downtime records. */
   downtimes: DowntimeService;
+  /** Stamp claims and the passport list (P8). */
+  stamps: StampService;
   /** Drops the catalog and moment caches (tests, the worktree reset). */
   clear(): void;
   nodeId: string;
@@ -195,13 +199,16 @@ export interface PresenceServices {
 const presenceCache = new WeakMap<Deps, PresenceServices>();
 
 /** Presence events of the current season: stored catalog rows joined with the live air's patched moments. */
-async function readPresenceCatalog(deps: Deps): Promise<PresenceCatalogView> {
+async function readPresenceCatalog(deps: Deps): Promise<{ view: PresenceCatalogView; stamps: StampCatalog }> {
   const [stored, live] = await Promise.all([catalogStoreOf(deps).read(), liveOf(deps).events.events()]);
   const str = (v: unknown): string => (typeof v === 'string' ? v : '');
   const countryOf = new Map(stored.events.map((e) => [str(e.eventId), str(e.countryIso)]));
   const patched = live.map((e) => ({ eventId: e.eventId, countryIso: countryOf.get(e.eventId) ?? '', zoneId: e.zoneId, moment: e.moment, hidden: e.hidden }));
   const zones = stored.zones.map((z) => ({ midnightMs: Date.parse(str(z.midnightUtc)) })).filter((z) => Number.isFinite(z.midnightMs));
-  return { catalog: presenceCatalogOf(stored.season?.key ?? null, stored.events, patched), zones: { zones } };
+  return {
+    view: { catalog: presenceCatalogOf(stored.season?.key ?? null, stored.events, patched), zones: { zones } },
+    stamps: stampCatalogOf(stored),
+  };
 }
 
 /**
@@ -236,13 +243,13 @@ export function presenceOf(served: Deps): PresenceServices {
       intake,
       nodeId,
     });
-    let cat: { at: number; view: PresenceCatalogView } | undefined;
-    const catalog = async (now: number): Promise<PresenceCatalogView> => {
-      if (cat !== undefined && now - cat.at < REFS_TTL_MS && now >= cat.at) return cat.view;
-      const view = await readPresenceCatalog(deps);
-      cat = { at: now, view };
-      return view;
+    let cat: { at: number; view: PresenceCatalogView; stamps: StampCatalog } | undefined;
+    const readCatalog = async (now: number) => {
+      if (cat !== undefined && now - cat.at < REFS_TTL_MS && now >= cat.at) return cat;
+      cat = { at: now, ...(await readPresenceCatalog(deps)) };
+      return cat;
     };
+    const catalog = async (now: number): Promise<PresenceCatalogView> => (await readCatalog(now)).view;
     const alarm = { raise: (a: Parameters<Deps['alarm']['raise']>[0]) => deps.alarm.raise(a) };
     const notifier = createDowntimeNotifier({
       alarm,
@@ -254,6 +261,7 @@ export function presenceOf(served: Deps): PresenceServices {
     const downtimeStore = createSqlDowntimeStore();
     const downtimes = createDowntimeService({ db, store: downtimeStore, catalog, notifier });
     const sampleStore = createSqlSampleStore();
+    const healthStore = createSqlHealthStore();
     built = {
       beats: createBeatService({ catalog, moments, proofs, windows, intake }),
       proofs,
@@ -262,8 +270,18 @@ export function presenceOf(served: Deps): PresenceServices {
       windows,
       catalog,
       sampler: createSampler({ db, fast, store: sampleStore, intake, nodeId, alarm }),
-      finaliser: createFinaliser({ db, store: createSqlHealthStore(), samples: sampleStore, downtimeStore, downtimes, windows, catalog, notifier, alarm, nodeId }),
+      finaliser: createFinaliser({ db, store: healthStore, samples: sampleStore, downtimeStore, downtimes, windows, catalog, notifier, alarm, nodeId }),
       downtimes,
+      stamps: createStampService({
+        db,
+        catalog,
+        stampCatalog: async (now) => (await readCatalog(now)).stamps,
+        moments,
+        proofs: createSqlProofStore(),
+        health: healthStore,
+        downtimes: downtimeStore,
+        store: createSqlStampStore(),
+      }),
       clear() {
         cat = undefined;
         moments.clear();

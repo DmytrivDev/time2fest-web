@@ -14,6 +14,7 @@ import { meAccountRoutes } from '../endpoints/meAccount';
 import { presenceBeatRoute } from '../endpoints/presence';
 import { realtimeTokenRoute } from '../endpoints/realtimeToken';
 import { siteStateRoute } from '../endpoints/siteState';
+import { stampRoutes } from '../endpoints/stamps';
 import { timeRoute } from '../endpoints/time';
 import { toastsCheckRoute } from '../endpoints/toastsCheck';
 import type { RouteRow } from '../endpoints/types';
@@ -33,6 +34,7 @@ export const routeRegistry: readonly RouteRow[] = [
   presenceBeatRoute,
   realtimeTokenRoute,
   siteStateRoute,
+  ...stampRoutes,
   timeRoute,
   toastsCheckRoute,
 ];
