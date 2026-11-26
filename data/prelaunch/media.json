@@ -3997,6 +3997,38 @@
         "x": 58,
         "y": 55
       }
+    },
+    "country:KI@utc+1400": {
+      "src": "/media/photos/kiritimati.webp",
+      "alt": {
+        "uk": "Кірітіматі з літака: селища Лондон і Табвакеа на смузі атола між океаном і лагуною",
+        "en": "Kiritimati from the air: the villages of London and Tabwakea on the strip of atoll between the ocean and the lagoon",
+        "es": "Kiritimati desde el aire: los poblados de London y Tabwakea en la franja del atolón entre el océano y la laguna",
+        "fr": "Kiritimati vu d’avion : les villages de London et Tabwakea sur la bande de l’atoll entre l’océan et le lagon"
+      },
+      "author": "Astonmc98",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:London,_Kiritimati.jpg",
+      "position": {
+        "x": 40,
+        "y": 55
+      }
+    },
+    "country:PT@utc-0100": {
+      "src": "/media/photos/azores.webp",
+      "alt": {
+        "uk": "Міська брама Понта-Делгади й дзвіниця церкви Матріс у різдвяну ніч, світлова ялинка на площі",
+        "en": "The city gates of Ponta Delgada and the bell tower of the Matriz church on a Christmas night, with a light tree on the square",
+        "es": "Las puertas de la ciudad de Ponta Delgada y el campanario de la iglesia Matriz en una noche navideña, con un árbol de luces en la plaza",
+        "fr": "Les portes de la ville de Ponta Delgada et le clocher de l’église Matriz un soir de Noël, avec un sapin lumineux sur la place"
+      },
+      "author": "Chris",
+      "license": "CC BY-SA 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ponta_Delgada_(23587955712).jpg",
+      "position": {
+        "x": 45,
+        "y": 55
+      }
     }
   }
 }

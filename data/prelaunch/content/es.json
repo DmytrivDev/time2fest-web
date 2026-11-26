@@ -6618,5 +6618,53 @@
       "description": "Bolivia recibe 2027 a medianoche local (04:00 UTC): ropa interior amarilla al revés, doce uvas, maletas para viajar y pirotecnia sobre la hoyada de La Paz."
     },
     "kit": "bo"
+  },
+  "KI@utc+1400": {
+    "text": "Kiritimati recibe el Año Nuevo antes que nadie en la Tierra: la isla vive en UTC+14, el huso horario más temprano del planeta, así que el año empieza aquí antes que en ningún otro lugar, y con ella Kiribati es el primer país en entrar en el año. Es así desde 1995, cuando Kiribati movió la línea internacional de cambio de fecha. La fiesta aquí es te botaki, una reunión compartida a la que cada uno aporta algo: las familias se juntan en casa, en las maneabas de iglesias y aldeas, casas de reunión abiertas, y en hoteles y bares.\n\nLa mesa es generosa: cerdo asado y langostas, taro, plátanos y cocos, acompañados de la savia dulce que se recoge de las flores del cocotero. La isla, llamada así por la Navidad desde que James Cook la visitó en Nochebuena de 1777, saluda también el amanecer del 1 de enero, que aquí se ha recibido con coros y danzas.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "door",
+        "title": "Botaki en la maneaba",
+        "text": "La Nochevieja se vive en comunidad: en las maneabas de iglesias y aldeas, casas de reunión abiertas, en familia en casa y, los visitantes, en los hoteles. En un botaki cada uno aporta algo a la fiesta común."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Cerdo asado y langosta",
+        "text": "En la mesa de fiesta hay cerdo asado y langostas, con taro, plátanos y cocos. Se bebe la savia dulce de las flores del cocotero, con agua o té."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "Amanecer del 1 de enero",
+        "text": "La isla recibe también al amanecer el primerísimo Año Nuevo del planeta. La salida del sol del 1 de enero en Kiritimati ya se ha celebrado con coros, danzas tradicionales y muestras de costumbres locales."
+      }
+    ],
+    "kit": "ki+14"
+  },
+  "PT@utc-0100": {
+    "text": "Doce pasas a medianoche, una por cada mes y con un deseo para cada una, y luego una copa de champán: así recibe el Año Nuevo todo Portugal. Las Azores lo hacen una hora más tarde que el continente y Madeira: cuando allí el año nuevo ya ha llegado, las islas aún esperan su medianoche. Y desde la Epifanía, en São Miguel salen las «Janeiras»: grupos que cantan bajo las ventanas al año nuevo y desean salud.\n\nPonta Delgada espera la medianoche junto a las Puertas de la Ciudad, tres arcos de piedra de 1783 que se convirtieron en el símbolo de la ciudad. El 31 de diciembre, en la plaza ante ellos, los conciertos empiezan a las 21:30, a medianoche estallan los fuegos artificiales sobre los arcos y a partir de las 00:15 un DJ toma el relevo.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "grapes",
+        "title": "Una pasa por cada mes",
+        "text": "A medianoche, cómete doce pasas pidiendo un deseo por cada mes y acompáñalas con una copa de champán, como en todo Portugal."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Fuegos sobre las Puertas",
+        "text": "Ponta Delgada se reúne en la plaza junto a los tres arcos de las Puertas de la Ciudad: conciertos por la noche, fuegos a medianoche y después un DJ."
+      },
+      {
+        "id": "t3",
+        "iconId": "clock",
+        "title": "Medianoche una hora después",
+        "text": "Las Azores van con UTC−1, así que el año nuevo llega aquí cuando el continente y Madeira ya llevan una hora celebrándolo."
+      }
+    ],
+    "kit": "pt-1"
   }
 }

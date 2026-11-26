@@ -1,0 +1,103 @@
+{
+  "code": "PT",
+  "zone": "UTC-1",
+  "zoneId": "utc-0100",
+  "cityId": "azores",
+  "names": {
+    "uk": {
+      "name": "Португалія",
+      "city": "Азорські острови",
+      "cityIn": "на Азорських островах",
+      "countryIn": "у Португалії",
+      "caps": "АЗОРИ · ПОРТУГАЛІЯ"
+    },
+    "en": {
+      "name": "Portugal",
+      "city": "Azores",
+      "cityIn": "in the Azores",
+      "countryIn": "in Portugal",
+      "caps": "AZORES · PORTUGAL"
+    },
+    "es": {
+      "name": "Portugal",
+      "city": "Azores",
+      "cityIn": "en las Azores",
+      "countryIn": "en Portugal",
+      "caps": "AZORES · PORTUGAL"
+    },
+    "fr": {
+      "name": "Portugal",
+      "city": "Açores",
+      "cityIn": "aux Açores",
+      "countryIn": "au Portugal",
+      "caps": "AÇORES · PORTUGAL"
+    }
+  },
+  "picto": "M-1 32 H41 M1.00 32.00 V17.26 H11.26 V14.82 H28.74 V17.26 H39.00 V32.00 M4.42 32.00 V22.50 A3.42 3.42 0 0 1 11.26 22.50 V32.00 M14.68 32.00 V22.50 A5.32 5.32 0 0 1 25.32 22.50 V32.00 M28.74 32.00 V22.50 A3.42 3.42 0 0 1 35.58 22.50 V32.00 M2.14 17.26 Q5.56 16.12 7.84 13.76 Q10.12 16.12 13.54 17.26 M26.46 17.26 Q29.88 16.12 32.16 13.76 Q34.44 16.12 37.86 17.26 M13.92 14.82 Q14.30 13.38 16.96 13.23 Q18.48 13.00 19.01 12.16 H20.99 Q21.52 13.00 23.04 13.23 Q25.70 13.38 26.08 14.82 M19.09 12.16 V10.34 L20.00 11.25 L20.91 10.34 V12.16",
+  "flagColors": [
+    "#046A38",
+    "#DA291C",
+    "#FFE900"
+  ],
+  "palette": 5,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "на Азорських островах"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "in the Azores"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en las Azores"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "aux Açores"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

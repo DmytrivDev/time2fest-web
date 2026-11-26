@@ -6618,5 +6618,53 @@
       "description": "La Bolivie fête 2027 à minuit heure locale (04:00 UTC) : dessous jaunes à l’envers, douze raisins, valises pour voyager et feux d’artifice sur La Paz."
     },
     "kit": "bo"
+  },
+  "KI@utc+1400": {
+    "text": "Kiritimati accueille le Nouvel An le premier sur Terre : l’île vit à UTC+14, le fuseau le plus précoce de la planète, si bien que l’année y commence plus tôt que partout ailleurs, et avec elle les Kiribati entrent les premiers dans l’année. Il en est ainsi depuis 1995, quand les Kiribati ont déplacé la ligne de changement de date. La fête s’appelle ici te botaki, un rassemblement où chacun apporte quelque chose : les familles se retrouvent à la maison, dans les maneaba des églises et des villages, maisons de réunion ouvertes, ou dans les hôtels et les bars.\n\nLa table est généreuse : cochon rôti et langoustes, taro, bananes et noix de coco, avec la sève sucrée récoltée sur les fleurs du cocotier. L’île, nommée d’après Noël depuis le passage de James Cook la veille de Noël 1777, salue aussi le lever du soleil du 1er janvier, qu’on y a déjà accueilli avec des chœurs et des danses.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "door",
+        "title": "Botaki à la maneaba",
+        "text": "La nuit du Nouvel An se vit en communauté : dans les maneaba des églises et des villages, maisons de réunion ouvertes, en famille à la maison et, pour les visiteurs, à l’hôtel. Au botaki, chacun apporte quelque chose à la fête commune."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Cochon rôti et langouste",
+        "text": "Sur la table de fête : cochon rôti et langoustes, avec taro, bananes et noix de coco. On boit la sève sucrée des fleurs du cocotier, avec de l’eau ou du thé."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "L’aube du 1er janvier",
+        "text": "L’île salue aussi à l’aube le tout premier Nouvel An de la planète. Le lever du soleil du 1er janvier à Kiritimati a déjà été accueilli par des chœurs, des danses traditionnelles et des démonstrations de coutumes locales."
+      }
+    ],
+    "kit": "ki+14"
+  },
+  "PT@utc-0100": {
+    "text": "Douze raisins secs à minuit, un par mois et un vœu pour chacun, puis une coupe de champagne : c’est ainsi que tout le Portugal accueille le Nouvel An. Les Açores font de même une heure plus tard que le continent et Madère : quand la nouvelle année y est déjà arrivée, les îles attendent encore leur minuit. Et dès l’Épiphanie, São Miguel chante les « Janeiras » : des groupes chantent la nouvelle année sous les fenêtres et souhaitent une bonne santé.\n\nPonta Delgada attend minuit près des Portes de la Ville, trois arcs de pierre de 1783 devenus le symbole de la ville. Le 31 décembre, les concerts commencent à 21 h 30 sur la place devant elles, à minuit un feu d’artifice éclate au-dessus des arcs, et dès 0 h 15 un DJ prend le relais.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "grapes",
+        "title": "Un raisin par mois",
+        "text": "À minuit, mange douze raisins secs en faisant un vœu pour chaque mois, puis une coupe de champagne, comme partout au Portugal."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Feu d’artifice aux Portes",
+        "text": "Ponta Delgada se retrouve sur la place près des trois arcs des Portes de la Ville : concerts le soir, feu d’artifice à minuit, puis un DJ."
+      },
+      {
+        "id": "t3",
+        "iconId": "clock",
+        "title": "Minuit une heure plus tard",
+        "text": "Les Açores vivent à l’heure UTC−1 : la nouvelle année y arrive quand le continent et Madère la fêtent déjà depuis une heure."
+      }
+    ],
+    "kit": "pt-1"
   }
 }

@@ -1,0 +1,99 @@
+{
+  "code": "KI",
+  "zone": "UTC+14",
+  "zoneId": "utc+1400",
+  "cityId": "kiritimati",
+  "names": {
+    "uk": {
+      "name": "Кірибаті",
+      "city": "Кірітіматі",
+      "cityIn": "на Кірітіматі",
+      "caps": "КІРІТІМАТІ · КІРИБАТІ"
+    },
+    "en": {
+      "name": "Kiribati",
+      "city": "Kiritimati",
+      "cityIn": "on Kiritimati",
+      "caps": "KIRITIMATI · KIRIBATI"
+    },
+    "es": {
+      "name": "Kiribati",
+      "city": "Kiritimati",
+      "cityIn": "en Kiritimati",
+      "caps": "KIRITIMATI · KIRIBATI"
+    },
+    "fr": {
+      "name": "Kiribati",
+      "city": "Kiritimati",
+      "cityIn": "à Kiritimati",
+      "caps": "KIRITIMATI · KIRIBATI"
+    }
+  },
+  "picto": "M10 14 Q11.5 12.6 13.2 13.6 Q16 14.6 19 15.4 L23.5 16.4 L36 19.6 L30 19.6 L35.2 23.4 L23 19 Q16 18.8 12.6 17.6 Q10 16.6 10 14 Z M10.2 14.8 L4.6 15.2 Q3.8 15.6 4.4 16.6 M15.6 14.6 L20 7.6 L34 4.6 L23.2 10.2 L20.6 15.8 M17.5 35 A6.5 6.5 0 0 1 30.5 35 Z M32.0 35.0 L34.5 35.0 M30.9 31.0 L33.1 29.8 M28.0 28.1 L29.2 25.9 M24.0 27.0 L24.0 24.5 M20.0 28.1 L18.8 25.9 M17.1 31.0 L14.9 29.8 M16.0 35.0 L13.5 35.0 M3 38.5 q2.5 -2 5 0 t5 0 t5 0 t5 0 t5 0 t5 0 t4 0",
+  "flagColors": [
+    "#CE1126",
+    "#FCD116",
+    "#4A6FD8"
+  ],
+  "palette": 3,
+  "shareCard": {
+    "total": 38,
+    "texts": {
+      "uk": {
+        "badge": "Штамп отримано",
+        "head": [
+          "Новий рік",
+          "на Кірітіматі"
+        ],
+        "progress7": "7 з 38 півночей у паспорті",
+        "first": "Перша північ із 38",
+        "hook": "38 півночей наживо — time2fest.com"
+      },
+      "en": {
+        "badge": "Stamp collected",
+        "head": [
+          "New Year",
+          "on Kiritimati"
+        ],
+        "progress7": "7 of 38 midnights in my passport",
+        "first": "First midnight of 38",
+        "hook": "38 midnights live — time2fest.com"
+      },
+      "es": {
+        "badge": "Sello conseguido",
+        "head": [
+          "Año Nuevo",
+          "en Kiritimati"
+        ],
+        "progress7": "7 de 38 medianoches en mi pasaporte",
+        "first": "Primera medianoche de 38",
+        "hook": "38 medianoches en vivo — time2fest.com"
+      },
+      "fr": {
+        "badge": "Tampon obtenu",
+        "head": [
+          "Nouvel An",
+          "à Kiritimati"
+        ],
+        "progress7": "7 minuits sur 38 dans mon passeport",
+        "first": "Premier minuit sur 38",
+        "hook": "38 minuits en direct — time2fest.com"
+      }
+    },
+    "plural": "N з 38 <іменник> — іменник за 38; якщо іменник після N: uk 1/21… північ, 2–4/22–24… півночі, інакше півночей; en/es 1 — однина; fr 0–1 однина, від 2 множина. N — з паспорта людини."
+  },
+  "stream": {
+    "uk": {
+      "live": "НАЖИВО"
+    },
+    "en": {
+      "live": "LIVE"
+    },
+    "es": {
+      "live": "EN VIVO"
+    },
+    "fr": {
+      "live": "EN DIRECT"
+    }
+  }
+}

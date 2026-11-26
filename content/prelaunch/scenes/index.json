@@ -1440,6 +1440,18 @@
       "wide": true,
       "sky": "#142b3a",
       "water": "#232733"
+    },
+    "KI@utc+1400": {
+      "src": "/scenes/KI-utc+1400-wide.svg",
+      "wide": true,
+      "sky": "#142b3a",
+      "water": "#384950"
+    },
+    "PT@utc-0100": {
+      "src": "/scenes/PT-utc-0100-wide.svg",
+      "wide": true,
+      "sky": "#112a2e",
+      "water": "#505955"
     }
   }
 }

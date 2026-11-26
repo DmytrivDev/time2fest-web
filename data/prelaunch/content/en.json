@@ -6618,5 +6618,53 @@
       "description": "Bolivia greets 2027 at local midnight (04:00 UTC): yellow underwear worn inside out, twelve grapes, suitcases for travel and fireworks over the La Paz bowl."
     },
     "kit": "bo"
+  },
+  "KI@utc+1400": {
+    "text": "Kiritimati greets the New Year first on Earth: the island runs on UTC+14, the planet's earliest time zone, so the year begins here sooner than anywhere else, and with it Kiribati becomes the first country to enter the year. It has been so since 1995, when Kiribati moved the International Date Line. The party here is te botaki, a shared gathering everyone adds something to: families meet at home, in church and village maneaba, the open-sided meeting houses, and in hotels and bars.\n\nThe table is generous: roast pig and crayfish, taro, bananas and coconuts, washed down with sweet sap collected from coconut flowers. The island, named after Christmas once James Cook visited on Christmas Eve 1777, also welcomes the sunrise of 1 January, which has been greeted here with choirs and dancing.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "door",
+        "title": "Botaki in the maneaba",
+        "text": "New Year's night is a community affair: in church and village maneaba, the open meeting houses, with family at home, and for visitors in hotels. At a botaki everyone brings something to the shared celebration."
+      },
+      {
+        "id": "t2",
+        "iconId": "feast",
+        "title": "Roast pig and crayfish",
+        "text": "The festive table has roast pig and crayfish, with taro, bananas and coconuts. People drink sweet sap from coconut flowers, mixed with water or tea."
+      },
+      {
+        "id": "t3",
+        "iconId": "sun",
+        "title": "Sunrise on 1 January",
+        "text": "The island greets the planet's very first New Year at dawn too. Sunrise on 1 January on Kiritimati has been welcomed with choirs, traditional dances and displays of local customs."
+      }
+    ],
+    "kit": "ki+14"
+  },
+  "PT@utc-0100": {
+    "text": "Twelve raisins at midnight, one for each month with a wish for each, then a glass of champagne — that is how all of Portugal greets the New Year. The Azores do it an hour later than the mainland and Madeira: when the new year has already arrived there, the islands are still waiting for their midnight. And from Epiphany on, São Miguel goes out singing the «Janeiras» — groups sing about the new year under the windows and wish people good health.\n\nPonta Delgada waits for midnight by the City Gates — three stone arches from 1783 that became the symbol of the city. On 31 December concerts start in the square in front of them at 21:30, at midnight fireworks burst above the gates, and after 00:15 a DJ keeps the party going.",
+    "traditions": [
+      {
+        "id": "t1",
+        "iconId": "grapes",
+        "title": "A raisin for every month",
+        "text": "At midnight, eat twelve raisins, making a wish for each month, and wash them down with a glass of champagne, as all of Portugal does."
+      },
+      {
+        "id": "t2",
+        "iconId": "fireworks",
+        "title": "Fireworks over the City Gates",
+        "text": "Ponta Delgada gathers in the square by the three arches of the City Gates: concerts in the evening, fireworks at midnight and a DJ set after them."
+      },
+      {
+        "id": "t3",
+        "iconId": "clock",
+        "title": "Midnight an hour later",
+        "text": "The Azores run on UTC−1, so the new year arrives here when the mainland and Madeira have already been celebrating for an hour."
+      }
+    ],
+    "kit": "pt-1"
   }
 }
