@@ -29,7 +29,7 @@ export interface InviteTexts {
   startLabel: string;
   /** «31 грудня, 12:00 · Київ» */
   startWhen: string;
-  /** «Кіритіматі · перша північ» */
+  /** «Кірітіматі · перша північ» */
   startSub: string;
   /** «вхід вільний · » */
   free: string;

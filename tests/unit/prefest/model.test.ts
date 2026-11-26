@@ -5,7 +5,7 @@ import { buildPrefestModel, countriesMetBefore, defaultCountry, isDescribed, vie
 describe('buildPrefestModel', () => {
   const model = buildPrefestModel(getData());
 
-  it('38 поясів у порядку півночі, перший — Кіритіматі (UTC+14)', () => {
+  it('38 поясів у порядку півночі, перший — Кірітіматі (UTC+14)', () => {
     expect(model.zones).toHaveLength(38);
     expect(model.zones[0]?.id).toBe('utc+1400');
     expect(model.zones.map((z) => z.index)).toEqual([...Array(38).keys()]);

@@ -14,7 +14,7 @@ export const HOW_TO_PLACEHOLDER = 'Тут ще збираємо';
 
 export interface PrefestZone {
   id: string;
-  /** 0…37 — порядок півночі (0 — Кіритіматі, UTC+14). */
+  /** 0…37 — порядок півночі (0 — Кірітіматі, UTC+14). */
   index: number;
   offsetMinutes: number;
   midnightMs: Ms;
