@@ -12,6 +12,7 @@
  * The handlers do not depend on each other: the `auth` erase deletes the user and sessions concurrently, so nothing here
  * reads `users` / `user_sessions` on the erase path.
  */
+import { decodeEmailChange, emailChangeIdentifier } from '../domain/rights/signInMethods';
 import { rightsDbOf } from '../auth/pool';
 import { requireSubjectDataDeps } from '../auth/scope';
 import type { Deps } from '../endpoints/types';
@@ -23,7 +24,7 @@ export const PASSES_CAPABILITY = 'passes';
 export const BANS_CAPABILITY = 'bans';
 
 /** The verification identifier of a pending email change (P10 `emailChange.ts` writes it). */
-export const changeEmailIdentifier = (subjectId: string): string => `t2f-change-email-${subjectId}`;
+export const changeEmailIdentifier = emailChangeIdentifier;
 
 export interface ProfileSubjectExport {
   nick: string | null;
@@ -62,14 +63,8 @@ async function pendingChangeOf(db: RightsQuery, subjectId: string): Promise<Prof
   );
   const row = res.rows[0];
   if (row === undefined) return null;
-  let email: string | null = null;
-  try {
-    const parsed: unknown = typeof row.value === 'string' ? JSON.parse(row.value) : row.value;
-    const candidate = (parsed as { email?: unknown } | null)?.email;
-    if (typeof candidate === 'string' && candidate !== '') email = candidate;
-  } catch {
-    email = null;
-  }
+  // Value shape of `emailChange.ts` (plan [П-11]): `<email>:<sha256>:<attemptsLeft>:<sentAt>`.
+  const email = decodeEmailChange(row.value)?.email ?? null;
   return email === null ? null : { email, sentAt: iso(row.created_at) };
 }
 

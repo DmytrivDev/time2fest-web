@@ -4,6 +4,7 @@
  * attached pass stripped, the unattached device pass stays on its payment email (EC-9); AC-56 an extra failing row does
  * not stop the others; AC-57 the account's own ban goes, the derived device ban stays and still blocks a new guest.
  */
+import { encodeEmailChange } from '../../src/domain/rights/signInMethods';
 import { randomBytes } from 'node:crypto';
 import pg from 'pg';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -64,7 +65,7 @@ describe('rights subject data (AC-54 ... AC-57, EC-9)', () => {
     );
     await pool.query(`INSERT INTO auth_verifications (identifier, value, expires_at) VALUES ($1, $2, now() + interval '1 hour')`, [
       `t2f-change-email-${a.id}`,
-      JSON.stringify({ email: 'new-address@example.test' }),
+      encodeEmailChange({ email: 'new-address@example.test', hash: 'a'.repeat(64), attemptsLeft: 5, sentAt: Date.now() }),
     ]);
     const passes = rightsOf(h.deps).passes;
     const own = await passes.grantPass({ holder: { account: a.id }, source: 'gift', grantRef: `sd-${run}-acc` });

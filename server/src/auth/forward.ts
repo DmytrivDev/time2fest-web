@@ -18,6 +18,7 @@ import type { Ctx, Outcome } from '../endpoints/types';
 import { CODE_REQUEST_PATH, CODE_VERIFY_PATH, requestCode, verifyCode, type AuthCall } from './codeFlow';
 import { GOOGLE_CALLBACK_PATH, GOOGLE_SIGN_IN_PATH, startGoogle } from './google';
 import { AUTH_BASE_PATH, authBaseUrl, type AuthInstance, type AuthWiring } from './instance';
+import { finishGoogleLink } from './link';
 import { errorCode, recordRetry, type SqlPool } from './merge';
 import { authPool } from './pool';
 import { scopeLinked } from './scope';
@@ -119,6 +120,11 @@ export async function forwardToAuth(ctx: Ctx): Promise<Outcome> {
     });
   }
   const res = await auth.handler(new Request(url, { method: ctx.req.method, headers, ...(body !== undefined && body !== '' ? { body } : {}) }));
-  if (ctx.req.method === 'GET' && path === GOOGLE_CALLBACK_PATH) await finishSignIn(ctx, auth, res);
+  if (ctx.req.method === 'GET' && path === GOOGLE_CALLBACK_PATH) {
+    // SPEC-11 W32: a cabinet link (its `profile` event; the AC-47 race loser) — `link.ts`.
+    const linked = await finishGoogleLink(ctx, res);
+    if (linked !== undefined) return linked;
+    await finishSignIn(ctx, auth, res);
+  }
   return fromAuthResponse(ctx, res, wiring);
 }

@@ -9,6 +9,7 @@ import type { ProfileWire } from '@time2fest/contracts/schemas';
 import { isAllowedFlag } from '../domain/rights/flags';
 import { nickDisplay, nickKey } from '../domain/rights/nick';
 import { applySettingsPatch, settingsOf } from '../domain/rights/settings';
+import { decodeEmailChange, emailChangeIdentifier } from '../domain/rights/signInMethods';
 import type { VerdictService } from '../moderation/verdict';
 import type { RightsDb, RightsQuery } from './ports';
 
@@ -48,6 +49,11 @@ interface Row extends Record<string, unknown> {
   schedule: string[];
 }
 
+/** The 30 s gap between two codes (SPEC-10 FR-ID-03; `auth/codeLimits.ts` `CODE_GAP_MS`). */
+const EMAIL_CODE_GAP_MS = 30_000;
+
+type Extras = { googleLinked: boolean; pendingEmail: ProfileWire['pendingEmail'] };
+
 const NICK_REASONS = new Set(['short', 'long', 'link', 'forbidden']);
 
 function refuse(reason: string, code: ApiError['code'] = 'validation'): { ok: false; error: ApiError } {
@@ -68,26 +74,43 @@ export function createProfileService(deps: ProfileServiceDeps): ProfileService {
     return refuse(v.reason !== undefined && NICK_REASONS.has(v.reason) ? v.reason : 'forbidden');
   }
 
-  async function extras(db: RightsQuery, subject: string): Promise<{ googleLinked: boolean }> {
+  async function extras(db: RightsQuery, subject: string): Promise<Extras> {
     const g = await db.query(
       `SELECT 1 FROM user_accounts WHERE provider_id = 'google' AND user_id::text = $1 LIMIT 1`,
       [subject],
     );
-    return { googleLinked: g.rowCount > 0 };
+    // The pending email change (W31): the newest live row of the account's own identifier.
+    const p = await db.query<{ value: string; expires_at: Date | string }>(
+      `SELECT value, expires_at FROM auth_verifications WHERE identifier = $1 AND expires_at > now()
+       ORDER BY created_at DESC LIMIT 1`,
+      [emailChangeIdentifier(subject)],
+    );
+    const row = p.rows[0];
+    const v = row === undefined ? undefined : decodeEmailChange(row.value);
+    const pendingEmail =
+      row === undefined || v === undefined
+        ? null
+        : {
+            email: v.email,
+            sentAt: v.sentAt,
+            resendAt: v.sentAt + EMAIL_CODE_GAP_MS,
+            expiresAt: new Date(row.expires_at).getTime(),
+            attemptsLeft: v.attemptsLeft,
+          };
+    return { googleLinked: g.rowCount > 0, pendingEmail };
   }
 
   const detected = (country: string): string | null => (country === 'unknown' || country === '' ? null : country);
 
-  function wire(row: Row | undefined, googleLinked: boolean, edgeCountry: string): ProfileWire {
+  function wire(row: Row | undefined, x: Extras, edgeCountry: string): ProfileWire {
     return {
       nick: row?.nick ?? null,
       flagCode: row?.flag_code ?? null,
       detectedFlag: detected(edgeCountry),
       settings: settingsOf(row?.settings),
       schedule: row?.schedule ?? [],
-      googleLinked,
-      // The pending email change arrives with SPEC-11 P10.
-      pendingEmail: null,
+      googleLinked: x.googleLinked,
+      pendingEmail: x.pendingEmail,
     };
   }
 
@@ -103,7 +126,7 @@ export function createProfileService(deps: ProfileServiceDeps): ProfileService {
     async get(subject, edgeCountry) {
       const db = await deps.db();
       const [row, x] = await Promise.all([readRow(db, subject), extras(db, subject)]);
-      return wire(row, x.googleLinked, edgeCountry);
+      return wire(row, x, edgeCountry);
     },
 
     async nickTaken(db, key, subject) {
@@ -150,7 +173,7 @@ export function createProfileService(deps: ProfileServiceDeps): ProfileService {
             [subject, nextNick, nextNick === null ? null : nickKey(nextNick), nextFlag, JSON.stringify(settings), current?.schedule ?? []],
           );
           const row = await readRow(q, subject);
-          return { ok: true, value: wire(row, (await extras(q, subject)).googleLinked, edgeCountry) } as ProfileResult<ProfileWire>;
+          return { ok: true, value: wire(row, await extras(q, subject), edgeCountry) } as ProfileResult<ProfileWire>;
         });
       } catch (err) {
         if (isUnique(err)) return refuse('taken');

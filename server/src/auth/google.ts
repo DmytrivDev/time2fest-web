@@ -13,7 +13,13 @@
  *   re-checked. The `#hash` is kept (AC-17).
  * Linking ([А12], AC-20, AC-21): no trusted providers, so an existing account is linked only when Google says
  * `email_verified=true` (Better Auth's default rule; `email_verified` is read from the verified id_token — spike S2, no
- * `mapProfileToUser`); same email only; the account's name is not overwritten.
+ * `mapProfileToUser`); the account's name is not overwritten. Sign-in still links only by the SAME email (Better Auth
+ * finds the user by the Google address); `allowDifferentEmails: true` (SPEC-11 [Q1]) affects only the explicit link
+ * from the cabinet (`link.ts`, `POST /api/me/google`).
+ * Explicit link (SPEC-11 W32, AC-46): `googleLinkBody` builds Better Auth's `/link-social` body with its own marks —
+ * success `t2f_google=linked`, error `t2f_google=link-error`; the callback maps them: linked → the return path (mark
+ * dropped), `account_already_linked_to_different_user` → `error=google-taken`, `access_denied` → `error=cancelled`,
+ * anything else → `error=failed`.
  */
 import { googleBody } from '@time2fest/contracts/schemas';
 import { safeReturnPath, withoutSignInMarks, withSignInMarks } from '../domain/auth/returnPath';
@@ -26,12 +32,16 @@ export const GOOGLE_CALLBACK_PATH = '/callback/google';
 /** Marks Better Auth's error redirect so it can be told from a successful one. */
 const ERROR_MARK = 't2f_google';
 const FAILED_HOME = '/?error=failed';
+const LINKED = 'linked';
+const LINK_ERROR = 'link-error';
+/** Better Auth's core link path (genericOAuth registers Google as a social provider). */
+export const GOOGLE_LINK_PATH = '/link-social';
 
 /** `account.accountLinking` of the instance ([А12]). */
 export const GOOGLE_ACCOUNT_LINKING = {
   enabled: true,
   trustedProviders: [] as string[],
-  allowDifferentEmails: false,
+  allowDifferentEmails: true,
   updateUserInfoOnLink: false,
 };
 
@@ -62,6 +72,29 @@ export function googleSignInBody(body: string | undefined): string | undefined {
     errorCallbackURL: withParam(path, ERROR_MARK, 'error'),
     disableRedirect: true,
   });
+}
+
+/** The return path of a link: a path of our own site without the server's marks. */
+export function linkReturnPath(returnPath: string): string {
+  return withoutSignInMarks(safeReturnPath(returnPath));
+}
+
+/** The Better Auth body of `/link-social` for a return path (already a string; cut to our own site here). */
+export function googleLinkBody(returnPath: string): string {
+  const path = linkReturnPath(returnPath);
+  return JSON.stringify({
+    provider: GOOGLE_PROVIDER_ID,
+    callbackURL: withParam(path, ERROR_MARK, LINKED),
+    errorCallbackURL: withParam(path, ERROR_MARK, LINK_ERROR),
+    disableRedirect: true,
+  });
+}
+
+/** The reason a failed link shows on the return path. */
+function linkErrorReason(code: string | null): string {
+  if (code === 'account_already_linked_to_different_user') return 'google-taken';
+  if (code === 'access_denied') return 'cancelled';
+  return 'failed';
 }
 
 async function errorCodeOf(res: Response): Promise<string | undefined> {
@@ -114,8 +147,14 @@ export function googleCallbackLocation(location: string | null, base: string, au
   if (url.origin !== origin) return FAILED_HOME;
   // A form_post callback is re-sent to itself as a GET by Better Auth.
   if (url.pathname === `${authBasePath}${GOOGLE_CALLBACK_PATH}`) return url.pathname + url.search;
-  if (url.searchParams.get(ERROR_MARK) === 'error') {
-    const reason = url.searchParams.get('error') === 'access_denied' ? 'cancelled' : 'failed';
+  const mark = url.searchParams.get(ERROR_MARK);
+  if (mark === LINKED) {
+    url.searchParams.delete(ERROR_MARK);
+    return safeReturnPath(url.pathname + url.search + url.hash);
+  }
+  if (mark === 'error' || mark === LINK_ERROR) {
+    const code = url.searchParams.get('error');
+    const reason = mark === LINK_ERROR ? linkErrorReason(code) : code === 'access_denied' ? 'cancelled' : 'failed';
     url.searchParams.delete(ERROR_MARK);
     url.searchParams.delete('error');
     url.searchParams.delete('error_description');

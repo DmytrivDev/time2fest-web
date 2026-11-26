@@ -10,6 +10,7 @@ import { liveSourceErrorsRoute } from '../endpoints/liveSourceErrors';
 import { liveViewerTokenRoute } from '../endpoints/liveViewerToken';
 import { liveViewersRoute } from '../endpoints/liveViewers';
 import { meRoutes } from '../endpoints/me';
+import { meAccountRoutes } from '../endpoints/meAccount';
 import { realtimeTokenRoute } from '../endpoints/realtimeToken';
 import { siteStateRoute } from '../endpoints/siteState';
 import { timeRoute } from '../endpoints/time';
@@ -26,6 +27,7 @@ export const routeRegistry: readonly RouteRow[] = [
   liveSourceErrorsRoute,
   liveViewerTokenRoute,
   liveViewersRoute,
+  ...meAccountRoutes,
   ...meRoutes,
   realtimeTokenRoute,
   siteStateRoute,
