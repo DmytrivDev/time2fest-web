@@ -5,7 +5,7 @@
  * `runSubjectDataInScope`.
  * - export: stamps of every season, achievements, proofs of presence and the old-moment journal of the subject, each a
  *   list (all empty → nothing held, the guest cleanup's emptiness rule);
- * - erase: deletes all four; anonymise = erase (a stamp without its subject means nothing).
+ * - erase: deletes all four tables plus the subject's `author_ids` row (one transaction); anonymise = erase (a stamp without its subject means nothing).
  * The beat keys in Redis are the declarative row `presence-beats` (TTL ≤ 48 h), not this handler.
  */
 import type { SubjectDataHandler } from '../platform/subjectData';
@@ -18,12 +18,14 @@ export interface StampsSubjectExport {
   achievements: { season: string; key: string; achievedAt: number }[];
   proofs: { season: string; eventId: string; momentMs: number; firstReceivedAt: number; lastReceivedAt: number | null; source: string }[];
   oldMoments: { season: string; eventId: string; oldMomentMs: number; newMomentMs: number; at: number }[];
+  /** The subject's opaque public author id (`author_ids`), or null when none was issued. */
+  authorId: string | null;
 }
 
 const num = (v: unknown): number => Number(v);
 
 async function exportOf(db: RightsQuery, subjectId: string): Promise<StampsSubjectExport> {
-  const [stamps, achievements, proofs, oldMoments] = await Promise.all([
+  const [stamps, achievements, proofs, oldMoments, authorIds] = await Promise.all([
     db.query<{ season: string; event_id: string; granted_at: string; presence_source: string; grant_kind: string; issued_at: string }>(
       'SELECT season, event_id, granted_at, presence_source, grant_kind, issued_at FROM stamps WHERE subject_id = $1 ORDER BY season, granted_at, event_id',
       [subjectId],
@@ -37,6 +39,7 @@ async function exportOf(db: RightsQuery, subjectId: string): Promise<StampsSubje
       'SELECT season, event_id, old_moment_ms, new_moment_ms, at FROM stamp_old_moment_log WHERE subject_id = $1 ORDER BY at, id',
       [subjectId],
     ),
+    db.query<{ author_id: string }>('SELECT author_id FROM author_ids WHERE subject_id = $1', [subjectId]),
   ]);
   return {
     stamps: stamps.rows.map((r) => ({
@@ -57,13 +60,14 @@ async function exportOf(db: RightsQuery, subjectId: string): Promise<StampsSubje
       source: r.source,
     })),
     oldMoments: oldMoments.rows.map((r) => ({ season: r.season, eventId: r.event_id, oldMomentMs: num(r.old_moment_ms), newMomentMs: num(r.new_moment_ms), at: num(r.at) })),
+    authorId: authorIds.rows[0]?.author_id ?? null,
   };
 }
 
 async function eraseOf(db: RightsDb, subjectId: string): Promise<{ removed: number }> {
   return db.tx(async (q) => {
     let removed = 0;
-    for (const table of ['stamps', 'passport_achievements', 'presence_proofs', 'stamp_old_moment_log']) {
+    for (const table of ['stamps', 'passport_achievements', 'presence_proofs', 'stamp_old_moment_log', 'author_ids']) {
       removed += (await q.query(`DELETE FROM ${table} WHERE subject_id = $1`, [subjectId])).rowCount ?? 0;
     }
     return { removed };

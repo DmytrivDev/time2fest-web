@@ -28,7 +28,7 @@ const OLD = `t14o-${run}`;
 const M = Date.parse('2026-12-31T21:00:00Z');
 const E = `s1-${run}`;
 const started = new Date();
-const TABLES = ['stamps', 'passport_achievements', 'presence_proofs', 'stamp_old_moment_log'];
+const TABLES = ['stamps', 'passport_achievements', 'presence_proofs', 'stamp_old_moment_log', 'author_ids'];
 
 const stored: StoredCatalog = {
   season: { id: '1', key: SEASON, generatedAt: '2026-11-01T00:00:00Z', tzdbVersion: '2026f' },
@@ -50,6 +50,7 @@ async function subject(): Promise<string> {
 
 /** One row in each of the four tables (stamps in two seasons). */
 async function fill(id: string): Promise<void> {
+  await pool.query('INSERT INTO author_ids (subject_id, author_id, created_at) VALUES ($1, $2, $3)', [id, `t14${run}${randomBytes(10).toString('base64url').slice(0, 13)}`, String(M)]);
   for (const season of [SEASON, OLD])
     await pool.query(
       `INSERT INTO stamps (subject_id, season, event_id, granted_at, presence_source, grant_kind, issued_at) VALUES ($1, $2, $3, $4, 'tv', 'presence', $5)`,
@@ -84,13 +85,14 @@ beforeAll(async () => {
 }, 60_000);
 
 afterAll(async () => {
-  for (const t of TABLES) await pool.query(`DELETE FROM ${t} WHERE season = ANY($1::text[])`, [[SEASON, OLD]]);
+  for (const t of TABLES.filter((x) => x !== 'author_ids')) await pool.query(`DELETE FROM ${t} WHERE season = ANY($1::text[])`, [[SEASON, OLD]]);
+  await pool.query("DELETE FROM author_ids WHERE author_id LIKE $1", [`t14${run}%`]);
   await pool.query('DELETE FROM users WHERE created_at >= $1', [started]);
   await pool.end();
   await redis.close();
 });
 
-describe('subject data stamps (AC-55, AC-56)', () => {
+describe('subject data stamps and author id (AC-55, AC-56)', () => {
   it('registry: handler stamps and declarative presence-beats (<= 48 h), sorted; beat key TTL <= 48 h', () => {
     const names = subjectDataRegistry.map((r) => r.capability);
     expect(names).toEqual([...names].sort());
@@ -114,6 +116,8 @@ describe('subject data stamps (AC-55, AC-56)', () => {
     expect(value.achievements).toEqual([{ season: SEASON, key: `goal:${SEASON}:countries:3`, achievedAt: M + 16_000 }]);
     expect(value.proofs).toEqual([{ season: SEASON, eventId: E, momentMs: M, firstReceivedAt: M - 1_000, lastReceivedAt: null, source: 'tv' }]);
     expect(value.oldMoments).toEqual([{ season: SEASON, eventId: E, oldMomentMs: M, newMomentMs: M + 60_000, at: M + 16_000 }]);
+    const authorRow = (await pool.query('SELECT author_id FROM author_ids WHERE subject_id = $1', [id])).rows[0] as { author_id: string };
+    expect(value.authorId).toBe(authorRow.author_id);
     expect((exported as { declarative: string[] }).declarative).toContain('presence-beats');
 
     expect((await runSubjectDataInScope(h.deps, 'erase', id, subjectDataRegistry)).ok).toBe(true);
