@@ -87,6 +87,11 @@ export function currentProfile(): Profile | null {
   return getService('profile').peek?.() ?? profileResource.getSnapshot().data ?? null;
 }
 
+/** «Мій графік» поза React: свіжий профіль адаптера (і в `sim`, і в `http`), а не стор гостя. */
+export function currentSchedule(): readonly string[] {
+  return currentProfile()?.schedule ?? NO_SCHEDULE;
+}
+
 export const profileActions = {
   update: (patch: ProfilePatch) => getService('profile').update(patch),
   /** «Мій графік» (профіль, шов E5b): у `sim` зміна синхронна в сторі гостя — наступний рядок уже бачить новий графік. */

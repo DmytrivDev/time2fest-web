@@ -12,7 +12,7 @@ import { Icon } from '@/components/primitives/Icon';
 import { useOverlay } from '@/components/shell/OverlayManager';
 import { GATE_KEYS, type PassGateFeature } from '@/components/pass/PassGate';
 import { Nick } from '@/components/chat/parts/Nick';
-import { hasPassNow, profileActions } from '@/lib/api/hooks/auth';
+import { currentSchedule, hasPassNow, profileActions } from '@/lib/api/hooks/auth';
 import { chatActions } from '@/lib/api/hooks/chat';
 import { currentStamps } from '@/lib/api/hooks/passport';
 import { authorHasPass, buildOwnPath } from '@/lib/chat/authorPath';
@@ -99,9 +99,8 @@ export function useChatPanelWindows(o: {
   const openAuthor = useCallback(
     (author: Author, message: ChatMessage) => {
       const hasPass = authorHasPass(author);
-      const guest = useGuestStore.getState();
       const path = author.isMine
-        ? buildOwnPath(currentStamps(), guest.schedule, getData(), clock.getSnapshot())
+        ? buildOwnPath(currentStamps(), currentSchedule(), getData(), clock.getSnapshot())
         : (chatActions.authorPath(author, clock.getSnapshot())?.points ?? []);
       const viewerHasPass = hasPassNow();
       overlay.open({
