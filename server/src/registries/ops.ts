@@ -566,11 +566,27 @@ export const opsRegistry: readonly OpsDomainRow[] = [
     alarms: [
       {
         source: 'presence',
+        code: 'presence/downtime',
+        level: 'page',
+        meaning: 'Зафіксовано простій прийому присутності біля півночі події: у цьому вікні штампи видаються без доказу.',
+        action: 'Перевірити Redis, сервер і край за журналом справності; простій не прибирається, він лише видає штампи.',
+        detailKeys: ['kind', 'event', 'events', 'signs'],
+      },
+      {
+        source: 'presence',
         code: 'presence/fast-store-down',
         level: 'log',
         meaning: 'Redis недоступний для пульсів присутності: докази пишуться прямо в базу, вікна цього часу стануть простоєм за журналом справності.',
         action: 'Перевірити Redis; поки він лежить, штампи видаються за доказами в базі, а лічильники справності не ведуться.',
         detailKeys: ['node'],
+      },
+      {
+        source: 'presence',
+        code: 'presence/finalise-failed',
+        level: 'log',
+        meaning: 'Не вдалося записати зразок прийому чи підсумок вікна присутності: вікно без запису вважається простоєм.',
+        action: 'Перевірити базу; вікна без запису після кінця + 2 хв видають штампи як простій.',
+        detailKeys: ['stage', 'node'],
       },
     ],
     metrics: [

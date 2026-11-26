@@ -52,7 +52,8 @@ import { clockFor, monotonicClock, processClockCache, realClock } from './clock'
 import { createDivergenceMeter } from './timekeeping/divergence';
 import { createSharedClock, startClockRefresh, type ClockRefresh, type SharedClock } from './timekeeping/shared';
 import { createDispatcher } from './endpoints/pipeline';
-import { alarmStoreOf, catalogStoreOf, eventsOf, liveOf, publisherOf, unattendedDepsOf } from './endpoints/deps';
+import { alarmStoreOf, catalogStoreOf, eventsOf, liveOf, presenceOf, publisherOf, unattendedDepsOf } from './endpoints/deps';
+import { SAMPLE_INTERVAL_MS } from './domain/presence/healthSigns';
 import type { AppEnv, Deps, EventPorts, LiveWiring, ModerationDeps, RouteRow, SiteWiring } from './endpoints/types';
 import { createEdgeGate, type EdgeGate } from './platform/edge';
 import { startEventBus, type EventBus } from './events/bus';
@@ -120,6 +121,7 @@ const LIVE_POLLER_KEY = Symbol.for('t2f.livePoller');
 const LIVE_VIEWERS_KEY = Symbol.for('t2f.liveViewers');
 const STREAMS_WATCH_KEY = Symbol.for('t2f.streamsWatch');
 const OPS_TICKER_KEY = Symbol.for('t2f.opsTicker');
+const PRESENCE_SAMPLER_KEY = Symbol.for('t2f.presenceSampler');
 const BACKGROUND_RETRY_MS = 5_000;
 
 /** The thin typed getters over the ports `createDeps` sets on `Deps` (re-exported for the callers of the root). */
@@ -955,6 +957,28 @@ export function startClockRefresher(deps: Deps, intervalMs?: number): Promise<Cl
   });
 }
 
+/**
+ * The presence intake sampler of one process (SPEC-14 [П-5], AC-14, AC-15): every 5 s one sample of this node at the
+ * server clock's `now`, then the finalisation of every due window. Never in `test` (the `presence-tick` door drives
+ * it there, so no timer leaks into the suites). Failures raise `presence/finalise-failed` inside the services; an
+ * unexpected throw raises the same kind and the ticker keeps going.
+ */
+export function startPresenceSampler(deps: Deps, intervalMs: number = SAMPLE_INTERVAL_MS): Ticker | undefined {
+  if (deps.env.class === 'test') return undefined;
+  const presence = presenceOf(deps);
+  return startTicker({
+    tick: async () => {
+      const now = deps.clock.now();
+      await presence.sampler.sampleOnce(now);
+      await presence.finaliser.finaliseDue(now);
+    },
+    onError: () => {
+      deps.alarm.raise({ level: 'log', source: 'presence', code: 'presence/finalise-failed', details: { stage: 'tick', node: presence.nodeId } });
+    },
+    intervalMs,
+  });
+}
+
 /** Starts the ops runner of `deps` (SPEC-13b [П-5]) on its ticker; `undefined` without ops. */
 export function startOpsTickerOf(deps: Deps, intervalMs?: number): OpsRunner | undefined {
   if (!deps.ops || !deps.opsRunner) return undefined;
@@ -986,6 +1010,7 @@ export function startProcessBackground(): void {
     g[LIVE_VIEWERS_KEY] ??= startViewersTicker(getDeps());
     g[STREAMS_WATCH_KEY] ??= startStreamsWatch(getDeps());
     g[OPS_TICKER_KEY] ??= startOpsTickerOf(getDeps());
+    g[PRESENCE_SAMPLER_KEY] ??= startPresenceSampler(getDeps());
     if (!g[MODERATION_TIMERS_KEY]) {
       pageMissingAiKeys(getDeps());
       g[MODERATION_TIMERS_KEY] = startModerationTimers(getDeps());

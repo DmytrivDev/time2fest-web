@@ -33,6 +33,9 @@ import { faultyFastStore, presenceFaults } from '../presence/faults';
 import { createNodeIntake, createWindowIntake, type NodeIntake, type WindowIntake } from '../presence/intake';
 import { createMomentBook, createSqlMomentStore, type MomentBook } from '../presence/moments';
 import { createProofWriter, createSqlProofStore, type ProofWriter } from '../presence/proofs';
+import { createDowntimeNotifier, createDowntimeService, createSqlDowntimeStore, PRESENCE_DOWNTIME_TOPIC, type DowntimeService } from '../presence/downtime';
+import { createFinaliser, createSqlHealthStore, type Finaliser } from '../presence/health';
+import { createSampler, createSqlSampleStore, type Sampler } from '../presence/samples';
 
 function built<T>(value: T | undefined, name: string): T {
   if (value === undefined) throw new Error(`deps: ${name} missing (deps not built by createDeps)`);
@@ -169,7 +172,7 @@ export function rightsOf(deps: Deps): RightsServices {
 /**
  * The presence services (SPEC-14 [П-2], [П-3]): built lazily per `deps` over the rights pool, the fast store (read on
  * each call: a test may swap `deps.redis`; the `presence-fault` switch gates it), the alarm port and the server clock.
- * One node intake and one node id per `deps` — the sampler (P6) reads the same intake.
+ * One node intake and one node id per `deps` — the sampler, the finaliser and the downtime records (P6) share them.
  */
 export interface PresenceServices {
   beats: BeatService;
@@ -179,6 +182,12 @@ export interface PresenceServices {
   windows: WindowIntake;
   /** The presence view of the catalog, rebuilt at most every 30 s per `deps`. */
   catalog(now: number): Promise<PresenceCatalogView>;
+  /** The intake sampler of this node (ticked by the background job, or the `presence-tick` door in `test`). */
+  sampler: Sampler;
+  /** Window finalisation of the health log. */
+  finaliser: Finaliser;
+  /** Manual and edge-region downtime records. */
+  downtimes: DowntimeService;
   /** Drops the catalog and moment caches (tests, the worktree reset). */
   clear(): void;
   nodeId: string;
@@ -234,6 +243,17 @@ export function presenceOf(served: Deps): PresenceServices {
       cat = { at: now, view };
       return view;
     };
+    const alarm = { raise: (a: Parameters<Deps['alarm']['raise']>[0]) => deps.alarm.raise(a) };
+    const notifier = createDowntimeNotifier({
+      alarm,
+      publish: async (payload) => {
+        // No open transaction: the event gets its own (the records live on the rights pool, not Payload's).
+        await deps.events?.publisher.publish({}, PRESENCE_DOWNTIME_TOPIC, payload);
+      },
+    });
+    const downtimeStore = createSqlDowntimeStore();
+    const downtimes = createDowntimeService({ db, store: downtimeStore, catalog, notifier });
+    const sampleStore = createSqlSampleStore();
     built = {
       beats: createBeatService({ catalog, moments, proofs, windows, intake }),
       proofs,
@@ -241,6 +261,9 @@ export function presenceOf(served: Deps): PresenceServices {
       intake,
       windows,
       catalog,
+      sampler: createSampler({ db, fast, store: sampleStore, intake, nodeId, alarm }),
+      finaliser: createFinaliser({ db, store: createSqlHealthStore(), samples: sampleStore, downtimeStore, downtimes, windows, catalog, notifier, alarm, nodeId }),
+      downtimes,
       clear() {
         cat = undefined;
         moments.clear();
