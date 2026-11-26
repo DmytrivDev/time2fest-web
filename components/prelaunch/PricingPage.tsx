@@ -24,14 +24,16 @@ const QUESTIONS = ['free', 'pass', 'once', 'seller', 'refund', 'when'] as const;
 function Body() {
   const t = useTranslations('prelaunch.pricing');
   const { site } = usePrefest();
-  const link = (href: string) => (chunks: React.ReactNode) =>
-    site ? (
-      <NextLink href={site.href(href)} className="underline underline-offset-2">
-        {chunks}
-      </NextLink>
-    ) : (
-      chunks
-    );
+  const link = (href: string) =>
+    function PricingLink(chunks: React.ReactNode) {
+      return site ? (
+        <NextLink href={site.href(href)} className="underline underline-offset-2">
+          {chunks}
+        </NextLink>
+      ) : (
+        chunks
+      );
+    };
   const rich = {
     refunds: link('/refunds/'),
     terms: link('/terms/'),
@@ -53,15 +55,15 @@ function Body() {
       </section>
       <PassBlock />
       <PrefestFaqList
-          className={cn(p.sec, p.wrap)}
-          stacks
-          title={t('faqTitle')}
-          items={QUESTIONS.map((k) => ({
-            id: k,
-            question: t(`${k}Q`),
-            answer: t.rich(`${k}A`, rich),
-          }))}
-        />
+        className={cn(p.sec, p.wrap)}
+        stacks
+        title={t('faqTitle')}
+        items={QUESTIONS.map((k) => ({
+          id: k,
+          question: t(`${k}Q`),
+          answer: t.rich(`${k}A`, rich),
+        }))}
+      />
     </>
   );
 }
