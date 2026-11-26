@@ -7,7 +7,7 @@ import type { Readable } from 'node:stream';
 import type { AlarmDetails } from '../alarms/ports';
 
 /** Leases of the ops jobs over the scheduler lease table ([П-2]); `LiveLeaseName` stays untouched. */
-export type OpsLeaseName = 'ops-auth' | 'ops-backup' | 'ops-heartbeat' | 'ops-mail' | 'ops-spend' | 'ops-telegram';
+export type OpsLeaseName = 'ops-auth' | 'ops-auth-link' | 'ops-backup' | 'ops-heartbeat' | 'ops-mail' | 'ops-spend' | 'ops-telegram';
 
 /** One holder per lease name across every instance (AC-8, AC-21, AC-40, AC-62). */
 export interface OpsLease {

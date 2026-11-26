@@ -5,6 +5,10 @@
  * - `get-session`: no cookie → no Better Auth call (AC-3);
  * - the code request / verify paths go through `codeFlow.ts` (validation, our limits, mail, reasons; W23, W24);
  * - `sign-in/social` goes through `google.ts` (own body, return path, errors; W33).
+ * - SPEC-11 W27 ([П-4], [А4], DR-3): after a code sign-in or the Google callback that set an account session, and when
+ *   `linkGuest` did not run in this request (no guest: sign-in after sign-out), the pass of this device / of the
+ *   account's verified email is attached (`attachOnSignIn`). A failure writes an `auth_link_retries` row (`passes`,
+ *   `device:<id>`) + `log` `auth/link-retry`; the response is never changed by it.
  * Emails, codes and tokens are never logged.
  */
 import { sessionExpiresAt } from '../domain/auth/sessionExpiry';
@@ -12,8 +16,11 @@ import { authOf, rightsOf } from '../endpoints/deps';
 import { failure, readBodyBytes } from '../endpoints/pipeline';
 import type { Ctx, Outcome } from '../endpoints/types';
 import { CODE_REQUEST_PATH, CODE_VERIFY_PATH, requestCode, verifyCode, type AuthCall } from './codeFlow';
-import { GOOGLE_SIGN_IN_PATH, startGoogle } from './google';
-import { AUTH_BASE_PATH, authBaseUrl, type AuthWiring } from './instance';
+import { GOOGLE_CALLBACK_PATH, GOOGLE_SIGN_IN_PATH, startGoogle } from './google';
+import { AUTH_BASE_PATH, authBaseUrl, type AuthInstance, type AuthWiring } from './instance';
+import { errorCode, recordRetry, type SqlPool } from './merge';
+import { authPool } from './pool';
+import { scopeLinked } from './scope';
 import { dropDeadSession, forwardHeaders, hasCookie, SESSION_STARTING } from './request';
 import { clampSessionCookies, envelope, fromAuthResponse, mapError, ms, sessionCookieName, toSession, type BaSession } from './response';
 
@@ -42,6 +49,33 @@ async function getSession(ctx: Ctx, wiring: AuthWiring, headers: Headers): Promi
   return envelope(await toSession(auth, body, ctx.device, passes), 200, cookies);
 }
 
+/**
+ * The sign-in finish step without a guest (W27). `res` — Better Auth's answer; acts only when it set a session cookie
+ * of a non-guest user and `linkGuest` did not run in this request. Never throws.
+ */
+async function finishSignIn(ctx: Ctx, auth: AuthInstance, res: Response): Promise<void> {
+  if (res.status >= 400 || scopeLinked()) return;
+  let account: string | undefined;
+  try {
+    const name = await sessionCookieName(auth);
+    const set = res.headers.getSetCookie().find((c) => c.startsWith(`${name}=`));
+    const token = set?.slice(name.length + 1).split(';')[0];
+    if (token === undefined || token === '') return;
+    const found = (await auth.api.getSession({ headers: new Headers({ cookie: `${name}=${token}` }), query: { disableRefresh: true } })) as BaSession | null;
+    if (found === null || found.user.isAnonymous === true) return;
+    account = found.user.id;
+    const email = found.user.emailVerified === true && typeof found.user.email === 'string' ? found.user.email : null;
+    await rightsOf(ctx.deps).passes.attachOnSignIn({ account, device: ctx.device, email });
+  } catch (err) {
+    if (account === undefined) {
+      ctx.deps.log.warn({ event: 'auth-link', outcome: 'finish-failed' });
+      return;
+    }
+    const pool = (await authPool(ctx.deps).catch(() => undefined)) as SqlPool | undefined;
+    await recordRetry(ctx.deps, pool, { userId: account, fromSubject: `device:${ctx.device}`, handler: 'passes', code: errorCode(err) });
+  }
+}
+
 /** The handler of every `/api/auth/*` row. */
 export async function forwardToAuth(ctx: Ctx): Promise<Outcome> {
   const wiring = authOf(ctx.deps);
@@ -64,6 +98,7 @@ export async function forwardToAuth(ctx: Ctx): Promise<Outcome> {
     const call: AuthCall = {
       send: (json) => auth.handler(new Request(url, { method: 'POST', headers, body: json })),
       respond: async (res, value) => {
+        if (path === CODE_VERIFY_PATH) await finishSignIn(ctx, auth, res);
         const cookies = new Headers();
         clampSessionCookies(res.headers, cookies, await sessionCookieName(auth), wiring);
         return envelope(value, 200, cookies);
@@ -84,5 +119,6 @@ export async function forwardToAuth(ctx: Ctx): Promise<Outcome> {
     });
   }
   const res = await auth.handler(new Request(url, { method: ctx.req.method, headers, ...(body !== undefined && body !== '' ? { body } : {}) }));
+  if (ctx.req.method === 'GET' && path === GOOGLE_CALLBACK_PATH) await finishSignIn(ctx, auth, res);
   return fromAuthResponse(ctx, res, wiring);
 }

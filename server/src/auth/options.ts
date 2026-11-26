@@ -75,6 +75,8 @@ export function authStaticOptions(input: AuthStaticInput) {
     plugins: [
       anonymous({
         schema: { user: { fields: { isAnonymous: 'is_anonymous' } } },
+        // SPEC-11 [П-5]: `linkGuest` revokes the guest's sessions and deletes the guest only when every merge row is done.
+        disableDeleteAnonymousUser: true,
         ...(input.onLinkAccount ? { onLinkAccount: input.onLinkAccount } : {}),
       }),
       emailOTP({

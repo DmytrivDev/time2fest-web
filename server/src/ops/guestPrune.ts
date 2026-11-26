@@ -5,6 +5,8 @@
  * guest (retried next hour); deletion goes through Better Auth's internal adapter (the store re-checks staleness).
  * The job walks the stale guests with a keyset cursor (oldest first) and starts over only after a short batch, so
  * guests kept for other data never starve the rest (S10-09).
+ * SPEC-11 W29 ([П-5], AC-31, AC-50): `profile`/`bans` data does not keep a guest; `held` (an `auth_link_retries` row
+ * from it, or an active unattached pass on its device) does; after a removal `afterGuestRemoved` erases its rights rows.
  */
 import { GUEST_PRUNE_BATCH, holdsOtherData, isStale, staleBefore } from '../domain/auth/guestPrune';
 import type { SubjectDataResult } from '../platform/subjectData';
@@ -34,8 +36,12 @@ export interface GuestPruneJobDeps {
   guests: GuestPruneStore;
   /** `export` of one subject across the subject-data registry (inside the auth scope). */
   exportSubject(subjectId: string): Promise<SubjectDataResult>;
-  /** The capability whose own data does not keep a guest. */
-  ownCapability: string;
+  /** The capabilities whose own data does not keep a guest. */
+  ownCapability: string | readonly string[];
+  /** Something else keeps the guest (retry row, unattached device pass). */
+  held?(guestId: string): Promise<boolean>;
+  /** Runs after the guest was deleted (its profile and bans rows; nick released). */
+  afterGuestRemoved?(guestId: string): Promise<void>;
   log: Logger;
 }
 
@@ -65,7 +71,19 @@ export function createGuestPruneJob(deps: GuestPruneJobDeps): GuestPruneJob {
           kept += 1;
           continue;
         }
-        if (await deps.guests.deleteIfStale(guest.id, before)) removed += 1;
+        const keptBy = deps.held ? await deps.held(guest.id).catch(() => null) : false;
+        if (keptBy === null) {
+          failed += 1;
+          continue;
+        }
+        if (keptBy) {
+          kept += 1;
+          continue;
+        }
+        if (await deps.guests.deleteIfStale(guest.id, before)) {
+          removed += 1;
+          await deps.afterGuestRemoved?.(guest.id).catch(() => deps.log.warn({ event: 'auth-guest-prune', outcome: 'rights-not-erased' }));
+        }
       }
       if (failed > 0) deps.log.warn({ event: 'auth-guest-prune', outcome: 'export-failed', failed });
       return { result: 'pruned', removed, kept, failed };

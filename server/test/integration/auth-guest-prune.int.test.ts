@@ -4,9 +4,14 @@
  * guest that a (test) handler holds data for is kept; a recent guest is kept.
  * The two stale guests are made stale by moving their own rows 31 days back (the door ticks at the real now), so no
  * other guest of the shared test database is touched.
+ * SPEC-11 W29 (AC-31, AC-50): a stale guest with only a nick is removed and its nick released; a retry row from the
+ * guest or an unattached pass on its device keeps it; once the retry row is gone it is removed on the next run.
  */
 import pg from 'pg';
+import { randomBytes } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { rightsOf } from '../../src/endpoints/deps';
+import { DEVICE_COOKIE } from '../../src/platform/device';
 import type { SubjectDataHandler } from '../../src/platform/subjectData';
 import { subjectDataRegistry } from '../../src/registries/subjectData';
 import { buildAuthHarness, CookieJar, writeProbe, type AuthHarness } from '../support/authClient';
@@ -28,13 +33,23 @@ const keeper: SubjectDataHandler = {
   anonymise: async () => null,
 };
 
+const jars = new Map<string, CookieJar>();
 async function guest(): Promise<string> {
-  const res = await writeProbe(h, { jar: new CookieJar() });
+  const jar = new CookieJar();
+  const res = await writeProbe(h, { jar });
   expect(res.status).toBe(200);
   const id = ((await res.json()) as { value: { subject: string } }).value.subject;
   made.push(id);
+  jars.set(id, jar);
   return id;
 }
+
+const tag = `gp-${randomBytes(4).toString('hex')}`;
+const tick = async (at: number) => {
+  const res = await h.call('/api/_test/ops-tick', { body: { now: new Date(at).toISOString(), jobs: ['auth-guest-prune'] } });
+  expect(res.status).toBe(200);
+  return ((await res.json()) as { value: { jobs: Record<string, { result: string; removed?: number; kept?: number }> } }).value.jobs['auth-guest-prune']!;
+};
 
 async function age(id: string, days: number): Promise<void> {
   const at = new Date(Date.now() - days * DAY);
@@ -59,6 +74,9 @@ beforeAll(async () => {
 afterAll(async () => {
   await h.deps.opsRunner?.stop();
   await pool.query('DELETE FROM users WHERE created_at >= $1 OR id = ANY($2::uuid[])', [started, made]);
+  await pool.query('DELETE FROM auth_link_retries WHERE from_subject = ANY($1::text[])', [made]);
+  await pool.query('DELETE FROM profiles WHERE subject_id = ANY($1::text[])', [made]);
+  await pool.query('DELETE FROM passes WHERE grant_ref LIKE $1', [`${tag}-%`]);
   await pool.end();
   await redis.deleteByPrefix('auth:rl:');
   await redis.close();
@@ -89,5 +107,45 @@ describe('guest cleanup through the ops-tick door (AC-5)', () => {
     // Hourly: a second tick in the same hour does nothing.
     const again = await h.call('/api/_test/ops-tick', { body: { now: new Date().toISOString(), jobs: ['auth-guest-prune'] } });
     expect(((await again.json()) as { value: { jobs: Record<string, { result: string }> } }).value.jobs['auth-guest-prune']).toEqual({ result: 'idle' });
+  });
+
+  it('SPEC-11: a nick does not keep a guest (nick released); a retry row or an unattached device pass does', { timeout: 60_000 }, async () => {
+    const nicked = await guest();
+    const retried = await guest();
+    const passHolder = await guest();
+    const key = `${tag}-nick`;
+    await pool.query(
+      `INSERT INTO profiles (subject_id, nick, nick_key, settings, schedule, updated_at) VALUES ($1, $2, $2, '{}'::jsonb, '{}', now())`,
+      [nicked, key],
+    );
+    await pool.query(
+      `INSERT INTO auth_link_retries (user_id, from_subject, handler, attempts, next_at) VALUES ($1, $2, 'it-none', 24, now() + interval '1 day')`,
+      [passHolder, retried],
+    );
+    const device = jars.get(passHolder)!.get(DEVICE_COOKIE) ?? '';
+    expect(device).not.toBe('');
+    const granted = await rightsOf(h.deps).passes.grantPass({
+      holder: { device, paymentEmail: `${tag}@example.test` },
+      source: 'gift',
+      grantRef: `${tag}-1`,
+    });
+    expect(granted.kind).toBe('granted');
+    for (const id of [nicked, retried, passHolder]) await age(id, 31);
+
+    // An hour after the first test's run (the job is hourly).
+    const first = await tick(Date.now() + 61 * 60_000);
+    expect(first.result).toBe('pruned');
+    expect(await countOf(nicked)).toEqual({ u: 0, s: 0 });
+    expect((await pool.query('SELECT count(*)::int AS n FROM profiles WHERE nick_key = $1', [key])).rows[0]).toEqual({ n: 0 });
+    expect((await countOf(retried)).u).toBe(1);
+    expect((await countOf(passHolder)).u).toBe(1);
+
+    // The retry row closed → removed on the next run; the device pass still keeps its guest.
+    await pool.query('DELETE FROM auth_link_retries WHERE from_subject = $1', [retried]);
+    await age(retried, 31);
+    await age(passHolder, 31);
+    await tick(Date.now() + 122 * 60_000);
+    expect(await countOf(retried)).toEqual({ u: 0, s: 0 });
+    expect((await countOf(passHolder)).u).toBe(1);
   });
 });

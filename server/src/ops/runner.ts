@@ -17,6 +17,7 @@ import type { Alarm, Logger } from '../ports';
 import { startTicker, type Ticker } from '../unattended/ticker';
 import type { BackupJob, BackupJobOutcome } from './backup';
 import type { GuestPruneJob, GuestPruneOutcome } from './guestPrune';
+import type { LinkRetryJob, LinkRetryOutcome } from './linkRetry';
 import type { MailPlanJob, MailPlanOutcome } from './mailPlan';
 import { createDigestJob, type SpendOver50 } from './digest';
 import { SPEND_EVERY_MS, type SpendJob, type SpendJobOutcome } from './spend';
@@ -43,7 +44,7 @@ export interface OpsWiring {
 }
 
 /** Jobs of one tick, in run order. */
-export const OPS_JOBS = ['heartbeat', 'digest', 'log-prune', 'backup', 'backup-stale', 'spend', 'mail-plan', 'auth-guest-prune', 'sender'] as const;
+export const OPS_JOBS = ['heartbeat', 'digest', 'log-prune', 'backup', 'backup-stale', 'spend', 'mail-plan', 'auth-link-retry', 'auth-guest-prune', 'sender'] as const;
 export type OpsJobName = (typeof OPS_JOBS)[number];
 
 export type OpsJobOutcome =
@@ -54,6 +55,7 @@ export type OpsJobOutcome =
   | SpendJobOutcome
   | MailPlanOutcome
   | GuestPruneOutcome
+  | LinkRetryOutcome
   | { result: 'started' }
   | { result: 'off' | 'idle' }
   | { result: 'failed'; code: string };
@@ -92,6 +94,8 @@ export interface OpsRunnerDeps {
   mailPlan?: MailPlanJob | null;
   /** The guest cleanup (SPEC-10 AC-5); `null` / absent — none in this process. */
   guestPrune?: GuestPruneJob | null;
+  /** The guest-merge retry job (SPEC-11 W29b); `null` / absent — none in this process. */
+  linkRetry?: LinkRetryJob | null;
 }
 
 function codeOf(err: unknown): string {
@@ -100,7 +104,7 @@ function codeOf(err: unknown): string {
 }
 
 /** The jobs of one process; no timer (the ticker, the door or a test drives `tick`). */
-export function createOpsRunner({ ops, alarm, log, sources, backup = null, spend = null, mailPlan = null, guestPrune = null }: OpsRunnerDeps): OpsRunner {
+export function createOpsRunner({ ops, alarm, log, sources, backup = null, spend = null, mailPlan = null, guestPrune = null, linkRetry = null }: OpsRunnerDeps): OpsRunner {
   const sink = ops.telegram.sink;
   const chatId = ops.telegram.chatId ?? '';
   const sender: Sender | null = sink ? createSender({ lease: ops.lease, outbox: ops.outbox, sink, chatId, cls: ops.cls, alarm }) : null;
@@ -144,6 +148,7 @@ export function createOpsRunner({ ops, alarm, log, sources, backup = null, spend
       return spend.run(now);
     },
     'mail-plan': async (now) => (mailPlan ? mailPlan.run(now) : { result: 'off' }),
+    'auth-link-retry': async (now) => (linkRetry ? linkRetry.run(now) : { result: 'off' }),
     'auth-guest-prune': async (now) => (guestPrune ? guestPrune.run(now) : { result: 'off' }),
     sender: async (now) => {
       if (!sender) return { result: 'off' };
@@ -176,6 +181,7 @@ export function createOpsRunner({ ops, alarm, log, sources, backup = null, spend
       await spend?.release();
       await mailPlan?.release();
       await guestPrune?.release();
+      await linkRetry?.release();
     },
   };
 }
