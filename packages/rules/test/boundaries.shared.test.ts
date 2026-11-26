@@ -10,6 +10,7 @@ import {
   RATING_CLOSE_AFTER,
   RATING_OPEN_AFTER,
   SERVER_CLOCK_TOLERANCE_MS,
+  PULSE_INTERVAL_MS,
   STAMP_DELAY,
   arrivedYear,
   canSayToast,
@@ -226,6 +227,14 @@ describe('AC-21 a call without Δ equals the call with Δ = 0', () => {
   });
   it('stampAcceptUntil', () => {
     expect(stampAcceptUntil(m)).toBe(stampAcceptUntil(m, 0));
+  });
+});
+
+describe('AC-13 beat interval constant', () => {
+  it('PULSE_INTERVAL_MS is 20 000 ms and equals I', () => {
+    expect(PULSE_INTERVAL_MS).toBe(20_000);
+    expect(PULSE_INTERVAL_MS).toBe(I);
+    expect(() => rules.assertPulseInterval(PULSE_INTERVAL_MS)).not.toThrow();
   });
 });
 

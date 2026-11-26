@@ -22,9 +22,9 @@ import { useClock, useNow } from '@/lib/time/TimeProvider';
 import { useGuestStore } from '@/stores/guest';
 import { useNotifStore } from '@/stores/notifications';
 
-const COUNTRY_GOALS = [3, 5, 10];
-const ZONE_GOALS = [3, 5, 10];
-const STREAK_GOALS = [3, 5];
+export const COUNTRY_GOALS = [3, 5, 10];
+export const ZONE_GOALS = [3, 5, 10];
+export const STREAK_GOALS = [3, 5];
 
 /** Сторінка країни саме з цією подією (місто й пояс), `lib/live/countryHref`. */
 function countryHref(iso: string, eventId: string): string {
@@ -33,7 +33,7 @@ function countryHref(iso: string, eventId: string): string {
 }
 
 /** Найдовша серія поясів підряд (за порядком поясу), що закінчується останнім штампом. */
-function streakOf(stamps: readonly Stamp[]): number {
+export function streakOf(stamps: readonly Stamp[]): number {
   const data = getData();
   const orders = [...new Set(stamps.map((s) => data.zonesById.get(data.eventsById.get(s.eventId)?.zoneId ?? '')?.order).filter((x): x is number => x !== undefined))].sort((a, b) => a - b);
   if (orders.length === 0) return 0;
@@ -43,6 +43,25 @@ function streakOf(stamps: readonly Stamp[]): number {
     else break;
   }
   return run;
+}
+
+export interface GoalOutcome {
+  id: string;
+  kind: 'goal' | 'streak';
+  params: { count: number; what?: 'countries' | 'zones' };
+}
+
+/** Досягнення й серії за штампами, у порядку створення сповіщень: країни, пояси, серія. */
+export function goalOutcomes(stamps: readonly Stamp[]): GoalOutcome[] {
+  const data = getData();
+  const out: GoalOutcome[] = [];
+  const countries = new Set(stamps.map((s) => s.countryIso)).size;
+  const zones = new Set(stamps.map((s) => data.eventsById.get(s.eventId)?.zoneId).filter(Boolean)).size;
+  for (const g of COUNTRY_GOALS) if (countries >= g) out.push({ id: `goal:countries:${g}`, kind: 'goal', params: { count: g, what: 'countries' } });
+  for (const g of ZONE_GOALS) if (zones >= g) out.push({ id: `goal:zones:${g}`, kind: 'goal', params: { count: g, what: 'zones' } });
+  const run = streakOf(stamps);
+  for (const g of STREAK_GOALS) if (run >= g) out.push({ id: `streak:${g}`, kind: 'streak', params: { count: g } });
+  return out;
 }
 
 export function NotificationsGenerator() {
@@ -65,12 +84,7 @@ export function NotificationsGenerator() {
         const country = data.countriesByIso.get(st.countryIso);
         push({ id: `stamp:${st.eventId}`, kind: 'stamp', params: { country: country?.name.uk ?? st.cityName, city: st.cityName }, href: '/passport/', flag: st.countryIso, createdAt: at });
       }
-      const countries = new Set(state.stamps.map((s) => s.countryIso)).size;
-      const zones = new Set(state.stamps.map((s) => data.eventsById.get(s.eventId)?.zoneId).filter(Boolean)).size;
-      for (const g of COUNTRY_GOALS) if (countries >= g) push({ id: `goal:countries:${g}`, kind: 'goal', params: { count: g, what: 'countries' }, href: '/passport/', createdAt: at });
-      for (const g of ZONE_GOALS) if (zones >= g) push({ id: `goal:zones:${g}`, kind: 'goal', params: { count: g, what: 'zones' }, href: '/passport/', createdAt: at });
-      const run = streakOf(state.stamps);
-      for (const g of STREAK_GOALS) if (run >= g) push({ id: `streak:${g}`, kind: 'streak', params: { count: g }, href: '/passport/', createdAt: at });
+      for (const o of goalOutcomes(state.stamps)) push({ id: o.id, kind: o.kind, params: o.params, href: '/passport/', createdAt: at });
     });
   }, [clock, push]);
 

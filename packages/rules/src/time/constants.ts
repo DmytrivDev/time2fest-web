@@ -5,6 +5,8 @@ const MIN = 60 * SEC;
 export const HOWTO_BEFORE = 15 * MIN;
 /** Stamp and system message come 15 s after midnight. */
 export const STAMP_DELAY = 15 * SEC;
+/** Presence beat interval near midnight, I = 20 s (SPEC-14 [А2]). */
+export const PULSE_INTERVAL_MS = 20 * SEC;
 /** Rating prompt opens 5 min after midnight… */
 export const RATE_OPEN_AFTER = 5 * MIN;
 /** …and lasts 3 min. */

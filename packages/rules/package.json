@@ -7,7 +7,8 @@
     "./time": "./src/time/index.ts",
     "./text": "./src/text/index.ts",
     "./text/fallback": "./src/text/fallback.ts",
-    "./schedule": "./src/schedule/index.ts"
+    "./schedule": "./src/schedule/index.ts",
+    "./passport": "./src/passport/index.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit -p ."

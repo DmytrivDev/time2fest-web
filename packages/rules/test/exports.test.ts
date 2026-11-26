@@ -1,5 +1,6 @@
 /** AC-1: the public surface of `@time2fest/rules/time` — every rule and constant the spec lists is exported. */
 import { describe, expect, it } from 'vitest';
+import { achievementsOf, streakLength, stampOf, COUNTRY_GOALS, ZONE_GOALS, STREAK_GOALS } from '../src/passport';
 import {
   // celebration bounds (±2 h), celebration phase and toast season
   CELEBRATION_LEAD,
@@ -59,6 +60,7 @@ import {
   // durations
   HOWTO_BEFORE,
   STAMP_DELAY,
+  PULSE_INTERVAL_MS,
   RATE_OPEN_AFTER,
   RATE_DURATION,
   HANDOVER_AFTER,
@@ -122,6 +124,7 @@ const surface = {
   assertPulseInterval,
   HOWTO_BEFORE,
   STAMP_DELAY,
+  PULSE_INTERVAL_MS,
   RATE_OPEN_AFTER,
   RATE_DURATION,
   HANDOVER_AFTER,
@@ -146,5 +149,16 @@ describe('AC-1 exports of @time2fest/rules/time', () => {
       if (/^[A-Z_]+$/.test(name)) expect(Number.isFinite(value), name).toBe(true);
       else expect(typeof value, name).toBe('function');
     }
+  });
+});
+
+describe('exports of @time2fest/rules/passport', () => {
+  it('achievements and stamp composer are exported', () => {
+    expect(typeof achievementsOf).toBe('function');
+    expect(typeof streakLength).toBe('function');
+    expect(typeof stampOf).toBe('function');
+    expect(COUNTRY_GOALS).toEqual([3, 5, 10]);
+    expect(ZONE_GOALS).toEqual([3, 5, 10]);
+    expect(STREAK_GOALS).toEqual([3, 5]);
   });
 });
