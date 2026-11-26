@@ -26,6 +26,13 @@ import type { ChannelPublisher, SubjectInvalidator } from '../realtime/ports';
 import type { SubjectResolver } from '../realtime/ports';
 import type { UnattendedDeps } from '../unattended/service';
 import type { Deps, EventPorts, LiveWiring, ModerationDeps, SiteWiring } from './types';
+import { hostname } from 'node:os';
+import { presenceCatalogOf } from '../domain/presence/eventValidity';
+import { createBeatService, type BeatService, type PresenceCatalogView } from '../presence/beats';
+import { faultyFastStore, presenceFaults } from '../presence/faults';
+import { createNodeIntake, createWindowIntake, type NodeIntake, type WindowIntake } from '../presence/intake';
+import { createMomentBook, createSqlMomentStore, type MomentBook } from '../presence/moments';
+import { createProofWriter, createSqlProofStore, type ProofWriter } from '../presence/proofs';
 
 function built<T>(value: T | undefined, name: string): T {
   if (value === undefined) throw new Error(`deps: ${name} missing (deps not built by createDeps)`);
@@ -155,6 +162,92 @@ export function rightsOf(deps: Deps): RightsServices {
       }),
     };
     rightsCache.set(deps, built);
+  }
+  return built;
+}
+
+/**
+ * The presence services (SPEC-14 [П-2], [П-3]): built lazily per `deps` over the rights pool, the fast store (read on
+ * each call: a test may swap `deps.redis`; the `presence-fault` switch gates it), the alarm port and the server clock.
+ * One node intake and one node id per `deps` — the sampler (P6) reads the same intake.
+ */
+export interface PresenceServices {
+  beats: BeatService;
+  proofs: ProofWriter;
+  moments: MomentBook;
+  intake: NodeIntake;
+  windows: WindowIntake;
+  /** The presence view of the catalog, rebuilt at most every 30 s per `deps`. */
+  catalog(now: number): Promise<PresenceCatalogView>;
+  /** Drops the catalog and moment caches (tests, the worktree reset). */
+  clear(): void;
+  nodeId: string;
+}
+const presenceCache = new WeakMap<Deps, PresenceServices>();
+
+/** Presence events of the current season: stored catalog rows joined with the live air's patched moments. */
+async function readPresenceCatalog(deps: Deps): Promise<PresenceCatalogView> {
+  const [stored, live] = await Promise.all([catalogStoreOf(deps).read(), liveOf(deps).events.events()]);
+  const str = (v: unknown): string => (typeof v === 'string' ? v : '');
+  const countryOf = new Map(stored.events.map((e) => [str(e.eventId), str(e.countryIso)]));
+  const patched = live.map((e) => ({ eventId: e.eventId, countryIso: countryOf.get(e.eventId) ?? '', zoneId: e.zoneId, moment: e.moment, hidden: e.hidden }));
+  const zones = stored.zones.map((z) => ({ midnightMs: Date.parse(str(z.midnightUtc)) })).filter((z) => Number.isFinite(z.midnightMs));
+  return { catalog: presenceCatalogOf(stored.season?.key ?? null, stored.events, patched), zones: { zones } };
+}
+
+/**
+ * The deps a test dispatcher derives with `Object.create(deps, …)` (doors' subject resolver) share the base's
+ * presence services: the routes, the sampler and the doors must see one node intake.
+ */
+function presenceRootOf(deps: Deps): Deps {
+  let root = deps;
+  for (;;) {
+    const proto: unknown = Object.getPrototypeOf(root);
+    if (typeof proto === 'object' && proto !== null && Object.prototype.hasOwnProperty.call(proto, 'env')) root = proto as Deps;
+    else return root;
+  }
+}
+
+export function presenceOf(served: Deps): PresenceServices {
+  const deps = presenceRootOf(served);
+  let built = presenceCache.get(deps);
+  if (built === undefined) {
+    const db = () => rightsDbOf(deps);
+    const fast = () => faultyFastStore(deps.redis, presenceFaults);
+    const intake = createNodeIntake();
+    const windows = createWindowIntake(fast);
+    const moments = createMomentBook({ db, store: createSqlMomentStore() });
+    const nodeId = `${hostname()}:${process.pid}`;
+    const proofs = createProofWriter({
+      db,
+      fast,
+      store: createSqlProofStore(),
+      alarm: { raise: (a) => deps.alarm.raise(a) },
+      clock: { now: () => deps.clock.now() },
+      intake,
+      nodeId,
+    });
+    let cat: { at: number; view: PresenceCatalogView } | undefined;
+    const catalog = async (now: number): Promise<PresenceCatalogView> => {
+      if (cat !== undefined && now - cat.at < REFS_TTL_MS && now >= cat.at) return cat.view;
+      const view = await readPresenceCatalog(deps);
+      cat = { at: now, view };
+      return view;
+    };
+    built = {
+      beats: createBeatService({ catalog, moments, proofs, windows, intake }),
+      proofs,
+      moments,
+      intake,
+      windows,
+      catalog,
+      clear() {
+        cat = undefined;
+        moments.clear();
+      },
+      nodeId,
+    };
+    presenceCache.set(deps, built);
   }
   return built;
 }

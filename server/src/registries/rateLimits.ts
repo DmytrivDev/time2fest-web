@@ -23,6 +23,8 @@ export const rateLimitRegistry: readonly RateLimitRow[] = [
   // The same guests counted per IPv6 /48 (IPv4: /24) too, so rotating /64s inside one /48 does not multiply them
   // (S10-08). 10x the per-client limit: an IPv4 /24 (mobile CGNAT) carries many people. Keyed row (`25-subject`).
   { key: GUEST_CREATE_IP48_ROW, limit: 600, windowMs: 600_000, keys: [], onStoreDown: 'fail-closed' },
+  // The author path of the chat card (SPEC-14 AC-54): 60 a minute per device, counted in this process if Redis is down.
+  { key: 'author-path', limit: 60, windowMs: 60_000, keys: ['device'], onStoreDown: 'memory' },
   // The public build-time read of the catalog (AC-63): 30 a minute per client (SPEC-05 daily fingerprint),
   // counted in this process if Redis is down.
   { key: 'catalog-read', limit: 30, windowMs: 60_000, keys: ['ipDay'], onStoreDown: 'memory' },
@@ -44,12 +46,17 @@ export const rateLimitRegistry: readonly RateLimitRow[] = [
   // Own-subject profile writes of SPEC-11: 30 a minute per subject, counted in this process if Redis is down.
   { key: 'me-profile', limit: 30, windowMs: 60_000, keys: ['subject'], onStoreDown: 'memory' },
   { key: 'me-schedule', limit: 30, windowMs: 60_000, keys: ['subject'], onStoreDown: 'memory' },
+  // Presence beats (SPEC-14 AC-5, [А2]): 12 a minute per subject (up to 4 tabs at I = 20 s), counted in this process
+  // if Redis is down.
+  { key: 'presence-beat', limit: 12, windowMs: 60_000, keys: ['subject'], onStoreDown: 'memory' },
   // Realtime connection tokens (SPEC-06 AC-16): 30 a minute per client, counted in this process if Redis is down.
   { key: 'realtime-token', limit: 30, windowMs: 60_000, keys: ['ipDay'], onStoreDown: 'memory' },
   // The public site snapshot (SPEC-08 AC-3, AC-37): mostly answered by the edge cache, so the origin sees few
   // reads; 600 a minute per client keeps a reload storm or a reader test far below the limit. Counted in this
   // process if Redis is down (a public read never fails closed on the fast store).
   { key: 'site-read', limit: 600, windowMs: 60_000, keys: ['ipDay'], onStoreDown: 'memory' },
+  // Stamp claims (SPEC-14 AC-35): 60 a minute per subject, counted in this process if Redis is down.
+  { key: 'stamp-claim', limit: 60, windowMs: 60_000, keys: ['subject'], onStoreDown: 'memory' },
   // The stream agent's proposals (SPEC-21a AC-37, [А13]): 30 a minute per agent record; refused if Redis is down
   // (a write never counts in one process only). The daily cap lives in `LIVE_DEFAULTS.agent`.
   { key: 'stream-agent-propose', limit: 30, windowMs: 60_000, keys: ['subject'], onStoreDown: 'fail-closed' },

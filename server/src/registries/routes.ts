@@ -11,6 +11,7 @@ import { liveViewerTokenRoute } from '../endpoints/liveViewerToken';
 import { liveViewersRoute } from '../endpoints/liveViewers';
 import { meRoutes } from '../endpoints/me';
 import { meAccountRoutes } from '../endpoints/meAccount';
+import { presenceBeatRoute } from '../endpoints/presence';
 import { realtimeTokenRoute } from '../endpoints/realtimeToken';
 import { siteStateRoute } from '../endpoints/siteState';
 import { timeRoute } from '../endpoints/time';
@@ -29,6 +30,7 @@ export const routeRegistry: readonly RouteRow[] = [
   liveViewersRoute,
   ...meAccountRoutes,
   ...meRoutes,
+  presenceBeatRoute,
   realtimeTokenRoute,
   siteStateRoute,
   timeRoute,

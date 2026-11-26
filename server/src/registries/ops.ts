@@ -563,11 +563,23 @@ export const opsRegistry: readonly OpsDomainRow[] = [
     domain: 'presence',
     title: 'Присутність',
     ownerWave: 'SPEC-14',
-    reserved: true,
-    alarms: [],
+    alarms: [
+      {
+        source: 'presence',
+        code: 'presence/fast-store-down',
+        level: 'log',
+        meaning: 'Redis недоступний для пульсів присутності: докази пишуться прямо в базу, вікна цього часу стануть простоєм за журналом справності.',
+        action: 'Перевірити Redis; поки він лежить, штампи видаються за доказами в базі, а лічильники справності не ведуться.',
+        detailKeys: ['node'],
+      },
+    ],
     metrics: [
-      { key: 'presence.rooms', title: 'Присутність у кімнатах', pendingNote: 'SPEC-14' },
-      { key: 'presence.realtimeConnections', title: 'Підключення realtime', pendingNote: 'SPEC-14' },
+      { key: 'presence.beatsPerSecond', title: 'Пульси за секунду' },
+      { key: 'presence.beatErrorShare', title: 'Частка помилок пульсів' },
+      { key: 'presence.claims', title: 'Підтвердження штампів' },
+      { key: 'presence.downtimeWindows', title: 'Вікна простою' },
+      { key: 'presence.rooms', title: 'Присутність у кімнатах', pendingNote: 'SPEC-15' },
+      { key: 'presence.realtimeConnections', title: 'Підключення realtime', pendingNote: 'SPEC-15' },
     ],
   },
   {
