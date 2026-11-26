@@ -48,6 +48,10 @@ describe('edge privacy, static (SPEC-05)', () => {
       'test-doors/edgeEcho.ts',
       'auth/codeFlow.ts',
       'auth/request.ts',
+      // SPEC-11 W31: the email-change code limits key on the daily fingerprint, like `auth/codeFlow.ts`.
+      'auth/link.ts',
+      // SPEC-11 W34: the `rights/ban {kind:'ip-day', subject:'current'}` door marks the caller's daily fingerprint.
+      'test-doors/rights.ts',
     ]);
     const calls = /\b(fingerprintOf|daySalts)\(|\.ipDay\(/;
     const found = files(SRC).filter((f) => calls.test(readFileSync(f, 'utf8'))).map(rel);

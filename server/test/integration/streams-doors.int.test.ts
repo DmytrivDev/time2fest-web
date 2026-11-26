@@ -106,9 +106,9 @@ describe('live door SPEC-21a variants (AC-44)', { timeout: 120_000 }, () => {
     expect((await get(`/youtube/v3/channels?id=${CH}`)).items).toEqual([]);
   });
 
-  it('the door registry keeps its 26 rows (no new streams door row; SPEC-10 added 6 door rows)', () => {
+  it('the door registry keeps its 32 rows (no new streams door row; SPEC-10 added 6 door rows, SPEC-11 6 rights rows)', () => {
     // SPEC-10: 4 auth rows, then 2 more for AC-54 (`auth/free-gap`, `mail/break-delivery`).
-    expect(doorRegistry).toHaveLength(26);
+    expect(doorRegistry).toHaveLength(32);
     expect(doorRegistry.filter((d) => d.path === '/api/_test/live')).toHaveLength(1);
   });
 });
