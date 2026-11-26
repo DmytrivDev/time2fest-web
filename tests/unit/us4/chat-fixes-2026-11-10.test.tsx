@@ -91,7 +91,7 @@ describe('вікно «Переклад повідомлень» без пасу
     expect(translateExample({ ...mehmet, text: 'Something unknown' })).toMatchObject({ nick: 'Hiro', lang: 'ja', translated: 'З Новим роком!' });
   });
 
-  it('оригінал і переклад, «Оформити пас · $5» і «Що дає пас»', () => {
+  it('оригінал і переклад, «Оформити пас · $7» і «Що дає пас»', () => {
     const onGetPass = vi.fn();
     const onPassInfo = vi.fn();
     renderApp(<TranslateGate message={mehmet} onGetPass={onGetPass} onPassInfo={onPassInfo} />);
@@ -99,7 +99,7 @@ describe('вікно «Переклад повідомлень» без пасу
     expect(ex).toHaveTextContent('Yeni yılınız kutlu olsun!');
     expect(ex).toHaveTextContent('З Новим роком вас!');
     expect(ex).toHaveTextContent('Перекладено з турецької');
-    fireEvent.click(screen.getByRole('button', { name: 'Оформити пас · $5' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Оформити пас · $7' }));
     expect(onGetPass).toHaveBeenCalledOnce();
     fireEvent.click(screen.getByRole('button', { name: 'Що дає пас' }));
     expect(onPassInfo).toHaveBeenCalledOnce();

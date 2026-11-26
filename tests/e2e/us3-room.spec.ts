@@ -691,7 +691,7 @@ test.describe('US3 · кімната перегляду', () => {
     await expect(page.locator('[data-timer-veiled]')).toHaveCount(0);
   });
 
-  test('«Мій графік» без пасу в «Поточних трансляціях»: той самий блок, що в «Зараз і далі» (Оформити пас · $5, Що ще дає пас)', async ({ page, ytStub }) => {
+  test('«Мій графік» без пасу в «Поточних трансляціях»: той самий блок, що в «Зараз і далі» (Оформити пас · $7, Що ще дає пас)', async ({ page, ytStub }) => {
     void ytStub;
     await seedRoom(page, [L1, L2], 0);
     await gotoAt(page, NOW, 0, ROOM);
@@ -699,7 +699,7 @@ test.describe('US3 · кімната перегляду', () => {
     await cards.getByRole('radio', { name: /Мій графік/ }).click();
     const locked = cards.locator('[data-row="mine-locked"]');
     await expect(locked).toContainText('потрібен Новорічний пас');
-    await expect(locked.getByRole('button', { name: 'Оформити пас · $5' })).toBeVisible();
+    await expect(locked.getByRole('button', { name: 'Оформити пас · $7' })).toBeVisible();
     await expect(locked.getByRole('button', { name: 'Що ще дає пас' })).toBeVisible();
     await expect(page.locator('[data-window="O-PASS-INFO"], [role="dialog"]')).toHaveCount(0);
   });

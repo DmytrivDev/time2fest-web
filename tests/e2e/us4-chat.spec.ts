@@ -351,7 +351,7 @@ test.describe('US4 · правки власника 2026-11-10: переклад
     if (await only.count()) await only.first().click();
   }
 
-  test('«Перекласти» без пасу — вікно «Переклад повідомлень» на місці чату з прикладом і «Оформити пас · $5»', async ({ page }) => {
+  test('«Перекласти» без пасу — вікно «Переклад повідомлень» на місці чату з прикладом і «Оформити пас · $7»', async ({ page }) => {
     await startChat(page, WALL, 0);
     await dismissCookies(page);
     const log = page.getByRole('log').first();
@@ -368,7 +368,7 @@ test.describe('US4 · правки власника 2026-11-10: переклад
       const box = await gate.boundingBox();
       expect(box!.x).toBeGreaterThanOrEqual(col!.x - 1);
     }
-    await gate.getByRole('button', { name: 'Оформити пас · $5' }).click();
+    await gate.getByRole('button', { name: 'Оформити пас · $7' }).click();
     await expect(page.locator('[data-window="O-PASS-BUY"]')).toBeVisible();
   });
 });

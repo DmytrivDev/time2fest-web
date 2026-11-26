@@ -26,7 +26,7 @@ test('гість: ціна, оформлення з Google чи поштою, п
   await gotoAt(page, AT, 1, '/pass/');
   await expect(page.getByRole('heading', { level: 1, name: 'Новорічний пас' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Оформити з Google' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Оформити пас — $5' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Оформити пас — $7' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Політикою конфіденційності' })).toHaveAttribute('href', '/privacy/');
   // Жодного «мертвого» посилання на `#` у вмісті сторінки.
   await expect(page.locator('main a[href="#"]')).toHaveCount(0);
@@ -45,7 +45,7 @@ test('«Скажи тост за $10 · …і Новорічний пас у п�
 
 test('до свята рядка «Скажи тост за $10» немає (тост лише під час свята, 2026-11-13) — пас оформлюється без нього', async ({ page }) => {
   await gotoAt(page, '2026-12-28T14:00:00+02:00', 1, '/pass/');
-  await expect(page.getByRole('button', { name: 'Оформити пас — $5' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Оформити пас — $7' })).toBeVisible();
   await expect(page.locator('[data-row="toast-gift"]')).toHaveCount(0);
 });
 
@@ -76,7 +76,7 @@ test('вікно пасу під час свята: рядок «Скажи то
 test('пас гостя на пристрої, вхід тут з іншою поштою (Google): пас переходить до першого акаунта на пристрої (рішення 2026-11-15)', async ({ page }) => {
   await gotoAt(page, AT, 1, '/pass/');
   await page.getByRole('textbox', { name: 'Email' }).fill('paid@example.com');
-  await page.getByRole('button', { name: 'Оформити пас — $5' }).click();
+  await page.getByRole('button', { name: 'Оформити пас — $7' }).click();
   await expect(page.locator('[data-phase="success"]')).toContainText('Пас активний', { timeout: 60_000 });
   await expect(page.locator('[data-row="device-pass"]')).toContainText('Увійди — і пас буде на всіх твоїх пристроях');
   await page.getByRole('link', { name: 'Увійти' }).first().click();
@@ -98,7 +98,7 @@ test('пас гостя на пристрої, вхід тут з іншою п�
 test('пас на пристрої (гість): сторінка входу без «Ще немає Новорічного пасу?», сторінка тостів без «Хочеш більше від свята?» (2026-11-16)', async ({ page }) => {
   await gotoAt(page, AT, 1, '/pass/');
   await page.getByRole('textbox', { name: 'Email' }).fill('paid@example.com');
-  await page.getByRole('button', { name: 'Оформити пас — $5' }).click();
+  await page.getByRole('button', { name: 'Оформити пас — $7' }).click();
   await expect(page.locator('[data-phase="success"]')).toContainText('Пас активний', { timeout: 60_000 });
   await page.goto('/login/');
   await waitForTimeApi(page);
@@ -115,14 +115,14 @@ test('оплата поштою: «Чекаємо підтвердження» �
   await gotoAt(page, AT, 1, '/pass/');
   await page.evaluate(() => (window as unknown as { __t2f: { setPayResult(r: string): void } }).__t2f.setPayResult('pending'));
   await page.getByRole('textbox', { name: 'Email' }).fill('olena@example.com');
-  await page.getByRole('button', { name: 'Оформити пас — $5' }).click();
+  await page.getByRole('button', { name: 'Оформити пас — $7' }).click();
   await expect(page.locator('[data-phase="pending"]')).toContainText('Чекаємо підтвердження оплати');
 
   await page.reload();
   await waitForTimeApi(page);
   // Після перезавантаження — те саме очікування, а не нова форма оплати.
   await expect(page.locator('[data-phase="pending"]')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Оформити пас — $5' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Оформити пас — $7' })).toHaveCount(0);
 
   await expect(page.locator('[data-phase="success"]')).toContainText('Пас активний', { timeout: 60_000 });
 
@@ -136,7 +136,7 @@ test('оплата поштою: «Чекаємо підтвердження» �
 test('гість оплатив поштою: пас працює на пристрої без входу; «Увійти кодом» переносить його в акаунт (рішення 2026-11-13)', async ({ page }) => {
   await gotoAt(page, AT, 1, '/pass/');
   await page.getByRole('textbox', { name: 'Email' }).fill('flag@example.com');
-  await page.getByRole('button', { name: 'Оформити пас — $5' }).click();
+  await page.getByRole('button', { name: 'Оформити пас — $7' }).click();
   const success = page.locator('[data-phase="success"]');
   await expect(success).toContainText('Пас активний', { timeout: 60_000 });
   // Гість без ніка: квиток без рядка імені — з пошти ім’я не вигадуємо (2026-11-14).
