@@ -37,6 +37,8 @@ import { createDowntimeNotifier, createDowntimeService, createSqlDowntimeStore, 
 import { createFinaliser, createSqlHealthStore, type Finaliser } from '../presence/health';
 import { createSampler, createSqlSampleStore, type Sampler } from '../presence/samples';
 import { createSqlStampStore, createStampService, type StampService } from '../presence/stamps';
+import { createAchievementService, createSqlAchievementStore, type AchievementLookups } from '../presence/achievements';
+import { createGrantEvents } from '../presence/events';
 import { stampCatalogOf, type StampCatalog } from '../domain/passport/stampView';
 
 function built<T>(value: T | undefined, name: string): T {
@@ -199,15 +201,22 @@ export interface PresenceServices {
 const presenceCache = new WeakMap<Deps, PresenceServices>();
 
 /** Presence events of the current season: stored catalog rows joined with the live air's patched moments. */
-async function readPresenceCatalog(deps: Deps): Promise<{ view: PresenceCatalogView; stamps: StampCatalog }> {
+async function readPresenceCatalog(deps: Deps): Promise<{ view: PresenceCatalogView; stamps: StampCatalog; lookups: AchievementLookups }> {
   const [stored, live] = await Promise.all([catalogStoreOf(deps).read(), liveOf(deps).events.events()]);
   const str = (v: unknown): string => (typeof v === 'string' ? v : '');
   const countryOf = new Map(stored.events.map((e) => [str(e.eventId), str(e.countryIso)]));
   const patched = live.map((e) => ({ eventId: e.eventId, countryIso: countryOf.get(e.eventId) ?? '', zoneId: e.zoneId, moment: e.moment, hidden: e.hidden }));
+  const zoneOfEvent = new Map(stored.events.map((e) => [str(e.eventId), str(e.zoneId)]));
+  const zoneOrder = new Map(stored.zones.filter((z) => Number.isFinite(Number(z.order))).map((z) => [str(z.zoneId), Number(z.order)]));
   const zones = stored.zones.map((z) => ({ midnightMs: Date.parse(str(z.midnightUtc)) })).filter((z) => Number.isFinite(z.midnightMs));
   return {
     view: { catalog: presenceCatalogOf(stored.season?.key ?? null, stored.events, patched), zones: { zones } },
     stamps: stampCatalogOf(stored),
+    lookups: {
+      zoneOf: (id) => zoneOfEvent.get(id) ?? '',
+      countryOf: (id) => countryOf.get(id) ?? '',
+      orderOf: (zoneId) => zoneOrder.get(zoneId) ?? NaN,
+    },
   };
 }
 
@@ -243,7 +252,7 @@ export function presenceOf(served: Deps): PresenceServices {
       intake,
       nodeId,
     });
-    let cat: { at: number; view: PresenceCatalogView; stamps: StampCatalog } | undefined;
+    let cat: { at: number; view: PresenceCatalogView; stamps: StampCatalog; lookups: AchievementLookups } | undefined;
     const readCatalog = async (now: number) => {
       if (cat !== undefined && now - cat.at < REFS_TTL_MS && now >= cat.at) return cat;
       cat = { at: now, ...(await readPresenceCatalog(deps)) };
@@ -257,6 +266,13 @@ export function presenceOf(served: Deps): PresenceServices {
         // No open transaction: the event gets its own (the records live on the rights pool, not Payload's).
         await deps.events?.publisher.publish({}, PRESENCE_DOWNTIME_TOPIC, payload);
       },
+    });
+    const stampStore = createSqlStampStore();
+    const achievements = createAchievementService({ store: createSqlAchievementStore(), stamps: (q, subject, season) => stampStore.listForSubject(q, subject, season) });
+    const grantEvents = createGrantEvents({
+      channel: () => deps.realtime?.publisher,
+      internal: () => deps.events?.publisher,
+      log: { warn: (f) => deps.log.warn(f) },
     });
     const downtimeStore = createSqlDowntimeStore();
     const downtimes = createDowntimeService({ db, store: downtimeStore, catalog, notifier });
@@ -280,7 +296,22 @@ export function presenceOf(served: Deps): PresenceServices {
         proofs: createSqlProofStore(),
         health: healthStore,
         downtimes: downtimeStore,
-        store: createSqlStampStore(),
+        store: stampStore,
+        // Consequences of a fresh stamp (AC-39 .. AC-41): achievements first, then the events with the new keys.
+        onGranted: async (granted) => {
+          let newKeys: string[] = [];
+          try {
+            newKeys = await achievements.grant(await db(), {
+              subjectId: granted.subjectId,
+              season: granted.season,
+              now: granted.issuedAt,
+              lookups: (await readCatalog(granted.issuedAt)).lookups,
+            });
+          } catch {
+            // A failed achievement write never undoes the stamp; the next grant catches the keys up.
+          }
+          await grantEvents.stampGranted(granted, newKeys);
+        },
       }),
       clear() {
         cat = undefined;
