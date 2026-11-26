@@ -117,12 +117,15 @@ export type PassViewPort = { view(input: { accountId: string | null; device: str
  */
 export async function toSession(auth: AuthInstance, found: BaSession | null, device: string, passes: PassViewPort): Promise<SessionWire> {
   const anonymous = found === null || found.user.isAnonymous === true;
-  const pass = await passes.view({ accountId: anonymous ? null : found.user.id, device });
+  // The pass read and the account rows are independent reads: one round trip on the critical path, not two (NFR-1).
+  const [pass, accounts] = await Promise.all([
+    passes.view({ accountId: anonymous ? null : found.user.id, device }),
+    anonymous ? null : auth.$context.then((c) => c.internalAdapter.findAccounts(found.user.id)),
+  ]);
   const fields = { ...pass, code: null };
   if (found === null) return { user: null, guestId: device, ...fields };
   const { user, session } = found;
-  if (user.isAnonymous === true) return { user: null, guestId: user.id, ...fields };
-  const accounts = await (await auth.$context).internalAdapter.findAccounts(user.id);
+  if (user.isAnonymous === true || accounts === null) return { user: null, guestId: user.id, ...fields };
   const via = accounts.some((a) => a.providerId === 'google') ? 'google' : 'email';
   const name = typeof user.name === 'string' && user.name.trim() !== '' ? user.name : undefined;
   return {
