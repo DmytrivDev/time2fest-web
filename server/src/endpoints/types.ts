@@ -219,6 +219,8 @@ export interface Ctx {
   device: string;
   /** The request carried no valid `__Host-t2f_device` cookie: `finalize` sets one on a non-public response. */
   deviceIsNew: boolean;
+  /** The values of the `:name` segments of a parametric row path (SPEC-14 author path); absent on exact rows. */
+  params?: Readonly<Record<string, string>>;
   /** The parsed body, set by `20-validate` when the row has a `body` schema. */
   body?: unknown;
   /** The parsed query, set by `20-validate` when the row has a `query` schema. */

@@ -40,6 +40,8 @@ import { createSqlStampStore, createStampService, type StampService } from '../p
 import { createAchievementService, createSqlAchievementStore, type AchievementLookups } from '../presence/achievements';
 import { createGrantEvents } from '../presence/events';
 import type { PresenceLinkPorts } from '../presence/links';
+import { createAuthorIds, type AuthorIds } from '../presence/authorIds';
+import { createAuthorPathService, type AuthorPathService } from '../presence/authorPath';
 import { stampCatalogOf, type StampCatalog } from '../domain/passport/stampView';
 
 function built<T>(value: T | undefined, name: string): T {
@@ -344,3 +346,35 @@ export function presenceOf(served: Deps): PresenceServices {
   }
   return built;
 }
+
+const authorServices = new WeakMap<Deps, { ids: AuthorIds; path: AuthorPathService }>();
+
+function authorServicesOf(served: Deps) {
+  const deps = presenceRootOf(served);
+  let built = authorServices.get(deps);
+  if (built === undefined) {
+    const db = () => rightsDbOf(deps);
+    const ids = createAuthorIds({ db });
+    const rights = rightsOf(deps);
+    const presence = presenceOf(deps);
+    built = {
+      ids,
+      path: createAuthorPathService({
+        db,
+        authorIds: ids,
+        passes: rights.passes,
+        bans: rights.bans,
+        catalog: (now) => presence.catalog(now),
+        stampedEventIds: async (subject, now) => (await presence.stamps.list(subject, now)).map((s) => s.eventId),
+      }),
+    };
+    authorServices.set(deps, built);
+  }
+  return built;
+}
+
+/** Opaque author ids of the chat (SPEC-14 [П-9]): `authorIdOf` / `subjectOfAuthor` for SPEC-15. */
+export const authorIdsOf = (deps: Deps): AuthorIds => authorServicesOf(deps).ids;
+
+/** The author path of the chat card (SPEC-14 [А14]). */
+export const authorPathOf = (deps: Deps): AuthorPathService => authorServicesOf(deps).path;

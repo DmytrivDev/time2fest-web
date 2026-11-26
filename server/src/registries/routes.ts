@@ -3,6 +3,7 @@
  */
 import { authRoutes } from '../endpoints/auth';
 import { catalogRoute } from '../endpoints/catalog';
+import { chatAuthorPathRoute } from '../endpoints/chatAuthors';
 import { chatNickCheckRoute } from '../endpoints/chatNick';
 import { healthRoute } from '../endpoints/health';
 import { liveChainsRoute } from '../endpoints/liveChains';
@@ -23,6 +24,7 @@ import { assertRegistry } from '../platform/registry';
 export const routeRegistry: readonly RouteRow[] = [
   ...authRoutes,
   catalogRoute,
+  chatAuthorPathRoute,
   chatNickCheckRoute,
   healthRoute,
   liveChainsRoute,

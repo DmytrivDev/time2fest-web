@@ -254,17 +254,48 @@ export function createDispatcher({ routes, middleware, deps, edge }: DispatcherI
     table.set(id, row);
   }
   for (const mw of middleware) mw.check?.(routes);
+  // Rows whose path has `:name` segments (one segment each, never empty); exact rows win.
+  const parametric = [...table.values()].filter((r) => r.path.includes('/:'));
+
+  const matchParametric = (method: string, pathname: string): { route: RouteRow; params: Record<string, string> } | undefined => {
+    const parts = pathname.split('/');
+    for (const row of parametric) {
+      if (row.method !== method) continue;
+      const pattern = row.path.split('/');
+      if (pattern.length !== parts.length) continue;
+      const params: Record<string, string> = {};
+      let ok = true;
+      for (let i = 0; i < pattern.length && ok; i += 1) {
+        const want = pattern[i]!;
+        const got = parts[i]!;
+        if (want.startsWith(':')) {
+          if (got === '') ok = false;
+          else {
+            try {
+              params[want.slice(1)] = decodeURIComponent(got);
+            } catch {
+              ok = false;
+            }
+          }
+        } else ok = want === got;
+      }
+      if (ok) return { route: row, params };
+    }
+    return undefined;
+  };
 
   return async function dispatch(req: Request): Promise<Response> {
     const url = new URL(req.url);
     const client = edge.admit(req);
     if (client === null) return notFoundResponse();
-    const route = METHODS.has(req.method) ? table.get(`${req.method} ${url.pathname}`) : undefined;
+    const exact = METHODS.has(req.method) ? table.get(`${req.method} ${url.pathname}`) : undefined;
+    const matched = exact === undefined && METHODS.has(req.method) && parametric.length > 0 ? matchParametric(req.method, url.pathname) : undefined;
+    const route = exact ?? matched?.route;
     if (!route) return notFoundResponse();
 
     const known = readDevice(req);
     const device = known ?? newDevice();
-    const ctx: Ctx = { req, url, env: deps.env, clock: deps.clock, deps, log: deps.log, route, client, device, deviceIsNew: known === undefined };
+    const ctx: Ctx = { req, url, env: deps.env, clock: deps.clock, deps, log: deps.log, route, client, device, deviceIsNew: known === undefined, ...(matched !== undefined ? { params: matched.params } : {}) };
     const run = (i: number): Promise<Outcome> => {
       const mw = middleware[i];
       return mw ? mw.run(ctx, () => run(i + 1)) : route.handler(ctx);
