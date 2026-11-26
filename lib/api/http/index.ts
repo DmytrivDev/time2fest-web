@@ -3,10 +3,11 @@
  * Ключі — рівно `HTTP_DOMAINS` (`./domains.ts`): тип не дасть пропустити чи додати домен повз список.
  */
 import type { ServiceFactories, Services } from '../services';
-import { createHttpAuth } from './auth';
+// Повні шляхи: передстартова збірка підміняє адаптери входу й профілю (`resolveAlias` у `next.config.ts`).
+import { createHttpAuth } from '@/lib/api/http/auth';
 import { createHttpCatalog } from './catalog';
 import { createHttpLive } from './live';
-import { createHttpProfile } from './profile';
+import { createHttpProfile } from '@/lib/api/http/profile';
 import { createHttpSite } from './site';
 import { buildSnapshot } from '../site/buildSnapshot';
 import { getData } from '@/lib/data/load';

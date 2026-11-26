@@ -60,7 +60,7 @@ const patch = (w: Who, body: unknown, init: { ip?: string; country?: string } = 
   });
 const get = async (w: Who, headers?: Record<string, string>) => {
   const res = await h.call('/api/me/profile', { jar: w.jar, ...(headers ? { headers } : {}) });
-  return { status: res.status, body: (await res.json()) as { ok: boolean; value?: Record<string, any>; error?: { code: string; reason?: string } } };
+  return { status: res.status, body: (await res.json()) as { ok: boolean; value?: Record<string, unknown>; error?: { code: string; reason?: string } } };
 };
 const refusal = async (res: Response) => ((await res.json()) as { ok: boolean; error?: { code: string; reason?: string } });
 const nick = (suffix: string) => `Ліра${tag}${suffix}`.slice(0, 20);

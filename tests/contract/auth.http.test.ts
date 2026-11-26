@@ -154,7 +154,7 @@ const ctx: AuthSuiteCtx = {
     });
     if (r.status !== 200) throw new Error(`pass-grant door ${r.status}`);
   },
-  async grantAccountPass(svc, _email) {
+  async grantAccountPass(svc) {
     const s = await svc.session();
     if (!s.ok || !s.value.user) throw new Error('grantAccountPass: not signed in');
     const r = await doorAs(svc, '/api/_test/rights/pass-grant', {
