@@ -1,7 +1,7 @@
 /** SPEC-11 W19 — profile settings: defaults and a strict patch (AC-36). Pure. */
 import type { ProfileSettingsWire } from '@time2fest/contracts/schemas';
 
-/** Defaults as `stores/account.ts`; `reminderEmails` is on by default [Q2]. */
+/** Defaults as `stores/account.ts`; `reminderEmails` is off by default: the person turns it on (owner, 2026-11-26) [Q2]. */
 export const DEFAULT_SETTINGS: Readonly<ProfileSettingsWire> = {
   hour12: false,
   homeCountry: null,
@@ -10,7 +10,7 @@ export const DEFAULT_SETTINGS: Readonly<ProfileSettingsWire> = {
   showPath: true,
   passportHints: true,
   quietDefault: false,
-  reminderEmails: true,
+  reminderEmails: false,
 };
 
 const KEYS = Object.keys(DEFAULT_SETTINGS) as (keyof ProfileSettingsWire)[];

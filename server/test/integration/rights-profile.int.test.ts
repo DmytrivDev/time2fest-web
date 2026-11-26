@@ -177,9 +177,9 @@ describe('settings (AC-36)', () => {
     const def = (await get(w)).body.value!;
     expect(def.settings).toEqual({
       hour12: false, homeCountry: null, homeZoneId: null, showPassport: true, showPath: true,
-      passportHints: true, quietDefault: false, reminderEmails: true,
+      passportHints: true, quietDefault: false, reminderEmails: false,
     });
-    const full = { hour12: true, homeCountry: 'PL', homeZoneId: 'utc+2', showPassport: false, showPath: false, passportHints: false, quietDefault: true, reminderEmails: false };
+    const full = { hour12: true, homeCountry: 'PL', homeZoneId: 'utc+2', showPassport: false, showPath: false, passportHints: false, quietDefault: true, reminderEmails: true };
     expect((await patch(w, { settings: full })).status).toBe(200);
     expect((await get(w)).body.value?.settings).toEqual(full);
     expect((await patch(w, { settings: { hour12: false } })).status).toBe(200);

@@ -24,7 +24,7 @@ Supersedes: none
 ## Питання власнику (перший прохід, не блокують)
 
 - **[Q1]** Прив'язка Google, пошта якого відрізняється від пошти акаунта — прийнято за замовчуванням: дозволено для явної прив'язки з кабінету; пошта акаунта не змінюється, вхід через цей Google веде в той самий акаунт. → AC-46
-- **[Q2]** Типове значення `reminderEmails` — прийнято за замовчуванням: увімкнено (людина сама додає події в графік; кожен лист має відписку одним кліком, FR-NOTIF-08). → AC-36
+- **[Q2]** Типове значення `reminderEmails` — **вимкнено** (рішення власника 2026-11-26: людина вмикає сама; кожен лист має відписку одним кліком, FR-NOTIF-08). → AC-36
 - **[Q3]** Щоб блок FR-ID-17 діяв з моменту бану, сервер тримає у швидкому сховищі зв'язок «суб'єкт → його добовий відбиток» до опівночі UTC (лише в Redis, не в базі, не з повідомленнями) — прийнято за замовчуванням. → AC-23, NFR-5
 - **[Q4]** Бан пристрою, похідний від бану акаунта, лишається після стирання акаунта до зняття власником — прийнято за замовчуванням (захист від повернення порушника). → AC-57
 - **[Q5]** Перелік особливих прапорів — прийнято за замовчуванням: як на сайті (`earth`, `EU`, `un`, `GB-ENG`, `GB-SCT`, `GB-WLS`, `pride`, `trans`, `bisexual`; `components/chat/FlagField.tsx:24`, `components/primitives/Flag.tsx:15,59`), ширше за FR-PROF-02. → AC-33
@@ -193,7 +193,7 @@ Verify: integration — заголовок краю `PL` → `detectedFlag: 'PL'
 **AC-35 [server]** WHEN налаштування, нік, прапор чи графік змінено, the server shall опублікувати подію `profile` у канал суб'єкта протягом 3 с.
 Verify: integration (Centrifugo) — друга вкладка отримує `profile` ≤3 с і перечитує однакові налаштування.
 
-**AC-36 [server, contracts]** The server shall зберігати налаштування `hour12`, `homeCountry` (ISO каталогу або `null`), `homeZoneId` (пояс каталогу або `null`), `showPassport`, `showPath`, `passportHints`, `quietDefault`, `reminderEmails` (типово `true` [Q2]) і відкидати інші ключі `validation`/`invalid-input`.
+**AC-36 [server, contracts]** The server shall зберігати налаштування `hour12`, `homeCountry` (ISO каталогу або `null`), `homeZoneId` (пояс каталогу або `null`), `showPassport`, `showPath`, `passportHints`, `quietDefault`, `reminderEmails` (типово `false` [Q2]) і відкидати інші ключі `validation`/`invalid-input`.
 Verify: integration — повний набір зберігається й читається; невідомий ключ і чужий пояс → `invalid-input`.
 
 ### Графік (FR-PROF-04, FR-PROF-05)

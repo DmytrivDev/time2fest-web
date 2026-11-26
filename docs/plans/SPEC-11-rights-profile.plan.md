@@ -93,7 +93,7 @@ Repository root for every path = the worktree `D:/Work/Pets/Time2Fest/web/.claud
 | AC-33 | flag: catalog ISO or special codes | spec:187 | W19, W20 | W22 |
 | AC-34 | `detectedFlag` from edge country; body ignored | spec:190 | W20 | W22 |
 | AC-35 | `profile` event ≤3 s after any profile change | spec:193 | W4, W20, W24 | W22, W25 |
-| AC-36 | settings keys, `reminderEmails` default true, unknown → `invalid-input` | spec:196 | W3, W19, W20 | W22 |
+| AC-36 | settings keys, `reminderEmails` default false (owner 2026-11-26), unknown → `invalid-input` | spec:196 | W3, W19, W20 | W22 |
 | AC-37 | one pure schedule rule for site and server | spec:201 | W6, W7, W23 | W6/W7/W23 unit (one table) |
 | AC-38 | add → all events of that country in the zone | spec:204 | W23, W24 | W25 `rights-schedule.int` |
 | AC-39 | full zone → `conflict/schedule-full` (toggle, PUT) | spec:207 | W23, W24 | W25 |

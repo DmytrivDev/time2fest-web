@@ -26,14 +26,14 @@ describe('flags', () => {
 });
 
 describe('settings', () => {
-  it('defaults include reminderEmails true; stored partial values merge over them', () => {
-    expect(DEFAULT_SETTINGS.reminderEmails).toBe(true);
+  it('defaults include reminderEmails false; stored partial values merge over them', () => {
+    expect(DEFAULT_SETTINGS.reminderEmails).toBe(false);
     expect(settingsOf({})).toEqual(DEFAULT_SETTINGS);
     expect(settingsOf({ hour12: true, homeCountry: 'UA', junk: 1, quietDefault: 'x' })).toEqual({ ...DEFAULT_SETTINGS, hour12: true, homeCountry: 'UA' });
   });
   it('applies a valid patch', () => {
-    const r = applySettingsPatch(DEFAULT_SETTINGS, { hour12: true, homeCountry: 'PL', homeZoneId: 'utc+2', reminderEmails: false }, refs);
-    expect(r).toEqual({ ok: true, value: { ...DEFAULT_SETTINGS, hour12: true, homeCountry: 'PL', homeZoneId: 'utc+2', reminderEmails: false } });
+    const r = applySettingsPatch(DEFAULT_SETTINGS, { hour12: true, homeCountry: 'PL', homeZoneId: 'utc+2', reminderEmails: true }, refs);
+    expect(r).toEqual({ ok: true, value: { ...DEFAULT_SETTINGS, hour12: true, homeCountry: 'PL', homeZoneId: 'utc+2', reminderEmails: true } });
     expect(applySettingsPatch({ ...DEFAULT_SETTINGS, homeCountry: 'PL' }, { homeCountry: null }, refs)).toMatchObject({ ok: true });
   });
   it('refuses unknown keys, wrong types, unknown country or zone', () => {
