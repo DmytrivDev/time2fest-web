@@ -68,7 +68,7 @@ export function inCountryOf(site: SiteData, iso: string): string | undefined {
  * каталогу «Тут ще збираємо…»).
  */
 /** Українські назви міст, що в каталозі сайту написані інакше, ніж у глосарії (одне написання по всьому сайту). */
-const UK_CITY_FIXES: Readonly<Record<string, string>> = { kiritimati: 'Кіритіматі' };
+const UK_CITY_FIXES: Readonly<Record<string, string>> = { kiritimati: 'Кірітіматі' };
 
 export function localizeDataset(data: Dataset, site: SiteData): Dataset {
   const countries: Country[] = data.countries.map((c) => {
