@@ -76,6 +76,16 @@ describe('ліміти й textRulesFor', () => {
     expect(textRulesFor('nick', 'А')).toEqual({ reason: 'short' });
     expect(textRulesFor('nick', 'Мирон')).toBeNull();
   });
+
+  it('nick з невидимими символами → forbidden (S11-08); ZWJ між емодзі дозволений', () => {
+    for (const ch of ['\u200B', '\u200C', '\u200D', '\u2060', '\uFEFF', '\u202E', '\u2066', '\u00AD', '\u0007', '\u2028']) {
+      expect(textRulesFor('nick', `Лі${ch}ра`)).toEqual({ reason: 'forbidden' });
+    }
+    expect(textRulesFor('nick', 'Ліра\u200B')).toEqual({ reason: 'forbidden' });
+    expect(textRulesFor('nick', 'Ліра 👨\u200D👩\u200D👧')).toBeNull();
+    expect(textRulesFor('nick', 'Ліра ❤\uFE0F\u200D🔥')).toBeNull();
+  });
+
   it('toast', () => {
     expect(textRulesFor('toast', 'a'.repeat(121))).toEqual({ reason: 'too-long' });
     expect(textRulesFor('toast', 'ти сука')).toEqual({ reason: 'word' });

@@ -44,7 +44,7 @@ export function doorRoutes(
 ): RouteRow[] {
   // Doors exist only in the `test` class, where `createDeps` always builds the shared clock.
   if (!deps.sharedClock) throw new Error('test doors: deps without a shared clock');
-  const tools = { clock: createTestClock(deps.sharedClock), seed, subjects };
+  const tools = { clock: createTestClock(deps.sharedClock), seed, subjects, deps };
   const slug = deps.env.vars.T2F_SLUG;
   return rows.map((door) => ({
     key: `door-${door.key}`,

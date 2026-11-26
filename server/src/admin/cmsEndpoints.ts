@@ -44,6 +44,7 @@ import { CLOCK_CONTROL_CLASSES, controlClock } from '../timekeeping/control';
 import { fail, isOwner, jsonBodyOf, NO_STORE } from './cmsHttp';
 import { liveEndpoints } from './liveEndpoints';
 import { opsEndpoints } from './opsEndpoints';
+import { bansEndpoints } from './bansEndpoints';
 import { streamsEndpoints } from './streamsEndpoints';
 import { streamAgentEndpoints } from '../agent-api/streamAgentEndpoints';
 
@@ -172,5 +173,7 @@ export function cmsEndpointsFor(cls: EnvClass, resolve: () => Promise<Deps> = pr
   endpoints.push(...streamAgentEndpoints(resolve));
   // SPEC-13b: the owner's monitoring overview and `ops-settings` change exist in every class (`admin/opsEndpoints.ts`).
   endpoints.push(...opsEndpoints(resolve));
+  // SPEC-11: the owner's ban slice endpoints (ban, unban, list; `admin/bansEndpoints.ts`) exist in every class.
+  endpoints.push(...bansEndpoints(resolve));
   return endpoints;
 }

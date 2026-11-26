@@ -65,7 +65,9 @@ describe('root cms endpoints per class', () => {
   // SPEC-13b S10 appends the owner-only ops overview and settings routes in every class.
   // SPEC-21a W30: the stream agent's three addresses.
   const agentRows = ['get /stream-agent/channels', 'get /stream-agent/candidates', 'post /stream-agent/candidates'];
-  const site = ['post /site/product', 'post /site/switch', 'get /site/view', ...liveRows, ...streamsRows, ...agentRows, 'get /ops/overview', 'post /ops/settings'];
+  // SPEC-11 W37: the owner's ban slice (list, ban, unban) in every class.
+  const banRows = ['get /bans', 'post /bans/ban', 'post /bans/unban'];
+  const site = ['post /site/product', 'post /site/switch', 'get /site/view', ...liveRows, ...streamsRows, ...agentRows, 'get /ops/overview', 'post /ops/settings', ...banRows];
   it('AC-52: production has only the read-only slice; rehearsal and test also have POST /clock', () => {
     expect(paths('production')).toEqual(['get /festival-state', ...site]);
     expect(paths('rehearsal')).toEqual(['get /festival-state', 'post /clock', ...site]);

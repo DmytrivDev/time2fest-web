@@ -7,6 +7,8 @@
  * - `code`: the state of one code request or verify (`codeFlow.ts`): mail outcome, "user created".
  * - `subjectDeps`: the deps of a subject-data call (`runSubjectDataInScope`), because the registry handler takes only
  *   a subject id.
+ * - `request`: mutable per-request flags (SPEC-11 [П-4]): `linked` — `linkGuest` ran in this request, so the
+ *   forwarder's finish step (`forward.ts`) does not attach a pass a second time.
  * Wiring-time deps (mail, realtime, log, env) do NOT travel here: Better Auth is built with a `getDeps` getter
  * (`createAuthWiring`).
  * The store lives on `globalThis[Symbol.for(...)]`: Next bundles modules more than once, and the Better Auth instance
@@ -26,8 +28,14 @@ export interface CodeRequestState {
   userCreated?: boolean;
 }
 
+/** Mutable flags of one request, shared by every nested scope of it. */
+export interface RequestFlags {
+  linked: boolean;
+}
+
 export interface AuthScope {
   readonly active: boolean;
+  readonly request?: RequestFlags;
   readonly code?: CodeRequestState;
   readonly subjectDeps?: Deps;
 }
@@ -38,7 +46,8 @@ const store: AsyncLocalStorage<AuthScope> = ((globalThis as Record<symbol, unkno
 
 /** Runs `fn` inside an auth scope: Better Auth's session and link hooks act during it. */
 export function runInAuthScope<T>(fn: () => Promise<T>): Promise<T> {
-  return store.run({ ...store.getStore(), active: true }, fn);
+  const current = store.getStore();
+  return store.run({ ...current, active: true, request: current?.request ?? { linked: false } }, fn);
 }
 
 /** Runs `fn` inside an auth scope that also carries the deps of a subject-data call. */
@@ -49,12 +58,31 @@ export function runInSubjectDataScope<T>(deps: Deps, fn: () => Promise<T>): Prom
 /** Runs one code request or verify with its own state; the enclosing scope (if any) stays as it was. */
 export function runCodeRequest<T>(state: CodeRequestState, fn: () => Promise<T>): Promise<T> {
   const current = store.getStore();
-  return store.run({ active: current?.active ?? false, ...(current?.subjectDeps ? { subjectDeps: current.subjectDeps } : {}), code: state }, fn);
+  return store.run(
+    {
+      active: current?.active ?? false,
+      ...(current?.subjectDeps ? { subjectDeps: current.subjectDeps } : {}),
+      ...(current?.request ? { request: current.request } : {}),
+      code: state,
+    },
+    fn,
+  );
 }
 
 /** Whether the current async context is inside `runInAuthScope`. */
 export function inAuthScope(): boolean {
   return store.getStore()?.active === true;
+}
+
+/** Marks that `linkGuest` ran in the current request (no-op outside a scope). */
+export function markScopeLinked(): void {
+  const flags = store.getStore()?.request;
+  if (flags !== undefined) flags.linked = true;
+}
+
+/** Whether `linkGuest` already ran in the current request. */
+export function scopeLinked(): boolean {
+  return store.getStore()?.request?.linked === true;
 }
 
 /** The state of the code request in flight, if any. */

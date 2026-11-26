@@ -1,6 +1,7 @@
 /**
  * Guest cleanup rules (SPEC-10 W41, AC-5), pure: a guest is stale after 30 days without session activity, and is
- * removed only when no subject-data handler other than `auth` holds anything about it.
+ * removed only when no subject-data handler outside the ignored ones holds anything about it. SPEC-11 [П-5] (conductor
+ * decision 1): `profile` and `bans` data do not keep a guest either (its nick is released on removal, AC-31).
  */
 
 export const GUEST_STALE_MS = 30 * 24 * 60 * 60 * 1000;
@@ -23,7 +24,11 @@ export function isEmptySubjectData(value: unknown): boolean {
   return false;
 }
 
-/** True when any capability except `except` returned data for the subject. */
-export function holdsOtherData(results: Record<string, unknown>, except: string): boolean {
-  return Object.entries(results).some(([capability, value]) => capability !== except && !isEmptySubjectData(value));
+/** Capabilities whose data alone never keeps a guest (SPEC-11 W29). */
+export const GUEST_PRUNE_IGNORED: readonly string[] = ['auth', 'bans', 'profile'];
+
+/** True when any capability except those in `except` returned data for the subject. */
+export function holdsOtherData(results: Record<string, unknown>, except: string | readonly string[]): boolean {
+  const ignored = typeof except === 'string' ? [except] : except;
+  return Object.entries(results).some(([capability, value]) => !ignored.includes(capability) && !isEmptySubjectData(value));
 }

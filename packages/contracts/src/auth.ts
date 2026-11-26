@@ -10,7 +10,7 @@ export type AuthReason = (typeof AUTH_REASONS)[number];
 export type AuthCodeIntent = 'signin' | 'signup';
 
 /** Why the `session` event on `user:#<id>` was published. */
-export const SESSION_EVENT_REASONS = ['signed-in', 'signed-out', 'erased'] as const;
+export const SESSION_EVENT_REASONS = ['signed-in', 'signed-out', 'erased', 'pass-granted', 'pass-attached', 'pass-revoked', 'email-changed'] as const;
 export type SessionEventReason = (typeof SESSION_EVENT_REASONS)[number];
 
 /** Event `session` on channel `user:#<id>`. */

@@ -19,6 +19,7 @@ import { betterAuth } from 'better-auth';
 import { realClock } from '../clock';
 import { emailKey } from '../domain/auth/email';
 import { sessionExpiresAt } from '../domain/auth/sessionExpiry';
+import { rightsOf } from '../endpoints/deps';
 import type { AppEnv, Deps } from '../endpoints/types';
 import { DEVICE_COOKIE, isDeviceId, readCookie } from '../platform/device';
 import type { FastStore } from '../ports';
@@ -199,7 +200,9 @@ function buildAuth(input: AuthInput) {
             };
           },
           async after(session, ctx) {
-            onSessionCreated(session, ctx, hookDeps());
+            const deps = hookDeps();
+            onSessionCreated(session, ctx, deps);
+            await banLaterDevice(session, ctx, deps);
           },
         },
         delete: {
@@ -216,6 +219,20 @@ function buildAuth(input: AuthInput) {
       },
     },
   });
+}
+
+/**
+ * A banned account's later session bans its device too (SPEC-11 AC-20). Guest sessions are skipped (a guest is never
+ * an account ban). Never throws: a failure is logged, the sign-in goes on.
+ */
+async function banLaterDevice(session: { userId?: unknown; deviceId?: unknown }, ctx: { path?: string } | null | undefined, deps: Deps | undefined): Promise<void> {
+  if (deps === undefined || ctx?.path === '/sign-in/anonymous') return;
+  if (typeof session.userId !== 'string' || typeof session.deviceId !== 'string') return;
+  try {
+    await rightsOf(deps).bans.onAccountSession(session.userId, session.deviceId);
+  } catch (err) {
+    deps.log.warn({ event: 'ban-device', outcome: 'failed', err: err instanceof Error ? err.name : 'unknown' });
+  }
 }
 
 export type AuthInstance = ReturnType<typeof buildAuth>;

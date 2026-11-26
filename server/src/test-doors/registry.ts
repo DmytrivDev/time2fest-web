@@ -1,8 +1,9 @@
 /**
  * Test-door registry (AC-32, AC-35 … AC-38, AC-62; SPEC-07 AC-67, AC-68): sorted, unique rows under
- * `/api/_test/*` — 24 rows (SPEC-12 W38: the `video-status` stub became the `live` door; SPEC-13b W18: + `ops-tick`;
+ * `/api/_test/*` — 32 rows (SPEC-12 W38: the `video-status` stub became the `live` door; SPEC-13b W18: + `ops-tick`;
  * SPEC-10 W26–W27: the `last-code` stub became `auth-last-code` under `/api/_test/auth/`, + `auth-expire-code`,
- * `auth-google-user`, `auth-write-probe`, `mail-counter`). Evaluated only in the `test` class with `T2F_TEST_DOORS=1` (see
+ * `auth-google-user`, `auth-write-probe`, `mail-counter`, `auth-free-gap`, `mail-break-delivery`; SPEC-11 W34: six `rights-*`
+ * rows, `test-doors/rights.ts`). Evaluated only in the `test` class with `T2F_TEST_DOORS=1` (see
  * `shouldLoadDoors`). `reset` empties this worktree's data (run records and scheduler runs included)
  * and seeds it (AC-47); `fixtures` applies one named fixture row of the seed registry.
  */
@@ -19,7 +20,7 @@ import { accessTokenDoor } from './accessToken';
 import { adminTestSliceDoor } from './adminTestSlice';
 import { alarmDoor } from './alarm';
 import { authDoors, clearAuthTables, mailBreakDeliveryDoorRow, mailCounterDoorRow, restoreDelivery } from './auth';
-import type { Ctx, HttpMethod, Outcome } from '../endpoints/types';
+import type { Ctx, Deps, HttpMethod, Outcome } from '../endpoints/types';
 import { assertRegistry } from '../platform/registry';
 import type { SeedStore } from '../ports';
 import { collectionRegistry } from '../registries/collections';
@@ -31,6 +32,7 @@ import { liveDoor } from './live';
 import { moderationDoor } from './moderation';
 import { opsTickDoor } from './ops';
 import { realtimeTokenDoor, type TestSubjects } from './realtimeToken';
+import { clearRightsTables, restoreLinkFault, rightsDoors } from './rights';
 import { schedulerDoors } from './scheduler';
 import { siteDoor } from './site';
 
@@ -41,6 +43,8 @@ export interface DoorTools {
   seed: SeedStore;
   /** The current realtime test subject of this doors construction (AC-57). */
   subjects: TestSubjects;
+  /** The composition root's deps (the ones the sign-in hooks read), not the served per-dispatcher view. */
+  deps: Deps;
 }
 
 export interface DoorRow {
@@ -96,6 +100,9 @@ export function resetDoor(
       });
       // SPEC-10: users, sessions, accounts and codes of Better Auth (`auth:*`, `mail:*` keys went with the prefix above).
       await clearAuthTables(ctx.deps);
+      // SPEC-11: passes, bans, profiles (`ban:*` keys went with the prefix above); an armed link fault is dropped.
+      await clearRightsTables(ctx.deps);
+      restoreLinkFault();
       restoreDelivery();
       subjects.clear();
       clearRunFault();
@@ -156,6 +163,7 @@ export const doorRegistry: readonly DoorRow[] = [
   stub('paypro-webhook', '/api/_test/paypro-webhook'),
   realtimeTokenDoor,
   resetDoor(),
+  ...rightsDoors,
   ...schedulerDoors,
   siteDoor,
 ];

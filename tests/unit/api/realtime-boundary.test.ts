@@ -7,8 +7,8 @@ import { HTTP_DOMAINS } from '../../../lib/api/http/domains';
 const root = path.resolve(__dirname, '../../..');
 
 describe('межі хвилі realtime', () => {
-  it('AC-55: HTTP_DOMAINS містить лише catalog, site (SPEC-08) і live (SPEC-12)', () => {
-    expect([...HTTP_DOMAINS]).toEqual(['catalog', 'site', 'live']);
+  it('AC-55: HTTP_DOMAINS містить лише catalog, site (SPEC-08), live (SPEC-12), auth і profile (SPEC-11)', () => {
+    expect([...HTTP_DOMAINS].sort()).toEqual(['auth', 'catalog', 'live', 'profile', 'site']);
   });
 
   it('AC-55: верхньорівневі файли lib/api/http/*.ts не імпортують ./realtime; винятки SPEC-08 — site.ts і SPEC-12 — live.ts: лише типи й динамічний import за прапорцем збірки', () => {
@@ -18,8 +18,15 @@ describe('межі хвилі realtime', () => {
     const anyImport = /from\s+['"]\.\/realtime(\/[^'"]*)?['"]|import\(\s*['"]\.\/realtime/g;
     for (const f of files) {
       const src = fs.readFileSync(path.join(dir, f), 'utf8');
-      if (f === 'auth.ts') {
-        // SPEC-10: only the transport type; the transport itself is handed in by the caller.
+      if (f === 'index.ts') {
+        // SPEC-11: the auth/profile factories get the transport through the same build-flag dynamic import as site.ts.
+        const dynamic = /process\.env\.NEXT_PUBLIC_REALTIME_URL\s*\?\s*\(\) => import\('\.\/realtime'\)/;
+        expect(src, f).toMatch(dynamic);
+        expect(src.replace(dynamic, ''), f).not.toMatch(anyImport);
+        continue;
+      }
+      if (f === 'auth.ts' || f === 'profile.ts') {
+        // SPEC-10/11: only the transport type; the transport itself is handed in by the caller.
         const typeOnly = /^import type \{[^}]*\} from '\.\/realtime\/types';$/m;
         expect(src.replace(typeOnly, ''), f).not.toMatch(anyImport);
         continue;

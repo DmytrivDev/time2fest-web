@@ -33,7 +33,7 @@ describe('admin first screen (AC-26 … AC-29)', () => {
 
   it('AC-28: under T2F_ENV=production there is no 90-test slot; the test class lists it last', () => {
     const production = visibleSlots(envClass({ T2F_ENV: 'production' }));
-    expect(production.map((s) => s.key)).toEqual(['05-festival', '10-corrections', '15-live', '17-streams', '20-unattended', '30-moderation', '40-site', '50-ops']);
+    expect(production.map((s) => s.key)).toEqual(['05-festival', '10-corrections', '15-live', '17-streams', '20-unattended', '30-moderation', '35-bans', '40-site', '50-ops']);
     expect(visibleSlots(envClass({ T2F_ENV: 'test' })).at(-1)?.key).toBe('90-test');
   });
 

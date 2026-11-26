@@ -16,7 +16,8 @@ describe('subject-data registry (AC-50)', () => {
   it('has auth (handler) and auth-codes (declarative, 10 min), sorted by capability', () => {
     const names = subjectDataRegistry.map((r) => r.capability);
     expect(names).toEqual([...names].sort());
-    expect(names).toEqual(expect.arrayContaining(['auth', 'auth-codes']));
+    expect(names).toEqual(expect.arrayContaining(['auth', 'auth-codes', 'bans', 'passes', 'profile']));
+    for (const c of ['bans', 'passes', 'profile']) expect(subjectDataRegistry.find((r) => r.capability === c) && 'declarative' in (subjectDataRegistry.find((r) => r.capability === c) ?? {})).toBe(false);
     const auth = subjectDataRegistry.find((r) => r.capability === 'auth');
     expect(auth).toBe(authSubjectData);
     expect(auth && 'declarative' in auth).toBe(false);

@@ -7,6 +7,7 @@ import * as migration_20261123_105845_live from './20261123_105845_live';
 import * as migration_20261124_060324_ops from './20261124_060324_ops';
 import * as migration_20261124_141222_stream_sources from './20261124_141222_stream_sources';
 import * as migration_20261125_001708_spec10_auth from './20261125_001708_spec10_auth';
+import * as migration_20261125_224924_spec11_rights from './20261125_224924_spec11_rights';
 
 export const migrations = [
   {
@@ -52,6 +53,11 @@ export const migrations = [
   {
     up: migration_20261125_001708_spec10_auth.up,
     down: migration_20261125_001708_spec10_auth.down,
-    name: '20261125_001708_spec10_auth'
+    name: '20261125_001708_spec10_auth',
+  },
+  {
+    up: migration_20261125_224924_spec11_rights.up,
+    down: migration_20261125_224924_spec11_rights.down,
+    name: '20261125_224924_spec11_rights'
   },
 ];

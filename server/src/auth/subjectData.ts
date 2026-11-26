@@ -16,7 +16,10 @@ import type { GuestPruneStore } from '../ops/guestPrune';
 import type { Deps } from '../endpoints/types';
 import { runSubjectData, type SubjectDataHandler, type SubjectDataOp, type SubjectDataResult, type SubjectDataRow } from '../platform/subjectData';
 import { publishSessionEvent } from './events';
+import { eraseGuestRights, guestHeld, type SqlPool as MergePool } from './merge';
 import { requireSubjectDataDeps, runInAuthScope, runInSubjectDataScope } from './scope';
+import { createRightsSubjectData } from '../rights/subjectData';
+import { rightsDbOf } from './pool';
 
 export const AUTH_CAPABILITY = 'auth';
 
@@ -168,3 +171,27 @@ export function createAuthGuestStore(deps: () => Deps): GuestPruneStore {
     },
   };
 }
+
+/**
+ * The keep rule and the after-removal step of the guest cleanup (SPEC-11 W29, [П-5], AC-31, AC-50): a guest with an
+ * `auth_link_retries` row from it or an active unattached pass on its device stays; a removed guest's profile and bans
+ * rows go (nick released).
+ */
+export function authGuestKeep(deps: () => Deps): { held(id: string): Promise<boolean>; afterGuestRemoved(id: string): Promise<void> } {
+  return {
+    async held(id) {
+      const d = deps();
+      if (d.auth === undefined) return false;
+      const pool = (await poolOf(d)) as unknown as MergePool;
+      const r = await pool.query('SELECT device_id FROM users WHERE id::text = $1', [id]);
+      const device = r.rows[0]?.device_id;
+      return guestHeld(d, pool, id, typeof device === 'string' ? device : null);
+    },
+    async afterGuestRemoved(id) {
+      await eraseGuestRights((await poolOf(deps())) as unknown as MergePool, id);
+    },
+  };
+}
+
+/** The rights rows `profile`, `passes`, `bans` (SPEC-11 W36) over the auth pool of the scope's deps (A3 wiring). */
+export const rightsSubjectData = createRightsSubjectData(() => rightsDbOf(requireSubjectDataDeps()));

@@ -86,6 +86,9 @@ const nextConfig: NextConfig = {
                   // Бекенду ще немає: спільні блоки (мапа) не мають звертатися до шва даних.
                   '@/lib/api/hooks/auth': './lib/prelaunch/noApi/auth.ts',
                   '@/lib/api/hooks/passport': './lib/prelaunch/noApi/passport.ts',
+                  // Входу й кабінету немає: адаптери http/auth і http/profile не йдуть у пакет (check:prelaunch).
+                  '@/lib/api/http/auth': './lib/prelaunch/noApi/httpAccount.ts',
+                  '@/lib/api/http/profile': './lib/prelaunch/noApi/httpAccount.ts',
                 }
               : {}),
             ...(CATALOG_SOURCE === 'data'

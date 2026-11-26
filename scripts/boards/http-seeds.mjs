@@ -6,15 +6,21 @@ import { fileURLToPath } from 'node:url';
 import { collectSeeds, listManifestFiles, loadManifest } from './lib/manifests.mjs';
 
 /**
- * In this wave every seed needs only the catalog, which the reset door re-seeds;
- * users, passes and stamps are still `sim`. Later waves extend the lists, keeping all names mapped.
+ * Seeds -> test-door calls (SPEC-11: `auth` and `profile` are http, so account state is server state).
+ * `user` = sign in once as olena@example.com (code flow: `auth/free-gap`, send code, `auth/last-code`, verify) and write the
+ * profile (nick Олена, flag UA) with `rights/profile-seed`; `pass` = `user` + `rights/pass-grant` (holder = the account) and the
+ * schedule from the seed; a board that must show NO pass first deletes the account's pass rows (revoke is clock-relative).
+ * `nick` = guest profile via `rights/profile-seed` (subject = the guest id of `GET /api/auth/get-session`).
+ * `authOther` (google account + unattached device pass) has no preset yet: boards using it are not run over http.
+ * Inline object seeds are localStorage of the still-sim domains (chat, passport, notifications, toasts) and stay client-side.
+ * Guests created by earlier boards are removed (`profiles` rows) so a nick can be taken again.
  */
 export const SEED_MAP = {
   fresh: [{ door: 'reset' }],
   guest: [{ door: 'reset' }],
-  user: [{ door: 'reset' }],
-  pass: [{ door: 'reset' }],
-  nick: [{ door: 'reset' }],
+  user: [{ door: 'auth/free-gap' }, { door: 'auth/last-code' }, { door: 'rights/profile-seed' }],
+  pass: [{ door: 'auth/free-gap' }, { door: 'auth/last-code' }, { door: 'rights/profile-seed' }, { door: 'rights/pass-grant' }],
+  nick: [{ door: 'rights/profile-seed' }],
   authOther: [{ door: 'reset' }],
 };
 

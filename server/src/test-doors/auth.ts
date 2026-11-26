@@ -25,12 +25,12 @@ import {
   authLastCodeDoor,
   mailCounterDoor,
 } from '@time2fest/contracts/schemas';
-import pg from 'pg';
 import type { z } from 'zod';
 import { realClock } from '../clock';
 import { normalizeEmail } from '../domain/auth/email';
 import { msToUtcMidnight, utcDayKey } from '../domain/mail/day';
 import { codeGapKey } from '../auth/codeLimits';
+import { authPool } from '../auth/pool';
 import { authOf, mailOf } from '../endpoints/deps';
 import { failure } from '../endpoints/pipeline';
 import type { Deps } from '../endpoints/types';
@@ -78,15 +78,6 @@ export async function lastCodeFor(to: string): Promise<string | null> {
     if (code) return code;
   }
   return null;
-}
-
-/** The Postgres pool Better Auth runs on (the one `auth/instance.ts` passes as `database`). */
-async function authPool(deps: Deps): Promise<pg.Pool> {
-  const ctx = await authOf(deps).instance().$context;
-  const db = (ctx.options as { database?: unknown }).database;
-  if (!(db instanceof pg.Pool))
-    throw new Error('test doors: Better Auth database is not a pg pool');
-  return db;
 }
 
 /** Empties the Better Auth tables (reset door, W26); no-op when sign-in is not wired into these deps. */

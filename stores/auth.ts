@@ -45,6 +45,8 @@ export interface AuthUser {
   email: string;
   via: 'google' | 'email';
   signedInAt: number;
+  /** `true` — адреса з Google не підтверджена (SPEC-10): Google — єдиний спосіб входу (AC-48 `last-method`). */
+  emailUnverified?: true;
 }
 
 /** Навіщо код: вхід (і створення акаунта) чи зміна пошти в кабінеті. */

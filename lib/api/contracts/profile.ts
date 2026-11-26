@@ -10,6 +10,13 @@ import type { NickReason } from './chat';
 /** Причина відмови прив’язки Google (`conflict`): цей Google уже зайнятий. */
 export type LinkGoogleReason = 'google-taken';
 
+/** SPEC-11: `conflict` графіка — пояс заповнено. */
+export type ScheduleReason = 'schedule-full';
+/** SPEC-11: відмови зміни пошти — `validation` `email` | `same-email`, `conflict` `taken`. */
+export type ChangeEmailReason = 'email' | 'same-email' | 'taken';
+/** SPEC-11: `conflict` відключення Google — це єдиний спосіб входу. */
+export type UnlinkGoogleReason = 'last-method';
+
 export interface ProfileSettings {
   hour12: boolean;
   homeCountry: string | null;
@@ -49,7 +56,7 @@ export interface ProfileService {
   get(): Promise<ApiResult<Profile>>;
   /** Останній відомий профіль без запиту (кеш на пристрої) — форми й шапка мають нік одразу після гідратації. */
   peek?(): Profile | undefined;
-  /** Зміни профілю (інша вкладка, інший пристрій). У `http` — особистий канал `user:#<id>` (подія `profile`). */
+  /** Зміни профілю (інша вкладка, інший пристрій). У `http` — особистий канал `user:#<id>`, подія `profile` (клієнт перечитує профіль). */
   subscribe?(onChange: (profile: Profile) => void): Unsubscribe;
   /** `PATCH /api/me/profile`. */
   update(patch: ProfilePatch): Promise<ApiResult<Profile>>;

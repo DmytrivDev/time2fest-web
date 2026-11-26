@@ -1313,6 +1313,13 @@
     "lib/api/contracts/passport.ts#applyPassportEvent": {
       "fn": "export function applyPassportEvent(stamps: readonly Stamp[], event: PassportEvent): readonly Stamp[]"
     },
+    "lib/api/contracts/profile.ts#ChangeEmailReason": {
+      "union": [
+        "'email'",
+        "'same-email'",
+        "'taken'"
+      ]
+    },
     "lib/api/contracts/profile.ts#LinkGoogleReason": {
       "union": [
         "'google-taken'"
@@ -1549,6 +1556,16 @@
           }
         }
       }
+    },
+    "lib/api/contracts/profile.ts#ScheduleReason": {
+      "union": [
+        "'schedule-full'"
+      ]
+    },
+    "lib/api/contracts/profile.ts#UnlinkGoogleReason": {
+      "union": [
+        "'last-method'"
+      ]
     },
     "lib/api/contracts/rating.ts#RatingAggregate": {
       "props": {
@@ -2875,8 +2892,23 @@
     "packages/contracts/src/auth.schemas.ts#requestCodeBody": {
       "text": "ZodObject<{ email: ZodString; intent: ZodEnum<{ signin: \"signin\"; signup: \"signup\"; }>; }, $strict>"
     },
+    "packages/contracts/src/auth.schemas.ts#rightsBanDoor": {
+      "text": "ZodObject<{ kind: ZodEnum<{ \"ip-day\": \"ip-day\"; account: \"account\"; device: \"device\"; guest: \"guest\"; }>; subject: ZodString; }, $strict>"
+    },
+    "packages/contracts/src/auth.schemas.ts#rightsFixtureDoor": {
+      "text": "ZodObject<{ name: ZodString; }, $strict>"
+    },
+    "packages/contracts/src/auth.schemas.ts#rightsLinkFaultDoor": {
+      "text": "ZodObject<{ handler: ZodString; }, $strict>"
+    },
+    "packages/contracts/src/auth.schemas.ts#rightsPassGrantDoor": {
+      "text": "ZodObject<{ grantRef: ZodString; holder: ZodUnion<readonly [ZodObject<{ account: ZodString; }, $strict>, ZodObject<{ device: ZodString; paymentEmail: ZodString; }, $strict>]>; issuedAt: ZodOptional<ZodNumber>; source: ZodString; }, $strict>"
+    },
+    "packages/contracts/src/auth.schemas.ts#rightsPassRevokeDoor": {
+      "text": "ZodObject<{ grantRef: ZodString; }, $strict>"
+    },
     "packages/contracts/src/auth.schemas.ts#sessionEventSchema": {
-      "text": "ZodObject<{ data: ZodObject<{ reason: ZodEnum<{ \"signed-in\": \"signed-in\"; \"signed-out\": \"signed-out\"; erased: \"erased\"; }>; }, $strict>; id: ZodString; type: ZodLiteral<\"session\">; }, $strict>"
+      "text": "ZodObject<{ data: ZodObject<{ reason: ZodEnum<{ \"email-changed\": \"email-changed\"; \"pass-attached\": \"pass-attached\"; \"pass-granted\": \"pass-granted\"; \"pass-revoked\": \"pass-revoked\"; \"signed-in\": \"signed-in\"; \"signed-out\": \"signed-out\"; erased: \"erased\"; }>; }, $strict>; id: ZodString; type: ZodLiteral<\"session\">; }, $strict>"
     },
     "packages/contracts/src/auth.schemas.ts#sessionSchema": {
       "text": "ZodObject<{ code: ZodNullable<ZodObject<{ attemptsLeft: ZodNumber; email: ZodString; expiresAt: ZodNumber; intent: ZodEnum<{ signin: \"signin\"; signup: \"signup\"; }>; resendAt: ZodNumber; sentAt: ZodNumber; }, $strict>>; devicePass: ZodNullable<ZodObject<{ email: ZodString; since: ZodNumber; }, $strict>>; guestId: ZodString; hasPass: ZodBoolean; passNight: ZodOptional<ZodString>; passOn: ZodNullable<ZodEnum<{ account: \"account\"; device: \"device\"; }>>; passSince: ZodNullable<ZodNumber>; user: ZodNullable<ZodObject<{ email: ZodString; id: ZodString; name: ZodOptional<ZodString>; signedInAt: ZodNumber; via: ZodEnum<{ email: \"email\"; google: \"google\"; }>; }, $strict>>; }, $strict>"
@@ -2903,7 +2935,7 @@
       "text": "(typeof AUTH_REASONS)[number]"
     },
     "packages/contracts/src/auth.ts#SESSION_EVENT_REASONS": {
-      "text": "readonly [\"signed-in\", \"signed-out\", \"erased\"]"
+      "text": "readonly [\"signed-in\", \"signed-out\", \"erased\", \"pass-granted\", \"pass-attached\", \"pass-revoked\", \"email-changed\"]"
     },
     "packages/contracts/src/auth.ts#SessionEvent": {
       "props": {
@@ -2938,6 +2970,132 @@
     },
     "packages/contracts/src/auth.ts#SessionEventReason": {
       "text": "(typeof SESSION_EVENT_REASONS)[number]"
+    },
+    "packages/contracts/src/authGuard.ts#CodeInfoLike": {
+      "props": {
+        "attemptsLeft": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "email": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "expiresAt": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "intent": {
+          "optional": false,
+          "type": {
+            "union": [
+              "'signin'",
+              "'signup'"
+            ]
+          }
+        },
+        "resendAt": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "sentAt": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/authGuard.ts#SessionLike": {
+      "props": {
+        "code": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "ref:packages/contracts/src/authGuard.ts#CodeInfoLike"
+            ]
+          }
+        },
+        "devicePass": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "{\"props\":{\"email\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"since\":{\"optional\":false,\"type\":{\"text\":\"number\"}}}}"
+            ]
+          }
+        },
+        "guestId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "hasPass": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "passNight": {
+          "optional": true,
+          "type": {
+            "text": "string"
+          }
+        },
+        "passOn": {
+          "optional": false,
+          "type": {
+            "union": [
+              "'account'",
+              "'device'",
+              "null"
+            ]
+          }
+        },
+        "passSince": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "number"
+            ]
+          }
+        },
+        "user": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "{\"props\":{\"email\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"id\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"name\":{\"optional\":true,\"type\":{\"text\":\"string\"}},\"signedInAt\":{\"optional\":false,\"type\":{\"text\":\"number\"}},\"via\":{\"optional\":false,\"type\":{\"union\":[\"'email'\",\"'google'\"]}}}}"
+            ]
+          }
+        }
+      }
+    },
+    "packages/contracts/src/authGuard.ts#isSessionEvent": {
+      "fn": "export function isSessionEvent(x: unknown): x is { type: 'session'; id: string; data: { reason: string } }"
+    },
+    "packages/contracts/src/authGuard.ts#parseCodeInfo": {
+      "fn": "export function parseCodeInfo(x: unknown): CodeInfoLike | null"
+    },
+    "packages/contracts/src/authGuard.ts#parseGoogleRedirect": {
+      "fn": "export function parseGoogleRedirect(x: unknown): { kind: 'redirect'; url: string } | null"
+    },
+    "packages/contracts/src/authGuard.ts#parseSession": {
+      "fn": "export function parseSession(x: unknown): SessionLike | null"
+    },
+    "packages/contracts/src/authGuard.ts#parseSignInOutcome": {
+      "fn": "export function parseSignInOutcome(x: unknown): { isNew: boolean; email: string } | null"
     },
     "packages/contracts/src/catalog.schemas.ts#CatalogChanged": {
       "text": "z.infer<typeof CatalogChangedSchema>"
@@ -4335,6 +4493,224 @@
           }
         }
       }
+    },
+    "packages/contracts/src/profile.schemas.ts#NickCheckBody": {
+      "text": "z.infer<typeof nickCheckBody>"
+    },
+    "packages/contracts/src/profile.schemas.ts#ProfilePatchBody": {
+      "text": "z.infer<typeof profilePatchBody>"
+    },
+    "packages/contracts/src/profile.schemas.ts#ProfileSettingsWire": {
+      "text": "z.infer<typeof profileSettingsSchema>"
+    },
+    "packages/contracts/src/profile.schemas.ts#ProfileWire": {
+      "text": "z.infer<typeof profileSchema>"
+    },
+    "packages/contracts/src/profile.schemas.ts#emailChangeBody": {
+      "text": "ZodObject<{ email: ZodString; }, $strict>"
+    },
+    "packages/contracts/src/profile.schemas.ts#emailVerifyBody": {
+      "text": "ZodObject<{ code: ZodString; }, $strict>"
+    },
+    "packages/contracts/src/profile.schemas.ts#flagCodeSchema": {
+      "text": "ZodString"
+    },
+    "packages/contracts/src/profile.schemas.ts#googleLinkBody": {
+      "text": "ZodObject<{ returnPath: ZodString; }, $strict>"
+    },
+    "packages/contracts/src/profile.schemas.ts#nickCheckBody": {
+      "text": "ZodObject<{ nick: ZodString; }, $strict>"
+    },
+    "packages/contracts/src/profile.schemas.ts#pendingEmailSchema": {
+      "text": "ZodObject<{ attemptsLeft: ZodNumber; email: ZodString; expiresAt: ZodNumber; resendAt: ZodNumber; sentAt: ZodNumber; }, $strict>"
+    },
+    "packages/contracts/src/profile.schemas.ts#profileEventSchema": {
+      "text": "ZodObject<{ data: ZodObject<{  }, $strict>; id: ZodString; type: ZodLiteral<\"profile\">; }, $strict>"
+    },
+    "packages/contracts/src/profile.schemas.ts#profilePatchBody": {
+      "text": "ZodObject<{ detectedFlag: ZodOptional<ZodString>; flagCode: ZodOptional<ZodString>; nick: ZodOptional<ZodString>; settings: ZodOptional<ZodObject<{ homeCountry: ZodOptional<ZodNullable<ZodString>>; homeZoneId: ZodOptional<ZodNullable<ZodString>>; hour12: ZodOptional<ZodBoolean>; passportHints: ZodOptional<ZodBoolean>; quietDefault: ZodOptional<ZodBoolean>; reminderEmails: ZodOptional<ZodBoolean>; showPassport: ZodOptional<ZodBoolean>; showPath: ZodOptional<ZodBoolean>; }, $strict>>; }, $strict>"
+    },
+    "packages/contracts/src/profile.schemas.ts#profileSchema": {
+      "text": "ZodObject<{ detectedFlag: ZodNullable<ZodString>; flagCode: ZodNullable<ZodString>; googleLinked: ZodBoolean; nick: ZodNullable<ZodString>; pendingEmail: ZodNullable<ZodObject<{ attemptsLeft: ZodNumber; email: ZodString; expiresAt: ZodNumber; resendAt: ZodNumber; sentAt: ZodNumber; }, $strict>>; schedule: ZodArray<ZodString>; settings: ZodObject<{ homeCountry: ZodNullable<ZodString>; homeZoneId: ZodNullable<ZodString>; hour12: ZodBoolean; passportHints: ZodBoolean; quietDefault: ZodBoolean; reminderEmails: ZodBoolean; showPassport: ZodBoolean; showPath: ZodBoolean; }, $strict>; }, $strict>"
+    },
+    "packages/contracts/src/profile.schemas.ts#profileSettingsSchema": {
+      "text": "ZodObject<{ homeCountry: ZodNullable<ZodString>; homeZoneId: ZodNullable<ZodString>; hour12: ZodBoolean; passportHints: ZodBoolean; quietDefault: ZodBoolean; reminderEmails: ZodBoolean; showPassport: ZodBoolean; showPath: ZodBoolean; }, $strict>"
+    },
+    "packages/contracts/src/profile.schemas.ts#rightsProfileSeedDoor": {
+      "text": "ZodObject<{ flagCode: ZodOptional<ZodString>; nick: ZodOptional<ZodString>; schedule: ZodOptional<ZodArray<ZodString>>; settings: ZodOptional<ZodObject<{ homeCountry: ZodOptional<ZodNullable<ZodString>>; homeZoneId: ZodOptional<ZodNullable<ZodString>>; hour12: ZodOptional<ZodBoolean>; passportHints: ZodOptional<ZodBoolean>; quietDefault: ZodOptional<ZodBoolean>; reminderEmails: ZodOptional<ZodBoolean>; showPassport: ZodOptional<ZodBoolean>; showPath: ZodOptional<ZodBoolean>; }, $strict>>; subject: ZodString; }, $strict>"
+    },
+    "packages/contracts/src/profile.schemas.ts#scheduleBody": {
+      "text": "ZodObject<{ eventIds: ZodArray<ZodString>; }, $strict>"
+    },
+    "packages/contracts/src/profile.schemas.ts#scheduleReplaceBody": {
+      "text": "ZodObject<{ eventId: ZodString; outIso: ZodString; }, $strict>"
+    },
+    "packages/contracts/src/profile.schemas.ts#scheduleToggleBody": {
+      "text": "ZodObject<{ eventId: ZodString; }, $strict>"
+    },
+    "packages/contracts/src/profile.ts#PROFILE_REASONS": {
+      "text": "readonly [\"google-taken\", \"last-method\", \"same-email\", \"schedule-full\", \"taken\"]"
+    },
+    "packages/contracts/src/profile.ts#PROFILE_SETTINGS_KEYS": {
+      "text": "readonly [\"hour12\", \"homeCountry\", \"homeZoneId\", \"showPassport\", \"showPath\", \"passportHints\", \"quietDefault\", \"reminderEmails\"]"
+    },
+    "packages/contracts/src/profile.ts#ProfileEvent": {
+      "props": {
+        "data": {
+          "optional": false,
+          "type": {
+            "text": "Record<string, never>"
+          }
+        },
+        "id": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "type": {
+          "optional": false,
+          "type": {
+            "union": [
+              "'profile'"
+            ]
+          }
+        }
+      }
+    },
+    "packages/contracts/src/profile.ts#ProfileReason": {
+      "text": "(typeof PROFILE_REASONS)[number]"
+    },
+    "packages/contracts/src/profile.ts#ProfileSettingsKey": {
+      "text": "(typeof PROFILE_SETTINGS_KEYS)[number]"
+    },
+    "packages/contracts/src/profile.ts#SPECIAL_FLAG_CODES": {
+      "text": "readonly [\"earth\", \"EU\", \"un\", \"GB-ENG\", \"GB-SCT\", \"GB-WLS\", \"pride\", \"trans\", \"bisexual\"]"
+    },
+    "packages/contracts/src/profile.ts#SpecialFlagCode": {
+      "text": "(typeof SPECIAL_FLAG_CODES)[number]"
+    },
+    "packages/contracts/src/profileGuard.ts#ProfileLike": {
+      "props": {
+        "detectedFlag": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "flagCode": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "googleLinked": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "nick": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "pendingEmail": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "{\"props\":{\"attemptsLeft\":{\"optional\":false,\"type\":{\"text\":\"number\"}},\"email\":{\"optional\":false,\"type\":{\"text\":\"string\"}},\"expiresAt\":{\"optional\":false,\"type\":{\"text\":\"number\"}},\"resendAt\":{\"optional\":false,\"type\":{\"text\":\"number\"}},\"sentAt\":{\"optional\":false,\"type\":{\"text\":\"number\"}}}}"
+            ]
+          }
+        },
+        "schedule": {
+          "optional": false,
+          "type": {
+            "text": "string[]"
+          }
+        },
+        "settings": {
+          "optional": false,
+          "type": {
+            "props": {
+              "homeCountry": {
+                "optional": false,
+                "type": {
+                  "union": [
+                    "null",
+                    "string"
+                  ]
+                }
+              },
+              "homeZoneId": {
+                "optional": false,
+                "type": {
+                  "union": [
+                    "null",
+                    "string"
+                  ]
+                }
+              },
+              "hour12": {
+                "optional": false,
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "passportHints": {
+                "optional": false,
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "quietDefault": {
+                "optional": false,
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "reminderEmails": {
+                "optional": false,
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "showPassport": {
+                "optional": false,
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "showPath": {
+                "optional": false,
+                "type": {
+                  "text": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "packages/contracts/src/profileGuard.ts#isProfileEvent": {
+      "fn": "export function isProfileEvent(x: unknown): x is { type: 'profile'; id: string; data: Record<string, never> }"
+    },
+    "packages/contracts/src/profileGuard.ts#parseProfile": {
+      "fn": "export function parseProfile(x: unknown): ProfileLike | null"
+    },
+    "packages/contracts/src/profileGuard.ts#parseScheduleIds": {
+      "fn": "export function parseScheduleIds(x: unknown): string[] | null"
     },
     "packages/contracts/src/publicRoutes.ts#PUBLIC_ROUTES": {
       "text": "readonly PublicRoute[]"
@@ -5954,6 +6330,13 @@
       "recordedAt": "2026-11-25T00:08:07.559Z",
       "changes": [
         "packages/contracts/src/live.schemas.ts#SourceErrorReportSchema: text changed (\"ZodObject<{ code: ZodNumber & ZodType<100 | 2 | 5 | 101 | 150 | 153, number, $ZodTypeInternals<100 | 2 | 5 | 101 | 150 | 153, number>>; eventId: ZodString; sourceId: ZodString; }, $strict>\" -> \"ZodObject<{ code: ZodNumber & ZodType<2 | 5 | 100 | 101 | 150 | 153, number, $ZodTypeInternals<2 | 5 | 100 | 101 | 150 | 153, number>>; eventId: ZodString; sourceId: ZodString; }, $strict>\")"
+      ]
+    },
+    {
+      "recordedAt": "2026-11-25T22:45:52.875Z",
+      "changes": [
+        "packages/contracts/src/auth.schemas.ts#sessionEventSchema: text changed (\"ZodObject<{ data: ZodObject<{ reason: ZodEnum<{ \\\"signed-in\\\": \\\"signed-in\\\"; \\\"signed-out\\\": \\\"signed-out\\\"; erased: \\\"erased\\\"; }>; }, $strict>; id: ZodString; type: ZodLiteral<\\\"session\\\">; }, $strict>\" -> \"ZodObject<{ data: ZodObject<{ reason: ZodEnum<{ \\\"email-changed\\\": \\\"email-changed\\\"; \\\"pass-attached\\\": \\\"pass-attached\\\"; \\\"pass-granted\\\": \\\"pass-granted\\\"; \\\"pass-revoked\\\": \\\"pass-revoked\\\"; \\\"signed-in\\\": \\\"signed-in\\\"; \\\"signed-out\\\": \\\"signed-out\\\"; erased: \\\"erased\\\"; }>; }, $strict>; id: ZodString; type: ZodLiteral<\\\"session\\\">; }, $strict>\")",
+        "packages/contracts/src/auth.ts#SESSION_EVENT_REASONS: text changed (\"readonly [\\\"signed-in\\\", \\\"signed-out\\\", \\\"erased\\\"]\" -> \"readonly [\\\"signed-in\\\", \\\"signed-out\\\", \\\"erased\\\", \\\"pass-granted\\\", \\\"pass-attached\\\", \\\"pass-revoked\\\", \\\"email-changed\\\"]\")"
       ]
     }
   ]

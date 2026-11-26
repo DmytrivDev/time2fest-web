@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { AUTH_REASONS } from '../src/auth';
+import { AUTH_REASONS, SESSION_EVENT_REASONS } from '../src/auth';
 import {
   authExpireCodeDoor,
   authGoogleUserDoor,
   authLastCodeDoor,
   googleBody,
   mailCounterDoor,
+  rightsBanDoor,
+  rightsPassGrantDoor,
   requestCodeBody,
   sessionEventSchema,
   sessionSchema,
@@ -63,5 +65,22 @@ describe('auth wire schemas (AC-51)', () => {
   it('session event', () => {
     expect(sessionEventSchema.safeParse({ type: 'session', id: 'e1', data: { reason: 'erased' } }).success).toBe(true);
     expect(sessionEventSchema.safeParse({ type: 'session', id: 'e1', data: { reason: 'x' } }).success).toBe(false);
+  });
+});
+
+// SPEC-11 AC-59: new session reasons and rights doors.
+describe('rights additions', () => {
+  it('session reasons', () => {
+    expect([...SESSION_EVENT_REASONS]).toEqual(['signed-in', 'signed-out', 'erased', 'pass-granted', 'pass-attached', 'pass-revoked', 'email-changed']);
+    for (const reason of SESSION_EVENT_REASONS)
+      expect(sessionEventSchema.safeParse({ type: 'session', id: 'x', data: { reason } }).success).toBe(true);
+    expect(sessionEventSchema.safeParse({ type: 'session', id: 'x', data: { reason: 'nope' } }).success).toBe(false);
+  });
+  it('doors', () => {
+    expect(rightsPassGrantDoor.safeParse({ holder: { account: 'u1' }, source: 'test', grantRef: 'g1' }).success).toBe(true);
+    expect(rightsPassGrantDoor.safeParse({ holder: { device: 'd1', paymentEmail: ok }, source: 'test', grantRef: 'g1' }).success).toBe(true);
+    expect(rightsPassGrantDoor.safeParse({ holder: { device: 'd1' }, source: 'test', grantRef: 'g1' }).success).toBe(false);
+    expect(rightsBanDoor.safeParse({ kind: 'ip-day', subject: 'x' }).success).toBe(true);
+    expect(rightsBanDoor.safeParse({ kind: 'other', subject: 'x' }).success).toBe(false);
   });
 });

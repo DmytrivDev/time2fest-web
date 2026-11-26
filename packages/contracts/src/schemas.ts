@@ -80,3 +80,5 @@ export * from './live.schemas';
 export * from './streams.schemas';
 
 export * from './auth.schemas';
+
+export * from './profile.schemas';

@@ -14,7 +14,7 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useOverlay } from '@/components/shell/OverlayManager';
 import { GATE_KEYS, type PassGateFeature } from '@/components/pass/PassGate';
-import { hasPassNow, profileActions } from '@/lib/api/hooks/auth';
+import { currentSchedule, hasPassNow, profileActions } from '@/lib/api/hooks/auth';
 import { on } from '@/lib/events/bus';
 import { installTypingTracking, setOverlayOpen } from '@/lib/offers/uiState';
 import { useClock } from '@/lib/time/TimeProvider';
@@ -93,8 +93,7 @@ export function useOfferWindows(): PassWindowsApi {
       const eventId = useScheduleReplace.getState().eventId;
       const event = eventId ? getData().eventsById.get(eventId) : undefined;
       if (!eventId || !event) return;
-      const guest = useGuestStore.getState();
-      const prev = guest.schedule;
+      const prev = currentSchedule();
       void profileActions.replaceSchedule(outIso, eventId).then((res) => {
         if (!res.ok) showScheduleToast(tS('toast.failed'), prev, { failed: true });
       });
@@ -114,7 +113,7 @@ export function useOfferWindows(): PassWindowsApi {
         kind: 'accent',
         chrome: 'board',
         title: tS('replaceWin.title'),
-        description: tS('replaceWin.sub', { count: scheduledCountries(useGuestStore.getState().schedule, event.zoneId).length }),
+        description: tS('replaceWin.sub', { count: scheduledCountries(currentSchedule(), event.zoneId).length }),
         onClose: () => useScheduleReplace.setState({ eventId: null }),
         ...(back ? { onBack: back } : {}),
         content: (
@@ -129,7 +128,7 @@ export function useOfferWindows(): PassWindowsApi {
     (eventId: string, _next?: boolean, back?: () => void) => {
       const guest = useGuestStore.getState();
       if (hasPassNow()) {
-        const prev = guest.schedule;
+        const prev = currentSchedule();
         const result = scheduleToggleResult(prev, eventId);
         if (result === 'full') {
           openScheduleReplace(eventId, back);

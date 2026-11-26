@@ -34,7 +34,10 @@ import type { OpsRunnerDeps, OpsWiring } from './ops/runner';
 import { createSpendJob, type SpendJob } from './ops/spend';
 import { createMailPlanJob } from './ops/mailPlan';
 import { createGuestPruneJob } from './ops/guestPrune';
-import { AUTH_CAPABILITY, createAuthGuestStore, runSubjectDataInScope } from './auth/subjectData';
+import { createLinkRetryJob } from './ops/linkRetry';
+import { createLinkRetryPorts } from './auth/merge';
+import { authGuestKeep, createAuthGuestStore, runSubjectDataInScope } from './auth/subjectData';
+import { GUEST_PRUNE_IGNORED } from './domain/auth/guestPrune';
 import { subjectDataRegistry } from './registries/subjectData';
 import type { Logger } from './ports';
 import { isRevertible } from './registries/revertHandlers';
@@ -148,9 +151,12 @@ export function opsRunnerDepsOf(deps: Deps, ops: OpsWiring, payload: () => Promi
       lease: ops.lease,
       guests: createAuthGuestStore(() => deps),
       exportSubject: (id) => runSubjectDataInScope(deps, 'export', id, deps.subjectData ?? subjectDataRegistry),
-      ownCapability: AUTH_CAPABILITY,
+      ownCapability: GUEST_PRUNE_IGNORED,
+      ...authGuestKeep(() => deps),
       log: deps.log,
     }),
+    // Guest-merge retries (SPEC-11 W29b): `deps.authLinks` read per run.
+    linkRetry: createLinkRetryJob({ lease: ops.lease, ...createLinkRetryPorts(() => deps), alarm: { raise: (a) => deps.alarm.raise(a) }, log: deps.log }),
     sources: {
       async zones() {
         const stored = await catalogStoreOf(deps).read();

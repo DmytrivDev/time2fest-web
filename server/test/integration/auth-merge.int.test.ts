@@ -4,6 +4,7 @@
  * device moves to the account, the guest is deleted; a repeated merge — the same pair, or the same guest into another
  * account — changes nothing. A throwing handler: the sign-in completes, a retry row and a `log` alarm
  * `auth/link-retry` are written.
+ * SPEC-11 W26 ([П-5], AC-49): a guest whose merge left a retry row is kept (its sessions revoked) for the retry job.
  */
 import pg from 'pg';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
@@ -110,7 +111,7 @@ describe('AC-23 / EC-2: guest merge', () => {
 });
 
 describe('AC-24: a throwing handler', () => {
-  it('the sign-in completes; a retry row and a log alarm auth/link-retry {handler} are written', { timeout: 60_000 }, async () => {
+  it('the sign-in completes; a retry row and a log alarm auth/link-retry {handler} are written; the guest is kept without sessions', { timeout: 60_000 }, async () => {
     h.deps.authLinks = [throwing];
     const jar = new CookieJar();
     const guest = await guestOf(jar);
@@ -118,7 +119,9 @@ describe('AC-24: a throwing handler', () => {
     expect(signed.status).toBe(200);
     const account = (await sessionOf(h, jar)).user?.id ?? '';
     expect(account).toMatch(/^[0-9a-f-]{36}$/);
-    expect(await userRow(guest)).toBeUndefined();
+    // SPEC-11 AC-49: the retry row keeps the guest; its sessions are revoked.
+    expect((await userRow(guest))?.is_anonymous).toBe(true);
+    expect((await pool.query('SELECT count(*)::int AS n FROM user_sessions WHERE user_id = $1', [guest])).rows[0]).toEqual({ n: 0 });
 
     const retries = (
       await pool.query('SELECT user_id, from_subject, handler, attempts::int AS attempts FROM auth_link_retries WHERE user_id = $1', [account])
@@ -131,5 +134,37 @@ describe('AC-24: a throwing handler', () => {
       return rows.find((r) => r.details?.handler === 'it-throw');
     }, 5_000);
     expect(alarm).toBeDefined();
+  });
+});
+
+describe('S11-04: a lost retry row', () => {
+  it('S11-04: the retry row cannot be written → the claim is given back, so a later sign-in re-runs the handler', { timeout: 30_000 }, async () => {
+    let failing = true;
+    const flaky: AuthLinkHandler = {
+      key: 'it-flaky',
+      async link({ fromSubject, toSubject }) {
+        calls.push({ from: fromSubject, to: toSubject });
+        if (failing) throw new Error('boom');
+      },
+    };
+    h.deps.authLinks = [flaky];
+    const real = (await h.wiring.instance().$context) as unknown as LinkAccountData['ctx']['context'];
+    // No usable pool: `recordRetry` cannot write its row.
+    const context = {
+      ...real,
+      internalAdapter: { updateUser: async () => undefined, deleteUserSessions: async () => undefined, deleteUser: async () => undefined },
+      options: { database: {} },
+    } as unknown as LinkAccountData['ctx']['context'];
+    const data = (): LinkAccountData => ({
+      anonymousUser: { user: { id: 'g-s1104' }, session: {} },
+      newUser: { user: { id: 'a-s1104' }, session: {} },
+      ctx: { context },
+    });
+    await runInAuthScope(() => linkGuest(data(), h.deps));
+    expect(await redis.get('auth:link:g-s1104:it-flaky')).toBeNull();
+    failing = false;
+    await runInAuthScope(() => linkGuest(data(), h.deps));
+    expect(calls).toHaveLength(2);
+    expect(await redis.get('auth:link:g-s1104:it-flaky')).toBe('a-s1104');
   });
 });

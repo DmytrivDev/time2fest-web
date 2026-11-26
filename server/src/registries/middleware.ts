@@ -3,6 +3,7 @@
  * - `05-edge-time`: feeds the edge-divergence meter from a verified edge mark (SPEC-07 AC-10 … AC-14).
  * - `25-subject`: `ctx.subject` from the session cookie (SPEC-10 AC-30); a `subject: 'required'` route without a
  *   session creates a guest first (AC-4, [П-6]); every later step runs in the auth scope (session events, merge).
+ * - `27-ban-mark`: a request with a subject remembers its daily fingerprint; a banned subject marks it (SPEC-11 AC-23).
  * - `30-rate-limit`: a route with `rateLimit: '<row key>'` is counted against that row (AC-48 … AC-50) by
  *   `subject`, `device` and `ipDay`.
  * - `40-idempotency`: a route with `idempotency: '<method>'` runs once per subject, method and
@@ -13,7 +14,7 @@ import { startGuestSession } from '../adapters/sessionSubjects';
 import { runInAuthScope } from '../auth/scope';
 import { ipHeaderValue } from '../auth/request';
 import { AUTH_BASE_PATH, AUTH_IP_HEADER } from '../auth/instance';
-import { authOf } from '../endpoints/deps';
+import { authOf, rightsOf } from '../endpoints/deps';
 import { failure, originMiddleware, toResponse, validateMiddleware } from '../endpoints/pipeline';
 import type { Ctx, Middleware, Outcome } from '../endpoints/types';
 import { DEVICE_COOKIE } from '../platform/device';
@@ -94,7 +95,10 @@ export function subjectMiddleware(rows: readonly RateLimitRow[] = rateLimitRegis
       return runInAuthScope(async () => {
         if (ctx.route.public !== true && !ctx.url.pathname.startsWith(`${AUTH_BASE_PATH}/`) && ctx.subject === undefined) {
           const found = await ctx.deps.subjects?.resolve(ctx.req);
-          if (found) ctx.subject = found.id;
+          if (found) {
+            ctx.subject = found.id;
+            ctx.subjectKind = found.kind;
+          }
         }
         if (ctx.route.subject !== 'required' || ctx.subject !== undefined) return next();
         if (!guestRow) return failure('unknown');
@@ -108,6 +112,9 @@ export function subjectMiddleware(rows: readonly RateLimitRow[] = rateLimitRegis
         }
         const guest = await startGuestSession(authOf(ctx.deps), await guestHeaders(ctx));
         ctx.subject = guest.id;
+        ctx.subjectKind = 'guest';
+        // The guest's creation fingerprint (Redis only): the daily-fingerprint block reads it (SPEC-11 AC-24).
+        await rightsOf(ctx.deps).bans.guestCreated(guest.id, await ctx.client.ipDay());
         const res = toResponse(await next());
         const headers = new Headers(res.headers);
         for (const line of guest.cookies) headers.append('set-cookie', line);
@@ -116,6 +123,25 @@ export function subjectMiddleware(rows: readonly RateLimitRow[] = rateLimitRegis
     },
   };
 }
+
+/**
+ * `27-ban-mark` (SPEC-11 W17; AC-23, NFR-5): after `25-subject`, a request with a subject remembers the subject's
+ * daily fingerprint in Redis (one `setIfAbsent`); on the first sighting of the pair today the ban is read once, and a
+ * banned subject marks the fingerprint so new guests from it are blocked until 00:00 UTC. Never fails the request.
+ */
+export const banMarkMiddleware: Middleware = {
+  key: '27-ban-mark',
+  async run(ctx, next) {
+    if (ctx.subject !== undefined && ctx.subject !== '' && ctx.deps.auth !== undefined) {
+      try {
+        await rightsOf(ctx.deps).bans.markRequest(ctx.subject, await ctx.client.ipDay(), ctx.device);
+      } catch (err) {
+        ctx.log.warn({ event: 'ban-mark', outcome: 'failed', err: err instanceof Error ? err.name : 'unknown' });
+      }
+    }
+    return next();
+  },
+};
 
 export function idempotencyMiddleware(rows: readonly IdempotencyRow[] = idempotencyRegistry): Middleware {
   const byMethod = new Map(rows.map((r) => [r.method, r]));
@@ -176,6 +202,7 @@ export const middlewareRegistry: readonly Middleware[] = [
   originMiddleware,
   validateMiddleware,
   subjectMiddleware(),
+  banMarkMiddleware,
   rateLimitMiddleware(),
   idempotencyMiddleware(),
 ];

@@ -24,6 +24,15 @@
  * |    | ourselves (AC-12) — Better Auth alone says so only on the 6th try. |
  * | S8 | `auth.api.signInAnonymous({ headers, returnHeaders: true })` → `headers.get('set-cookie')` has the session cookie,
  * |    | usable as-is; anonymous → `/sign-in/email-otp` fires `onLinkAccount` once and deletes the guest → W28 as planned. |
+ * SPEC-11 W2 re-run with `better-auth` pinned to 1.7.28 (2026-11-26; SPEC-10 ran on 1.7.27): S1–S8 unchanged.
+ * | S9 | `internalAdapter.deleteUser` is one transaction: a throw in `account.delete.before` (sessions already deleted
+ * |    | inside it) rolls back user, sessions and accounts, and no `session.delete.after` fires (after-commit hooks
+ * |    | dropped). A `user.delete.before` veto (`false`) keeps everything and returns QUIETLY — no FAILED_TO_DELETE_USER
+ * |    | (thrown only when the user row survives the DELETE itself) → SPEC-11 П-5/W26/W29: after `deleteUser` re-read
+ * |    | the user row if the caller must know whether the guest is gone. Plain delete: 1 `session.delete.after` (= S1). |
+ * | S10 | `anonymous({ disableDeleteAnonymousUser: true })`: `onLinkAccount` still fires once on `/sign-in/email-otp`
+ * |    | and on `/callback/google`; the guest user row AND its session row stay, no `session.delete.after` → П-4/П-5
+ * |    | hold: `linkGuest` must revoke the guest sessions itself (`deleteUserSessions`) and delete the guest itself. |
  */
 import { appendFileSync } from 'node:fs';
 import pg from 'pg';
@@ -50,10 +59,13 @@ const otps = new Map<string, string>();
 const sessionDeletes: string[] = [];
 const sessionCreates: { userId: string; ipAddress?: string | null }[] = [];
 const links: { anonymousUserId: string; newUserId: string }[] = [];
+/** S9: user ids whose `user.delete.before` vetoes (returns false) / whose `account.delete.before` throws. */
+const vetoUserDelete = new Set<string>();
+const failAccountDelete = new Set<string>();
 
 let pool: pg.Pool;
 
-function makeOptions(ipv6Subnet?: number) {
+function makeOptions(ipv6Subnet?: number, keepGuest = false) {
   return {
     baseURL: BASE,
     basePath: '/api/auth',
@@ -65,6 +77,18 @@ function makeOptions(ipv6Subnet?: number) {
     account: { accountLinking: { enabled: true, trustedProviders: [] as string[], allowDifferentEmails: false } },
     advanced: { ipAddress: { ipAddressHeaders: ['x-t2f-ip'], ...(ipv6Subnet === undefined ? {} : { ipv6Subnet }) } },
     databaseHooks: {
+      user: {
+        delete: {
+          before: async (u: { id: string }) => (vetoUserDelete.has(u.id) ? false : undefined),
+        },
+      },
+      account: {
+        delete: {
+          before: async (a: { userId: string }) => {
+            if (failAccountDelete.has(a.userId)) throw new Error('spike: account delete fails');
+          },
+        },
+      },
       session: {
         create: {
           after: async (s: { userId: string; ipAddress?: string | null }) => {
@@ -80,6 +104,7 @@ function makeOptions(ipv6Subnet?: number) {
     },
     plugins: [
       anonymous({
+        ...(keepGuest ? { disableDeleteAnonymousUser: true } : {}),
         onLinkAccount: async ({ anonymousUser, newUser }) => {
           links.push({ anonymousUserId: anonymousUser.user.id, newUserId: newUser.user.id });
         },
@@ -110,8 +135,8 @@ function makeOptions(ipv6Subnet?: number) {
   };
 }
 
-function makeAuth(ipv6Subnet?: number) {
-  return betterAuth(makeOptions(ipv6Subnet));
+function makeAuth(ipv6Subnet?: number, keepGuest = false) {
+  return betterAuth(makeOptions(ipv6Subnet, keepGuest));
 }
 type Auth = ReturnType<typeof makeAuth>;
 let auth: Auth;
@@ -188,6 +213,8 @@ afterAll(async () => {
 });
 
 beforeEach(() => {
+  vetoUserDelete.clear();
+  failAccountDelete.clear();
   sessionDeletes.length = 0;
   sessionCreates.length = 0;
   links.length = 0;
@@ -365,5 +392,86 @@ describe('Better Auth 1.7.28 spike', () => {
     expect(links).toHaveLength(1);
     expect(links[0]?.anonymousUserId).toBe(s!.user.id);
     expect(await userRow(s!.user.id)).toBeUndefined();
+  });
+  it('S9 — deleteUser is one transaction; a user.delete.before veto keeps the user, sessions and accounts', async () => {
+    const counts = async (id: string) => {
+      const r = await pool.query(
+        `SELECT (SELECT count(*)::int FROM "user" WHERE id = $1) AS users, (SELECT count(*)::int FROM session WHERE "userId" = $1) AS sessions, (SELECT count(*)::int FROM account WHERE "userId" = $1) AS accounts`,
+        [id],
+      );
+      return r.rows[0] as { users: number; sessions: number; accounts: number };
+    };
+    const ctx = await auth.$context;
+    const errorOf = async (id: string) => {
+      try {
+        await ctx.internalAdapter.deleteUser(id);
+        return 'none';
+      } catch (e) {
+        return (e as { body?: { code?: string } }).body?.code ?? (e as Error).message;
+      }
+    };
+
+    // Google user: one session + one account row.
+    const jar = new CookieJar();
+    await googleFlow(jar, { sub: `g-${RUN}-9`, email: email('s9'), emailVerified: true });
+    const id = (await auth.api.getSession({ headers: new Headers(jar.headers()) }))!.user.id;
+    const before = await counts(id);
+
+    vetoUserDelete.add(id);
+    sessionDeletes.length = 0;
+    const vetoError = await errorOf(id);
+    const afterVeto = await counts(id);
+    const vetoSessionDeletes = sessionDeletes.length;
+    vetoUserDelete.clear();
+
+    failAccountDelete.add(id);
+    const failError = await errorOf(id);
+    const afterFail = await counts(id);
+    const failSessionDeletes = sessionDeletes.length;
+    failAccountDelete.clear();
+
+    const okError = await errorOf(id);
+    const afterOk = await counts(id);
+    const okSessionDeletes = sessionDeletes.length;
+
+    note('[S9]', { before, vetoError, afterVeto, vetoSessionDeletes, failError, afterFail, failSessionDeletes, okError, afterOk, okSessionDeletes });
+    expect(before).toEqual({ users: 1, sessions: 1, accounts: 1 });
+    // Veto: deleteUser returns quietly (no FAILED_TO_DELETE_USER — that is thrown only when the row survives the
+    // DELETE itself), nothing is deleted, no session.delete.after fires.
+    expect({ vetoError, afterVeto, vetoSessionDeletes }).toEqual({ vetoError: 'none', afterVeto: before, vetoSessionDeletes: 0 });
+    // A throw after the sessions were deleted rolls the whole delete back (one transaction); after-commit hooks dropped.
+    expect({ failError, afterFail, failSessionDeletes }).toEqual({ failError: 'spike: account delete fails', afterFail: before, failSessionDeletes: 0 });
+    expect({ okError, afterOk, okSessionDeletes }).toEqual({ okError: 'none', afterOk: { users: 0, sessions: 0, accounts: 0 }, okSessionDeletes: 1 });
+  });
+
+  it('S10 — disableDeleteAnonymousUser: onLinkAccount still fires (email-otp, Google); guest user and session rows stay', async () => {
+    const saved = auth;
+    auth = makeAuth(undefined, true);
+    try {
+      const guestRows = async (id: string) => {
+        const r = await pool.query(
+          `SELECT (SELECT count(*)::int FROM "user" WHERE id = $1) AS users, (SELECT count(*)::int FROM session WHERE "userId" = $1) AS sessions`,
+          [id],
+        );
+        return r.rows[0] as { users: number; sessions: number };
+      };
+      const j1 = new CookieJar();
+      const g1 = await signInAnon(j1);
+      await signInCode(j1, email('s10a'));
+      const otp = { links: links.map((l) => l.anonymousUserId === g1), rows: await guestRows(g1), deletes: sessionDeletes.length };
+      links.length = 0;
+      sessionDeletes.length = 0;
+
+      const j2 = new CookieJar();
+      const g2 = await signInAnon(j2);
+      const g = await googleFlow(j2, { sub: `g-${RUN}-10`, email: email('s10g'), emailVerified: true });
+      const google = { location: g.location, links: links.map((l) => l.anonymousUserId === g2), rows: await guestRows(g2), deletes: sessionDeletes.length };
+
+      note('[S10]', { otp, google });
+      expect(otp).toEqual({ links: [true], rows: { users: 1, sessions: 1 }, deletes: 0 });
+      expect(google).toEqual({ location: '/done', links: [true], rows: { users: 1, sessions: 1 }, deletes: 0 });
+    } finally {
+      auth = saved;
+    }
   });
 });

@@ -12,7 +12,7 @@ import type { Dataset, GuestRoomWindow } from '@/lib/data/types';
 import { cityOf } from '@/lib/live/cityOf';
 import type { StreamRowData } from '@/lib/live/countryData';
 import { thumbOf } from '@/lib/live/thumb';
-import { useGuestStore } from '@/stores/guest';
+import { currentSchedule } from '@/lib/api/hooks/auth';
 import { posOf, useRoomStore, type RoomTarget, type RoomViewport } from '@/stores/room';
 import { RoomReplacePanel } from '@/components/room/parts/RoomReplacePanel';
 import { flagOf } from '@/components/room/roomShare';
@@ -95,7 +95,7 @@ export function useRoomPicker({
             onPick={(row) => add({ sourceId: row.id, eventId: row.eventId })}
             onAddToRoom={(row: StreamRowData) => add({ sourceId: row.id, eventId: row.eventId })}
             onToggleSchedule={(id) =>
-              passWindows.requestSchedule(id, !useGuestStore.getState().schedule.includes(id))
+              passWindows.requestSchedule(id, !currentSchedule().includes(id))
             }
           />
         </RoomPageContext.Provider>

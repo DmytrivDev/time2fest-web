@@ -3,11 +3,14 @@
  */
 import { authRoutes } from '../endpoints/auth';
 import { catalogRoute } from '../endpoints/catalog';
+import { chatNickCheckRoute } from '../endpoints/chatNick';
 import { healthRoute } from '../endpoints/health';
 import { liveChainsRoute } from '../endpoints/liveChains';
 import { liveSourceErrorsRoute } from '../endpoints/liveSourceErrors';
 import { liveViewerTokenRoute } from '../endpoints/liveViewerToken';
 import { liveViewersRoute } from '../endpoints/liveViewers';
+import { meRoutes } from '../endpoints/me';
+import { meAccountRoutes } from '../endpoints/meAccount';
 import { realtimeTokenRoute } from '../endpoints/realtimeToken';
 import { siteStateRoute } from '../endpoints/siteState';
 import { timeRoute } from '../endpoints/time';
@@ -18,11 +21,14 @@ import { assertRegistry } from '../platform/registry';
 export const routeRegistry: readonly RouteRow[] = [
   ...authRoutes,
   catalogRoute,
+  chatNickCheckRoute,
   healthRoute,
   liveChainsRoute,
   liveSourceErrorsRoute,
   liveViewerTokenRoute,
   liveViewersRoute,
+  ...meAccountRoutes,
+  ...meRoutes,
   realtimeTokenRoute,
   siteStateRoute,
   timeRoute,

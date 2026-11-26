@@ -13,3 +13,6 @@ export * from './liveRules';
 export * from './liveGuard';
 export * from './streams';
 export * from './auth';
+export * from './profile';
+export * from './authGuard';
+export * from './profileGuard';

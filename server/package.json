@@ -47,7 +47,7 @@
     "@payloadcms/ui": "3.91.0",
     "@time2fest/contracts": "workspace:*",
     "@time2fest/rules": "workspace:*",
-    "better-auth": "1.7.27",
+    "better-auth": "1.7.28",
     "graphql": "16.15.0",
     "ioredis": "5.11.1",
     "jose": "5.10.0",

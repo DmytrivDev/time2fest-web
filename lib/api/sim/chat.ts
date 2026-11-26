@@ -20,6 +20,7 @@ import { getData } from '@/lib/data/load';
 import { useGuestStore } from '@/stores/guest';
 import { useTestControls } from '@/stores/testControls';
 import { accountHasPass, useAuthStore } from '@/stores/auth';
+import { getService } from '../services';
 
 let siteNow: () => Ms = () => Date.now();
 /** Годинник сайту (машина часу) для відправлення й повільного режиму — з `ChatSimRuntime`. */
@@ -115,13 +116,15 @@ export function createSimChat(): ChatService {
       const g = useGuestStore.getState();
       const tc = useTestControls.getState();
       const reply = req.replyToId ? findMessage(req.replyToId) : undefined;
+      // Mixed build (profile on `http`, chat still `sim`): the nick and flag live in the profile, the guest store is not mirrored.
+      const profile = getService('profile').peek?.();
       const res = sendMessage(
         { clientId: req.clientId, room: req.room, text: req.text },
         {
           now,
           guestId: g.id,
-          nick: g.nick,
-          flagCode: g.flagCode ?? g.detectedFlag,
+          nick: g.nick ?? profile?.nick ?? undefined,
+          flagCode: g.flagCode ?? profile?.flagCode ?? g.detectedFlag ?? undefined,
           hasPass: accountHasPass(useAuthStore.getState()),
           canWrite: () => true,
           slowSeconds: slowNow(req.room, now),

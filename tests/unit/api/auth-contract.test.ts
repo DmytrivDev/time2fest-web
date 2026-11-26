@@ -12,6 +12,7 @@ beforeEach(() => {
 afterEach(() => vi.useRealTimers());
 
 let n = 0;
+let otherDevice: { svc: unknown; email: string } | null = null;
 const ctx: AuthSuiteCtx = {
   freshEmail: (tag) => `sim-${tag}-${n++}@example.com`,
   lastCode: async () => useAuthStore.getState().code!.code,
@@ -20,6 +21,27 @@ const ctx: AuthSuiteCtx = {
     useAuthStore.setState({ sends: [] });
   },
   breakDelivery: () => useTestControls.setState({ authUnavailable: true }),
+  async grantDevicePass(_svc, email) {
+    useAuthStore.getState().grantDevicePass(email, Date.now());
+  },
+  async grantAccountPass(_svc, email) {
+    useAuthStore.getState().grantPass(email, Date.now());
+  },
+  async signInOtherDevice(_owner, other, email) {
+    // One store = one device: apply what the server does when another device signs in with the payment email.
+    otherDevice = { svc: other, email };
+    useAuthStore.setState((s) => {
+      const dp = s.devicePass;
+      if (!dp || dp.email !== email) throw new Error('the device holds no pass paid with that email');
+      const unclaimed = Object.fromEntries(Object.entries(s.unclaimed).filter(([, v]) => v.id !== dp.id));
+      return { passes: { ...s.passes, [email]: dp.since }, attached: { ...s.attached, [dp.id]: email }, unclaimed, devicePass: null };
+    });
+  },
+  useDevice(svc) {
+    // The first device stays signed out; the other one is signed in as the payer's account.
+    const signedIn = otherDevice !== null && otherDevice.svc === svc;
+    useAuthStore.setState({ user: signedIn ? { email: otherDevice!.email, via: 'email', signedInAt: Date.now() } : null });
+  },
   async google(svc, scenario) {
     vi.useFakeTimers();
     try {

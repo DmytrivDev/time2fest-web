@@ -6,6 +6,18 @@
 import type { AlarmService } from '../alarms/service';
 import type { AlarmStore } from '../alarms/ports';
 import type { AuthWiring } from '../auth/instance';
+import { rightsDbOf } from '../auth/pool';
+import { seasonKeyOfEnd, type SeasonCtx } from '../domain/rights/passSeason';
+import { createBanMarks } from '../rights/banMarks';
+import { createBanService, type BanService } from '../rights/bans';
+import { publishSessionEvent } from '../auth/events';
+import { publishPassEvent, publishProfileEvent } from '../rights/events';
+import type { RightsLinkPorts } from '../rights/links';
+import { createPassService, type PassService } from '../rights/passes';
+import { createScheduleService, type ScheduleService } from '../rights/schedule';
+import { scheduleCatalogFrom } from '../domain/rights/schedule';
+import type { ScheduleCatalog } from '@time2fest/rules/schedule';
+import { createProfileService, type CatalogRefs, type ProfileService } from '../rights/profiles';
 import type { CatalogStore } from '../catalog/ports';
 import type { CorrectionDeps } from '../corrections/service';
 import type { ReadinessProbe } from '../health/ports';
@@ -52,3 +64,97 @@ export const liveOf = (deps: Deps): LiveWiring => built(deps.live, 'live');
 export const authOf = (deps: Deps): AuthWiring => built(deps.auth, 'auth');
 /** Mail (SPEC-10): primary SMTP with the fallback, day counters and alarms; absent without `SMTP_HOST`. */
 export const mailOf = (deps: Deps): MailService => built(deps.mail, 'mail');
+
+/** The rights services (SPEC-11): built lazily per `deps` over Better Auth's pool, the season clock and the events. */
+export interface RightsServices {
+  passes: PassService;
+  bans: BanService;
+  profiles: ProfileService;
+  schedule: ScheduleService;
+}
+const rightsCache = new WeakMap<Deps, RightsServices>();
+
+/** The season of the passes: the current key from the season end (`T2F_SEASON_END`, `2027-01-15` → `2026-27`). */
+export function seasonCtxOf(deps: Deps): SeasonCtx {
+  const end = authOf(deps).seasonEnd;
+  return { currentKey: seasonKeyOfEnd(end), currentEndMs: end };
+}
+
+const REFS_TTL_MS = 30_000;
+const refsCache = new WeakMap<Deps, { at: number; refs: CatalogRefs }>();
+
+/** Country ISOs and zone ids of the stored catalog, read at most every 30 s per `deps` (profile validation). */
+async function catalogRefsOf(deps: Deps): Promise<CatalogRefs> {
+  const hit = refsCache.get(deps);
+  const now = deps.clock.now();
+  if (hit !== undefined && now - hit.at < REFS_TTL_MS && now >= hit.at) return hit.refs;
+  const stored = await catalogStoreOf(deps).read();
+  const str = (v: unknown): string[] => (typeof v === 'string' ? [v] : []);
+  const refs: CatalogRefs = {
+    countryIsos: new Set(stored.countries.flatMap((c) => str(c.iso))),
+    zoneIds: new Set(stored.zones.flatMap((z) => str(z.zoneId))),
+  };
+  refsCache.set(deps, { at: now, refs });
+  return refs;
+}
+
+const scheduleCatCache = new WeakMap<Deps, { at: number; cat: ScheduleCatalog }>();
+
+/** The schedule rule's catalog (SPEC-11 W23), rebuilt from the stored catalog at most every 30 s per `deps`. */
+async function scheduleCatalogOf(deps: Deps): Promise<ScheduleCatalog> {
+  const hit = scheduleCatCache.get(deps);
+  const now = deps.clock.now();
+  if (hit !== undefined && now - hit.at < REFS_TTL_MS && now >= hit.at) return hit.cat;
+  const cat = scheduleCatalogFrom(await catalogStoreOf(deps).read());
+  scheduleCatCache.set(deps, { at: now, cat });
+  return cat;
+}
+
+/** The ports of the guest-merge rows (`rights/links.ts`, A3). */
+export function rightsLinkPortsOf(deps: Deps): RightsLinkPorts {
+  const rights = rightsOf(deps);
+  return {
+    db: () => rightsDbOf(deps),
+    bans: rights.bans,
+    passes: rights.passes,
+    catalog: () => catalogStoreOf(deps).read(),
+    publishProfile: (subject) => publishProfileEvent(deps, subject),
+  };
+}
+
+/** Passes, bans, profiles (SPEC-11 [П-2]); "now" is the server's season clock `deps.clock`. */
+export function rightsOf(deps: Deps): RightsServices {
+  let built = rightsCache.get(deps);
+  if (built === undefined) {
+    built = {
+      passes: createPassService({
+        db: () => rightsDbOf(deps),
+        now: () => deps.clock.now(),
+        season: () => seasonCtxOf(deps),
+        publish: (db, targets, reason) =>
+          publishPassEvent({ session: (id, r) => publishSessionEvent(deps, id, r), log: deps.log }, db, targets, reason),
+      }),
+      bans: createBanService({
+        db: () => rightsDbOf(deps),
+        // Read on each call: a test may swap `deps.redis`.
+        marks: createBanMarks(() => deps.redis),
+        alarm: { raise: (a) => deps.alarm.raise(a) },
+        now: () => deps.clock.now(),
+      }),
+      profiles: createProfileService({
+        db: () => rightsDbOf(deps),
+        verdict: () => moderationOf(deps).verdict,
+        refs: () => catalogRefsOf(deps),
+        publish: (subject) => publishProfileEvent(deps, subject),
+      }),
+      schedule: createScheduleService({
+        db: () => rightsDbOf(deps),
+        hasPass: (subject, device) => built!.passes.hasPass(subject, device),
+        catalog: () => scheduleCatalogOf(deps),
+        publish: (subject) => publishProfileEvent(deps, subject),
+      }),
+    };
+    rightsCache.set(deps, built);
+  }
+  return built;
+}

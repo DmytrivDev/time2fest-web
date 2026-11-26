@@ -23,7 +23,8 @@ export function authStaticOptions(input: AuthStaticInput) {
   return {
     telemetry: { enabled: false },
     emailAndPassword: { enabled: false },
-    advanced: { database: { generateId: 'uuid' as const } },
+    // `joins`: a session read with its user is one SQL join, not two round trips (NFR-2); no schema change.
+    advanced: { database: { generateId: 'uuid' as const, joins: true } },
     user: {
       modelName: 'users',
       fields: {
@@ -75,6 +76,8 @@ export function authStaticOptions(input: AuthStaticInput) {
     plugins: [
       anonymous({
         schema: { user: { fields: { isAnonymous: 'is_anonymous' } } },
+        // SPEC-11 [П-5]: `linkGuest` revokes the guest's sessions and deletes the guest only when every merge row is done.
+        disableDeleteAnonymousUser: true,
         ...(input.onLinkAccount ? { onLinkAccount: input.onLinkAccount } : {}),
       }),
       emailOTP({
