@@ -16,3 +16,6 @@ export * from './auth';
 export * from './profile';
 export * from './authGuard';
 export * from './profileGuard';
+export * from './passport';
+export * from './passportGuard';
+export * from './authorPath';

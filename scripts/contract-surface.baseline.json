@@ -1133,6 +1133,7 @@
     "lib/api/contracts/passport.ts#PassportClaimReason": {
       "union": [
         "'claim-closed'",
+        "'no-presence'",
         "'unknown-event'"
       ]
     },
@@ -3097,6 +3098,44 @@
     "packages/contracts/src/authGuard.ts#parseSignInOutcome": {
       "fn": "export function parseSignInOutcome(x: unknown): { isNew: boolean; email: string } | null"
     },
+    "packages/contracts/src/authorPath.schemas.ts#AuthorPathResponseWire": {
+      "text": "z.infer<typeof authorPathResponse>"
+    },
+    "packages/contracts/src/authorPath.schemas.ts#authorPathResponse": {
+      "text": "ZodObject<{ hidden: ZodBoolean; points: ZodArray<ZodObject<{ eventId: ZodString; planned: ZodBoolean; }, $strict>>; }, $strict>"
+    },
+    "packages/contracts/src/authorPath.ts#AuthorPathPointWire": {
+      "props": {
+        "eventId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "planned": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/authorPath.ts#AuthorPathResponse": {
+      "props": {
+        "hidden": {
+          "optional": false,
+          "type": {
+            "text": "boolean"
+          }
+        },
+        "points": {
+          "optional": false,
+          "type": {
+            "text": "AuthorPathPointWire[]"
+          }
+        }
+      }
+    },
     "packages/contracts/src/catalog.schemas.ts#CatalogChanged": {
       "text": "z.infer<typeof CatalogChangedSchema>"
     },
@@ -4493,6 +4532,237 @@
           }
         }
       }
+    },
+    "packages/contracts/src/passport.schemas.ts#PresenceBeatBody": {
+      "text": "z.infer<typeof presenceBeatBody>"
+    },
+    "packages/contracts/src/passport.schemas.ts#PresenceDowntimeAdd": {
+      "text": "z.infer<typeof presenceDowntimeAdd>"
+    },
+    "packages/contracts/src/passport.schemas.ts#StampClaimBody": {
+      "text": "z.infer<typeof stampClaimBody>"
+    },
+    "packages/contracts/src/passport.schemas.ts#presenceBeatBody": {
+      "text": "ZodObject<{ eventIds: ZodArray<ZodString>; openedAt: ZodOptional<ZodNumber>; source: ZodEnum<{ air: \"air\"; country: \"country\"; room: \"room\"; tv: \"tv\"; }>; }, $strict>"
+    },
+    "packages/contracts/src/passport.schemas.ts#presenceBeatResponse": {
+      "text": "ZodObject<{ nextBeatMs: ZodNullable<ZodNumber>; }, $strict>"
+    },
+    "packages/contracts/src/passport.schemas.ts#presenceDowntimeAdd": {
+      "text": "ZodObject<{ eventId: ZodOptional<ZodString>; from: ZodNumber; reason: ZodString; to: ZodNumber; }, $strict>"
+    },
+    "packages/contracts/src/passport.schemas.ts#presenceDowntimeDoor": {
+      "text": "ZodUnion<readonly [ZodObject<{ eventId: ZodString; kind: ZodLiteral<\"manual\">; reason: ZodString; }, $strict>, ZodObject<{ from: ZodNumber; kind: ZodLiteral<\"manual\">; reason: ZodString; to: ZodNumber; }, $strict>, ZodObject<{ from: ZodNumber; kind: ZodLiteral<\"edge-region\">; region: ZodString; to: ZodNumber; }, $strict>]>"
+    },
+    "packages/contracts/src/passport.schemas.ts#presenceFaultDoor": {
+      "text": "ZodObject<{ beatErrorRate: ZodOptional<ZodNumber>; dbWrite: ZodOptional<ZodEnum<{ down: \"down\"; up: \"up\"; }>>; fastStore: ZodOptional<ZodEnum<{ down: \"down\"; up: \"up\"; }>>; }, $strict>"
+    },
+    "packages/contracts/src/passport.schemas.ts#presenceHealthDoor": {
+      "text": "ZodObject<{ eventId: ZodString; }, $strict>"
+    },
+    "packages/contracts/src/passport.schemas.ts#presenceTickDoor": {
+      "text": "ZodObject<{  }, $strict>"
+    },
+    "packages/contracts/src/passport.schemas.ts#stampClaimBody": {
+      "text": "ZodObject<{ at: ZodNumber; eventId: ZodString; source: ZodEnum<{ air: \"air\"; country: \"country\"; room: \"room\"; tv: \"tv\"; }>; }, $strict>"
+    },
+    "packages/contracts/src/passport.schemas.ts#stampEventSchema": {
+      "text": "ZodObject<{ data: ZodUnion<readonly [ZodObject<{ kind: ZodLiteral<\"granted\">; stamp: ZodObject<{ cityName: ZodString; countryIso: ZodString; eventId: ZodString; grantedAt: ZodNumber; illustrationId: ZodString; presenceSource: ZodEnum<{ air: \"air\"; country: \"country\"; room: \"room\"; tv: \"tv\"; }>; }, $strict>; }, $strict>, ZodObject<{ kind: ZodLiteral<\"snapshot\">; stamps: ZodArray<ZodObject<{ cityName: ZodString; countryIso: ZodString; eventId: ZodString; grantedAt: ZodNumber; illustrationId: ZodString; presenceSource: ZodEnum<{ air: \"air\"; country: \"country\"; room: \"room\"; tv: \"tv\"; }>; }, $strict>>; }, $strict>]>; id: ZodString; type: ZodLiteral<\"stamp\">; }, $strict>"
+    },
+    "packages/contracts/src/passport.schemas.ts#stampListSchema": {
+      "text": "ZodArray<ZodObject<{ cityName: ZodString; countryIso: ZodString; eventId: ZodString; grantedAt: ZodNumber; illustrationId: ZodString; presenceSource: ZodEnum<{ air: \"air\"; country: \"country\"; room: \"room\"; tv: \"tv\"; }>; }, $strict>>"
+    },
+    "packages/contracts/src/passport.schemas.ts#stampSchema": {
+      "text": "ZodObject<{ cityName: ZodString; countryIso: ZodString; eventId: ZodString; grantedAt: ZodNumber; illustrationId: ZodString; presenceSource: ZodEnum<{ air: \"air\"; country: \"country\"; room: \"room\"; tv: \"tv\"; }>; }, $strict>"
+    },
+    "packages/contracts/src/passport.ts#GRANT_KINDS": {
+      "text": "readonly [\"presence\", \"downtime\", \"old-moment\"]"
+    },
+    "packages/contracts/src/passport.ts#GrantKind": {
+      "text": "(typeof GRANT_KINDS)[number]"
+    },
+    "packages/contracts/src/passport.ts#PASSPORT_REASONS": {
+      "text": "readonly [\"claim-closed\", \"no-presence\", \"unknown-event\"]"
+    },
+    "packages/contracts/src/passport.ts#PRESENCE_SOURCES": {
+      "text": "readonly [\"country\", \"air\", \"room\", \"tv\"]"
+    },
+    "packages/contracts/src/passport.ts#PassportReason": {
+      "text": "(typeof PASSPORT_REASONS)[number]"
+    },
+    "packages/contracts/src/passport.ts#PassportStamp": {
+      "props": {
+        "cityName": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "countryIso": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "eventId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "grantedAt": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "illustrationId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "presenceSource": {
+          "optional": false,
+          "type": {
+            "ref": "packages/contracts/src/passport.ts#PresenceSourceWire"
+          }
+        }
+      }
+    },
+    "packages/contracts/src/passport.ts#PresenceBeatResponse": {
+      "props": {
+        "nextBeatMs": {
+          "optional": false,
+          "type": {
+            "union": [
+              "null",
+              "number"
+            ]
+          }
+        }
+      }
+    },
+    "packages/contracts/src/passport.ts#PresenceSourceWire": {
+      "text": "(typeof PRESENCE_SOURCES)[number]"
+    },
+    "packages/contracts/src/passport.ts#StampEvent": {
+      "props": {
+        "data": {
+          "optional": false,
+          "type": {
+            "variants": {
+              "'granted'": {
+                "props": {
+                  "kind": {
+                    "optional": false,
+                    "type": {
+                      "union": [
+                        "'granted'"
+                      ]
+                    }
+                  },
+                  "stamp": {
+                    "optional": false,
+                    "type": {
+                      "ref": "packages/contracts/src/passport.ts#PassportStamp"
+                    }
+                  }
+                }
+              },
+              "'snapshot'": {
+                "props": {
+                  "kind": {
+                    "optional": false,
+                    "type": {
+                      "union": [
+                        "'snapshot'"
+                      ]
+                    }
+                  },
+                  "stamps": {
+                    "optional": false,
+                    "type": {
+                      "text": "PassportStamp[]"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "id": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "type": {
+          "optional": false,
+          "type": {
+            "union": [
+              "'stamp'"
+            ]
+          }
+        }
+      }
+    },
+    "packages/contracts/src/passportGuard.ts#StampLike": {
+      "props": {
+        "cityName": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "countryIso": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "eventId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "grantedAt": {
+          "optional": false,
+          "type": {
+            "text": "number"
+          }
+        },
+        "illustrationId": {
+          "optional": false,
+          "type": {
+            "text": "string"
+          }
+        },
+        "presenceSource": {
+          "optional": false,
+          "type": {
+            "union": [
+              "'air'",
+              "'country'",
+              "'room'",
+              "'tv'"
+            ]
+          }
+        }
+      }
+    },
+    "packages/contracts/src/passportGuard.ts#isBeatResponse": {
+      "fn": "export function isBeatResponse(x: unknown): x is { nextBeatMs: number | null }"
+    },
+    "packages/contracts/src/passportGuard.ts#isStamp": {
+      "fn": "export function isStamp(x: unknown): x is StampLike"
+    },
+    "packages/contracts/src/passportGuard.ts#isStampEvent": {
+      "fn": "export function isStampEvent( x: unknown, ): x is { type: 'stamp'; id: string; data: { kind: 'granted'; stamp: StampLike } | { kind: 'snapshot'; stamps: StampLike[] } }"
+    },
+    "packages/contracts/src/passportGuard.ts#isStampList": {
+      "fn": "export function isStampList(x: unknown): x is StampLike[]"
     },
     "packages/contracts/src/profile.schemas.ts#NickCheckBody": {
       "text": "z.infer<typeof nickCheckBody>"

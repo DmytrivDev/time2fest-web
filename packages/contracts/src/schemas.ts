@@ -82,3 +82,7 @@ export * from './streams.schemas';
 export * from './auth.schemas';
 
 export * from './profile.schemas';
+
+export * from './passport.schemas';
+
+export * from './authorPath.schemas';
