@@ -1,6 +1,9 @@
 'use client';
 
-/** Підвал мовного дерева (на основі `PrefestFooter`): лише сторінки передстартового сайту, пошта, мови, соцмережі. */
+/**
+ * Підвал мовного дерева (на основі `PrefestFooter`): лише сторінки передстартового сайту, пошта підтримки, мови, соцмережі.
+ * Документи — Умови, Конфіденційність, Оплата й повернення, Правила чату, Cookies, Автори (рішення власника 2026-11-26).
+ */
 import NextLink from 'next/link';
 import { useTranslations } from 'next-intl';
 import siteJson from '@/data/prelaunch/site.json';
@@ -34,7 +37,7 @@ const GROUPS: {
     title: 'groupAbout',
     links: [
       { key: 'pass', path: PAGES.pass },
-      { key: 'toasts', path: PAGES.toasts },
+      { key: 'pricing', path: PAGES.pricing },
     ],
   },
   {
@@ -42,6 +45,8 @@ const GROUPS: {
     links: [
       { key: 'terms', path: PAGES.terms },
       { key: 'privacy', path: PAGES.privacy },
+      { key: 'refunds', path: PAGES.refunds },
+      { key: 'rules', path: PAGES.rules },
       { key: 'cookies', path: PAGES.cookies },
       { key: 'credits', path: PAGES.credits },
     ],
@@ -59,6 +64,10 @@ export function SiteFooter({ locale }: { locale: Locale }) {
           <div className={ft.brand}>
             <Logo variant="footer" href={localeHref(locale, PAGES.home)} label={h('logoLabel')} />
             <p className={ft.tag}>{t('tagline')}</p>
+            {/* Пошта підтримки — на кожній сторінці (вимога платіжного провайдера; рішення власника 2026-11-26). */}
+            <a className={ft.mail} href={`mailto:${SITE.email}`} aria-label={`${t('support')}: ${SITE.email}`}>
+              {SITE.email}
+            </a>
             <SocialLinks />
           </div>
           {GROUPS.map((g) => (

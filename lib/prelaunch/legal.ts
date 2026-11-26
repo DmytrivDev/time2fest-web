@@ -20,7 +20,7 @@ import { DEFAULT_LOCALE, type Locale } from '@/i18n/locales';
 import type { LegalBlock, LegalDoc as SiteLegalDoc } from '@/lib/legal/docs';
 import edition from '@/content/prelaunch/legal/edition.json';
 
-export const LEGAL_IDS = ['privacy', 'cookies', 'terms', 'credits'] as const;
+export const LEGAL_IDS = ['terms', 'privacy', 'refunds', 'rules', 'cookies', 'credits'] as const;
 export type LegalId = (typeof LEGAL_IDS)[number];
 
 export type { LegalBlock };
@@ -182,7 +182,8 @@ export function loadLegal(id: LegalId, locale: Locale): LegalDoc {
   for (const l of [locale, DEFAULT_LOCALE] as const) {
     const file = path.join(DIR, `${id}.${l}.md`);
     if (fs.existsSync(file))
-      return { ...parseLegal(id, l, fs.readFileSync(file, 'utf8')), updated: editionDate(l) };
+      // Дата — мовою сторінки, навіть коли текст англійський (іспанська, французька).
+      return { ...parseLegal(id, l, fs.readFileSync(file, 'utf8')), updated: editionDate(locale) };
   }
   throw new Error(`legal: немає файла content/prelaunch/legal/${id}.${locale}.md`);
 }

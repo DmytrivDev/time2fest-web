@@ -97,8 +97,8 @@ const MENU_LANGUAGES = [
 const SITE_ROWS: readonly { key: PageKey; icon: IconName }[] = [
   { key: 'home', icon: 'home' },
   { key: 'countries', icon: 'map' },
-  { key: 'toasts', icon: 'glass' },
   { key: 'pass', icon: 'ticket' },
+  { key: 'pricing', icon: 'card' },
 ];
 
 export function SiteMenu({
@@ -152,8 +152,7 @@ export function SiteMenu({
                 href={localeHref(locale, PAGES[r.key])}
                 icon={icon(r.icon)}
                 title={th(r.key)}
-                hint={r.key === 'toasts' ? t('toastsHint') : undefined}
-                highlight={r.key === 'toasts' || r.key === 'pass'}
+                highlight={r.key === 'pass'}
                 current={current === r.key}
                 onNavigate={close}
               />

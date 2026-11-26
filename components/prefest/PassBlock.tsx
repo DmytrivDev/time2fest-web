@@ -5,6 +5,7 @@ import NextLink from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Icon } from '@/components/primitives/Icon';
 import { cn } from '@/components/primitives/cn';
+import { SEASON_VALUES } from '@/lib/prelaunch/season';
 import { usePrefest } from './PrefestContext';
 import p from './PassBlock.module.css';
 import s from './prefest.module.css';
@@ -39,7 +40,7 @@ export function PassBlock() {
         <div className={p.buy}>
           <div className={p.price}>
             <b>{t('price')}</b>
-            <span>{t('priceNote')}</span>
+            <span>{t('priceNote', SEASON_VALUES)}</span>
           </div>
           <div className={p.soonbox}>
             <Icon name="clock" size={20} />

@@ -25,10 +25,12 @@ export type MetaPage =
   | 'countries'
   | 'country'
   | 'pass'
-  | 'toasts'
+  | 'pricing'
   | 'privacy'
   | 'cookies'
   | 'terms'
+  | 'refunds'
+  | 'rules'
   | 'credits'
   | 'notFound';
 
@@ -37,10 +39,12 @@ export const PAGE_PATHS: Readonly<Record<Exclude<MetaPage, 'country' | 'notFound
   home: '/',
   countries: '/countries/',
   pass: '/pass/',
-  toasts: '/toasts/',
+  pricing: '/pricing/',
   privacy: '/privacy/',
   cookies: '/cookies/',
   terms: '/terms/',
+  refunds: '/refunds/',
+  rules: '/rules/',
   credits: '/credits/',
 };
 
@@ -108,7 +112,17 @@ const SEO = seoMeta as unknown as Record<string, Record<string, SeoText> | undef
 const SEO_COUNTRY = (seoMeta as unknown as { country: Record<string, Record<string, SeoText> | undefined> })
   .country;
 /** Сторінки, чиї тексти — у `seo-meta.json`; решта (`credits`, `notFound`) — у `prelaunch.meta` повідомлень. */
-const FROM_SEO: readonly MetaPage[] = ['home', 'countries', 'pass', 'toasts', 'privacy', 'cookies', 'terms'];
+const FROM_SEO: readonly MetaPage[] = [
+  'home',
+  'countries',
+  'pass',
+  'pricing',
+  'privacy',
+  'cookies',
+  'terms',
+  'refunds',
+  'rules',
+];
 
 /** Рік сезону в текст: «{year}» → «2027». */
 const withYear = (s: string) => s.replaceAll('{year}', SEASON_VALUES.year);
@@ -230,7 +244,7 @@ export async function jsonLdFor(
     ];
   }
   const t = await getTranslations({ locale, namespace: 'prelaunch.header' });
-  if (!crumb && (page === 'countries' || page === 'pass' || page === 'toasts'))
+  if (!crumb && (page === 'countries' || page === 'pass' || page === 'pricing'))
     crumb = { name: t(page), path: PAGE_PATHS[page] };
   if (!crumb) return null;
   const items: { name: string; path: string }[] = [{ name: t('home'), path: '/' }];

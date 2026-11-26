@@ -84,7 +84,7 @@ const FORBIDDEN_SEGMENTS = [
   'tv-info',
   'notifications',
   'help',
-  'rules',
+  // 'rules' — з 2026-11-26 відкрита сторінка «Правила чату» (вимога платіжного провайдера).
   'before',
   'api',
   'test',

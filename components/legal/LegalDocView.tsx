@@ -178,6 +178,8 @@ export interface LegalDocViewProps {
   email?: string;
   /** Обгортка: вміст сторінки документа й кнопка «Нагору» (сайт свята ставить між ними підвал). */
   wrap?: (content: ReactNode, toTop: ReactNode) => ReactNode;
+  /** Примітка під датою (передстартовий сайт: «діє англійська версія», коли тексту мовою сторінки немає). */
+  notice?: ReactNode;
 }
 
 export function LegalDocView({
@@ -186,6 +188,7 @@ export function LegalDocView({
   hrefFor = SAME,
   email = 'support@time2fest.com',
   wrap,
+  notice,
 }: LegalDocViewProps) {
   const t = useTranslations('legal');
   const announce = useAnnounce();
@@ -265,6 +268,7 @@ export function LegalDocView({
         <div className={s.body}>
           <h1 className={s.h1}>{doc.title}</h1>
           <p className={s.updated}>{t('updated', { date: doc.updated })}</p>
+          {notice}
 
           <p className={s.short}>
             <b>{t('short')}</b> {doc.short}

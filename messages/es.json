@@ -13,13 +13,16 @@
       "schedule": "Programa",
       "map": "Mapa de zonas horarias",
       "pass": "Pase de Año Nuevo",
-      "toasts": "Brindis",
       "terms": "Términos",
       "privacy": "Privacidad",
       "cookies": "Cookies",
       "socialLabel": "Estamos en redes sociales",
       "languageLabel": "Idioma del sitio",
-      "copyright": "© 2026 Time2Fest · Hecho en Ucrania"
+      "copyright": "© 2026 Time2Fest · Hecho en Ucrania",
+      "pricing": "Precios",
+      "refunds": "Pagos y reembolsos",
+      "rules": "Normas del chat",
+      "support": "Soporte"
     },
     "overrides": {
       "liveMap": {
@@ -29,7 +32,12 @@
       },
       "pass": {
         "faq": {
-          "a4": "Por ahora no: el pase es personal y funcionará para quien lo consiga."
+          "a4": "Por ahora no: el pase es personal y funcionará para quien lo consiga.",
+          "a1": "No. El pase se paga una sola vez y vale para el Año Nuevo {season}; no hay cobros automáticos.",
+          "a3": "Escríbenos a support@time2fest.com en los 30 días siguientes al pago: si no has usado el pase o no funcionó, te devolvemos el dinero. Los detalles, en «Pagos y reembolsos»."
+        },
+        "page": {
+          "priceNote": "pago único, para el Año Nuevo {season} · sin suscripción"
         }
       }
     },
@@ -94,8 +102,8 @@
         "description": "Las 38 zonas horarias y 246 países y territorios: cuándo llega el Año Nuevo {year} a cada uno en tu hora local y cómo se celebra."
       },
       "pass": {
-        "title": "Pase de Año Nuevo por $5 — Time2Fest",
-        "description": "Pase de Año Nuevo de Time2Fest: tu propio programa y recordatorios, insignia en el chat, modo silencioso, traducción de mensajes y la tarjeta «Mis Años Nuevos». $5, pago único, sin suscripción."
+        "title": "Pase de Año Nuevo por $7 — Time2Fest",
+        "description": "Pase de Año Nuevo de Time2Fest: tu propio programa y recordatorios, insignia en el chat, modo silencioso, traducción de mensajes y la tarjeta «Mis Años Nuevos». $7, pago único, sin suscripción."
       },
       "privacy": {
         "title": "Política de privacidad — Time2Fest",
@@ -113,10 +121,6 @@
         "title": "Página no encontrada",
         "description": "Esta página no existe en Time2Fest."
       },
-      "toasts": {
-        "title": "Brindis de Año Nuevo: saluda a todo el mundo | Time2Fest",
-        "description": "Haz un brindis de Año Nuevo que verá todo el mundo: un mensaje dorado en el chat con tu nombre y tu bandera. Tres niveles: $2, $5 y $10. El brindis de $10 incluye el Pase de Año Nuevo."
-      },
       "credits": {
         "title": "Créditos de fotos y vídeos",
         "description": "Quién hizo las fotos y los vídeos de Time2Fest, de dónde proceden y con qué licencias."
@@ -124,7 +128,9 @@
     },
     "prefest": {
       "what": {
-        "videoSoon": "Estamos preparando un video corto sobre Time2Fest. Muy pronto estará aquí."
+        "videoSoon": "Estamos preparando un video corto sobre Time2Fest. Muy pronto estará aquí.",
+        "f4Title": "Mapa de husos y tradiciones",
+        "f4Text": "Mira dónde ya llegó el Año Nuevo y lee cómo lo celebran los países."
       },
       "meta": {
         "description": "Recibe el Año Nuevo 38 veces mientras la medianoche recorre el mundo durante 26 horas. Programa en tu hora local, mapa de zonas horarias, tradiciones. Gratis."
@@ -173,11 +179,15 @@
         "a5": "Kiribati: la isla de Kiritimati está en UTC+14, así que la medianoche llega allí antes que a ningún otro lugar, a las {when} en tu hora local.",
         "q6": "¿Quién recibe el Año Nuevo el último?",
         "a6": "Las últimas son las islas deshabitadas Baker y Howland (UTC−12). Entre los lugares habitados, los últimos en celebrarlo son Samoa Americana y Niue (UTC−11).",
-        "a1": "Sí. Las transmisiones, el chat, las salas de país y los sellos serán gratis para todos. Solo el Pase de Año Nuevo y los brindis serán de pago, y únicamente si quieres.",
+        "a1": "Sí. Las transmisiones, el chat, las salas de país y los sellos serán gratis para todos. Solo el Pase de Año Nuevo será de pago, y únicamente si quieres.",
         "a4": "Reunimos transmisiones abiertas de ciudades, cadenas de televisión y webcams en YouTube; el 31 de diciembre las mostraremos en el programa, zona horaria a zona horaria."
       },
       "pass": {
-        "intro": "Todas las transmisiones y el chat serán gratis para todos. El pase añadirá esto:"
+        "intro": "Todas las transmisiones y el chat serán gratis para todos. El pase añadirá esto:",
+        "title": "Más fiesta por $7",
+        "price": "$7",
+        "priceNote": "pago único, para el Año Nuevo {season} · sin suscripción",
+        "fine": "Los pagos los procesa nuestro revendedor autorizado (Merchant of Record). Sin publicidad."
       }
     },
     "header": {
@@ -185,14 +195,14 @@
       "logoLabel": "Time2Fest — ir al inicio",
       "home": "Inicio",
       "countries": "Países",
-      "toasts": "Brindis",
       "pass": "Pase de Año Nuevo",
       "menu": "Menú",
       "menuClose": "Cerrar el menú",
       "menuLabel": "Menú del sitio",
       "language": "Idioma: {language}",
       "languageLabel": "Idioma del sitio",
-      "passShort": "Pase"
+      "passShort": "Pase",
+      "pricing": "Precios"
     },
     "home": {
       "cardsNote": "Por ahora tenemos historias de {count, plural, one {# país} other {# países}} y vamos añadiendo el resto.",
@@ -226,14 +236,25 @@
       "home": "Volver al inicio",
       "countries": "Todos los países"
     },
-    "toasts": {
-      "art": {
-        "badge": "brindis",
-        "backNick": "Hiro",
-        "backText": "¡Feliz Año Nuevo desde Tokio!",
-        "frontNick": "Olena",
-        "frontText": "🥂 ¡Por todos los que recibimos juntos el Año Nuevo!"
-      }
+    "legal": {
+      "englishNote": "Este documento solo está disponible en inglés. La versión en inglés es la versión vigente."
+    },
+    "pricing": {
+      "title": "Precios",
+      "lead": "Ver las transmisiones, chatear y coleccionar sellos es gratis. Solo el Pase de Año Nuevo es de pago: $7 una sola vez, sin suscripción.",
+      "faqTitle": "Pago y condiciones",
+      "freeQ": "¿Qué es gratis?",
+      "freeA": "Todo lo principal: transmisiones en vivo, el chat y las salas de país, los sellos del pasaporte, el programa, el mapa de husos y las páginas de países. No hay publicidad ni acceso de pago a las transmisiones.",
+      "passQ": "¿Qué incluye el Pase de Año Nuevo?",
+      "passA": "Una insignia en el chat y tu ruta visible, tu propio programa con recordatorios, el modo silencioso del chat, la traducción de mensajes y la tarjeta «Mis Años Nuevos». El pase vale para el Año Nuevo {season}, hasta el 1 de enero de {year} a las 14:00 UTC.",
+      "onceQ": "¿Es una suscripción?",
+      "onceA": "No. $7 es un pago único en dólares estadounidenses, impuestos incluidos. No hay cobros automáticos ni nada que cancelar.",
+      "sellerQ": "¿Quién cobra el pago?",
+      "sellerA": "Los pagos los procesa nuestro revendedor autorizado (Merchant of Record); su nombre aparece en la página de pago y en tu recibo. Actúa como vendedor y gestiona los impuestos; nunca vemos los datos de tu tarjeta. Para comprar hay que tener 18 años o más. Detalles en los <terms>Términos</terms>.",
+      "refundQ": "¿Cómo pido un reembolso?",
+      "refundA": "En los 30 días siguientes al pago: sin dar motivos si no has usado el pase, y reembolso completo si no funcionó. Escribe a <mail>{email}</mail>; respondemos en un máximo de 3 días hábiles. Detalles en «<refunds>Pagos y reembolsos</refunds>».",
+      "whenQ": "¿Cuándo se puede comprar?",
+      "whenA": "La venta se abrirá más cerca de la fiesta. El pase se vende solo para el Año Nuevo en curso: no se vende después de la fiesta {season}."
     }
   },
   "prefest": {
@@ -1167,8 +1188,8 @@
   },
   "cookies": {
     "title": "Cookies en Time2Fest",
-    "text": "Las necesarias, siempre. La analítica y los vídeos de Facebook solo las activamos con tu consentimiento.",
-    "textShort": "Analítica y vídeos de Facebook: solo con tu consentimiento.",
+    "text": "Las necesarias, siempre. Los vídeos de Facebook solo los activamos con tu consentimiento.",
+    "textShort": "Vídeos de Facebook: solo con tu consentimiento.",
     "close": "Cerrar: solo las necesarias",
     "closeShort": "Cerrar",
     "accept": "Aceptar",
@@ -1180,10 +1201,6 @@
     "categoriesLabel": "Categorías de cookies",
     "necessary": "Necesarias",
     "necessaryText": "Siempre activadas",
-    "analytics": "Analítica",
-    "analyticsText": "Contamos las visitas sin nombres ni cuentas.",
-    "marketing": "Marketing",
-    "marketingText": "Medimos de dónde llega la gente a la fiesta.",
     "facebook": "Vídeos de Facebook",
     "facebookText": "Hacen falta para mostrar las transmisiones que solo se emiten en Facebook.",
     "save": "Guardar mi elección",

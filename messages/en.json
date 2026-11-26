@@ -565,8 +565,8 @@
         "descriptionFactsIn": "When New Year {year} arrives {inCountry}: midnight in your local time, a countdown to it and the country’s time zones."
       },
       "pass": {
-        "title": "New Year Pass for $5 — Time2Fest",
-        "description": "Time2Fest New Year Pass: your own schedule and reminders, a chat badge, quiet mode, message translation and a “My New Years” card. $5 one-time, no subscription."
+        "title": "New Year Pass for $7 — Time2Fest",
+        "description": "Time2Fest New Year Pass: your own schedule and reminders, a chat badge, quiet mode, message translation and a “My New Years” card. $7 one-time, no subscription."
       },
       "privacy": {
         "title": "Privacy Policy — Time2Fest",
@@ -584,10 +584,6 @@
         "title": "Page not found",
         "description": "There’s no such page on Time2Fest."
       },
-      "toasts": {
-        "title": "New Year Toasts: Greet the Whole World | Time2Fest",
-        "description": "Say a New Year toast the whole world sees: a golden chat message with your name and flag. Three levels: $2, $5 and $10. The $10 toast includes a New Year Pass."
-      },
       "credits": {
         "title": "Photo and video credits",
         "description": "Who made the photos and videos on Time2Fest, where they come from and under which licenses."
@@ -598,14 +594,14 @@
       "logoLabel": "Time2Fest — back to home",
       "home": "Home",
       "countries": "Countries",
-      "toasts": "Toasts",
       "pass": "New Year Pass",
       "menu": "Menu",
       "menuClose": "Close menu",
       "menuLabel": "Site menu",
       "language": "Language: {language}",
       "languageLabel": "Site language",
-      "passShort": "Pass"
+      "passShort": "Pass",
+      "pricing": "Pricing"
     },
     "footer": {
       "tagline": "New Year around the world, live — time zone by time zone.",
@@ -618,7 +614,6 @@
       "schedule": "Schedule",
       "map": "Time zone map",
       "pass": "New Year Pass",
-      "toasts": "Toasts",
       "terms": "Terms",
       "privacy": "Privacy",
       "cookies": "Cookies",
@@ -626,7 +621,11 @@
       "languageLabel": "Site language",
       "copyright": "© 2026 Time2Fest · Made in Ukraine",
       "credits": "Photo & video credits",
-      "socialLink": "Time2Fest on {network}"
+      "socialLink": "Time2Fest on {network}",
+      "pricing": "Pricing",
+      "refunds": "Payments & Refunds",
+      "rules": "Chat Rules",
+      "support": "Support"
     },
     "home": {
       "cardsNote": "So far we have stories about {count, plural, one {# country} other {# countries}}, and we’re adding the rest.",
@@ -716,7 +715,7 @@
         "a6": "The uninhabited Baker and Howland Islands (UTC−12) are last. Among inhabited places, American Samoa and Niue (UTC−11) celebrate last.",
         "a2": "The first midnight is on Kiritimati Island, {when} your time. Then midnight travels the world for 26 hours.",
         "a3": "Just a browser. On 31 December streams will be open to everyone, and there’s nothing to install.",
-        "a1": "Yes. Streams, chat, country rooms and stamps will be free for everyone. Only the New Year Pass and toasts will be paid, and only if you want them.",
+        "a1": "Yes. Streams, chat, country rooms and stamps will be free for everyone. Only the New Year Pass will be paid, and only if you want it.",
         "a4": "We gather open streams from cities, TV channels and webcams on YouTube — on 31 December we’ll show them in the schedule, time zone by time zone."
       },
       "meta": {
@@ -754,10 +753,16 @@
         "clockKicker": "Your time"
       },
       "pass": {
-        "intro": "All streams and chat will be free for everyone. The Pass will add this:"
+        "intro": "All streams and chat will be free for everyone. The Pass will add this:",
+        "title": "More from the celebration — for $7",
+        "price": "$7",
+        "priceNote": "one-time, for New Year {season} · no subscription",
+        "fine": "Payments are processed by our authorised reseller (Merchant of Record). No ads."
       },
       "what": {
-        "videoSoon": "We’re making a short video about Time2Fest. It’ll be here soon."
+        "videoSoon": "We’re making a short video about Time2Fest. It’ll be here soon.",
+        "f4Title": "Time zone map and traditions",
+        "f4Text": "See where the New Year has already arrived and read how countries celebrate."
       }
     },
     "overrides": {
@@ -774,18 +779,35 @@
       },
       "pass": {
         "faq": {
-          "a4": "Not yet: the pass is personal — it will work for whoever gets it."
+          "a4": "Not yet: the pass is personal — it will work for whoever gets it.",
+          "a1": "No. The Pass is paid once and works for New Year {season} — there are no automatic charges.",
+          "a3": "Write to support@time2fest.com within 30 days of payment: if you haven’t used the Pass or it didn’t work, we’ll refund you. Details are in “Payments & Refunds”."
+        },
+        "page": {
+          "priceNote": "one-time, for New Year {season} · no subscription",
+          "metaTitle": "New Year Pass: $7 Once, No Subscription | Time2Fest"
         }
       }
     },
-    "toasts": {
-      "art": {
-        "badge": "toast",
-        "backNick": "Hiro",
-        "backText": "Happy New Year from Tokyo!",
-        "frontNick": "Olena",
-        "frontText": "🥂 Raising a glass to everyone ringing in the New Year together!"
-      }
+    "legal": {
+      "englishNote": "This document is available in English only. The English version applies."
+    },
+    "pricing": {
+      "title": "Pricing",
+      "lead": "Watching the streams, chatting and collecting stamps is free. Only the New Year Pass is paid: $7 once, no subscription.",
+      "faqTitle": "Payment and terms",
+      "freeQ": "What is free?",
+      "freeA": "Everything that matters: live streams, the chat and country rooms, passport stamps, the schedule, the time zone map and country pages. There are no ads and no paid access to streams.",
+      "passQ": "What does the New Year Pass include?",
+      "passA": "A chat badge and your visible path, your own schedule with reminders, quiet chat mode, message translation and the “My New Years” card. The Pass is valid for New Year {season} — until 1 January {year}, 14:00 UTC.",
+      "onceQ": "Is it a subscription?",
+      "onceA": "No. $7 is a single payment in US dollars, taxes included. There are no automatic charges and nothing to cancel.",
+      "sellerQ": "Who takes the payment?",
+      "sellerA": "Payments are processed by our authorised reseller (Merchant of Record); its name is shown on the checkout page and on your receipt. It acts as the seller and handles taxes; we never see your card details. You must be 18 or older to buy. Details are in the <terms>Terms</terms>.",
+      "refundQ": "How do I get a refund?",
+      "refundA": "Within 30 days of payment: no reason needed if you haven’t used the Pass, and a full refund if it didn’t work. Write to <mail>{email}</mail> — we reply within 3 business days. Details are in “<refunds>Payments & Refunds</refunds>”.",
+      "whenQ": "When can I buy it?",
+      "whenA": "Sales open closer to the celebration. The Pass is sold only for the current New Year: it is not sold after the {season} celebration ends."
     }
   },
   "player": {
@@ -1500,8 +1522,8 @@
   },
   "cookies": {
     "title": "Cookies on Time2Fest",
-    "text": "Necessary cookies are always on. We turn on analytics and Facebook video only with your consent.",
-    "textShort": "Analytics and Facebook video — only with your consent.",
+    "text": "Necessary cookies are always on. We turn on Facebook video only with your consent.",
+    "textShort": "Facebook video — only with your consent.",
     "close": "Close — necessary only",
     "closeShort": "Close",
     "accept": "Accept",
@@ -1513,10 +1535,6 @@
     "categoriesLabel": "Cookie categories",
     "necessary": "Necessary",
     "necessaryText": "Always on",
-    "analytics": "Analytics",
-    "analyticsText": "We count visits without names or accounts.",
-    "marketing": "Marketing",
-    "marketingText": "We measure where people come from to join the celebration.",
     "facebook": "Facebook video",
     "facebookText": "Needed to show streams that are only available on Facebook.",
     "save": "Save choice",

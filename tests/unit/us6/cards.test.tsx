@@ -33,7 +33,7 @@ describe('PassOffer — «Наступна північ» (рішення 2026-1
     expect(screen.getByText(/^Азорські острови · /)).toBeInTheDocument();
     expect(screen.getByText('З пасом — нагадаємо перед північчю')).toBeInTheDocument();
     expect(coralButtons()).toHaveLength(1);
-    expect(screen.getByRole('button', { name: 'Оформити пас · $5' })).toHaveAttribute('data-variant', 'coral');
+    expect(screen.getByRole('button', { name: 'Оформити пас · $7' })).toHaveAttribute('data-variant', 'coral');
   });
 
   it('коралова кнопка робить кнопку звуку нейтральною', () => {
@@ -59,7 +59,7 @@ describe('PassOffer — «Наступна північ» (рішення 2026-1
     const onClose = vi.fn();
     const onDetails = vi.fn();
     renderPage(offer({ onGetPass, onClose, onDetails }));
-    fireEvent.click(screen.getByRole('button', { name: 'Оформити пас · $5' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Оформити пас · $7' }));
     expect(onGetPass).toHaveBeenCalledOnce();
     screen.getAllByRole('button', { name: 'Детальніше' }).forEach((b) => fireEvent.click(b));
     expect(onDetails).toHaveBeenCalledTimes(2);
@@ -109,7 +109,7 @@ describe('рівні тосту — плитки й «що дає» (дошка 
     expect(within(list).getByText('Твій нік у привітанні опівночі').closest('li')).toHaveTextContent('з $10');
     fireEvent.click(screen.getByRole('radio', { name: /^\$10/ }));
     expect(list.querySelectorAll('[data-on]')).toHaveLength(4);
-    expect(within(list).getByText(/Новорічний пас у подарунок/).closest('li')).toHaveTextContent('· окремо $5');
+    expect(within(list).getByText(/Новорічний пас у подарунок/).closest('li')).toHaveTextContent('· окремо $7');
     expect(coralButtons()).toHaveLength(0);
   });
 
@@ -192,7 +192,7 @@ describe('CookieBanner', () => {
     unmount();
     const r2 = renderPlain(<CookieBanner variant="bar" compact hidden />);
     const hidden = document.querySelector('[data-cookie-banner="bar"]')!;
-    expect(hidden).toHaveTextContent('Аналітика й відео з Facebook — лише з твоєї згоди.');
+    expect(hidden).toHaveTextContent('Відео з Facebook — лише з твоєї згоди.');
     expect(hidden).toHaveAttribute('data-hidden', 'true');
     expect(hidden).toHaveAttribute('aria-hidden', 'true');
     r2.unmount();
@@ -204,11 +204,11 @@ describe('CookieBanner', () => {
 });
 
 describe('CookieSettings', () => {
-  it('чотири категорії: «Необхідні» завжди ввімкнені, решта перемикаються; зберігає вибір', () => {
+  it('дві категорії (2026-11-26: без аналітики й маркетингу): «Необхідні» завжди ввімкнені, Facebook перемикається; зберігає вибір', () => {
     const onSave = vi.fn();
     renderPlain(<CookieSettings value={{ analytics: false, marketing: false, facebookVideo: false }} onSave={onSave} />);
     const switches = screen.getAllByRole('switch');
-    expect(switches).toHaveLength(4);
+    expect(switches).toHaveLength(2);
     expect(screen.getByRole('switch', { name: 'Необхідні' })).toBeDisabled();
     expect(screen.getByRole('switch', { name: 'Необхідні' })).toBeChecked();
     expect(screen.getByText('Завжди увімкнені')).toBeInTheDocument();

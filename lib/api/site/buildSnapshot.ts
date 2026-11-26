@@ -27,7 +27,7 @@ export function buildSnapshot(meta: BuildCatalogMeta): SiteState {
       toastTiers: { '2': true, '5': true, '10': true },
     },
     products: [
-      { key: 'pass', price: price(500), priceVersion: 1 },
+      { key: 'pass', price: price(700), priceVersion: 1 },
       { key: 'toast:2', price: price(200), priceVersion: 1 },
       { key: 'toast:5', price: price(500), priceVersion: 1 },
       { key: 'toast:10', price: price(1000), priceVersion: 1 },

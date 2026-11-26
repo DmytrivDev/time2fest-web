@@ -18,7 +18,6 @@ const PAIRS = [
   { id: 'pass', demo: `/pass/${T}`, pre: '/uk/pass/' },
   { id: 'countries', demo: `/countries/${T}`, pre: '/uk/countries/' },
   { id: 'country-fr', demo: `/country/frantsiia/${T}`, pre: '/uk/country/france/' },
-  { id: 'toasts', demo: `/support/${T}`, pre: '/uk/toasts/' },
   { id: 'privacy', demo: `/privacy/${T}`, pre: '/uk/privacy/' },
 ];
 const only = arg('--only', '').split(',').filter(Boolean);

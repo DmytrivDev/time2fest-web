@@ -188,14 +188,15 @@ export interface CookieSettingsProps {
   className?: string;
 }
 
-/** Вміст вікна «Налаштування cookies»: Необхідні (завжди), Аналітика, Маркетинг, «Відео з Facebook». */
+/**
+ * Вміст вікна «Налаштування cookies»: Необхідні (завжди) і «Відео з Facebook». Аналітики й маркетингу на сайті немає —
+ * категорій теж немає (рішення власника 2026-11-26); поля `analytics`/`marketing` у виборі лишаються для сумісності сховища.
+ */
 export function CookieSettings({ value, onSave, saveFailed = false, onRetry, className }: CookieSettingsProps) {
   const t = useTranslations('cookies');
   const [draft, setDraft] = useState<CookieChoices>(value);
   useRegisterCoral();
   const rows: { key: keyof CookieChoices; label: string; text: string }[] = [
-    { key: 'analytics', label: t('analytics'), text: t('analyticsText') },
-    { key: 'marketing', label: t('marketing'), text: t('marketingText') },
     { key: 'facebookVideo', label: t('facebook'), text: t('facebookText') },
   ];
   return (

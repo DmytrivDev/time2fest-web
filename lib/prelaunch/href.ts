@@ -7,10 +7,12 @@ export const PAGES = {
   home: '/',
   countries: '/countries/',
   pass: '/pass/',
-  toasts: '/toasts/',
+  pricing: '/pricing/',
   privacy: '/privacy/',
   cookies: '/cookies/',
   terms: '/terms/',
+  refunds: '/refunds/',
+  rules: '/rules/',
   credits: '/credits/',
 } as const;
 export type PageKey = keyof typeof PAGES;

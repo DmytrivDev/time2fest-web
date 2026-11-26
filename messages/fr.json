@@ -13,13 +13,16 @@
       "schedule": "Programme",
       "map": "Carte des fuseaux",
       "pass": "Pass Nouvel An",
-      "toasts": "Toasts",
       "terms": "Conditions",
       "privacy": "Confidentialité",
       "cookies": "Cookies",
       "socialLabel": "Retrouve-nous sur les réseaux sociaux",
       "languageLabel": "Langue du site",
-      "copyright": "© 2026 Time2Fest · Fabriqué en Ukraine"
+      "copyright": "© 2026 Time2Fest · Fabriqué en Ukraine",
+      "pricing": "Tarifs",
+      "refunds": "Paiement et remboursement",
+      "rules": "Règles du chat",
+      "support": "Assistance"
     },
     "overrides": {
       "liveMap": {
@@ -29,7 +32,12 @@
       },
       "pass": {
         "faq": {
-          "a4": "Pas pour le moment : le Pass est personnel, il fonctionnera pour la personne qui l’obtient."
+          "a4": "Pas pour le moment : le Pass est personnel, il fonctionnera pour la personne qui l’obtient.",
+          "a1": "Non. Le Pass se paie une seule fois et vaut pour le Nouvel An {season} : aucun prélèvement automatique.",
+          "a3": "Écris à support@time2fest.com dans les 30 jours suivant le paiement : si tu n’as pas utilisé le Pass ou s’il n’a pas fonctionné, nous te remboursons. Détails dans « Paiement et remboursement »."
+        },
+        "page": {
+          "priceNote": "paiement unique, pour le Nouvel An {season} · sans abonnement"
         }
       }
     },
@@ -94,8 +102,8 @@
         "description": "Les 38 fuseaux horaires et 246 pays et territoires : quand le Nouvel An {year} arrive dans chacun à ton heure, et comment on le fête."
       },
       "pass": {
-        "title": "Pass Nouvel An pour $5 — Time2Fest",
-        "description": "Pass Nouvel An Time2Fest : ton programme et des rappels, un badge dans le chat, le mode discret, la traduction des messages et la carte « Mes Nouvel An ». $5, paiement unique, sans abonnement."
+        "title": "Pass Nouvel An pour $7 — Time2Fest",
+        "description": "Pass Nouvel An Time2Fest : ton programme et des rappels, un badge dans le chat, le mode discret, la traduction des messages et la carte « Mes Nouvel An ». $7, paiement unique, sans abonnement."
       },
       "privacy": {
         "title": "Politique de confidentialité — Time2Fest",
@@ -113,10 +121,6 @@
         "title": "Page introuvable",
         "description": "Cette page n’existe pas sur Time2Fest."
       },
-      "toasts": {
-        "title": "Toasts du Nouvel An : salue le monde entier | Time2Fest",
-        "description": "Porte un toast du Nouvel An que le monde entier verra : un message doré dans le chat, avec ton nom et ton drapeau. Trois niveaux : $2, $5 et $10. Le toast à $10 inclut le Pass Nouvel An."
-      },
       "credits": {
         "title": "Crédits photos et vidéos",
         "description": "Qui a réalisé les photos et vidéos de Time2Fest, d’où elles viennent et sous quelles licences."
@@ -124,7 +128,9 @@
     },
     "prefest": {
       "what": {
-        "videoSoon": "On prépare une courte vidéo sur Time2Fest. Elle arrive bientôt ici."
+        "videoSoon": "On prépare une courte vidéo sur Time2Fest. Elle arrive bientôt ici.",
+        "f4Title": "Carte des fuseaux et traditions",
+        "f4Text": "Vois où le Nouvel An est déjà arrivé et découvre comment les pays le fêtent."
       },
       "meta": {
         "description": "Fête le Nouvel An 38 fois : minuit fait le tour du monde en 26 heures. Programme à ton heure, carte des fuseaux, traditions. Gratuit."
@@ -173,11 +179,15 @@
         "a5": "Kiribati : l’île de Kiritimati vit à l’heure UTC+14, c’est donc là que minuit arrive en premier, à {when} à ton heure.",
         "q6": "Qui fête le Nouvel An en dernier ?",
         "a6": "Les îles inhabitées de Baker et Howland (UTC−12) sont les dernières. Parmi les lieux habités, les Samoa américaines et Niue (UTC−11) fêtent en dernier.",
-        "a1": "Oui. Les diffusions, le chat, les salons des pays et les tampons seront gratuits pour tous. Seuls le Pass Nouvel An et les toasts seront payants, si tu le souhaites.",
+        "a1": "Oui. Les diffusions, le chat, les salons des pays et les tampons seront gratuits pour tous. Seul le Pass Nouvel An sera payant, si tu le souhaites.",
         "a4": "Nous rassemblons les diffusions publiques de villes, de chaînes de télévision et de webcams sur YouTube ; le 31 décembre, nous les présenterons dans le programme, fuseau après fuseau."
       },
       "pass": {
-        "intro": "Toutes les diffusions et le chat seront gratuits pour tous. Le Pass ajoutera ceci :"
+        "intro": "Toutes les diffusions et le chat seront gratuits pour tous. Le Pass ajoutera ceci :",
+        "title": "Plus de fête pour $7",
+        "price": "$7",
+        "priceNote": "paiement unique, pour le Nouvel An {season} · sans abonnement",
+        "fine": "Les paiements sont traités par notre revendeur agréé (Merchant of Record). Sans publicité."
       }
     },
     "header": {
@@ -185,14 +195,14 @@
       "logoLabel": "Time2Fest — retour à l’accueil",
       "home": "Accueil",
       "countries": "Pays",
-      "toasts": "Toasts",
       "pass": "Pass Nouvel An",
       "menu": "Menu",
       "menuClose": "Fermer le menu",
       "menuLabel": "Menu du site",
       "language": "Langue : {language}",
       "languageLabel": "Langue du site",
-      "passShort": "Pass"
+      "passShort": "Pass",
+      "pricing": "Tarifs"
     },
     "home": {
       "cardsNote": "Pour l’instant, nous racontons {count, plural, one {# pays} other {# pays}}, et nous ajoutons les autres.",
@@ -226,14 +236,25 @@
       "home": "Retour à l’accueil",
       "countries": "Tous les pays"
     },
-    "toasts": {
-      "art": {
-        "badge": "toast",
-        "backNick": "Hiro",
-        "backText": "Bonne année depuis Tokyo !",
-        "frontNick": "Olena",
-        "frontText": "🥂 Je lève mon verre à tous ceux qui fêtent le Nouvel An ensemble !"
-      }
+    "legal": {
+      "englishNote": "Ce document n’existe qu’en anglais. La version anglaise est la version qui fait foi."
+    },
+    "pricing": {
+      "title": "Tarifs",
+      "lead": "Regarder les diffusions, discuter et collectionner les tampons est gratuit. Seul le Pass Nouvel An est payant : $7 une seule fois, sans abonnement.",
+      "faqTitle": "Paiement et conditions",
+      "freeQ": "Qu’est-ce qui est gratuit ?",
+      "freeA": "L’essentiel : les diffusions en direct, le chat et les salons des pays, les tampons du passeport, le programme, la carte des fuseaux et les pages des pays. Pas de publicité ni d’accès payant aux diffusions.",
+      "passQ": "Que comprend le Pass Nouvel An ?",
+      "passA": "Un badge dans le chat et ton parcours visible, ton programme avec rappels, le mode discret du chat, la traduction des messages et la carte « Mes Nouvel An ». Le Pass vaut pour le Nouvel An {season}, jusqu’au 1er janvier {year} à 14:00 UTC.",
+      "onceQ": "Est-ce un abonnement ?",
+      "onceA": "Non. $7, c’est un paiement unique en dollars américains, taxes comprises. Aucun prélèvement automatique, rien à résilier.",
+      "sellerQ": "Qui encaisse le paiement ?",
+      "sellerA": "Les paiements sont traités par notre revendeur agréé (Merchant of Record) ; son nom figure sur la page de paiement et sur ton reçu. C’est lui le vendeur, il gère les taxes ; nous ne voyons jamais les données de ta carte. Il faut avoir 18 ans ou plus pour acheter. Détails dans les <terms>Conditions</terms>.",
+      "refundQ": "Comment être remboursé ?",
+      "refundA": "Dans les 30 jours suivant le paiement : sans justification si tu n’as pas utilisé le Pass, et remboursement intégral s’il n’a pas fonctionné. Écris à <mail>{email}</mail> — réponse sous 3 jours ouvrés. Détails dans « <refunds>Paiement et remboursement</refunds> ».",
+      "whenQ": "Quand peut-on l’acheter ?",
+      "whenA": "La vente ouvrira à l’approche de la fête. Le Pass n’est vendu que pour le Nouvel An en cours : il n’est plus vendu après la fête {season}."
     }
   },
   "prefest": {
@@ -1167,8 +1188,8 @@
   },
   "cookies": {
     "title": "Cookies sur Time2Fest",
-    "text": "Les cookies nécessaires sont toujours actifs. Nous n’activons l’analytique et les vidéos Facebook qu’avec ton accord.",
-    "textShort": "Analytique et vidéos Facebook : uniquement avec ton accord.",
+    "text": "Les cookies nécessaires sont toujours actifs. Nous n’activons les vidéos Facebook qu’avec ton accord.",
+    "textShort": "Vidéos Facebook : uniquement avec ton accord.",
     "close": "Fermer — nécessaires uniquement",
     "closeShort": "Fermer",
     "accept": "Accepter",
@@ -1180,10 +1201,6 @@
     "categoriesLabel": "Catégories de cookies",
     "necessary": "Nécessaires",
     "necessaryText": "Toujours activés",
-    "analytics": "Analytique",
-    "analyticsText": "Nous comptons les visites sans noms ni comptes.",
-    "marketing": "Marketing",
-    "marketingText": "Nous mesurons d’où viennent les gens qui rejoignent la fête.",
     "facebook": "Vidéos Facebook",
     "facebookText": "Nécessaires pour afficher les diffusions qui passent uniquement par Facebook.",
     "save": "Enregistrer mon choix",

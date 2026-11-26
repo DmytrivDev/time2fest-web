@@ -22,7 +22,6 @@ const PAIRS = [
   { id: 'country-fr', demo: `/country/frantsiia/${T}`, pre: '/uk/country/france/' },
   { id: 'country-ph', demo: `/country/filippiny/${T}`, pre: '/uk/country/philippines/' },
   { id: 'country-au', demo: `/country/avstraliia/${T}`, pre: '/uk/country/australia/' },
-  { id: 'toasts', demo: `/support/${T}`, pre: '/uk/toasts/' },
   { id: 'privacy', demo: `/privacy/${T}`, pre: '/uk/privacy/' },
 ];
 const SIZES = [

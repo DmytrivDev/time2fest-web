@@ -38,92 +38,128 @@
   },
   "pass": {
     "uk": {
-      "title": "Новорічний пас за $5: разово, без підписки | Time2Fest",
-      "description": "Новорічний пас додає позначку в чаті, свій графік із нагадуваннями, тихий режим і переклад чату. $5 разово, без підписки. Трансляції й чат безплатні для всіх."
+      "title": "Новорічний пас за $7: разово, без підписки | Time2Fest",
+      "description": "Новорічний пас додає позначку в чаті, свій графік із нагадуваннями, тихий режим і переклад чату. $7 разово, без підписки. Трансляції й чат безплатні для всіх."
     },
     "en": {
-      "title": "New Year Pass: $5 Once, No Subscription | Time2Fest",
-      "description": "The New Year Pass adds a chat badge, your schedule with reminders, quiet chat mode and chat translation. $5 once, no subscription. Streams and chat stay free."
+      "title": "New Year Pass: $7 Once, No Subscription | Time2Fest",
+      "description": "The New Year Pass adds a chat badge, your schedule with reminders, quiet chat mode and chat translation. $7 once, no subscription. Streams and chat stay free."
     },
     "es": {
-      "title": "Pase de Año Nuevo: 5 USD, pago único | Time2Fest",
-      "description": "El Pase de Año Nuevo añade una insignia en el chat, tu programa con recordatorios, modo silencioso y traducción del chat. 5 USD, pago único. El chat es gratis."
+      "title": "Pase de Año Nuevo: 7 USD, pago único | Time2Fest",
+      "description": "El Pase de Año Nuevo añade una insignia en el chat, tu programa con recordatorios, modo silencioso y traducción del chat. 7 USD, pago único. El chat es gratis."
     },
     "fr": {
-      "title": "Pass Nouvel An : 5 USD, paiement unique | Time2Fest",
-      "description": "Le Pass Nouvel An ajoute un badge dans le chat, ton programme avec rappels, un mode discret et la traduction du chat. 5 USD, paiement unique. Chat gratuit."
+      "title": "Pass Nouvel An : 7 USD, paiement unique | Time2Fest",
+      "description": "Le Pass Nouvel An ajoute un badge dans le chat, ton programme avec rappels, un mode discret et la traduction du chat. 7 USD, paiement unique. Chat gratuit."
     }
   },
-  "toasts": {
+  "pricing": {
     "uk": {
-      "title": "Новорічні тости: привітай увесь світ | Time2Fest",
-      "description": "Скажи новорічний тост, який побачить увесь світ: золоте повідомлення в чаті з твоїм ніком і прапором. Рівні: $2, $5 і $10. За $10 — Новорічний пас у подарунок."
+      "title": "Ціни: трансляції безплатно, Новорічний пас $7 | Time2Fest",
+      "description": "Трансляції й чат Time2Fest безплатні. Новорічний пас — $7 разово, без підписки, на Новий рік 2026/27. Як оплатити й повернути гроші."
     },
     "en": {
-      "title": "New Year Toasts: Greet the Whole World | Time2Fest",
-      "description": "Say a New Year toast the whole world sees: a golden chat message with your name and flag. Three levels: $2, $5 and $10. The $10 toast includes a New Year Pass."
+      "title": "Pricing: Free Streams, New Year Pass $7 | Time2Fest",
+      "description": "Time2Fest streams and chat are free. The New Year Pass is $7 once, no subscription, for New Year 2026/27. How payment and refunds work."
     },
     "es": {
-      "title": "Brindis de Año Nuevo: saluda al mundo entero | Time2Fest",
-      "description": "Haz un brindis de Año Nuevo que verá todo el mundo: un mensaje dorado en el chat con tu nombre y bandera. Tres niveles: 2, 5 y 10 USD. El de 10 incluye el Pase."
+      "title": "Precios: transmisiones gratis, Pase 7 USD | Time2Fest",
+      "description": "Las transmisiones y el chat de Time2Fest son gratis. El Pase de Año Nuevo cuesta 7 USD, pago único, sin suscripción. Cómo pagar y pedir reembolso."
     },
     "fr": {
-      "title": "Toasts du Nouvel An : salue le monde entier | Time2Fest",
-      "description": "Porte un toast du Nouvel An vu par le monde entier : un message doré dans le chat avec ton pseudo et ton drapeau. Trois niveaux : 2, 5 et 10 USD."
+      "title": "Tarifs : diffusions gratuites, Pass 7 USD | Time2Fest",
+      "description": "Les diffusions et le chat Time2Fest sont gratuits. Le Pass Nouvel An coûte 7 USD, paiement unique, sans abonnement. Paiement et remboursement."
     }
   },
   "privacy": {
     "uk": {
       "title": "Політика конфіденційності | Time2Fest",
-      "description": "Які дані отримує сайт Time2Fest і навіщо: статистика без cookies, технічні дані хостингу, листи. Без реклами й продажу даних."
+      "description": "Які дані обробляє Time2Fest і навіщо: сайт сьогодні, вхід, чат і оплата паса. Без реклами й продажу даних."
     },
     "en": {
       "title": "Privacy Policy | Time2Fest",
-      "description": "What data the Time2Fest site receives and why: cookie-free statistics, technical hosting data and emails. No ads, no selling of data."
+      "description": "What data Time2Fest processes and why: the site today, sign-in, chat and Pass payments. No ads, no selling of data."
     },
     "es": {
       "title": "Política de privacidad | Time2Fest",
-      "description": "Qué datos recibe el sitio Time2Fest y por qué: estadísticas sin cookies, datos técnicos del alojamiento y correos. Sin anuncios ni venta de datos."
+      "description": "Qué datos trata Time2Fest y por qué: el sitio hoy, el inicio de sesión, el chat y el pago del Pase. Sin anuncios ni venta de datos."
     },
     "fr": {
       "title": "Politique de confidentialité | Time2Fest",
-      "description": "Quelles données le site Time2Fest reçoit et pourquoi : statistiques sans cookies, données techniques d’hébergement et e-mails. Sans pub ni revente de données."
+      "description": "Quelles données Time2Fest traite et pourquoi : le site aujourd’hui, la connexion, le chat et le paiement du Pass. Sans pub ni revente de données."
     }
   },
   "cookies": {
     "uk": {
       "title": "Cookies | Time2Fest",
-      "description": "Time2Fest не ставить cookies для статистики чи реклами. У браузері зберігається лише вибір мови."
+      "description": "Що Time2Fest зберігає у браузері: сьогодні — лише вибір мови. Без cookies для аналітики чи реклами."
     },
     "en": {
       "title": "Cookies | Time2Fest",
-      "description": "Time2Fest sets no cookies for statistics or advertising. Only your language choice is stored in your browser."
+      "description": "What Time2Fest stores in your browser: today only your language choice. No cookies for analytics or advertising."
     },
     "es": {
       "title": "Cookies | Time2Fest",
-      "description": "Time2Fest no usa cookies de estadística ni de publicidad. En tu navegador solo se guarda el idioma elegido."
+      "description": "Qué guarda Time2Fest en tu navegador: hoy solo el idioma elegido. Sin cookies de analítica ni de publicidad."
     },
     "fr": {
       "title": "Cookies | Time2Fest",
-      "description": "Time2Fest n’utilise pas de cookies de statistiques ni de publicité. Seul ton choix de langue est enregistré dans ton navigateur."
+      "description": "Ce que Time2Fest enregistre dans ton navigateur : aujourd’hui, seulement ta langue. Aucun cookie d’analyse ni de publicité."
     }
   },
   "terms": {
     "uk": {
       "title": "Умови користування | Time2Fest",
-      "description": "Як користуватися сайтом Time2Fest: що це за сайт, права на вміст, межі відповідальності й контакти."
+      "description": "Умови користування Time2Fest: трансляції, чат, Новорічний пас, оплата й повернення, модерація, відповідальність і контакти."
     },
     "en": {
-      "title": "Terms of Use | Time2Fest",
-      "description": "How to use the Time2Fest site: what it is, content rights, limitation of liability and contact details."
+      "title": "Terms of Service | Time2Fest",
+      "description": "Time2Fest Terms of Service: streams, chat, the New Year Pass, payments and refunds, moderation, liability and contact details."
     },
     "es": {
-      "title": "Términos de uso | Time2Fest",
-      "description": "Cómo usar el sitio Time2Fest: qué es, derechos sobre el contenido, límites de responsabilidad y contacto."
+      "title": "Términos del servicio | Time2Fest",
+      "description": "Términos del servicio de Time2Fest: transmisiones, chat, Pase de Año Nuevo, pagos y reembolsos, moderación, responsabilidad y contacto."
     },
     "fr": {
       "title": "Conditions d’utilisation | Time2Fest",
-      "description": "Comment utiliser le site Time2Fest : ce qu’il est, droits sur le contenu, limites de responsabilité et contact."
+      "description": "Conditions d’utilisation de Time2Fest : diffusions, chat, Pass Nouvel An, paiement et remboursement, modération, responsabilité et contact."
+    }
+  },
+  "refunds": {
+    "uk": {
+      "title": "Оплата й повернення | Time2Fest",
+      "description": "Як оплатити Новорічний пас Time2Fest і повернути гроші: разова оплата $7, податки в ціні, повернення протягом 30 днів."
+    },
+    "en": {
+      "title": "Payments & Refund Policy | Time2Fest",
+      "description": "How paying for the Time2Fest New Year Pass works and how to get a refund: a one-time $7 payment, taxes included, refunds within 30 days."
+    },
+    "es": {
+      "title": "Pagos y reembolsos | Time2Fest",
+      "description": "Cómo se paga el Pase de Año Nuevo de Time2Fest y cómo pedir un reembolso: pago único de 7 USD, impuestos incluidos, reembolsos en 30 días."
+    },
+    "fr": {
+      "title": "Paiement et remboursement | Time2Fest",
+      "description": "Comment payer le Pass Nouvel An Time2Fest et être remboursé : paiement unique de 7 USD, taxes comprises, remboursement sous 30 jours."
+    }
+  },
+  "rules": {
+    "uk": {
+      "title": "Правила чату | Time2Fest",
+      "description": "Правила чату Time2Fest: що можна й чого не можна писати, як працює модерація, як поскаржитися й оскаржити рішення."
+    },
+    "en": {
+      "title": "Chat & Community Rules | Time2Fest",
+      "description": "Time2Fest chat rules: what is welcome and what is not, how moderation works, how to report content and appeal a decision."
+    },
+    "es": {
+      "title": "Normas del chat | Time2Fest",
+      "description": "Normas del chat de Time2Fest: qué se puede y qué no se puede escribir, cómo funciona la moderación, cómo denunciar y apelar."
+    },
+    "fr": {
+      "title": "Règles du chat | Time2Fest",
+      "description": "Règles du chat Time2Fest : ce qui est bienvenu ou interdit, comment fonctionne la modération, comment signaler et contester une décision."
     }
   },
   "country": {

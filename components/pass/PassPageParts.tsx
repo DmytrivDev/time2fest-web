@@ -12,6 +12,7 @@ import { Reveal } from '@/components/primitives/Reveal';
 import { cn } from '@/components/primitives/cn';
 import { formatUsd } from '@/lib/offers/format';
 import { useSitePrices } from '@/lib/api/hooks/site';
+import { SEASON_VALUES } from '@/lib/prelaunch/season';
 import s from './pass.module.css';
 
 /** Квиток пасу (той самий малюнок, що на дошках): небо з феєрверками, місто, корінець «СЕЗОН 2026/27». */
@@ -107,7 +108,7 @@ export function Hero({ active, ticket }: { active: boolean; ticket?: Parameters<
         ) : (
           <span className={s.price}>{formatUsd(passPrice)}</span>
         )}
-        <span className={s.priceNote}>{active ? t('activeNote') : t('priceNote')}</span>
+        <span className={s.priceNote}>{active ? t('activeNote') : t('priceNote', SEASON_VALUES)}</span>
         <p className={s.lead}>{t('lead')}</p>
       </div>
     </section>

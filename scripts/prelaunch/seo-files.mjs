@@ -132,6 +132,8 @@ export function redirectsFile() {
       add(`${p}/country/${slug}/`, to);
     }
     for (const doc of ['/agreement', '/disclaimer']) add(`${p}${doc}`, `${t}/terms/`);
+    // Тостів цього сезону немає (рішення власника 2026-11-26): сторінку прибрано, адреса веде на «Ціни».
+    add(`${p}/toasts`, `${t}/pricing/`);
     // «Про проєкт» до окремого дизайну немає (рішення 2026-11-18) — про сайт і контакти розповідає головна.
     for (const x of ['/about', '/contact']) add(`${p}${x}`, home);
     for (const x of ['/ambassadors', '/ambassadors/list', '/become-ambassador']) add(`${p}${x}`, home);

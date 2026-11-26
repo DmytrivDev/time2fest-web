@@ -14,7 +14,7 @@ import { Hero } from '@/components/pass/PassPageParts';
 import { PrefestFaqList } from '@/components/prefest/PrefestFaq';
 import { PassPerksShowcase } from '@/components/pass/PassPerks';
 import ps from '@/components/pass/pass.module.css';
-import { SEASON_LABEL } from '@/lib/prelaunch/season';
+import { SEASON_LABEL, SEASON_VALUES } from '@/lib/prelaunch/season';
 import type { SiteData } from '@/lib/prelaunch/site';
 import { SiteShell } from './SiteShell';
 
@@ -54,7 +54,7 @@ function Body() {
       <PrefestFaqList
         stacks
         title={tf('title')}
-        items={PASS_FAQ.map((n) => ({ id: String(n), question: tf(`q${n}`), answer: tf(`a${n}`) }))}
+        items={PASS_FAQ.map((n) => ({ id: String(n), question: tf(`q${n}`), answer: tf(`a${n}`, SEASON_VALUES) }))}
       />
     </div>
   );

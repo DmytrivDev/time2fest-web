@@ -106,12 +106,12 @@ describe('PassBuy — картка оформлення', () => {
 
   const props = { onSignIn: vi.fn(), onCodeSent: vi.fn(), onDone: vi.fn() };
 
-  it('гість: Google, email, «Оформити пас — $5», «Вже маєш акаунт? Увійти»', () => {
+  it('гість: Google, email, «Оформити пас — $7», «Вже маєш акаунт? Увійти»', () => {
     renderWithApp(<PassBuy variant="page" {...props} />);
     expect(screen.getByRole('heading', { name: 'Оформити за хвилину' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Оформити з Google' })).toBeInTheDocument();
     expect(screen.getByRole('textbox', { name: 'Email' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Оформити пас — $5' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Оформити пас — $7' })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Увійти' }));
     expect(props.onSignIn).toHaveBeenCalled();
   });
@@ -140,7 +140,7 @@ describe('PassBuy — картка оформлення', () => {
   it('помилка email: рядок під полем, поле позначене', () => {
     renderWithApp(<PassBuy variant="page" {...props} />);
     fireEvent.change(screen.getByRole('textbox', { name: 'Email' }), { target: { value: 'olena@example' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Оформити пас — $5' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Оформити пас — $7' }));
     expect(screen.getByRole('alert')).toHaveTextContent('після «@» бракує домену');
     expect(screen.getByRole('textbox', { name: 'Email' })).toHaveAttribute('aria-invalid', 'true');
   });
@@ -161,9 +161,9 @@ describe('PassBuy — картка оформлення', () => {
     const restore = setServicesForTest({ checkout: { ...getService('checkout'), start: async () => fail('network') } });
     useAuthStore.getState().signInVerified('olena@example.com', T0);
     renderWithApp(<PassBuy variant="page" {...props} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Оформити пас — $5' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Оформити пас — $7' }));
     expect(await screen.findByText('Не вдалося відкрити оплату')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Спробувати ще — $5' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Спробувати ще — $7' })).toBeInTheDocument();
     restore();
     act(() => usePassStore.setState({ phase: 'expired' }));
     expect(screen.getByText('Час на оплату минув')).toBeInTheDocument();
@@ -175,11 +175,11 @@ describe('PassBuy — картка оформлення', () => {
     useAuthStore.setState({ accounts: ['olena@example.com'], passes: { 'olena@example.com': 1 } });
     renderWithApp(<PassBuy variant="page" {...props} />);
     fireEvent.change(screen.getByRole('textbox', { name: 'Email' }), { target: { value: 'olena@example.com' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Оформити пас — $5' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Оформити пас — $7' }));
     const box = await screen.findByRole('alert');
     expect(box).toHaveTextContent('На цю адресу пас уже оформлено');
     expect(box).toHaveTextContent('Код для входу надішлемо на цю пошту.');
-    expect(screen.getByRole('button', { name: 'Оформити пас — $5' })).toHaveAttribute('aria-disabled', 'true');
+    expect(screen.getByRole('button', { name: 'Оформити пас — $7' })).toHaveAttribute('aria-disabled', 'true');
     fireEvent.click(within(box).getByRole('button', { name: 'Надіслати код' }));
     // Код — через сервіс входу (асинхронно).
     await waitFor(() => expect(props.onCodeSent).toHaveBeenCalled());

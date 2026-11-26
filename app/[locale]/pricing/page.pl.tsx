@@ -1,20 +1,20 @@
 import type { Metadata } from 'next';
 import { JsonLd } from '@/components/prelaunch/JsonLd';
-import { ToastsPage } from '@/components/prelaunch/ToastsPage';
+import { PricingPage } from '@/components/prelaunch/PricingPage';
 import { localeOf, type LocaleParams } from '@/lib/prelaunch/params';
 import { pageMetadata } from '@/lib/prelaunch/seo';
 import { siteData } from '@/lib/prelaunch/siteData';
 
 export async function generateMetadata({ params }: { params: LocaleParams }): Promise<Metadata> {
-  return pageMetadata(await localeOf(params), 'toasts');
+  return pageMetadata(await localeOf(params), 'pricing');
 }
 
 export default async function Page({ params }: { params: LocaleParams }) {
   const locale = await localeOf(params);
   return (
     <>
-      <JsonLd locale={locale} page="toasts" />
-      <ToastsPage site={siteData(locale)} />
+      <JsonLd locale={locale} page="pricing" />
+      <PricingPage site={siteData(locale)} />
     </>
   );
 }

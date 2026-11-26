@@ -221,7 +221,7 @@ describe('пропозиції — блок під штампом (рішенн�
     giveStamps(s1, s2);
     renderPage(<Page />);
     offerShow('pass-offer', s2.id, 2);
-    fireEvent.click(within(block()!).getByRole('button', { name: 'Оформити пас · $5' }));
+    fireEvent.click(within(block()!).getByRole('button', { name: 'Оформити пас · $7' }));
     expect(screen.getByRole('dialog', { name: /Новорічний пас/ })).toBeInTheDocument();
     expect(useGuestStore.getState().offers.history[0]).toMatchObject({ kind: 'pass-offer', acted: 'primary' });
     expect(block()).not.toBeNull();
@@ -317,7 +317,7 @@ describe('cookies', () => {
     expect(document.querySelector('[data-cookie-banner="bar"]')).not.toBeNull();
   });
 
-  it('«Налаштувати» → 4 категорії; Facebook-згода з налаштувань повертає плеєр (FacebookConsentCard)', () => {
+  it('«Налаштувати» → 2 категорії (без аналітики й маркетингу); Facebook-згода з налаштувань повертає плеєр (FacebookConsentCard)', () => {
     renderPage(
       <>
         <CookieLayer />
@@ -329,7 +329,7 @@ describe('cookies', () => {
     expect(screen.getByRole('dialog', { name: 'Налаштування cookies' })).toBeInTheDocument();
     // Плашка зникає, поки відкриті налаштування.
     expect(screen.queryByRole('region', { name: 'Cookies на Time2Fest' })).toBeNull();
-    expect(screen.getAllByRole('switch')).toHaveLength(4);
+    expect(screen.getAllByRole('switch')).toHaveLength(2);
     expect(screen.getByTestId('sound')).toHaveTextContent('neutral');
     fireEvent.click(screen.getByRole('switch', { name: 'Відео з Facebook' }));
     fireEvent.click(screen.getByRole('button', { name: 'Зберегти вибір' }));
@@ -339,11 +339,11 @@ describe('cookies', () => {
   });
 
   it('футер: «Налаштування cookies» відкриває налаштування і після відповіді', () => {
-    useGuestStore.getState().setConsent({ analytics: true });
+    useGuestStore.getState().setConsent({ facebookVideo: true });
     renderPage(<CookieFooter />);
     fireEvent.click(screen.getByRole('button', { name: 'Налаштування cookies' }));
     expect(screen.getByRole('dialog', { name: 'Налаштування cookies' })).toBeInTheDocument();
-    expect(screen.getByRole('switch', { name: 'Аналітика' })).toBeChecked();
+    expect(screen.getByRole('switch', { name: 'Відео з Facebook' })).toBeChecked();
   });
 
   it('вибір не збережено (сховище недоступне): тихий рядок і «Спробувати ще»', () => {

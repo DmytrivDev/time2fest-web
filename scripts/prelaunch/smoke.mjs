@@ -80,8 +80,8 @@ const browser = await chromium.launch();
   await page.goto(`${base}/uk/#map`, { waitUntil: 'load' });
   await page.locator('#map svg path').first().waitFor({ timeout: 20000 });
   check(true, 'мапа поясів намальована');
-  // Сторінки пасу й тостів: продажу немає.
-  for (const path of ['/pass/', '/toasts/']) {
+  // Сторінки пасу й цін: продажу немає.
+  for (const path of ['/pass/', '/pricing/']) {
     await page.goto(`${base}/uk${path}`, { waitUntil: 'load' });
     check(
       (await page.getByText('Продаж стане доступний згодом').count()) >= 1,
