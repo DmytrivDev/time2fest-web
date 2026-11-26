@@ -7,6 +7,7 @@
  *   client prefix, so `deleteByPrefix` matches the full prefix itself and strips it again
  *   before `UNLINK` (which does apply it).
  */
+import { randomUUID } from 'node:crypto';
 import { Redis } from 'ioredis';
 import { DependencyUnavailable, type Clock, type FastStore } from '../ports';
 
@@ -109,6 +110,13 @@ export function createRedisStore(vars: RedisStoreVars, opts: { onError?: (err: u
         } while (cursor !== '0');
         return deleted;
       }),
+    info: () =>
+      op(async () => {
+        const text = await client.info('server');
+        const field = (name: string): string => new RegExp(`^${name}:(.*)$`, 'm').exec(text)?.[1]?.trim() ?? '';
+        const uptimeS = Number(field('uptime_in_seconds'));
+        return { runId: field('run_id'), uptimeS: Number.isFinite(uptimeS) ? uptimeS : 0 };
+      }),
     async close() {
       if (client.status === 'wait' || client.status === 'end') {
         client.disconnect();
@@ -127,6 +135,9 @@ interface MemoryEntry {
 /** In-process `FastStore` with lazy expiry, timed by `clock`. One per process. */
 export function createMemoryStore(clock: Clock): FastStore {
   const map = new Map<string, MemoryEntry>();
+  // A fixed run id per store: a new store is a "restart" of the in-process fast store.
+  const runId = randomUUID();
+  const startedAt = clock.now();
   const live = (key: string): MemoryEntry | undefined => {
     const e = map.get(key);
     if (e && e.expiresAt <= clock.now()) {
@@ -173,6 +184,9 @@ export function createMemoryStore(clock: Clock): FastStore {
         }
       }
       return n;
+    },
+    async info() {
+      return { runId, uptimeS: Math.max(0, Math.floor((clock.now() - startedAt) / 1000)) };
     },
   };
 }
