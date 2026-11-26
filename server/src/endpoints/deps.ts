@@ -182,7 +182,7 @@ export interface PresenceServices {
   windows: WindowIntake;
   /** The presence view of the catalog, rebuilt at most every 30 s per `deps`. */
   catalog(now: number): Promise<PresenceCatalogView>;
-  /** The intake sampler of this node (ticked by the background job, or the `presence-tick` door in `test`). */
+  /** The intake sampler of this node (ticked by the background job of a server process, or the `presence-tick` door). */
   sampler: Sampler;
   /** Window finalisation of the health log. */
   finaliser: Finaliser;

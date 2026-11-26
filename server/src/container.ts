@@ -959,12 +959,15 @@ export function startClockRefresher(deps: Deps, intervalMs?: number): Promise<Cl
 
 /**
  * The presence intake sampler of one process (SPEC-14 [П-5], AC-14, AC-15): every 5 s one sample of this node at the
- * server clock's `now`, then the finalisation of every due window. Never in `test` (the `presence-tick` door drives
- * it there, so no timer leaks into the suites). Failures raise `presence/finalise-failed` inside the services; an
- * unexpected throw raises the same kind and the ticker keeps going.
+ * server clock's `now`, then the finalisation of every due window. Runs in every class, `test` included: a real
+ * server process (`stack.mjs serve`, night-runs, e2e, the exclusive restart run) needs samples, or every window
+ * reads `downtime/sample-gap`. Only `startProcessBackground` (a real server process) starts it; the integration
+ * suites build deps directly and never call either, so no timer leaks into them — there the `presence-tick` door
+ * drives the sampler. Door and ticker may both finalise a window: the record's unique key keeps the first one.
+ * Failures raise `presence/finalise-failed` inside the services; an unexpected throw raises the same kind and the
+ * ticker keeps going.
  */
-export function startPresenceSampler(deps: Deps, intervalMs: number = SAMPLE_INTERVAL_MS): Ticker | undefined {
-  if (deps.env.class === 'test') return undefined;
+export function startPresenceSampler(deps: Deps, intervalMs: number = SAMPLE_INTERVAL_MS): Ticker {
   const presence = presenceOf(deps);
   return startTicker({
     tick: async () => {

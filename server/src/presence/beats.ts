@@ -51,17 +51,17 @@ export interface BeatServiceDeps {
   windows: WindowIntake;
   intake: NodeIntake;
   faults?: PresenceFaultSwitch;
-  /** Uniform in [0, 1); only the injected beat error reads it. */
+  /** Uniform in [0, 1); only the injected beat error reads it. Absent → the switch's exact spread (`nextBeatFails`). */
   random?: () => number;
 }
 
 export function createBeatService(deps: BeatServiceDeps): BeatService {
   const faults = deps.faults ?? presenceFaults;
-  const random = deps.random ?? Math.random;
+  const random = deps.random;
 
   return {
     async beat({ subjectId, eventIds, source, receivedAt }) {
-      if (beatFails(faults, random())) {
+      if (random ? beatFails(faults, random()) : faults.nextBeatFails()) {
         deps.intake.failed();
         return { ok: false, retryAfterMs: PROOF_RETRY_AFTER_MS };
       }

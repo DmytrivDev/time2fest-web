@@ -1,6 +1,6 @@
 /**
  * The intake sampler of the health log (SPEC-14 [А4], [П-5]; AC-14, AC-22), application ring. Every 5 s of server
- * time (started with the background jobs; in `test` the `presence-tick` door drives it) a node writes one row to
+ * time (started with the background jobs of a server process; in the in-process suites the `presence-tick` door drives it) a node writes one row to
  * `presence_samples`: its id, whether the fast store answered, the fast store's run id and uptime (`FastStore.info`),
  * and the beats it accepted and failed since its previous sample — no subject data (NFR-5). A failed write raises
  * `presence/finalise-failed` (`log`, AC-22) and puts the counts back, so the next sample carries them.

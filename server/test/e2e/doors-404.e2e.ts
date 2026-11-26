@@ -37,6 +37,10 @@ const DOORS: Array<[string, string]> = [
   ['POST', '/api/_test/moderation'],
   ['POST', '/api/_test/ops-tick'],
   ['POST', '/api/_test/paypro-webhook'],
+  ['POST', '/api/_test/presence/downtime'],
+  ['POST', '/api/_test/presence/fault'],
+  ['POST', '/api/_test/presence/health'],
+  ['POST', '/api/_test/presence/tick'],
   ['POST', '/api/_test/realtime-token'],
   ['POST', '/api/_test/scheduler/fault'],
   ['POST', '/api/_test/scheduler/lease'],
@@ -65,8 +69,8 @@ async function probe(request: APIRequestContext, method: string, path: string, q
   return { status: res.status(), body: await res.text(), names };
 }
 
-test('AC-30/31, SPEC-07 AC-68, SPEC-08 W19, SPEC-12 W38, SPEC-13b W18, SPEC-10 (+6), SPEC-11 (+6 rights): the registry has 32 door rows', () => {
-  expect(DOORS).toHaveLength(32);
+test('AC-30/31, SPEC-07 AC-68, SPEC-08 W19, SPEC-12 W38, SPEC-13b W18, SPEC-10 (+6), SPEC-11 (+6 rights), SPEC-14 (+4 presence): the registry has 36 door rows', () => {
+  expect(DOORS).toHaveLength(36);
 });
 
 for (const v of VARIANTS) {
