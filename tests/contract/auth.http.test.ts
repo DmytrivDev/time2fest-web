@@ -42,6 +42,22 @@ async function door<T>(path: string, body: unknown): Promise<{ status: number; v
   return { status: res.status, value: json?.value };
 }
 
+/** A door call carrying the cookies of `svc` (its device/session); the answer's cookies go back into the jar. */
+async function doorAs(svc: AuthService, path: string, body: unknown): Promise<{ status: number; value?: unknown }> {
+  const jar = jars.get(svc)!;
+  const cookie = jar.header();
+  const res = await fetch(`${BASE}${path}`, {
+    method: 'POST',
+    headers: { origin: ORIGIN, 'content-type': 'application/json', ...(cookie ? { cookie } : {}) },
+    body: JSON.stringify(body),
+  });
+  jar.store(res.headers);
+  const json = (await res.json().catch(() => null)) as { value?: unknown } | null;
+  return { status: res.status, value: json?.value };
+}
+
+let grants = 0;
+
 function makeService(): AuthService {
   const jar = new Jar();
   const spy = { n: 0 };
@@ -130,6 +146,30 @@ const ctx: AuthSuiteCtx = {
     if (r.status !== 200) throw new Error(`break-delivery door ${r.status}`);
   },
   google,
+  async grantDevicePass(svc, email) {
+    const r = await doorAs(svc, '/api/_test/rights/pass-grant', {
+      holder: { device: 'current', paymentEmail: email },
+      source: 'purchase',
+      grantRef: `http-suite-${run}-${grants++}`,
+    });
+    if (r.status !== 200) throw new Error(`pass-grant door ${r.status}`);
+  },
+  async grantAccountPass(svc, _email) {
+    const s = await svc.session();
+    if (!s.ok || !s.value.user) throw new Error('grantAccountPass: not signed in');
+    const r = await doorAs(svc, '/api/_test/rights/pass-grant', {
+      holder: { account: s.value.user.id },
+      source: 'purchase',
+      grantRef: `http-suite-${run}-${grants++}`,
+    });
+    if (r.status !== 200) throw new Error(`pass-grant door ${r.status}`);
+  },
+  async signInOtherDevice(_owner, other, email) {
+    const sent = await other.requestCode(email, 'signin');
+    if (!sent.ok) throw new Error(`requestCode → ${sent.error.code}`);
+    const done = await other.verifyCode(email, await ctx.lastCode(email));
+    if (!done.ok) throw new Error(`verifyCode → ${done.error.code}`);
+  },
 };
 
 beforeAll(async () => {

@@ -15,6 +15,16 @@ export interface AuthSuiteCtx {
   breakDelivery?(): void | Promise<void>;
   /** Runs one Google sign-in of `svc` to its end: «ok» signs in, «cancel» is a refusal at Google. */
   google(svc: AuthService, scenario: 'ok' | 'cancel'): Promise<{ signedIn: boolean; cancelled: boolean }>;
+  /** An unattached pass paid with `email`, now held by the device of `svc` (sim: store; http: door `rights/pass-grant`, `device:'current'`). */
+  grantDevicePass(svc: AuthService, email: string): Promise<void>;
+  /** The account `svc` is signed in as gets a pass of its own. */
+  grantAccountPass(svc: AuthService, email: string): Promise<void>;
+  /**
+   * `other` (a second device) signs in with `email`, the payment email of the unattached pass `owner`'s device holds; afterwards
+   * `owner` is only read. (http: a second client with its own cookie jar signs in; sim has one store, so it applies what the
+   * server did — the pass moves to the account, the first device loses it.)
+   */
+  signInOtherDevice(owner: AuthService, other: AuthService, email: string): Promise<void>;
 }
 
 const wrongOf = (c: string) => (c === '000000' ? '111111' : '000000');
@@ -150,6 +160,86 @@ export function describeDomain(name: string, makeService: () => AuthService, ctx
       expect(typeof off).toBe('function');
       off();
       off();
+    });
+    describe('FR-ID-14: session × device table', () => {
+      async function signIn(svc: AuthService, email: string, intent: 'signin' | 'signup') {
+        if (intent === 'signin') await ctx.freeGap?.(email);
+        await request(svc, email, intent);
+        const done = await svc.verifyCode(email, await ctx.lastCode(email));
+        if (!done.ok) throw new Error(`verifyCode → ${done.error.code}`);
+      }
+      async function state(svc: AuthService) {
+        const r = await svc.session();
+        if (!r.ok) throw new Error(`session() → ${r.error.code}`);
+        const { hasPass, passOn, devicePass } = r.value;
+        return { hasPass, passOn, devicePass };
+      }
+      const NONE = { hasPass: false, passOn: null, devicePass: null };
+      /** An account with a pass of its own, signed out; the device then gets an unattached pass paid with `payer`. */
+      async function accountWithOwnPassAndDevicePass(svc: AuthService, account: string, payer: string) {
+        await signIn(svc, account, 'signup');
+        await ctx.grantAccountPass(svc, account);
+        expect((await svc.signOut()).ok).toBe(true);
+        await ctx.grantDevicePass(svc, payer);
+        await signIn(svc, account, 'signin');
+      }
+
+      it('row 1: guest, no pass on the device', async () => {
+        expect(await state(makeService())).toEqual(NONE);
+      });
+
+      it('row 2: guest, an unattached pass on the device → device pass', async () => {
+        const svc = makeService();
+        const payer = ctx.freshEmail('r2');
+        await ctx.grantDevicePass(svc, payer);
+        expect(await state(svc)).toEqual({ hasPass: true, passOn: 'device', devicePass: { email: payer, since: expect.any(Number) } });
+      });
+
+      it('row 3: account without a pass, no pass on the device', async () => {
+        const svc = makeService();
+        await signIn(svc, ctx.freshEmail('r3'), 'signup');
+        expect(await state(svc)).toEqual(NONE);
+      });
+
+      it('row 4: account without a pass signs in on a device with an unattached pass → the pass is attached', async () => {
+        const svc = makeService();
+        await ctx.grantDevicePass(svc, ctx.freshEmail('r4pay'));
+        await signIn(svc, ctx.freshEmail('r4'), 'signup');
+        expect(await state(svc)).toEqual({ hasPass: true, passOn: 'account', devicePass: null });
+      });
+
+      it('row 5: account with its own pass on a device with an unattached pass → account pass, device pass stays', async () => {
+        const svc = makeService();
+        const payer = ctx.freshEmail('r5pay');
+        await accountWithOwnPassAndDevicePass(svc, ctx.freshEmail('r5'), payer);
+        expect(await state(svc)).toEqual({ hasPass: true, passOn: 'account', devicePass: { email: payer, since: expect.any(Number) } });
+      });
+
+      it('row 6: sign-out from the account the device pass was attached to → no pass', async () => {
+        const svc = makeService();
+        await ctx.grantDevicePass(svc, ctx.freshEmail('r6pay'));
+        await signIn(svc, ctx.freshEmail('r6'), 'signup');
+        expect((await svc.signOut()).ok).toBe(true);
+        expect(await state(svc)).toEqual(NONE);
+      });
+
+      it('row 7: sign-out from an account with its own pass; the device holds an unattached pass → device pass', async () => {
+        const svc = makeService();
+        const payer = ctx.freshEmail('r7pay');
+        await accountWithOwnPassAndDevicePass(svc, ctx.freshEmail('r7'), payer);
+        expect((await svc.signOut()).ok).toBe(true);
+        expect(await state(svc)).toEqual({ hasPass: true, passOn: 'device', devicePass: { email: payer, since: expect.any(Number) } });
+      });
+
+      it('row 8: the device pass is attached by signing in with the payment email on another device → the first device has none', async () => {
+        const first = makeService();
+        const second = makeService();
+        const payer = ctx.freshEmail('r8pay');
+        await ctx.grantDevicePass(first, payer);
+        expect((await state(first)).passOn).toBe('device');
+        await ctx.signInOtherDevice(first, second, payer);
+        expect(await state(first)).toEqual(NONE);
+      });
     });
   });
 }
