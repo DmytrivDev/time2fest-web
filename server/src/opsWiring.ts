@@ -26,7 +26,9 @@ import type { CatalogCopyDeps } from './catalog/copy';
 import { realClock } from './clock';
 import { counterOf, quotaDay } from './domain/live/quota';
 import { MICROS_PER_USD, periodsAt } from './domain/moderation/spend';
-import { alarmStoreOf, catalogStoreOf } from './endpoints/deps';
+import { alarmStoreOf, catalogStoreOf, presenceOf } from './endpoints/deps';
+import { rightsDbOf } from './auth/pool';
+import { createPresenceRetention } from './presence/retention';
 import type { AppEnv, Deps } from './endpoints/types';
 import { createBackupJob, type BackupDeps } from './ops/backup';
 import { keyIdOf, parseBackupKey } from './ops/backupFormat';
@@ -157,6 +159,17 @@ export function opsRunnerDepsOf(deps: Deps, ops: OpsWiring, payload: () => Promi
     }),
     // Guest-merge retries (SPEC-11 W29b): `deps.authLinks` read per run.
     linkRetry: createLinkRetryJob({ lease: ops.lease, ...createLinkRetryPorts(() => deps), alarm: { raise: (a) => deps.alarm.raise(a) }, log: deps.log }),
+    // Proof retention (SPEC-14 AC-57): on the server clock (NFR-8), not the ops wall clock the ticker passes.
+    presenceRetention: (() => {
+      const job = createPresenceRetention({
+        db: () => rightsDbOf(deps),
+        season: async (now) => {
+          const view = await presenceOf(deps).catalog(now);
+          return { key: view.catalog.season, zones: view.zones.zones };
+        },
+      });
+      return { run: () => job.run(deps.clock.now()) };
+    })(),
     sources: {
       async zones() {
         const stored = await catalogStoreOf(deps).read();

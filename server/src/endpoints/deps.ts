@@ -39,6 +39,7 @@ import { createSampler, createSqlSampleStore, type Sampler } from '../presence/s
 import { createSqlStampStore, createStampService, type StampService } from '../presence/stamps';
 import { createAchievementService, createSqlAchievementStore, type AchievementLookups } from '../presence/achievements';
 import { createGrantEvents } from '../presence/events';
+import type { PresenceLinkPorts } from '../presence/links';
 import { stampCatalogOf, type StampCatalog } from '../domain/passport/stampView';
 
 function built<T>(value: T | undefined, name: string): T {
@@ -136,6 +137,20 @@ export function rightsLinkPortsOf(deps: Deps): RightsLinkPorts {
   };
 }
 
+/** The ports of the guest-merge row `stamps` (`presence/links.ts`, SPEC-14 W31). */
+export function presenceLinkPortsOf(deps: Deps): PresenceLinkPorts {
+  const presence = presenceOf(deps);
+  return {
+    db: () => rightsDbOf(deps),
+    now: () => deps.clock.now(),
+    season: (now) => presence.season(now),
+    snapshot: (subject, now) => presence.stamps.list(subject, now),
+    channel: () => deps.realtime?.publisher,
+    internal: () => deps.events?.publisher,
+    log: { warn: (f) => deps.log.warn(f) },
+  };
+}
+
 /** Passes, bans, profiles (SPEC-11 [П-2]); "now" is the server's season clock `deps.clock`. */
 export function rightsOf(deps: Deps): RightsServices {
   let built = rightsCache.get(deps);
@@ -194,6 +209,8 @@ export interface PresenceServices {
   downtimes: DowntimeService;
   /** Stamp claims and the passport list (P8). */
   stamps: StampService;
+  /** The current season key and the achievement lookups of the catalog (30 s cache; the guest merge, P10). */
+  season(now: number): Promise<{ key: string | null; lookups: AchievementLookups }>;
   /** Drops the catalog and moment caches (tests, the worktree reset). */
   clear(): void;
   nodeId: string;
@@ -313,6 +330,10 @@ export function presenceOf(served: Deps): PresenceServices {
           await grantEvents.stampGranted(granted, newKeys);
         },
       }),
+      season: async (now) => {
+        const c = await readCatalog(now);
+        return { key: c.view.catalog.season, lookups: c.lookups };
+      },
       clear() {
         cat = undefined;
         moments.clear();

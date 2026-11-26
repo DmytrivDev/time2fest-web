@@ -119,8 +119,8 @@ afterAll(async () => {
 });
 
 describe('merge rows bans / passes / profile', () => {
-  it('registry rows are bans, passes, profile', () => {
-    expect(authLinkRegistry.map((r) => r.key)).toEqual(['bans', 'passes', 'profile']);
+  it('registry rows are bans, passes, profile (+ SPEC-14 stamps)', () => {
+    expect(authLinkRegistry.map((r) => r.key)).toEqual(['bans', 'passes', 'profile', 'stamps']);
   });
 
   it('AC-19: a banned guest → the account is banned; guest gone, both ids invalidated (AC-49, AC-53)', { timeout: 60_000 }, async () => {
