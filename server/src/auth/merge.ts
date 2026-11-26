@@ -9,13 +9,13 @@
  *   `(guest, handler)`: a Redis claim `auth:link:<guest>:<handler>` (value = the account id). A second call — the same
  *   sign-in repeated, or a second tab signing the same guest into another account (EC-2) — finds the claim and skips.
  * - A handler throw, or no claim store, → one row in `auth_link_retries` + `log` alarm `auth/link-retry {handler}`;
- *   the claim stays (the retry row owns the work; `ops/linkRetry.ts` re-runs it). The sign-in always completes.
+ *   the claim stays (the retry row owns the work; `ops/linkRetry.ts` re-runs it); if that row could not be written,
+ *   the claim is given back so a later sign-in re-runs the handler (S11-04). The sign-in always completes.
  * - Afterwards the guest's sessions are always revoked (`deleteUserSessions`: the session hooks publish `signed-out`);
  *   the guest is deleted only when THIS call claimed and finished every handler, no retry row comes from it and no
  *   active unattached pass is on its device (`maybeRemoveGuest`, shared with the retry job). Otherwise the guest stays
  *   for `auth-guest-prune`. Then `invalidateSubject` for both ids (AC-53).
  */
-import { realClock } from '../clock';
 import { firstOpenSeason } from '../domain/rights/passSeason';
 import { deviceOfSubject, LINK_RETRY_MAX_ATTEMPTS, type LinkRetryRow } from '../domain/auth/linkRetry';
 import { authOf, rightsOf, seasonCtxOf } from '../endpoints/deps';
@@ -69,24 +69,28 @@ function poolOf(data: LinkAccountData): SqlPool | undefined {
 
 /**
  * The retry task of AC-24 (`auth_link_retries`, on Better Auth's own pool) + `log` alarm `auth/link-retry {handler}`.
- * `fromSubject` — the guest id, or `device:<id>` for the finish step of a sign-in without a guest (W27). Never throws.
+ * `fromSubject` — the guest id, or `device:<id>` for the finish step of a sign-in without a guest (W27). Never throws;
+ * answers whether the row was written. `next_at` follows `deps.clock` (A1).
  */
 export async function recordRetry(
   deps: Deps,
   pool: SqlPool | undefined,
   task: { userId: string; fromSubject: string; handler: string; code: string },
-): Promise<void> {
+): Promise<boolean> {
+  let recorded = false;
   try {
     if (pool === undefined) throw new Error('no pool');
     await pool.query(
       `INSERT INTO auth_link_retries (user_id, from_subject, handler, attempts, next_at, last_error_code)
        VALUES ($1, $2, $3, 1, $4, $5)`,
-      [task.userId, task.fromSubject, task.handler, new Date(realClock.now() + RETRY_DELAY_MS), task.code],
+      [task.userId, task.fromSubject, task.handler, new Date(deps.clock.now() + RETRY_DELAY_MS), task.code],
     );
+    recorded = true;
   } catch {
     deps.log.error({ event: 'auth-link', outcome: 'retry-not-recorded', handler: task.handler });
   }
   deps.alarm.raise({ level: 'log', source: 'auth', code: 'auth/link-retry', details: { handler: task.handler } });
+  return recorded;
 }
 
 type HandlerOutcome = 'done' | 'skipped' | 'failed';
@@ -105,7 +109,9 @@ async function runHandler(deps: Deps, pool: SqlPool | undefined, fromSubject: st
     return 'done';
   } catch (err) {
     deps.log.warn({ event: 'auth-link', outcome: 'failed', handler: handler.key });
-    await recordRetry(deps, pool, { userId: toSubject, fromSubject, handler: handler.key, code: errorCode(err) });
+    const recorded = await recordRetry(deps, pool, { userId: toSubject, fromSubject, handler: handler.key, code: errorCode(err) });
+    // No retry row owns the work (S11-04): give the claim back (best effort) so a later sign-in re-runs the handler.
+    if (!recorded) await deps.redis.del(linkClaimKey(fromSubject, handler.key)).catch(() => undefined);
     return 'failed';
   }
 }

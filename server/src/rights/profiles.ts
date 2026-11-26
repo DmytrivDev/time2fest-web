@@ -134,7 +134,9 @@ export function createProfileService(deps: ProfileServiceDeps): ProfileService {
       return res.rowCount > 0;
     },
 
-    async checkNick(subject, nick) {
+    async checkNick(subject, raw) {
+      // The same string `patch` judges and stores (S11-08).
+      const nick = nickDisplay(raw);
       const bad = await nickVerdict(nick);
       if (bad) return bad;
       if (await this.nickTaken(await deps.db(), nickKey(nick), subject)) return refuse('taken');

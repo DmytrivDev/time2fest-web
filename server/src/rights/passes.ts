@@ -4,7 +4,8 @@
  * - `view` — the session's pass fields: ONE query (the account's active pass ∪ the device's active unattached pass,
  *   both by index; NFR-1), mapped by the pure FR-ID-14 view.
  * - `grantPass` — idempotent by `grantRef` (`ON CONFLICT DO NOTHING` + re-read); `pass-owned` for a holder that
- *   already has an active pass for the holiday (account: also guarded by `passes_one_active_per_account`).
+ *   already has an active pass for the holiday (account: also guarded by `passes_one_active_per_account`; device
+ *   holder: check + insert under advisory locks on the device and the payment email, S11-02).
  * - `attachOnSignIn` [П-3] — path (a) this device, then path (b) the account's verified email (earliest unattached
  *   first, EC-3); each attempt is one conditional UPDATE in its own short transaction, guarded by the partial
  *   unique index: 1 row → attached; 0 rows → re-read (ours → idempotent, else next); `23505` → the account already
@@ -139,8 +140,8 @@ export function createPassService(deps: PassServiceDeps): PassService {
     });
   }
 
-  async function passOwnedByEmail(email: string): Promise<boolean> {
-    const db = await deps.db();
+  async function passOwnedByEmail(email: string, q?: RightsQuery): Promise<boolean> {
+    const db = q ?? (await deps.db());
     const res = await db.query<{ owned: boolean }>(
       `SELECT EXISTS (
          SELECT 1 FROM passes p JOIN users u ON u.id = p.attached_user_id
@@ -181,15 +182,26 @@ export function createPassService(deps: PassServiceDeps): PassService {
     } else {
       const { device } = input.holder;
       const email = normalizeEmail(input.holder.paymentEmail);
-      const onDevice = await db.query(`SELECT 1 FROM passes WHERE device_id = $1 AND season = $2 AND ${UNATTACHED}`, [device, season]);
-      if (onDevice.rowCount > 0 || (await passOwnedByEmail(email))) return { kind: 'pass-owned' };
-      inserted = (
-        await db.query<Row>(
-          `INSERT INTO passes (season, source, grant_ref, payment_email, device_id, issued_at)
-           VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT (grant_ref) DO NOTHING RETURNING ${COLUMNS}`,
-          [season, input.source, input.grantRef, email, device, issued],
-        )
-      ).rows[0];
+      // Check + insert under transaction-scoped advisory locks on the device, then the payment email (always this
+      // order, so two grants never wait on each other in a cycle): two grants with different `grantRef`s for one
+      // device or one email serialize, the second sees the first and answers `pass-owned` (S11-02).
+      const out = await db.tx(async (q): Promise<Row | 'owned' | undefined> => {
+        await q.query(`SELECT pg_advisory_xact_lock(hashtext('t2f-pass-device:' || $1))`, [device]);
+        if (email !== '') await q.query(`SELECT pg_advisory_xact_lock(hashtext('t2f-pass-email:' || $1))`, [email]);
+        // A concurrent grant with the same `grantRef` committed while we waited: the same pass (re-read below).
+        if (await byGrantRef(q, input.grantRef)) return undefined;
+        const onDevice = await q.query(`SELECT 1 FROM passes WHERE device_id = $1 AND season = $2 AND ${UNATTACHED}`, [device, season]);
+        if (onDevice.rowCount > 0 || (await passOwnedByEmail(email, q))) return 'owned';
+        return (
+          await q.query<Row>(
+            `INSERT INTO passes (season, source, grant_ref, payment_email, device_id, issued_at)
+             VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT (grant_ref) DO NOTHING RETURNING ${COLUMNS}`,
+            [season, input.source, input.grantRef, email, device, issued],
+          )
+        ).rows[0];
+      });
+      if (out === 'owned') return { kind: 'pass-owned' };
+      inserted = out;
     }
     if (!inserted) {
       // A concurrent grant with the same `grantRef` won: the same pass.

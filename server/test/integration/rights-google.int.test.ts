@@ -63,10 +63,15 @@ async function atGoogle(authorize: string, user: FakeGoogleUser): Promise<string
   return back.pathname + back.search;
 }
 
+/** `Set-Cookie` names of each callback answer, by its location (S11-13). */
+const callbackCookies = new Map<string, string[]>();
+
 async function callback(jar: CookieJar, path: string): Promise<string> {
   const res = await h.call(path, { jar });
   expect(res.status).toBe(302);
-  return res.headers.get('location') ?? '';
+  const location = res.headers.get('location') ?? '';
+  callbackCookies.set(location, res.headers.getSetCookie().map((l) => l.split('=')[0] ?? ''));
+  return location;
 }
 
 const link = async (a: Account, user: FakeGoogleUser, returnPath?: string) => callback(a.jar, await atGoogle(await startLink(a.jar, returnPath), user));
@@ -163,6 +168,10 @@ describe('link (AC-46, AC-47, [Q1])', () => {
     expect(locs[winner]).toBe('/account');
     // The loser met the unique index (Better Auth's insert threw), not Better Auth's own check.
     expect(warnings).toContainEqual({ event: 'google-link', outcome: 'taken' });
+    // S11-13: the loser's own redirect clears the OAuth state cookie, as the winner's does.
+    const stateCookie = callbackCookies.get('/account')?.find((n) => n.endsWith('.state'));
+    expect(stateCookie).toBeDefined();
+    expect(callbackCookies.get('/account?error=google-taken')).toContain(stateCookie);
   });
 
   it('sign-in with an unlinked Google of another email links nothing to an existing account', { timeout: 60_000 }, async () => {

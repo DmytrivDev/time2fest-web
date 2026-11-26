@@ -3,14 +3,21 @@
  * a banned guest → the account is banned (AC-19); profile merge, account field wins, the guest's nick moves or is
  * released (AC-51); schedules: account first, then guest countries while the zone has room (AC-52, EC-7 rule); a
  * throwing `profile` row → guest kept, retry row, alarm (AC-49); a device pass left unattached (the account has its
- * own) → guest kept (AC-49); a second `linkGuest` for the pair changes nothing; both ids invalidated (AC-53).
+ * own) → guest kept (AC-49); a second `linkGuest` for the pair changes nothing; both ids invalidated (AC-53); EC-7 with
+ * real concurrency: the profile row and a schedule replace of the same account, both inside their transactions
+ * before either locks the row (a latch in `RightsDb.tx`).
  * The catalog is stubbed (zone Z5 with six countries, one event each); realtime publish/invalidate are spies.
  */
 import { randomBytes } from 'node:crypto';
 import pg from 'pg';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { linkGuest, type LinkAccountData } from '../../src/auth/merge';
+import { rightsDbOfPool } from '../../src/auth/pool';
 import { runInAuthScope } from '../../src/auth/scope';
+import { scheduleCatalogFrom } from '../../src/domain/rights/schedule';
+import { createRightsLinks, type RightsLinkPorts } from '../../src/rights/links';
+import type { RightsDb } from '../../src/rights/ports';
+import { createScheduleService } from '../../src/rights/schedule';
 import type { StoredCatalog } from '../../src/catalog/ports';
 import { rightsOf } from '../../src/endpoints/deps';
 import type { Deps } from '../../src/endpoints/types';
@@ -75,7 +82,7 @@ async function putProfile(id: string, p: { nick?: string | null; flag?: string |
 }
 
 beforeAll(async () => {
-  pool = new pg.Pool({ connectionString: process.env.DATABASE_URI, max: 2 });
+  pool = new pg.Pool({ connectionString: process.env.DATABASE_URI, max: 4 });
   h = await buildAuthHarness(redis, (deps: Deps) => {
     deps.catalogStore = { read: async () => stored() };
     const base = deps.realtime;
@@ -225,5 +232,63 @@ describe('merge rows bans / passes / profile', () => {
     const row = (await pool.query('SELECT attached_user_id::text AS a FROM passes WHERE grant_ref = $1', [`rm-${tag}-m`])).rows[0];
     expect(row).toEqual({ a: account });
     expect(await userRow(g.id)).toBeUndefined();
+  });
+});
+
+/** Two arrivals wait for each other inside their transactions (both open before either locks a row). */
+function latched(inner: RightsDb): { db: RightsDb; arrivals: () => number } {
+  let arrived = 0;
+  let open!: () => void;
+  const gate = new Promise<void>((r) => (open = r));
+  return {
+    arrivals: () => arrived,
+    db: {
+      query: (text, values) => inner.query(text, values),
+      tx: (fn) =>
+        inner.tx(async (q) => {
+          arrived += 1;
+          if (arrived <= 2) {
+            if (arrived === 2) open();
+            await gate;
+          }
+          return fn(q);
+        }),
+    },
+  };
+}
+
+describe('EC-7: the profile merge during an open schedule replace of the same account (real concurrency)', () => {
+  it('both finish; the account schedule = replaced list + the guest country, 4 countries max (10×)', { timeout: 60_000 }, async () => {
+    for (let i = 0; i < 10; i += 1) {
+      const account = `rm-ec7-a-${tag}-${i}`;
+      const g = `rm-ec7-g-${tag}-${i}`;
+      made.push(account, g);
+      await putProfile(account, { schedule: ['aa1', 'bb1', 'cc1'] });
+      await putProfile(g, { schedule: ['dd1', 'ee1'] });
+      const l = latched(rightsDbOfPool(pool));
+      const ports: RightsLinkPorts = {
+        db: async () => l.db,
+        bans: { ban: async () => { throw new Error('unused'); } },
+        passes: { attachOnSignIn: async () => { throw new Error('unused'); } },
+        catalog: async () => stored(),
+        publishProfile: async () => undefined,
+      };
+      const profileRow = createRightsLinks<null>(() => ports).find((r) => r.key === 'profile')!;
+      const schedule = createScheduleService({
+        db: async () => l.db,
+        hasPass: async () => true,
+        catalog: async () => scheduleCatalogFrom(stored()),
+        publish: async () => undefined,
+      });
+      const [, replaced] = await Promise.all([
+        profileRow.link({ fromSubject: g, toSubject: account, deps: null }),
+        schedule.replace(account, 'dev', 'AA', 'ff1'),
+      ]);
+      expect(l.arrivals()).toBe(2);
+      expect(replaced.ok).toBe(true);
+      const p = await profileOf(account);
+      expect([...(p?.schedule ?? [])].sort()).toEqual(['bb1', 'cc1', 'dd1', 'ff1']);
+      expect(await profileOf(g)).toBeUndefined();
+    }
   });
 });

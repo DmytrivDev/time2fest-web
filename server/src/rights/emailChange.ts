@@ -2,8 +2,8 @@
  * Email change of an account (SPEC-11 W31, [П-11], [А11]; AC-43 … AC-45, EC-4). Our own flow, not Better Auth's
  * built-in one (it is silent about a taken address, DR-4):
  * - `request(account, raw)`: normalize (bad → `validation/email`); the account's own address → `validation/same-email`;
- *   another user's address → `conflict/taken`; the SPEC-10 code limits keyed by the NEW address (30 s gap →
- *   `rate_limited/wait`, 5 per 10 min / 10 per day → `too-many`); one pending change per account (a new request
+ *   the SPEC-10 code limits keyed by the NEW address (30 s gap → `rate_limited/wait`, 5 per 10 min / 10 per day →
+ *   `too-many`), then another user's address → `conflict/taken` (after the limits, S11-01); one pending change per account (a new request
  *   replaces it); the code is stored hashed (`<email>:<sha256>:<attemptsLeft>:<sentAt>`, identifier
  *   `t2f-change-email-<id>`) and mailed to the new address with `changeEmailCode`. Mail outcome as SPEC-10 [П-8]:
  *   both providers down → pending removed, limits given back, `unavailable`; recipient refused → pending removed,
@@ -100,12 +100,13 @@ export function createEmailChangeService(ports: EmailChangePorts): EmailChangeSe
       const account = await ports.account(userId);
       if (account === null || account.isAnonymous) return fail('unauthorized');
       if (account.email !== null && account.email.toLowerCase() === email) return fail('validation', { reason: 'same-email' });
-      const owner = await ports.emailOwner(email);
-      if (owner !== null && owner !== userId) return fail('conflict', { reason: 'taken' });
-
+      // The code limits come first (S11-01): `taken` is answered only within them, and a refused address keeps its
+      // reserved hit, so the answer cannot be used as an unlimited account-existence oracle.
       const now = ports.now();
       const admitted = await ports.limits.admit(email, now);
       if (!admitted.ok) return admitted;
+      const owner = await ports.emailOwner(email);
+      if (owner !== null && owner !== userId) return fail('conflict', { reason: 'taken' });
 
       const identifier = emailChangeIdentifier(userId);
       const code = String(randomInt(0, 1_000_000)).padStart(6, '0');

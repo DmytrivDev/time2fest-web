@@ -49,6 +49,23 @@ export interface HttpProfileOptions {
   currentPath?: () => string;
 }
 
+const isLoopback = (host: string) => host === 'localhost' || host === '127.0.0.1' || host === '[::1]' || host.endsWith('.localhost');
+
+/**
+ * Чи можна переходити за адресою прив'язки Google (S11-12): лише `https://accounts.google.com`; фейковий OIDC
+ * локальних тестів (loopback) — лише коли сама сторінка на loopback (або поза браузером, `pageHost` невідомий).
+ */
+export function googleRedirectAllowed(url: string, pageHost: string | undefined = globalThis.location?.hostname): boolean {
+  let u: URL;
+  try {
+    u = new URL(url);
+  } catch {
+    return false;
+  }
+  if (u.protocol === 'https:' && u.hostname === 'accounts.google.com') return true;
+  return (u.protocol === 'https:' || u.protocol === 'http:') && isLoopback(u.hostname) && (pageHost === undefined || isLoopback(pageHost));
+}
+
 export function createHttpProfile(options: HttpProfileOptions = {}): ProfileService {
   const doFetch: ProfileFetch = options.fetch ?? ((input, init) => globalThis.fetch(input, init));
   const transportOpt = options.transport ?? null;
@@ -194,6 +211,7 @@ export function createHttpProfile(options: HttpProfileOptions = {}): ProfileServ
     async linkGoogle() {
       const r = await call(PROFILE_URLS.google, 'POST', { returnPath: currentPath() }, parseGoogleRedirect);
       if (!r.ok) return r;
+      if (!googleRedirectAllowed(r.value.url)) return fail('unavailable', { message: 'unexpected google redirect' });
       navigate(r.value.url);
       return last ? ok(last) : readProfile();
     },

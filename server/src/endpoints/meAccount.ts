@@ -4,8 +4,9 @@
  * `unauthorized`. Every answer of the email rows and of unlink is the fresh profile (`pendingEmail`, `googleLinked`);
  * link answers `{kind:'redirect', url}` (full navigation to Google, back on `returnPath`).
  * - `POST /api/me/email {email}`: the body is read here (not by the row schema) so a malformed address answers
- *   `validation/email` (AC-43), a body with any other key `validation/invalid-input`; limits = the SPEC-10 code limits
- *   of the new address (`rights/emailChange.ts`).
+ *   `validation/email` (AC-43), a body with any other key `validation/invalid-input`; limits = the `me-email-request` row
+ *   (10 per 10 min per subject and per client, S11-01) + the SPEC-10 code limits of the new address, checked before
+ *   `taken` (`rights/emailChange.ts`).
  * - `POST /api/me/email/verify {code}`, `DELETE /api/me/email`, `POST|DELETE /api/me/google`: `me-profile` limit
  *   (30 per minute per subject, [А13]).
  * Sorted by key.
@@ -69,6 +70,7 @@ export const meAccountRoutes: readonly RouteRow[] = [
     path: '/api/me/email',
     needs: ['db'],
     maxBodyBytes: ACCOUNT_BODY_MAX_BYTES,
+    rateLimit: 'me-email-request',
     async handler(ctx) {
       const account = accountOf(ctx);
       if (account === undefined) return failure('unauthorized');

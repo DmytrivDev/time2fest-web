@@ -236,3 +236,45 @@ describe('AC-10 app level: two attachOnSignIn through a latch in RightsDb.tx', (
     expect(await svc.attachOnSignIn({ account: v, device: null, email: `${tag}-ac7@race.t2f.test` })).toEqual({ attached: null, from: null });
   });
 });
+
+describe('S11-02: two device-holder grants with different grantRefs through a latch in RightsDb.tx', () => {
+  it(`same device, or same payment email on two devices → one pass granted, the other pass-owned (${ITERATIONS}×)`, { timeout: 60_000 }, async () => {
+    for (let i = 0; i < ITERATIONS; i += 1) {
+      const sameDevice = i % 2 === 0;
+      const email = `${tag}-g${i}@race.t2f.test`;
+      const [d1, d2] = sameDevice ? [`${tag}-gd${i}`, `${tag}-gd${i}`] : [`${tag}-gd${i}a`, `${tag}-gd${i}b`];
+      const l = latched(rightsDbOfPool(pool));
+      const svc = service(l.db);
+      const results = await Promise.all([
+        svc.grantPass({ holder: { device: d1, paymentEmail: email }, source: 'purchase', grantRef: `${tag}-${(n += 1)}` }),
+        svc.grantPass({ holder: { device: d2, paymentEmail: email.toUpperCase() }, source: 'purchase', grantRef: `${tag}-${(n += 1)}` }),
+      ]);
+      expect(l.arrivals()).toBeGreaterThanOrEqual(2);
+      expect(results.filter((r) => r.kind === 'granted')).toHaveLength(1);
+      expect(results.filter((r) => r.kind === 'pass-owned')).toHaveLength(1);
+      const count = await pool.query<{ c: number }>(
+        `SELECT count(*)::int AS c FROM passes WHERE payment_email = $1 AND attached_user_id IS NULL AND revoked_at IS NULL`,
+        [email],
+      );
+      expect(count.rows[0]!.c).toBe(1);
+    }
+  });
+
+  it(`the same grantRef twice concurrently → the same pass, created once (${ITERATIONS}×)`, { timeout: 60_000 }, async () => {
+    for (let i = 0; i < ITERATIONS; i += 1) {
+      const ref = `${tag}-${(n += 1)}`;
+      const holder = { device: `${tag}-gs${i}`, paymentEmail: `${tag}-gs${i}@race.t2f.test` };
+      const svc = service(latched(rightsDbOfPool(pool)).db);
+      const [r1, r2] = await Promise.all([
+        svc.grantPass({ holder, source: 'purchase', grantRef: ref }),
+        svc.grantPass({ holder, source: 'purchase', grantRef: ref }),
+      ]);
+      expect(r1.kind).toBe('granted');
+      expect(r2.kind).toBe('granted');
+      if (r1.kind === 'granted' && r2.kind === 'granted') {
+        expect(r1.pass.id).toBe(r2.pass.id);
+        expect([r1.created, r2.created].filter(Boolean)).toHaveLength(1);
+      }
+    }
+  });
+});

@@ -115,10 +115,29 @@ describe('email change request (AC-43)', () => {
     const a = await account('refuse');
     const other = await account('other');
     expect((await request(a, a.email.toUpperCase())).body.error).toEqual({ code: 'validation', reason: 'same-email' });
+    // The code limits run before the owner lookup (S11-01): free the 30 s gap `other`'s own sign-in code left.
+    await redis.deleteByPrefix('auth:gap:');
     expect((await request(a, other.email)).body.error).toEqual({ code: 'conflict', reason: 'taken' });
     expect((await request(a, 'not-an-address')).body.error).toEqual({ code: 'validation', reason: 'email' });
     expect((await call(a, '/api/me/email', 'POST', { email: testEmail(), subject: other.id })).body.error).toMatchObject({ code: 'validation', reason: 'invalid-input' });
     expect(await pendingRows(a.id)).toBe(0);
+  });
+
+  it('S11-01: `taken` is answered within the code limits, and the request row stops a subject after 10 per 10 min', { timeout: 60_000 }, async () => {
+    const a = await account('probe');
+    const other = await account('probe-other');
+    // Right after `other`'s sign-in its address is inside the 30 s code gap: the limits answer before the owner lookup.
+    expect((await request(a, other.email)).body.error).toMatchObject({ code: 'rate_limited', reason: 'wait' });
+    await redis.deleteByPrefix('auth:gap:');
+    // Within the limits → `taken`, and the probed address keeps its reserved hit (a new 30 s gap).
+    expect((await request(a, other.email)).body.error).toEqual({ code: 'conflict', reason: 'taken' });
+    expect((await request(a, other.email)).body.error).toMatchObject({ code: 'rate_limited', reason: 'wait' });
+    // 3 used above; 7 more (malformed, no mail) reach the handler, the 11th is refused by the row (fresh IP each time).
+    for (let i = 0; i < 7; i += 1) expect((await request(a, 'not-an-address')).body.error).toEqual({ code: 'validation', reason: 'email' });
+    const over = await request(a, testEmail('re-probe-x'));
+    expect(over.status).toBe(429);
+    expect(over.body.error).toMatchObject({ code: 'rate_limited' });
+    expect(over.body.error?.reason).toBeUndefined();
   });
 
   it('AC-58: a guest and a request without a session → unauthorized on every account row', { timeout: 30_000 }, async () => {

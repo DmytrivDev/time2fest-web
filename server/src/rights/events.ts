@@ -7,9 +7,24 @@
  */
 import { randomUUID } from 'node:crypto';
 import type { ProfileEvent, SessionEventReason } from '@time2fest/contracts';
-import { publishSessionEvent } from '../auth/events';
-import type { Deps } from '../endpoints/types';
 import type { RightsQuery } from './ports';
+
+/** A logger that never throws (structural: `Deps.log` fits). */
+interface WarnLog {
+  warn(fields: Record<string, unknown>): void;
+}
+
+/** What `publishPassEvent` needs (A3: ports, not `Deps`): the session event of one subject (never throws) and a log. */
+export interface PassEventPorts {
+  session(subjectId: string, reason: PassEventReason): Promise<void>;
+  log: WarnLog;
+}
+
+/** What `publishProfileEvent` needs (structural: any `Deps` fits). */
+export interface ProfileEventPorts {
+  realtime?: { publisher?: { publish(channelClass: 'user', key: string, envelope: ProfileEvent): Promise<{ status: string }> } };
+  log: WarnLog;
+}
 
 export type PassEventReason = Extract<SessionEventReason, 'pass-granted' | 'pass-attached' | 'pass-revoked'>;
 export type PassEventTarget = { account: string } | { device: string };
@@ -25,7 +40,7 @@ async function subjectsOfDevice(db: RightsQuery, device: string): Promise<string
 
 /** Publishes `reason` to every subject of each target (deduplicated). Never throws. */
 export async function publishPassEvent(
-  deps: Deps,
+  ports: PassEventPorts,
   db: RightsQuery,
   targets: readonly PassEventTarget[],
   reason: PassEventReason,
@@ -41,20 +56,20 @@ export async function publishPassEvent(
       for (const id of await subjectsOfDevice(db, t.device)) subjects.add(id);
     } catch {
       try {
-        deps.log.warn({ event: 'pass-publish', reason, result: 'device-lookup-failed' });
+        ports.log.warn({ event: 'pass-publish', reason, result: 'device-lookup-failed' });
       } catch {
         // A logger never throws.
       }
     }
   }
-  await Promise.all([...subjects].map((id) => publishSessionEvent(deps, id, reason)));
+  await Promise.all([...subjects].map((id) => ports.session(id, reason)));
 }
 
 /**
  * `profile` (SPEC-11 AC-35, EC-5): to the subject's channel `user:#<id>`; the client re-reads the profile. No data in
  * the envelope; never throws (a failed publish is logged without any profile content).
  */
-export async function publishProfileEvent(deps: Deps, subjectId: string): Promise<void> {
+export async function publishProfileEvent(deps: ProfileEventPorts, subjectId: string): Promise<void> {
   const envelope: ProfileEvent = { type: 'profile', id: randomUUID(), data: {} };
   let result: string;
   try {

@@ -3,13 +3,25 @@
  * (SPEC-11 [П-2]). Adapter ring: the only place the rights stores meet `pg`.
  */
 import pg from 'pg';
-import { authOf } from '../endpoints/deps';
-import type { Deps } from '../endpoints/types';
 import type { RightsDb, RightsQuery } from '../rights/ports';
+import type { AuthWiring } from './instance';
+
+/**
+ * What the pool getters read: the auth wiring only (A2: no `Deps`, no import of `endpoints/deps`, so the
+ * `endpoints/deps` <-> `auth/pool` cycle is gone). Any `Deps` fits.
+ */
+export interface AuthPoolSource {
+  auth?: AuthWiring;
+}
+
+function wiringOf(src: AuthPoolSource): AuthWiring {
+  if (src.auth === undefined) throw new Error('deps.auth is not built (createDeps builds it)');
+  return src.auth;
+}
 
 /** The pool `auth/instance.ts` passes to Better Auth as `database`. */
-export async function authPool(deps: Deps): Promise<pg.Pool> {
-  const ctx = await authOf(deps).instance().$context;
+export async function authPool(src: AuthPoolSource): Promise<pg.Pool> {
+  const ctx = await wiringOf(src).instance().$context;
   const db = (ctx.options as { database?: unknown }).database;
   if (!(db instanceof pg.Pool))
     throw new Error('test doors: Better Auth database is not a pg pool');
@@ -53,6 +65,6 @@ export function rightsDbOfPool(pool: pg.Pool): RightsDb {
   };
 }
 
-export async function rightsDbOf(deps: Deps): Promise<RightsDb> {
-  return rightsDbOfPool(await authPool(deps));
+export async function rightsDbOf(src: AuthPoolSource): Promise<RightsDb> {
+  return rightsDbOfPool(await authPool(src));
 }

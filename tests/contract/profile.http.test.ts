@@ -109,6 +109,38 @@ const ctx: ProfileSuiteCtx = {
     if (!r.ok) throw new Error(`linkGoogle → ${r.error.code}`);
     return client.navigated.some((u) => u.length > 0);
   },
+  /**
+   * SPEC-10: a NEW email from Google with `email_verified:false` → an account with an unverified address, Google its
+   * only sign-in method (AC-48 `last-method`). The fake Google round trip on the service's jar (mock OIDC of the stack).
+   */
+  async googleOnlyAccount(svc) {
+    const { jar, auth } = clients.get(svc)!;
+    const started = await auth.google({ returnPath: '/account/' });
+    if (!started.ok || started.value.kind !== 'redirect') throw new Error('google() did not answer a redirect');
+    const authorize = new URL(started.value.url);
+    const tag = `go${run}${n++}`;
+    const user = await door<{ username: string; claims: string }>('/api/_test/auth/google-user', { sub: tag, email: `${tag}@t2f.test`, emailVerified: false });
+    if (!user.value) throw new Error(`google-user door ${user.status}`);
+    await (await fetch(authorize, { redirect: 'manual' })).text();
+    const login = await fetch(authorize, {
+      method: 'POST',
+      redirect: 'manual',
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(user.value).toString(),
+    });
+    const location = login.headers.get('location');
+    if (!location) throw new Error(`fake OIDC login answered ${login.status}`);
+    const callback = new URL(location);
+    const res = await fetch(`${BASE}${callback.pathname}${callback.search}`, {
+      redirect: 'manual',
+      headers: { origin: ORIGIN, ...(jar.header() ? { cookie: jar.header() } : {}) },
+    });
+    jar.store(res.headers);
+    const back = new URL(res.headers.get('location') ?? '/', BASE);
+    if (back.searchParams.get('signin') !== 'google') throw new Error(`google sign-in answered ${back.pathname}${back.search}`);
+    const p = await svc.get();
+    if (!p.ok || p.value.googleLinked !== true) throw new Error('google-only account is not linked to Google');
+  },
 };
 
 beforeAll(async () => {

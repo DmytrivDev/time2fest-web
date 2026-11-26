@@ -123,7 +123,22 @@ export async function forwardToAuth(ctx: Ctx): Promise<Outcome> {
   if (ctx.req.method === 'GET' && path === GOOGLE_CALLBACK_PATH) {
     // SPEC-11 W32: a cabinet link (its `profile` event; the AC-47 race loser) — `link.ts`.
     const linked = await finishGoogleLink(ctx, res);
-    if (linked !== undefined) return linked;
+    if (linked !== undefined) {
+      // The AC-47 race loser's own redirect keeps Better Auth's cookie lines and clears the OAuth state cookie, which
+      // Better Auth's failed answer leaves in place (S11-13).
+      if (linked instanceof Response) {
+        clampSessionCookies(res.headers, linked.headers, await sessionCookieName(auth), wiring);
+        const state = (await auth.$context).createAuthCookie('state');
+        if (!linked.headers.getSetCookie().some((l) => l.startsWith(`${state.name}=`))) {
+          const a = state.attributes;
+          linked.headers.append(
+            'set-cookie',
+            `${state.name}=; Max-Age=0; Path=${a.path ?? '/'}; HttpOnly; SameSite=Lax${a.secure === true ? '; Secure' : ''}`,
+          );
+        }
+      }
+      return linked;
+    }
     await finishSignIn(ctx, auth, res);
   }
   return fromAuthResponse(ctx, res, wiring);

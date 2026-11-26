@@ -10,7 +10,9 @@ import { rightsDbOf } from '../auth/pool';
 import { seasonKeyOfEnd, type SeasonCtx } from '../domain/rights/passSeason';
 import { createBanMarks } from '../rights/banMarks';
 import { createBanService, type BanService } from '../rights/bans';
+import { publishSessionEvent } from '../auth/events';
 import { publishPassEvent, publishProfileEvent } from '../rights/events';
+import type { RightsLinkPorts } from '../rights/links';
 import { createPassService, type PassService } from '../rights/passes';
 import { createScheduleService, type ScheduleService } from '../rights/schedule';
 import { scheduleCatalogFrom } from '../domain/rights/schedule';
@@ -108,6 +110,18 @@ async function scheduleCatalogOf(deps: Deps): Promise<ScheduleCatalog> {
   return cat;
 }
 
+/** The ports of the guest-merge rows (`rights/links.ts`, A3). */
+export function rightsLinkPortsOf(deps: Deps): RightsLinkPorts {
+  const rights = rightsOf(deps);
+  return {
+    db: () => rightsDbOf(deps),
+    bans: rights.bans,
+    passes: rights.passes,
+    catalog: () => catalogStoreOf(deps).read(),
+    publishProfile: (subject) => publishProfileEvent(deps, subject),
+  };
+}
+
 /** Passes, bans, profiles (SPEC-11 [П-2]); "now" is the server's season clock `deps.clock`. */
 export function rightsOf(deps: Deps): RightsServices {
   let built = rightsCache.get(deps);
@@ -117,7 +131,8 @@ export function rightsOf(deps: Deps): RightsServices {
         db: () => rightsDbOf(deps),
         now: () => deps.clock.now(),
         season: () => seasonCtxOf(deps),
-        publish: (db, targets, reason) => publishPassEvent(deps, db, targets, reason),
+        publish: (db, targets, reason) =>
+          publishPassEvent({ session: (id, r) => publishSessionEvent(deps, id, r), log: deps.log }, db, targets, reason),
       }),
       bans: createBanService({
         db: () => rightsDbOf(deps),

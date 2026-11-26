@@ -136,3 +136,35 @@ describe('AC-24: a throwing handler', () => {
     expect(alarm).toBeDefined();
   });
 });
+
+describe('S11-04: a lost retry row', () => {
+  it('S11-04: the retry row cannot be written → the claim is given back, so a later sign-in re-runs the handler', { timeout: 30_000 }, async () => {
+    let failing = true;
+    const flaky: AuthLinkHandler = {
+      key: 'it-flaky',
+      async link({ fromSubject, toSubject }) {
+        calls.push({ from: fromSubject, to: toSubject });
+        if (failing) throw new Error('boom');
+      },
+    };
+    h.deps.authLinks = [flaky];
+    const real = (await h.wiring.instance().$context) as unknown as LinkAccountData['ctx']['context'];
+    // No usable pool: `recordRetry` cannot write its row.
+    const context = {
+      ...real,
+      internalAdapter: { updateUser: async () => undefined, deleteUserSessions: async () => undefined, deleteUser: async () => undefined },
+      options: { database: {} },
+    } as unknown as LinkAccountData['ctx']['context'];
+    const data = (): LinkAccountData => ({
+      anonymousUser: { user: { id: 'g-s1104' }, session: {} },
+      newUser: { user: { id: 'a-s1104' }, session: {} },
+      ctx: { context },
+    });
+    await runInAuthScope(() => linkGuest(data(), h.deps));
+    expect(await redis.get('auth:link:g-s1104:it-flaky')).toBeNull();
+    failing = false;
+    await runInAuthScope(() => linkGuest(data(), h.deps));
+    expect(calls).toHaveLength(2);
+    expect(await redis.get('auth:link:g-s1104:it-flaky')).toBe('a-s1104');
+  });
+});

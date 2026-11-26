@@ -25,6 +25,12 @@ export interface AuthSuiteCtx {
    * server did — the pass moves to the account, the first device loses it.)
    */
   signInOtherDevice(owner: AuthService, other: AuthService, email: string): Promise<void>;
+  /**
+   * Before `svc` is read in a two-device row: the sim has one store, so it switches the store to that device (the one
+   * `signInOtherDevice` signed in → that account; any other → the first device). http: not needed (each client is its
+   * own device).
+   */
+  useDevice?(svc: AuthService): void | Promise<void>;
 }
 
 const wrongOf = (c: string) => (c === '000000' ? '111111' : '000000');
@@ -238,7 +244,11 @@ export function describeDomain(name: string, makeService: () => AuthService, ctx
         await ctx.grantDevicePass(first, payer);
         expect((await state(first)).passOn).toBe('device');
         await ctx.signInOtherDevice(first, second, payer);
+        await ctx.useDevice?.(first);
         expect(await state(first)).toEqual(NONE);
+        // The second device is signed in as the payer's account, which now holds the pass.
+        await ctx.useDevice?.(second);
+        expect(await state(second)).toEqual({ hasPass: true, passOn: 'account', devicePass: null });
       });
     });
   });

@@ -38,6 +38,10 @@ export const rateLimitRegistry: readonly RateLimitRow[] = [
   // Viewer subscription tokens (SPEC-12 [П-2]): 30 a minute per client, as the connection tokens; counted in this
   // process if Redis is down.
   { key: 'live-viewer-token', limit: 30, windowMs: 60_000, keys: ['ipDay'], onStoreDown: 'memory' },
+  // The email change request (SPEC-11 AC-43, S11-01): 10 per 10 min per subject AND per client (ipDay), on top of
+  // the code rows; refused if Redis is down (it answers `taken`, an account-existence signal).
+  { key: 'me-email-request', limit: 10, windowMs: 600_000, keys: ['subject', 'ipDay'], onStoreDown: 'fail-closed' },
+  // Own-subject profile writes of SPEC-11: 30 a minute per subject, counted in this process if Redis is down.
   { key: 'me-profile', limit: 30, windowMs: 60_000, keys: ['subject'], onStoreDown: 'memory' },
   { key: 'me-schedule', limit: 30, windowMs: 60_000, keys: ['subject'], onStoreDown: 'memory' },
   // Realtime connection tokens (SPEC-06 AC-16): 30 a minute per client, counted in this process if Redis is down.

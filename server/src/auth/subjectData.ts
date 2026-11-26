@@ -18,6 +18,8 @@ import { runSubjectData, type SubjectDataHandler, type SubjectDataOp, type Subje
 import { publishSessionEvent } from './events';
 import { eraseGuestRights, guestHeld, type SqlPool as MergePool } from './merge';
 import { requireSubjectDataDeps, runInAuthScope, runInSubjectDataScope } from './scope';
+import { createRightsSubjectData } from '../rights/subjectData';
+import { rightsDbOf } from './pool';
 
 export const AUTH_CAPABILITY = 'auth';
 
@@ -190,3 +192,6 @@ export function authGuestKeep(deps: () => Deps): { held(id: string): Promise<boo
     },
   };
 }
+
+/** The rights rows `profile`, `passes`, `bans` (SPEC-11 W36) over the auth pool of the scope's deps (A3 wiring). */
+export const rightsSubjectData = createRightsSubjectData(() => rightsDbOf(requireSubjectDataDeps()));

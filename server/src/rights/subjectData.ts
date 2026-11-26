@@ -1,7 +1,8 @@
 /**
  * Subject data of the rights capability (SPEC-11 W36, FR-PLAT-13, AC-54 ... AC-57, AC-31, EC-9): the rows `profile`,
  * `passes` and `bans` of `registries/subjectData.ts`. Like the `auth` row, a handler holds no deps: it reads them from
- * the auth scope (`requireSubjectDataDeps`), so callers run the registry through `runSubjectDataInScope`.
+ * the auth scope (`requireSubjectDataDeps`), so callers run the registry through `runSubjectDataInScope`. Application
+ * ring (A3): `createRightsSubjectData(db)` takes the database getter; `auth/subjectData.ts` wires it to the scope.
  * - `profile`: export nick, flag, settings, schedule and the pending email change `{email, sentAt}`; erase = the row
  *   (nick freed) and the pending change code `t2f-change-email-<id>`; anonymise = erase.
  * - `passes`: export `{season, source, issuedAt, place}` of the passes attached to the subject or unattached on its
@@ -13,11 +14,8 @@
  * reads `users` / `user_sessions` on the erase path.
  */
 import { decodeEmailChange, emailChangeIdentifier } from '../domain/rights/signInMethods';
-import { rightsDbOf } from '../auth/pool';
-import { requireSubjectDataDeps } from '../auth/scope';
-import type { Deps } from '../endpoints/types';
 import type { SubjectDataHandler } from '../platform/subjectData';
-import type { RightsQuery } from './ports';
+import type { RightsDb, RightsQuery } from './ports';
 
 export const PROFILE_CAPABILITY = 'profile';
 export const PASSES_CAPABILITY = 'passes';
@@ -68,8 +66,7 @@ async function pendingChangeOf(db: RightsQuery, subjectId: string): Promise<Prof
   return email === null ? null : { email, sentAt: iso(row.created_at) };
 }
 
-async function profileExport(deps: Deps, subjectId: string): Promise<ProfileSubjectExport | null> {
-  const db = await rightsDbOf(deps);
+async function profileExport(db: RightsQuery, subjectId: string): Promise<ProfileSubjectExport | null> {
   const res = await db.query<{ nick: string | null; flag_code: string | null; settings: Record<string, unknown>; schedule: string[] }>(
     'SELECT nick, flag_code, settings, schedule FROM profiles WHERE subject_id = $1',
     [subjectId],
@@ -80,15 +77,13 @@ async function profileExport(deps: Deps, subjectId: string): Promise<ProfileSubj
   return { nick: row.nick, flagCode: row.flag_code, settings: row.settings, schedule: [...row.schedule], pendingEmailChange };
 }
 
-async function profileErase(deps: Deps, subjectId: string): Promise<{ erased: boolean }> {
-  const db = await rightsDbOf(deps);
+async function profileErase(db: RightsQuery, subjectId: string): Promise<{ erased: boolean }> {
   const res = await db.query('DELETE FROM profiles WHERE subject_id = $1', [subjectId]);
   await db.query('DELETE FROM auth_verifications WHERE identifier = $1', [changeEmailIdentifier(subjectId)]);
   return { erased: (res.rowCount ?? 0) > 0 };
 }
 
-async function passesExport(deps: Deps, subjectId: string): Promise<PassSubjectExport[]> {
-  const db = await rightsDbOf(deps);
+async function passesExport(db: RightsQuery, subjectId: string): Promise<PassSubjectExport[]> {
   const devices = await devicesOf(db, subjectId);
   const res = await db.query<{ season: string; source: string; issued_at: unknown; attached: boolean }>(
     `SELECT season, source, issued_at, (attached_user_id IS NOT NULL) AS attached FROM passes
@@ -100,8 +95,7 @@ async function passesExport(deps: Deps, subjectId: string): Promise<PassSubjectE
   return res.rows.map((r) => ({ season: r.season, source: r.source, issuedAt: iso(r.issued_at), place: r.attached ? 'account' : 'device' }));
 }
 
-async function passesErase(deps: Deps, subjectId: string): Promise<{ stripped: number }> {
-  const db = await rightsDbOf(deps);
+async function passesErase(db: RightsQuery, subjectId: string): Promise<{ stripped: number }> {
   const res = await db.query(
     `UPDATE passes SET attached_user_id = NULL, payment_email = NULL, device_id = NULL, erased_at = now()
       WHERE attached_user_id::text = $1 AND erased_at IS NULL`,
@@ -110,8 +104,7 @@ async function passesErase(deps: Deps, subjectId: string): Promise<{ stripped: n
   return { stripped: res.rowCount ?? 0 };
 }
 
-async function bansExport(deps: Deps, subjectId: string): Promise<BanSubjectExport[]> {
-  const db = await rightsDbOf(deps);
+async function bansExport(db: RightsQuery, subjectId: string): Promise<BanSubjectExport[]> {
   const devices = await devicesOf(db, subjectId);
   const res = await db.query<{ kind: BanSubjectExport['kind']; created_at: unknown }>(
     `SELECT kind, created_at FROM bans
@@ -122,25 +115,26 @@ async function bansExport(deps: Deps, subjectId: string): Promise<BanSubjectExpo
   return res.rows.map((r) => ({ kind: r.kind, since: iso(r.created_at) }));
 }
 
-async function bansErase(deps: Deps, subjectId: string): Promise<{ removed: number }> {
-  const db = await rightsDbOf(deps);
+async function bansErase(db: RightsQuery, subjectId: string): Promise<{ removed: number }> {
   const res = await db.query(`DELETE FROM bans WHERE kind IN ('account', 'guest') AND subject_id = $1`, [subjectId]);
   return { removed: res.rowCount ?? 0 };
 }
 
-function handler<E>(
-  capability: string,
-  exp: (deps: Deps, id: string) => Promise<E>,
-  era: (deps: Deps, id: string) => Promise<unknown>,
-): SubjectDataHandler {
-  return {
+/** The three registry rows over `db` (read per call: the caller resolves it from its scope). */
+export function createRightsSubjectData(db: () => Promise<RightsDb>): { profile: SubjectDataHandler; passes: SubjectDataHandler; bans: SubjectDataHandler } {
+  const handler = <E>(
+    capability: string,
+    exp: (q: RightsQuery, id: string) => Promise<E>,
+    era: (q: RightsQuery, id: string) => Promise<unknown>,
+  ): SubjectDataHandler => ({
     capability,
-    export: (id) => exp(requireSubjectDataDeps(), id),
-    erase: (id) => era(requireSubjectDataDeps(), id),
-    anonymise: (id) => era(requireSubjectDataDeps(), id),
+    export: async (id) => exp(await db(), id),
+    erase: async (id) => era(await db(), id),
+    anonymise: async (id) => era(await db(), id),
+  });
+  return {
+    profile: handler(PROFILE_CAPABILITY, profileExport, profileErase),
+    passes: handler(PASSES_CAPABILITY, passesExport, passesErase),
+    bans: handler(BANS_CAPABILITY, bansExport, bansErase),
   };
 }
-
-export const profileSubjectData = handler(PROFILE_CAPABILITY, profileExport, profileErase);
-export const passesSubjectData = handler(PASSES_CAPABILITY, passesExport, passesErase);
-export const bansSubjectData = handler(BANS_CAPABILITY, bansExport, bansErase);

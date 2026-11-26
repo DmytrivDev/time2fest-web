@@ -7,7 +7,8 @@
  */
 import type { Deps } from '../endpoints/types';
 import { assertRegistry } from '../platform/registry';
-import { bansLink, passesLink, profileLink } from '../rights/links';
+import { rightsLinkPortsOf } from '../endpoints/deps';
+import { createRightsLinks } from '../rights/links';
 
 export interface AuthLinkInput {
   /** The guest's subject id (being removed). */
@@ -23,6 +24,6 @@ export interface AuthLinkHandler {
   link(input: AuthLinkInput): Promise<void>;
 }
 
-export const authLinkRegistry: readonly AuthLinkHandler[] = [bansLink, passesLink, profileLink];
+export const authLinkRegistry: readonly AuthLinkHandler[] = createRightsLinks<Deps>((deps) => rightsLinkPortsOf(deps));
 
 assertRegistry('authLinks', authLinkRegistry, (h) => h.key);

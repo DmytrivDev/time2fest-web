@@ -14,7 +14,6 @@ import {
   type ScheduleCatalog,
   type ScheduleEvent,
 } from '@time2fest/rules/schedule';
-import type { StoredCatalog } from '../../catalog/ports';
 
 export type { ScheduleCatalog, ScheduleEvent, ScheduleToggle } from '@time2fest/rules/schedule';
 export {
@@ -30,9 +29,15 @@ export {
 /** The most ids a schedule may hold (the body limit, NFR-4). */
 export const SCHEDULE_MAX_IDS = 512;
 
-const memo = new WeakMap<StoredCatalog, ScheduleCatalog>();
+/** The part of the stored catalog the rule reads (structural: ring 1 imports nothing outward, A4). */
+export interface ScheduleCatalogSource {
+  readonly events: readonly Record<string, unknown>[];
+  readonly cities: readonly Record<string, unknown>[];
+}
 
-export function scheduleCatalogFrom(stored: StoredCatalog): ScheduleCatalog {
+const memo = new WeakMap<ScheduleCatalogSource, ScheduleCatalog>();
+
+export function scheduleCatalogFrom(stored: ScheduleCatalogSource): ScheduleCatalog {
   const hit = memo.get(stored);
   if (hit !== undefined) return hit;
   const events: ScheduleEvent[] = [];

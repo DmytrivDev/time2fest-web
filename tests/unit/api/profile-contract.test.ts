@@ -35,6 +35,12 @@ const ctx: ProfileSuiteCtx = {
     useAuthStore.getState().grantDevicePass(`sim-pass-${n++}@example.com`, Date.now());
   },
   fullZone: fullZoneOfData,
+  // SPEC-10: a new address from Google with `email_verified:false` → Google is the account's only sign-in method.
+  async googleOnlyAccount() {
+    const email = `sim-go-${n++}@example.com`;
+    useAuthStore.setState((s) => ({ user: { email, via: 'google', signedInAt: Date.now(), emailUnverified: true }, accounts: [...s.accounts, email] }));
+    useAccountStore.getState().set('googleLinked', true);
+  },
   async linkGoogle(svc) {
     vi.useFakeTimers();
     try {

@@ -166,6 +166,9 @@ export function createSimProfile(): ProfileService {
       );
     },
     async unlinkGoogle() {
+      // Як сервер (AC-48): Google — єдиний спосіб входу, коли пошта акаунта не підтверджена.
+      const user = useAuthStore.getState().user;
+      if (user?.emailUnverified === true && useAccountStore.getState().googleLinked) return fail('conflict', { reason: 'last-method' });
       useAccountStore.getState().set('googleLinked', false);
       return ok(profileNow());
     },
