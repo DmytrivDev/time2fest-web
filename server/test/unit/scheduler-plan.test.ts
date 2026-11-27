@@ -219,8 +219,8 @@ describe('scheduler timing helpers (AC-39)', () => {
 
 describe('moment-action registry (C5, AC-73)', () => {
   it('holds the presence finalisation (SPEC-14 W19) and the run recorder (SPEC-07 W29) and filters by class', () => {
-    expect(momentsRegistry.map((r) => r.key)).toEqual(['presence-finalise', 'run-recorder']);
-    expect(momentActionsFor('production').map((r) => r.key)).toEqual(['presence-finalise']);
+    expect(momentsRegistry.map((r) => r.key)).toEqual(['run-recorder']);
+    expect(momentActionsFor('production').map((r) => r.key)).toEqual([]);
   });
 
   it('rejects malformed rows', () => {

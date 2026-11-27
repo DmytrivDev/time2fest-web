@@ -1,13 +1,12 @@
 /**
- * SPEC-07 W32 (AC-73, AC-74): the moment-action registry has the run recorder in `test` and
- * `rehearsal` only (and, since SPEC-14 W19, the presence window finalisation in every class); the subscriber registry recomputes the moments on both topics. The recorder row
+ * SPEC-07 W32 (AC-73, AC-74): the moment-action registry has exactly the run recorder, in `test` and
+ * `rehearsal` only; the subscriber registry recomputes the moments on both topics. The recorder row
  * over fakes: idempotent by consequence id, publishes only in `test`, and the one-shot fault fires
  * after publishing (AC-29).
  */
 import { afterEach, describe, expect, it } from 'vitest';
 import { CATALOG_CHANGED_TOPIC } from '../../src/catalog/service';
 import { EVENT_PATCH_CHANGED_TOPIC } from '../../src/corrections/service';
-import { PRESENCE_FINALISE } from '../../src/presence/health';
 import { momentActionsFor, momentsRegistry } from '../../src/registries/moments';
 import { subscriberRegistry } from '../../src/registries/subscribers';
 import type { ChannelPublisher, PublishResult } from '../../src/realtime/ports';
@@ -72,20 +71,15 @@ function group(over: Partial<MomentActionGroup> = {}): MomentActionGroup {
 const ctxOf = (cls: ActionContext['cls']): ActionContext => ({ cls, log: silent });
 
 describe('moment-action registry (AC-73)', () => {
-  it('has the run recorder in test and rehearsal only, the presence finalisation everywhere', () => {
-    expect(momentsRegistry.map((r) => r.key)).toEqual([PRESENCE_FINALISE, RUN_RECORDER]);
-    expect(momentActionsFor('production').map((r) => r.key)).toEqual([PRESENCE_FINALISE]);
-    expect(momentActionsFor('test').map((r) => r.key)).toEqual([PRESENCE_FINALISE, RUN_RECORDER]);
-    expect(momentActionsFor('rehearsal').map((r) => r.key)).toEqual([PRESENCE_FINALISE, RUN_RECORDER]);
-  });
-
-  it('the presence finalisation takes event-stamp, late "always" (SPEC-14 W19)', () => {
-    const row = momentsRegistry.find((r) => r.key === PRESENCE_FINALISE);
-    expect(row).toMatchObject({ capability: 'SPEC-14', kinds: ['event-stamp'], late: 'always' });
+  it('has exactly the run recorder, in test and rehearsal only', () => {
+    expect(momentsRegistry.map((r) => r.key)).toEqual([RUN_RECORDER]);
+    expect(momentActionsFor('production')).toEqual([]);
+    expect(momentActionsFor('test').map((r) => r.key)).toEqual([RUN_RECORDER]);
+    expect(momentActionsFor('rehearsal').map((r) => r.key)).toEqual([RUN_RECORDER]);
   });
 
   it('the recorder takes every one of the 11 kinds, late "always"', () => {
-    const row = momentsRegistry.find((r) => r.key === RUN_RECORDER);
+    const row = momentsRegistry[0];
     expect(row?.late).toBe('always');
     expect(row?.capability).toBe('SPEC-07');
     expect(new Set(row?.kinds)).toEqual(new Set(ALL_MOMENT_KINDS));

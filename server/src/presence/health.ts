@@ -3,7 +3,7 @@
  * A window (one event × one seen moment) is due at its end + 10 s; then exactly ONE record is written:
  * `healthOf` over the samples of every node, the window's distinct-subject counters and the downtime records.
  * It runs (a) on every sampler tick for every due window of the season without a record (the primary finaliser,
- * boot-after-downtime included, AC-15, EC-4), and (b) from the moments registry row `presence-finalise`
+ * boot-after-downtime included, AC-15, EC-4), and (b) optionally from a moments row built by `createPresenceFinaliseRow` (NOT registered: it slowed the scheduler, 2026-11-27; kept for tests of late finalisation) `presence-finalise`
  * (`event-stamp`, `late: 'always'`) for windows already due at that group (a late group); an on-time group returns
  * before any read, and a window not due yet is left to (a). The unique key of `presence_window_health` makes a second run a no-op.
  * A failed read or write raises `presence/finalise-failed` (`log`) and writes nothing — never `healthy` on

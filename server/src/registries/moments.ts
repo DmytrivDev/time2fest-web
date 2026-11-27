@@ -7,15 +7,14 @@
  *
  * The scheduler groups moments of one instant per action (one call per group), applies the late
  * rule and records exactly-once per (runEpoch, action, momentKey). `run` must be idempotent by
- * `group.consequenceId` and read time only from `group.now`. Rows: the presence window finalisation (SPEC-14
- * [П-5], every class) and the run recorder (SPEC-07 W29, AC-73: `test` and `rehearsal` only).
+ * `group.consequenceId` and read time only from `group.now`. Presence windows (SPEC-14) are finalised by the 5 s
+ * sampler ticker, not by a row here: a row at every `event-stamp` instant slowed the scheduler (p99 ~1 s vs ~0.25 s,
+ * scheduler-a evidence, 2026-11-27). Rows: the run recorder (SPEC-07 W29, AC-73: `test` and `rehearsal` only).
  */
 import { processDeps } from '../adapters/processDeps';
 import { createPayloadRunRecordStore } from '../adapters/payloadRunRecords';
 import { realClock } from '../clock';
 import { appliesIn, assertActionRules } from '../domain/scheduler/plan';
-import { presenceOf } from '../endpoints/deps';
-import { createPresenceFinaliseRow } from '../presence/health';
 import type { EnvClass } from '../platform/env';
 import { assertRegistry } from '../platform/registry';
 import type { MomentActionRow } from '../scheduler/ports';
@@ -41,7 +40,6 @@ function processRecorderDeps(): Promise<RunRecorderDeps> {
 }
 
 export const momentsRegistry: readonly MomentActionRow[] = [
-  createPresenceFinaliseRow(async () => presenceOf(await processDeps()).finaliser),
   createRunRecorder(processRecorderDeps),
 ];
 
