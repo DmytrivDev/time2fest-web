@@ -7,8 +7,9 @@
  *
  * The scheduler groups moments of one instant per action (one call per group), applies the late
  * rule and records exactly-once per (runEpoch, action, momentKey). `run` must be idempotent by
- * `group.consequenceId` and read time only from `group.now`. This wave has exactly one row, the run
- * recorder (SPEC-07 W29, AC-73: `test` and `rehearsal` only); subscribers of other waves add theirs.
+ * `group.consequenceId` and read time only from `group.now`. Presence windows (SPEC-14) are finalised by the 5 s
+ * sampler ticker, not by a row here: a row at every `event-stamp` instant slowed the scheduler (p99 ~1 s vs ~0.25 s,
+ * scheduler-a evidence, 2026-11-27). Rows: the run recorder (SPEC-07 W29, AC-73: `test` and `rehearsal` only).
  */
 import { processDeps } from '../adapters/processDeps';
 import { createPayloadRunRecordStore } from '../adapters/payloadRunRecords';
@@ -38,7 +39,9 @@ function processRecorderDeps(): Promise<RunRecorderDeps> {
   return recorderDeps;
 }
 
-export const momentsRegistry: readonly MomentActionRow[] = [createRunRecorder(processRecorderDeps)];
+export const momentsRegistry: readonly MomentActionRow[] = [
+  createRunRecorder(processRecorderDeps),
+];
 
 assertRegistry('moments', momentsRegistry, (r) => r.key);
 assertActionRules(momentsRegistry);

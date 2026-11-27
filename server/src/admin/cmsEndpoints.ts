@@ -45,6 +45,7 @@ import { fail, isOwner, jsonBodyOf, NO_STORE } from './cmsHttp';
 import { liveEndpoints } from './liveEndpoints';
 import { opsEndpoints } from './opsEndpoints';
 import { bansEndpoints } from './bansEndpoints';
+import { presenceEndpoints } from './presenceEndpoints';
 import { streamsEndpoints } from './streamsEndpoints';
 import { streamAgentEndpoints } from '../agent-api/streamAgentEndpoints';
 
@@ -175,5 +176,7 @@ export function cmsEndpointsFor(cls: EnvClass, resolve: () => Promise<Deps> = pr
   endpoints.push(...opsEndpoints(resolve));
   // SPEC-11: the owner's ban slice endpoints (ban, unban, list; `admin/bansEndpoints.ts`) exist in every class.
   endpoints.push(...bansEndpoints(resolve));
+  // SPEC-14: the owner's presence slice endpoints (list, add downtime; `admin/presenceEndpoints.ts`) exist in every class.
+  endpoints.push(...presenceEndpoints(resolve));
   return endpoints;
 }

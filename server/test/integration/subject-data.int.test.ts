@@ -41,7 +41,7 @@ describe('subject-data registry', () => {
     expect(await runSubjectData('export', 'subj-3', declarations)).toEqual({
       ok: true,
       results: {},
-      declarative: ['auth-codes', 'ip-day-fingerprint'],
+      declarative: ['auth-codes', 'ip-day-fingerprint', 'presence-beats'],
     });
   });
 });

@@ -5,6 +5,9 @@
  * load (SPEC-09 NFR-1).
  *
  *   node scripts/k6.mjs --scenario moderation [--rate 3000/min] [--duration 5m] [--api-url URL]
+ *   node scripts/k6.mjs --scenario presence [--part beats|claims|both] [--rate 200/s] [--claim-rate 100/s]
+ *        [--duration 60s] [--subjects 1200] [--event evt_london_2027] [--api-url URL]   (SPEC-14 NFR-1, NFR-2;
+ *        needs this worktree's served test-class server, e.g. `node scripts/stack.mjs serve`)
  *   node scripts/k6.mjs --scenario steady|publish|storm --vus N [--ramp 30s] [--duration 90s]
  *        [--token anon|door:0.1] [--channels site:state,rttest:batch] [--rate 1000/min] [--origin URL]
  *        [--ws-url URL] [--api-url URL] [--network NAME] [--prefix TEXT] [--storm-at 40s] [--storm-window 5s]
@@ -29,16 +32,19 @@ import { realtimeSecretsFile, ensureRealtimeSecrets } from './lib/realtimeSecret
 import { resolveWorktree } from './lib/worktree.mjs';
 
 export const K6_IMAGE = 'grafana/k6:2.4.0';
-export const SCENARIOS = ['steady', 'publish', 'storm', 'moderation'];
-/** Scenarios that talk to the server's test door, not to Centrifugo. */
-export const SERVER_SCENARIOS = ['moderation'];
+export const SCENARIOS = ['steady', 'publish', 'storm', 'moderation', 'presence'];
+/** Scenarios that talk to the server (its test doors or routes), not to Centrifugo. */
+export const SERVER_SCENARIOS = ['moderation', 'presence'];
+/** The parts of the `presence` scenario (SPEC-14 NFR-1 beats, NFR-2 claims). */
+export const PRESENCE_PARTS = ['beats', 'claims'];
 const serverDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 /** @param {string} scenario */
-export const loadDirFor = (scenario) => path.join(serverDir, 'load', SERVER_SCENARIOS.includes(scenario) ? 'moderation' : 'realtime');
-/** The script file of a scenario inside its load directory. @param {string} scenario */
-export const scriptFor = (scenario) => (scenario === 'moderation' ? 'verdict' : scenario);
+export const loadDirFor = (scenario) =>
+  path.join(serverDir, 'load', scenario === 'presence' ? 'presence' : SERVER_SCENARIOS.includes(scenario) ? 'moderation' : 'realtime');
+/** The script file of a scenario inside its load directory (`presence` runs `beats`, then `claims`). @param {string} scenario */
+export const scriptFor = (scenario) => (scenario === 'moderation' ? 'verdict' : scenario === 'presence' ? 'beats' : scenario);
 
-/** @typedef {{ scenario: string, vus: number, ramp: string, duration: string, token: string, channels: string[], rate: string, origin: string, wsUrl: string | undefined, apiUrl: string | undefined, network: string | undefined, prefix: string | undefined, stormAt: string | undefined, stormWindow: string | undefined }} Args */
+/** @typedef {{ scenario: string, vus: number, ramp: string, duration: string, token: string, channels: string[], rate: string, origin: string, wsUrl: string | undefined, apiUrl: string | undefined, network: string | undefined, prefix: string | undefined, stormAt: string | undefined, stormWindow: string | undefined, claimRate: string, event: string, subjects: number, parts: string[] }} Args */
 
 /**
  * @param {string[]} argv
@@ -62,14 +68,23 @@ export function parseArgs(argv) {
   const server = SERVER_SCENARIOS.includes(scenario);
   const channels = (raw.channels ?? '').split(',').map((c) => c.trim()).filter(Boolean);
   if (!server && channels.length === 0) throw new Error('--channels needs at least one channel');
-  const rate = raw.rate ?? (server ? '3000/min' : '60/min');
+  const presence = scenario === 'presence';
+  const rate = raw.rate ?? (presence ? '200/s' : server ? '3000/min' : '60/min');
   if (!/^\d+\/(s|sec|min|m|h)$/.test(rate)) throw new Error('--rate must be N/s, N/min or N/h');
+  const claimRate = raw['claim-rate'] ?? '100/s';
+  if (!/^\d+\/(s|sec|min|m|h)$/.test(claimRate)) throw new Error('--claim-rate must be N/s, N/min or N/h');
+  const event = raw.event ?? 'evt_london_2027';
+  if (!/^[A-Za-z0-9_-]{1,128}$/.test(event)) throw new Error('--event must be an event id');
+  const subjects = Number(raw.subjects ?? '1200');
+  if (!Number.isInteger(subjects) || subjects < 1 || subjects > 5000) throw new Error('--subjects must be 1..5000');
+  const parts = (raw.part ?? 'both') === 'both' ? PRESENCE_PARTS : [raw.part ?? ''];
+  if (!parts.every((p) => PRESENCE_PARTS.includes(p))) throw new Error('--part must be beats|claims|both');
   if (raw['api-url'] !== undefined && !/^https?:\/\/[^/\s]+\/?$/.test(raw['api-url'])) throw new Error('--api-url must be an http(s) origin');
   return {
     scenario,
     vus,
     ramp: raw.ramp ?? '0s',
-    duration: raw.duration ?? (server ? '5m' : '60s'),
+    duration: raw.duration ?? (server && !presence ? '5m' : '60s'),
     token,
     channels,
     rate,
@@ -80,6 +95,10 @@ export function parseArgs(argv) {
     prefix: raw.prefix,
     stormAt: raw['storm-at'],
     stormWindow: raw['storm-window'],
+    claimRate,
+    event,
+    subjects,
+    parts,
   };
 }
 
@@ -142,7 +161,7 @@ export function moderationEnv(a, serverPort) {
 
 /**
  * The `docker` argv. The key is in neither argv nor the env map: only the env file path is.
- * @param {{ scenario: string, loadDir: string, dataDir: string | undefined, envFile: string, network: string | undefined, image?: string, hostGateway?: boolean }} o
+ * @param {{ scenario: string, loadDir: string, dataDir: string | undefined, envFile: string, network: string | undefined, image?: string, hostGateway?: boolean, script?: string }} o
  * @returns {string[]}
  */
 export function buildDockerArgs(o) {
@@ -159,7 +178,7 @@ export function buildDockerArgs(o) {
     o.image ?? K6_IMAGE,
     'run',
     '--quiet',
-    `/scripts/${scriptFor(o.scenario)}.js`,
+    `/scripts/${o.script ?? scriptFor(o.scenario)}.js`,
   ];
 }
 
@@ -212,9 +231,133 @@ function runModeration(a, serverPort) {
   }
 }
 
+const PRESENCE_ORIGIN = 'http://localhost:3000';
+
+/**
+ * The environment of one `presence` part: the server origin as the container sees it, the loopback `Host`, the
+ * event, the claim `at`, the rate and the duration. The subjects' cookies are a mounted file, never env.
+ * @param {Args} a @param {number} serverPort @param {'beats' | 'claims'} part @param {number} moment
+ * @returns {Record<string, string>}
+ */
+export function presenceEnv(a, serverPort, part, moment) {
+  const apiUrl = (a.apiUrl ?? `http://host.docker.internal:${serverPort}`).replace(/\/+$/, '');
+  const port = new URL(apiUrl).port || String(serverPort);
+  return {
+    API_URL: apiUrl,
+    HOST_HEADER: `127.0.0.1:${port}`,
+    ORIGIN: PRESENCE_ORIGIN,
+    EVENT_ID: a.event,
+    CLAIM_AT: String(moment),
+    RATE: part === 'beats' ? a.rate : a.claimRate,
+    DURATION: a.duration,
+    SUBJECTS_FILE: '/data/subjects.json',
+  };
+}
+
+/**
+ * A loopback call of this worktree's server (doors answer a loopback `Host` only).
+ * @param {number} port @param {string} p @param {unknown} body @param {string} [cookie]
+ */
+async function presencePost(port, p, body, cookie) {
+  /** @type {Response | undefined} */
+  let res;
+  // A connection dropped while the server drains a load backlog is retried (the calls are idempotent).
+  for (let attempt = 1; !res; attempt += 1) {
+    try {
+      res = await fetch(`http://127.0.0.1:${port}${p}`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', origin: PRESENCE_ORIGIN, ...(cookie ? { cookie } : {}) },
+        body: JSON.stringify(body),
+      });
+    } catch (e) {
+      if (attempt >= 5) throw e;
+      await new Promise((r) => setTimeout(r, 1_000 * attempt));
+    }
+  }
+  const json = /** @type {{ ok?: boolean, value?: any, error?: { code?: string } }} */ (await res.json().catch(() => ({})));
+  return { status: res.status, json, cookie: res.headers.getSetCookie().map((c) => c.split(';')[0]).join('; ') };
+}
+
+/**
+ * Guests are created on a first write and limited to 60 per 10 min per client; a served test-class server has no
+ * edge secret, so every local request is one client. Between batches the runner drops the guest-creation counters of
+ * this worktree's Redis database (local stack only, test class).
+ * @param {{ redisDb: number }} wt
+ */
+function clearGuestLimits(wt) {
+  const id = spawnSync('docker', ['ps', '-q', '--filter', 'label=com.docker.compose.project=t2f', '--filter', 'label=com.docker.compose.service=redis'], {
+    encoding: 'utf8',
+  }).stdout.trim();
+  if (!id) throw new Error('shared Redis container not found');
+  const keys = spawnSync('docker', ['exec', id, 'redis-cli', '-n', String(wt.redisDb), '--scan', '--pattern', '*rl:auth-guest-create*'], { encoding: 'utf8' })
+    .stdout.split('\n')
+    .map((k) => k.trim())
+    .filter(Boolean);
+  if (keys.length > 0) spawnSync('docker', ['exec', id, 'redis-cli', '-n', String(wt.redisDb), 'DEL', ...keys], { encoding: 'utf8' });
+}
+
+/**
+ * The `presence` run (SPEC-14 NFR-1, NFR-2) against this worktree's served test-class server: the event's moment from
+ * the health door; guests through the write probe; the clock frozen at m − 10 s for the beats (inside the window)
+ * and at m + 20 s for the claims (after the stamp moment; every subject beat first, so a claim is a grant or the
+ * existing stamp). The clock goes back to real time afterwards.
+ * @param {Args} a @param {{ ports: { server: number }, redisDb: number }} wt
+ */
+async function runPresence(a, wt) {
+  const port = wt.ports.server;
+  const health = await presencePost(port, '/api/_test/presence/health', { eventId: a.event });
+  /** @type {number[]} */
+  const moments = health.json.value?.moments ?? [];
+  const moment = moments[moments.length - 1];
+  if (health.status !== 200 || moment === undefined) throw new Error(`presence-health door answered ${health.status} for ${a.event}`);
+  const clockTo = async (/** @type {number} */ at) => {
+    const r = await presencePost(port, '/api/_test/clock', { at, frozen: true });
+    if (r.status !== 200) throw new Error(`clock door answered ${r.status}`);
+  };
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), `t2f-k6-${crypto.randomBytes(4).toString('hex')}-`));
+  try {
+    await clockTo(moment - 10_000);
+    /** @type {string[]} */
+    const subjects = [];
+    for (let i = 0; i < a.subjects; i += 50) {
+      clearGuestLimits(wt);
+      const batch = await Promise.all(
+        Array.from({ length: Math.min(50, a.subjects - i) }, async () => {
+          const r = await presencePost(port, '/api/_test/auth/write-probe', {});
+          if (r.status !== 200 || r.cookie === '') throw new Error(`write-probe door answered ${r.status}`);
+          // One untimed beat each, so a claims-only run has proofs too.
+          const b = await presencePost(port, '/api/presence', { eventIds: [a.event], source: 'tv' }, r.cookie);
+          if (b.status !== 200) throw new Error(`first beat answered ${b.status} ${b.json.error?.code ?? ''}`);
+          return r.cookie;
+        }),
+      );
+      subjects.push(...batch);
+    }
+    clearGuestLimits(wt);
+    fs.writeFileSync(path.join(tmp, 'subjects.json'), JSON.stringify(subjects), { mode: 0o600 });
+    let failed = 0;
+    for (const part of a.parts) {
+      if (part === 'claims') await clockTo(moment + 20_000);
+      const env = presenceEnv(a, port, /** @type {'beats' | 'claims'} */ (part), moment);
+      const envFile = path.join(tmp, `${part}.env`);
+      fs.writeFileSync(envFile, envFileText(env), { mode: 0o600 });
+      const args = buildDockerArgs({ scenario: a.scenario, script: part, loadDir: loadDirFor(a.scenario), dataDir: tmp, envFile, network: undefined, hostGateway: a.apiUrl === undefined });
+      console.log(`k6 presence ${part}: ${env.RATE} for ${a.duration}, ${subjects.length} subjects, event ${a.event} (m=${new Date(moment).toISOString()}) against ${env.API_URL}`);
+      const r = spawnSync('docker', args, { stdio: 'inherit', shell: false });
+      if (r.status !== 0) failed = r.status ?? 1;
+      console.log(`k6 presence ${part}: ${r.status === 0 ? 'thresholds passed' : `FAILED (exit ${r.status})`}`);
+    }
+    process.exitCode = failed;
+  } finally {
+    await presencePost(port, '/api/_test/clock', { at: Date.now(), speed: 1, frozen: false }).catch(() => undefined);
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+}
+
 async function main() {
   const a = parseArgs(process.argv.slice(2));
   const wt = resolveWorktree(serverDir, process.env);
+  if (a.scenario === 'presence') return runPresence(a, wt);
   if (SERVER_SCENARIOS.includes(a.scenario)) return runModeration(a, wt.ports.server);
   const local = a.wsUrl === undefined;
   const prefix = a.prefix ?? (local ? wt.channelPrefix : '');

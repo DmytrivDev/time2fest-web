@@ -7,8 +7,8 @@ import { HTTP_DOMAINS } from '../../../lib/api/http/domains';
 const root = path.resolve(__dirname, '../../..');
 
 describe('межі хвилі realtime', () => {
-  it('AC-55: HTTP_DOMAINS містить лише catalog, site (SPEC-08), live (SPEC-12), auth і profile (SPEC-11)', () => {
-    expect([...HTTP_DOMAINS].sort()).toEqual(['auth', 'catalog', 'live', 'profile', 'site']);
+  it('AC-55: HTTP_DOMAINS містить лише catalog, site (SPEC-08), live (SPEC-12), auth і profile (SPEC-11), passport (SPEC-14)', () => {
+    expect([...HTTP_DOMAINS].sort()).toEqual(['auth', 'catalog', 'live', 'passport', 'profile', 'site']);
   });
 
   it('AC-55: верхньорівневі файли lib/api/http/*.ts не імпортують ./realtime; винятки SPEC-08 — site.ts і SPEC-12 — live.ts: лише типи й динамічний import за прапорцем збірки', () => {
@@ -25,7 +25,7 @@ describe('межі хвилі realtime', () => {
         expect(src.replace(dynamic, ''), f).not.toMatch(anyImport);
         continue;
       }
-      if (f === 'auth.ts' || f === 'profile.ts') {
+      if (f === 'auth.ts' || f === 'profile.ts' || f === 'passport.ts') {
         // SPEC-10/11: only the transport type; the transport itself is handed in by the caller.
         const typeOnly = /^import type \{[^}]*\} from '\.\/realtime\/types';$/m;
         expect(src.replace(typeOnly, ''), f).not.toMatch(anyImport);

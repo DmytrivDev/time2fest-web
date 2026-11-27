@@ -10,6 +10,7 @@ import {
   RATING_CLOSE_AFTER,
   RATING_OPEN_AFTER,
   SERVER_CLOCK_TOLERANCE_MS,
+  PULSE_INTERVAL_MS,
   STAMP_DELAY,
   arrivedYear,
   canSayToast,
@@ -124,6 +125,7 @@ describe('AC-31 empty zone list behaves as on master 3f2389f', () => {
     expect(toastSeason(now, empty)).toBe('before');
     expect(pinnedUntilAt(now, [])).toBeNull();
     expect(ratingCloseAt(empty)).toBe(-Infinity);
+    expect(rules.celebrationEndAt(empty)).toBe(-Infinity);
     expect(isRatingClosed(now, empty)).toBe(true);
   });
 });
@@ -159,6 +161,8 @@ describe('AC-20 Δ shifts only the shiftable bounds, in the person’s favour', 
     expect(isCelebrating(end + D + 1, data, D)).toBe(false);
     expect(toastSeason(end + D, data, D)).toBe('during');
     expect(toastSeason(end + D + 1, data, D)).toBe('after');
+    expect(rules.celebrationEndAt(data)).toBe(end);
+    expect(rules.celebrationEndAt(data, D)).toBe(end + D);
   });
   it('celebration start does not move', () => {
     const start = first - CELEBRATION_LEAD;
@@ -229,6 +233,14 @@ describe('AC-21 a call without Δ equals the call with Δ = 0', () => {
   });
 });
 
+describe('AC-13 beat interval constant', () => {
+  it('PULSE_INTERVAL_MS is 20 000 ms and equals I', () => {
+    expect(PULSE_INTERVAL_MS).toBe(20_000);
+    expect(PULSE_INTERVAL_MS).toBe(I);
+    expect(() => rules.assertPulseInterval(PULSE_INTERVAL_MS)).not.toThrow();
+  });
+});
+
 describe('NFR-2 no module state: equal arguments give equal results', () => {
   const m = Date.parse('2027-01-01T00:00:00Z');
   const ev = { id: 'e', midnightUtc: '2027-01-01T00:00:00Z' };
@@ -250,6 +262,7 @@ describe('NFR-2 no module state: equal arguments give equal results', () => {
     eventStatus: () => rules.eventStatus(now, ev),
     handoverMoment: () => rules.handoverMoment(m),
     isCelebrating: () => rules.isCelebrating(now, data, D),
+    celebrationEndAt: () => rules.celebrationEndAt(data, D),
     isInReminderWindow: () => rules.isInReminderWindow(now, m),
     isPresentByPulses: () => rules.isPresentByPulses({ moment: m, pulses: [{ receivedAt: now }], intervalMs: I, delta: D }),
     isRatingClosed: () => rules.isRatingClosed(now, data, D),

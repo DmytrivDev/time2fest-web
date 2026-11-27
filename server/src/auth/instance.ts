@@ -60,6 +60,11 @@ export interface AuthInput {
  * 3 per 10 s per address would refuse people behind one address.
  */
 const CODE_PATH_SAFETY_NET = { window: 60, max: 20 };
+/**
+ * Connections of the auth pool. It also carries the rights, presence and stamp queries (`auth/pool.ts`), so it is
+ * sized for SPEC-14 NFR-1/NFR-2 load (claims hold a client for their transaction); connections open on demand.
+ */
+const AUTH_POOL_MAX = 12;
 /*
  * `/sign-in/anonymous` is not mounted on `/api/auth` (S10-08): guests are created only server-side by `25-subject`
  * through `auth.api` (rows `auth-guest-create` per client and `auth-guest-create-ip48` per /48).
@@ -133,7 +138,7 @@ function buildAuth(input: AuthInput) {
   return betterAuth({
     ...statics,
     plugins: googleOn ? statics.plugins : statics.plugins.filter((p) => p.id !== GOOGLE_PLUGIN_ID),
-    database: new pg.Pool({ connectionString: String(env.vars.DATABASE_URI ?? ''), max: 5 }),
+    database: new pg.Pool({ connectionString: String(env.vars.DATABASE_URI ?? ''), max: AUTH_POOL_MAX }),
     basePath: AUTH_BASE_PATH,
     baseURL: authBaseUrl(env),
     secret,

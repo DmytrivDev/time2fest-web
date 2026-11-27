@@ -68,3 +68,42 @@ export function rightsDbOfPool(pool: pg.Pool): RightsDb {
 export async function rightsDbOf(src: AuthPoolSource): Promise<RightsDb> {
   return rightsDbOfPool(await authPool(src));
 }
+
+/**
+ * Connections of the presence pool (S14-03): beats (the via-DB path included), proofs, claims and the health log run
+ * on their own small pool, so a Redis-down midnight that sends every beat to Postgres cannot starve sign-in and
+ * `getSession` on the auth pool. A request that cannot get a connection within `PRESENCE_CONNECT_TIMEOUT_MS`, or a
+ * statement over `PRESENCE_STATEMENT_TIMEOUT_MS`, throws; the presence services answer that `unavailable` with
+ * `retryAfterMs` (never `no-presence`).
+ */
+export const PRESENCE_POOL_MAX = 8;
+export const PRESENCE_CONNECT_TIMEOUT_MS = 2_000;
+export const PRESENCE_STATEMENT_TIMEOUT_MS = 5_000;
+
+const presencePools = new WeakMap<pg.Pool, pg.Pool>();
+
+/** The presence pool beside the auth pool of `src` (same database, built once per auth pool). */
+export async function presencePool(src: AuthPoolSource): Promise<pg.Pool> {
+  const auth = await authPool(src);
+  let pool = presencePools.get(auth);
+  if (pool === undefined) {
+    const base = auth.options as pg.PoolConfig;
+    pool = new pg.Pool({
+      ...(base.connectionString !== undefined ? { connectionString: base.connectionString } : {}),
+      max: PRESENCE_POOL_MAX,
+      connectionTimeoutMillis: PRESENCE_CONNECT_TIMEOUT_MS,
+      statement_timeout: PRESENCE_STATEMENT_TIMEOUT_MS,
+      idleTimeoutMillis: 10_000,
+      allowExitOnIdle: true,
+    });
+    // An idle client's error (database restart) must not crash the process; the next query reconnects.
+    pool.on('error', () => undefined);
+    presencePools.set(auth, pool);
+  }
+  return pool;
+}
+
+/** Presence database port over the presence pool (S14-03). */
+export async function presenceDbOf(src: AuthPoolSource): Promise<RightsDb> {
+  return rightsDbOfPool(await presencePool(src));
+}

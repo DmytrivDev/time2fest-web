@@ -15,6 +15,10 @@ export const internalEvents: CollectionConfig = {
   admin: { hidden: true },
   access: { read: never, create: never, update: never, delete: never },
   timestamps: false,
+  // `publish` reads MAX(version) of one topic under the outbox lock, served by the index
+  // `internal_events_topic_version_idx` on `(topic, version)` (SPEC-14 PERF-2). It is created by the hand-written
+  // migration `20261127_010737_spec14_events_index`, not declared here: Payload's compound `indexes` cannot be
+  // named and would call it `topic_version_idx`, a schema-global name.
   fields: [
     { name: 'topic', type: 'text', required: true, index: true },
     { name: 'version', type: 'number', required: true },

@@ -1,9 +1,9 @@
 /**
  * Test-door registry (AC-32, AC-35 … AC-38, AC-62; SPEC-07 AC-67, AC-68): sorted, unique rows under
- * `/api/_test/*` — 32 rows (SPEC-12 W38: the `video-status` stub became the `live` door; SPEC-13b W18: + `ops-tick`;
+ * `/api/_test/*` — 36 rows (SPEC-12 W38: the `video-status` stub became the `live` door; SPEC-13b W18: + `ops-tick`;
  * SPEC-10 W26–W27: the `last-code` stub became `auth-last-code` under `/api/_test/auth/`, + `auth-expire-code`,
  * `auth-google-user`, `auth-write-probe`, `mail-counter`, `auth-free-gap`, `mail-break-delivery`; SPEC-11 W34: six `rights-*`
- * rows, `test-doors/rights.ts`). Evaluated only in the `test` class with `T2F_TEST_DOORS=1` (see
+ * rows, `test-doors/rights.ts`; SPEC-14 W21–W22: four `presence-*` rows, `test-doors/presence.ts`). Evaluated only in the `test` class with `T2F_TEST_DOORS=1` (see
  * `shouldLoadDoors`). `reset` empties this worktree's data (run records and scheduler runs included)
  * and seeds it (AC-47); `fixtures` applies one named fixture row of the seed registry.
  */
@@ -31,6 +31,7 @@ import { edgeEchoDoors } from './edgeEcho';
 import { liveDoor } from './live';
 import { moderationDoor } from './moderation';
 import { opsTickDoor } from './ops';
+import { clearPresenceTables, presenceDoors } from './presence';
 import { realtimeTokenDoor, type TestSubjects } from './realtimeToken';
 import { clearRightsTables, restoreLinkFault, rightsDoors } from './rights';
 import { schedulerDoors } from './scheduler';
@@ -103,6 +104,8 @@ export function resetDoor(
       // SPEC-11: passes, bans, profiles (`ban:*` keys went with the prefix above); an armed link fault is dropped.
       await clearRightsTables(ctx.deps);
       restoreLinkFault();
+      // SPEC-14: stamps, proofs, achievements, the health log, author ids; the fault switch is dropped (`pr:*` went above).
+      await clearPresenceTables(ctx.deps);
       restoreDelivery();
       subjects.clear();
       clearRunFault();
@@ -161,6 +164,7 @@ export const doorRegistry: readonly DoorRow[] = [
   moderationDoor,
   opsTickDoor,
   stub('paypro-webhook', '/api/_test/paypro-webhook'),
+  ...presenceDoors,
   realtimeTokenDoor,
   resetDoor(),
   ...rightsDoors,

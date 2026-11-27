@@ -12,6 +12,8 @@ import type { Ms, PresenceSource, Stamp } from '@/lib/data/types';
 export type PassportClaimReason =
   /** `conflict`: вікно підтвердження закрито. */
   | 'claim-closed'
+  /** `forbidden`: сервер не має доказу присутності. */
+  | 'no-presence'
   /** `not_found`: подія невідома. */
   | 'unknown-event';
 

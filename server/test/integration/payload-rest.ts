@@ -4,7 +4,7 @@
  * made through the Local API (a server-side call).
  */
 import config from '@payload-config';
-import { REST_DELETE, REST_GET, REST_PATCH, REST_POST } from '@payloadcms/next/routes';
+import { REST_DELETE, REST_GET, REST_PATCH, REST_POST, REST_PUT } from '@payloadcms/next/routes';
 import type { Payload } from 'payload';
 import { IDENTITY_HEADER } from '../../src/adapters/identityMarker';
 import { getIdentityMarker } from '../../src/container';
@@ -12,8 +12,8 @@ import type { Role } from '../../src/domain/access/roles';
 
 export const ADMIN_HOST = String(process.env.T2F_ADMIN_HOST);
 
-type Method = 'GET' | 'POST' | 'PATCH' | 'DELETE';
-const HANDLERS = { GET: REST_GET, POST: REST_POST, PATCH: REST_PATCH, DELETE: REST_DELETE } as const;
+type Method = 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
+const HANDLERS = { GET: REST_GET, POST: REST_POST, PATCH: REST_PATCH, PUT: REST_PUT, DELETE: REST_DELETE } as const;
 
 const exp = () => Math.floor(Date.now() / 1000) + 600;
 

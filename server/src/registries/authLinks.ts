@@ -1,13 +1,14 @@
 /**
  * Guest-merge handlers (SPEC-10 W30, AC-23, AC-24): when a guest signs in (code or Google), each row moves the
  * guest's data of one capability to the account. Rows are added by the waves that own the data: SPEC-11 registers
- * `bans`, `passes`, `profile` (`rights/links.ts`). A test injects its own rows through `Deps.authLinks`.
+ * `bans`, `passes`, `profile` (`rights/links.ts`); SPEC-14 registers `stamps` (`presence/links.ts`). A test injects its own rows through `Deps.authLinks`.
  * Contract of a row: idempotent for `(fromSubject, toSubject)`; may throw — the merge then records a retry row and
  * raises `log` `auth/link-retry`, and the sign-in still completes. Sorted by `key`.
  */
 import type { Deps } from '../endpoints/types';
 import { assertRegistry } from '../platform/registry';
-import { rightsLinkPortsOf } from '../endpoints/deps';
+import { presenceLinkPortsOf, rightsLinkPortsOf } from '../endpoints/deps';
+import { createPresenceLinks } from '../presence/links';
 import { createRightsLinks } from '../rights/links';
 
 export interface AuthLinkInput {
@@ -24,6 +25,9 @@ export interface AuthLinkHandler {
   link(input: AuthLinkInput): Promise<void>;
 }
 
-export const authLinkRegistry: readonly AuthLinkHandler[] = createRightsLinks<Deps>((deps) => rightsLinkPortsOf(deps));
+export const authLinkRegistry: readonly AuthLinkHandler[] = [
+  ...createRightsLinks<Deps>((deps) => rightsLinkPortsOf(deps)),
+  ...createPresenceLinks<Deps>((deps) => presenceLinkPortsOf(deps)),
+].sort((a, b) => (a.key < b.key ? -1 : a.key > b.key ? 1 : 0));
 
 assertRegistry('authLinks', authLinkRegistry, (h) => h.key);

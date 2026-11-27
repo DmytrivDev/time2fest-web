@@ -65,10 +65,12 @@ const SPEC_TABLE: [domain: string, source: string, code: string, level: OpsAlarm
   ['mail', 'mail', 'mail/plan-free', 'page'],
   // SPEC-10 AC-24
   ['auth', 'auth', 'auth/link-retry', 'log'],
+  // SPEC-14 AC-6, AC-64
+  ['presence', 'presence', 'presence/fast-store-down', 'log'],
 ];
 
-const DOMAINS = ['clock', 'scheduler', 'catalog', 'site', 'live', 'moderation', 'ops', 'telegram', 'spend', 'platform', 'mail', 'auth'];
-const RESERVED = ['edge', 'payments', 'chat', 'presence', 'toasts'];
+const DOMAINS = ['clock', 'scheduler', 'catalog', 'site', 'live', 'moderation', 'ops', 'telegram', 'spend', 'platform', 'mail', 'auth', 'presence'];
+const RESERVED = ['edge', 'payments', 'chat', 'toasts'];
 
 const alarm = { source: 'x', code: 'y', level: 'log' as const, meaning: 'Щось сталося.', action: 'Зробити щось.', detailKeys: ['a'] };
 const row = (domain: string, over: Partial<OpsDomainRow> = {}): OpsDomainRow => ({ domain, title: 'Т', ownerWave: 'SPEC-00', alarms: [], metrics: [], ...over });

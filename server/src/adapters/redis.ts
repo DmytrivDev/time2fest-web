@@ -2,11 +2,12 @@
  * Fast-store adapters (ring 4): the Redis `FastStore` and the in-process one used by the
  * `memory` rate-limit policy (AC-50).
  * - The Redis client is lazy, never queues offline and never retries a command: a request
- *   either reaches Redis now or fails with `DependencyUnavailable`.
+ *   either reaches Redis now or fails with `DependencyUnavailable`. Commands are auto-pipelined.
  * - Every key is under `T2F_REDIS_PREFIX` (applied by the client). `SCAN` does not apply the
  *   client prefix, so `deleteByPrefix` matches the full prefix itself and strips it again
  *   before `UNLINK` (which does apply it).
  */
+import { randomUUID } from 'node:crypto';
 import { Redis } from 'ioredis';
 import { DependencyUnavailable, type Clock, type FastStore } from '../ports';
 
@@ -40,6 +41,9 @@ export function createRedisStore(vars: RedisStoreVars, opts: { onError?: (err: u
     maxRetriesPerRequest: 0,
     connectTimeout: 500,
     lazyConnect: true,
+    // Commands issued in one event-loop turn go out as one write (SPEC-14 NFR-1/NFR-2: a beat or a claim makes
+    // several small calls; one socket write per call was a large share of the node's CPU under load).
+    enableAutoPipelining: true,
   });
   // Without a listener ioredis prints every reconnect failure; the caller decides what to log.
   client.on('error', (err: unknown) => opts.onError?.(err));
@@ -109,6 +113,13 @@ export function createRedisStore(vars: RedisStoreVars, opts: { onError?: (err: u
         } while (cursor !== '0');
         return deleted;
       }),
+    info: () =>
+      op(async () => {
+        const text = await client.info('server');
+        const field = (name: string): string => new RegExp(`^${name}:(.*)$`, 'm').exec(text)?.[1]?.trim() ?? '';
+        const uptimeS = Number(field('uptime_in_seconds'));
+        return { runId: field('run_id'), uptimeS: Number.isFinite(uptimeS) ? uptimeS : 0 };
+      }),
     async close() {
       if (client.status === 'wait' || client.status === 'end') {
         client.disconnect();
@@ -127,6 +138,9 @@ interface MemoryEntry {
 /** In-process `FastStore` with lazy expiry, timed by `clock`. One per process. */
 export function createMemoryStore(clock: Clock): FastStore {
   const map = new Map<string, MemoryEntry>();
+  // A fixed run id per store: a new store is a "restart" of the in-process fast store.
+  const runId = randomUUID();
+  const startedAt = clock.now();
   const live = (key: string): MemoryEntry | undefined => {
     const e = map.get(key);
     if (e && e.expiresAt <= clock.now()) {
@@ -173,6 +187,9 @@ export function createMemoryStore(clock: Clock): FastStore {
         }
       }
       return n;
+    },
+    async info() {
+      return { runId, uptimeS: Math.max(0, Math.floor((clock.now() - startedAt) / 1000)) };
     },
   };
 }

@@ -102,8 +102,8 @@ describe('test doors gating', () => {
     expect(await snapshot(await post('/api/_test/video-status', '{}'))).toEqual(unknown);
   });
 
-  it('SPEC-07 AC-68: the registry has 32 door rows (SPEC-11 W34: + 6 rights-*; SPEC-08 W19: + site; SPEC-12 W38: video-status → live; SPEC-13b W18: + ops-tick; SPEC-10 W26–W27: last-code → auth-last-code, + 4; R-B: + auth-free-gap, mail-break-delivery), and the production e2e list names exactly them', () => {
-    expect(doorRegistry).toHaveLength(32);
+  it('SPEC-07 AC-68: the registry has 36 door rows (SPEC-14 W22: + 4 presence-*; SPEC-11 W34: + 6 rights-*; SPEC-08 W19: + site; SPEC-12 W38: video-status → live; SPEC-13b W18: + ops-tick; SPEC-10 W26–W27: last-code → auth-last-code, + 4; R-B: + auth-free-gap, mail-break-delivery), and the production e2e list names exactly them', () => {
+    expect(doorRegistry).toHaveLength(36);
     expect(doorRegistry.find((d) => d.key === 'ops-tick')).toMatchObject({ method: 'POST', path: '/api/_test/ops-tick' });
     expect(doorRegistry.find((d) => d.key === 'live')).toMatchObject({ method: 'POST', path: '/api/_test/live' });
     expect(doorRegistry.some((d) => d.key === 'video-status')).toBe(false);

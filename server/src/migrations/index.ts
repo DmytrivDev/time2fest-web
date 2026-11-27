@@ -8,6 +8,8 @@ import * as migration_20261124_060324_ops from './20261124_060324_ops';
 import * as migration_20261124_141222_stream_sources from './20261124_141222_stream_sources';
 import * as migration_20261125_001708_spec10_auth from './20261125_001708_spec10_auth';
 import * as migration_20261125_224924_spec11_rights from './20261125_224924_spec11_rights';
+import * as migration_20261126_205719_spec14_presence from './20261126_205719_spec14_presence';
+import * as migration_20261127_010737_spec14_events_index from './20261127_010737_spec14_events_index';
 
 export const migrations = [
   {
@@ -58,6 +60,16 @@ export const migrations = [
   {
     up: migration_20261125_224924_spec11_rights.up,
     down: migration_20261125_224924_spec11_rights.down,
-    name: '20261125_224924_spec11_rights'
+    name: '20261125_224924_spec11_rights',
+  },
+  {
+    up: migration_20261126_205719_spec14_presence.up,
+    down: migration_20261126_205719_spec14_presence.down,
+    name: '20261126_205719_spec14_presence',
+  },
+  {
+    up: migration_20261127_010737_spec14_events_index.up,
+    down: migration_20261127_010737_spec14_events_index.down,
+    name: '20261127_010737_spec14_events_index'
   },
 ];

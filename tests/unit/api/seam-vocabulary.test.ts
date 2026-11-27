@@ -32,7 +32,7 @@ export const startReasons: readonly CheckoutStartReason[] = [
   'countries',
 ];
 export const cancelReason: CheckoutCancelReason = 'already-paid';
-export const claimReasons: readonly PassportClaimReason[] = ['claim-closed', 'unknown-event'];
+export const claimReasons: readonly PassportClaimReason[] = ['claim-closed', 'no-presence', 'unknown-event'];
 export const toastReason: ToastCheckReason = 'moderation';
 export const googleReason: LinkGoogleReason = 'google-taken';
 export const scheduleReason: ScheduleReason = 'schedule-full';

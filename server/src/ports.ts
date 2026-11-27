@@ -39,6 +39,11 @@ export interface FastStore {
   del(key: string): Promise<void>;
   /** Deletes every key under the prefix and returns how many were deleted. */
   deleteByPrefix(prefix: string): Promise<number>;
+  /**
+   * Identity of the running store: its run id (changes on every restart) and uptime in seconds (SPEC-14 AC-14).
+   * Optional: only the presence sampler reads it.
+   */
+  info?(): Promise<{ runId: string; uptimeS: number }>;
 }
 
 export type IdempotencyBegin<R> = 'started' | { status: 'running' } | { status: 'done'; result: R };
