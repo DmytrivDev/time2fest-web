@@ -123,7 +123,10 @@ describe('fast subject read == Better Auth getSession (W5)', () => {
   it('bad signature: fast path defers, Better Auth says no session', async () => {
     const a = await userWithSession({ anonymous: false });
     const value = decodeURIComponent(a.raw);
-    const flipped = value.slice(0, -2) + (value.at(-2) === 'A' ? 'B' : 'A') + '=';
+    // Flip the FIRST signature character: the last base64 data character before '=' carries padding bits, so
+    // changing it can decode to the same HMAC (the test was flaky in CI 45974443772).
+    const dot = value.lastIndexOf('.');
+    const flipped = value.slice(0, dot + 1) + (value[dot + 1] === 'A' ? 'B' : 'A') + value.slice(dot + 2);
     const r = await compare(`${cookieName}=${encodeURIComponent(flipped)}`);
     expect(r).toEqual({ fast: undefined, ba: null });
     const otherSecret = encodeURIComponent(`${a.token}.${createHmac('sha256', 'not-the-secret').update(a.token).digest('base64')}`);
