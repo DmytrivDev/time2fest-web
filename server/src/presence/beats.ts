@@ -16,7 +16,7 @@
 import type { PresenceSource } from '@time2fest/rules/time';
 import { nextBeatMs } from '../domain/presence/beatSchedule';
 import { validEvent, type PresenceCatalog, type PresenceEvent } from '../domain/presence/eventValidity';
-import { windowsContaining, type SeasonZones } from '../domain/presence/window';
+import { phaseOf, windowsContaining, type SeasonZones } from '../domain/presence/window';
 import { beatFails, presenceFaults, type PresenceFaultSwitch } from './faults';
 import type { NodeIntake, WindowIntake } from './intake';
 import type { MomentBook } from './moments';
@@ -51,6 +51,11 @@ export interface BeatServiceDeps {
   windows: WindowIntake;
   intake: NodeIntake;
   faults?: PresenceFaultSwitch;
+  /**
+   * The subject's creation time (ms) for the established-subject rule of `beat-rate-drop` (S14-01); read only when the
+   * beat falls in some window's pre span. Absent or failing → `null` (not established, not counted).
+   */
+  subjectCreatedAt?(subjectId: string): Promise<number | null>;
   /** Uniform in [0, 1); only the injected beat error reads it. Absent → the switch's exact spread (`nextBeatFails`). */
   random?: () => number;
 }
@@ -65,34 +70,51 @@ export function createBeatService(deps: BeatServiceDeps): BeatService {
         deps.intake.failed();
         return { ok: false, retryAfterMs: PROOF_RETRY_AFTER_MS };
       }
-      const { catalog, zones } = await deps.catalog(receivedAt);
-      const season = catalog.season;
-      const valid: PresenceEvent[] = [];
-      for (const id of new Set(eventIds)) {
-        const e = validEvent(catalog, id);
-        if (e) valid.push(e);
-      }
-
-      if (valid.length > 0) {
-        await deps.moments.observe(season, valid.map((e) => ({ eventId: e.eventId, momentMs: e.momentMs })), receivedAt);
-      }
-
-      const proofs: ProofInput[] = [];
-      // The intake counters never fail the beat and do not depend on the proofs: they run alongside the proof writes.
-      const counting: Promise<boolean>[] = [];
-      for (const e of valid) {
-        const accepted = await deps.moments.accepted(season, e.eventId, e.momentMs, receivedAt, zones);
-        for (const momentMs of accepted) {
-          counting.push(deps.windows.count({ season, eventId: e.eventId, momentMs }, subjectId, receivedAt));
+      try {
+        const { catalog, zones } = await deps.catalog(receivedAt);
+        const season = catalog.season;
+        const valid: PresenceEvent[] = [];
+        for (const id of new Set(eventIds)) {
+          const e = validEvent(catalog, id);
+          if (e) valid.push(e);
         }
-        for (const momentMs of windowsContaining(receivedAt, accepted)) {
-          proofs.push({ subjectId, season, eventId: e.eventId, momentMs, receivedAt, source });
-        }
-      }
 
-      const [written] = await Promise.all([deps.proofs.recordBeat(proofs), Promise.all(counting)]);
-      if (!written.ok) return { ok: false, retryAfterMs: written.retryAfterMs };
-      return { ok: true, nextBeatMs: nextBeatMs(receivedAt, valid.map((e) => e.momentMs)) };
+        if (valid.length > 0) {
+          await deps.moments.observe(season, valid.map((e) => ({ eventId: e.eventId, momentMs: e.momentMs })), receivedAt);
+        }
+
+        // Read once per beat, and only when some accepted moment is in its pre span (S14-01).
+        let createdAt: Promise<number | null> | undefined;
+        const createdAtOf = (): Promise<number | null> =>
+          (createdAt ??= deps.subjectCreatedAt ? deps.subjectCreatedAt(subjectId).catch(() => null) : Promise.resolve(null));
+
+        const proofs: ProofInput[] = [];
+        // The intake counters never fail the beat and do not depend on the proofs: they run alongside the proof writes.
+        const counting: Promise<boolean>[] = [];
+        for (const e of valid) {
+          const accepted = await deps.moments.accepted(season, e.eventId, e.momentMs, receivedAt, zones);
+          for (const momentMs of accepted) {
+            const w = { season, eventId: e.eventId, momentMs };
+            counting.push(
+              phaseOf(receivedAt, momentMs) === 'pre'
+                ? createdAtOf().then((at) => deps.windows.count(w, subjectId, receivedAt, at))
+                : deps.windows.count(w, subjectId, receivedAt, null),
+            );
+          }
+          for (const momentMs of windowsContaining(receivedAt, accepted)) {
+            proofs.push({ subjectId, season, eventId: e.eventId, momentMs, receivedAt, source });
+          }
+        }
+
+        const [written] = await Promise.all([deps.proofs.recordBeat(proofs), Promise.all(counting)]);
+        if (!written.ok) return { ok: false, retryAfterMs: written.retryAfterMs };
+        return { ok: true, nextBeatMs: nextBeatMs(receivedAt, valid.map((e) => e.momentMs)) };
+      } catch {
+        // A catalog / moment-book read that failed (presence pool timeout, database down, S14-03): `unavailable`,
+        // counted as failed — never a silent `ok`.
+        deps.intake.failed();
+        return { ok: false, retryAfterMs: PROOF_RETRY_AFTER_MS };
+      }
     },
   };
 }

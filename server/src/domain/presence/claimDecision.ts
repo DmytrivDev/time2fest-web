@@ -92,15 +92,27 @@ function byPreference(windows: readonly ClaimWindow[], current: number): ClaimWi
   return [...windows].sort((a, b) => (a.moment === current ? -1 : b.moment === current ? 1 : b.moment - a.moment));
 }
 
+/**
+ * The cheap time-only steps of the decision for a subject WITHOUT a stamp (claim-closed, unknown-event, before
+ * m + 15 s), in the flowchart's order. `null` → the windows are needed. The stamp check must run before this (S14-08:
+ * callers skip the proof, downtime and health reads when this refuses).
+ */
+export function claimPrecheck(input: Pick<ClaimInput, 'now' | 'closeAt' | 'currentMoment'>): ClaimRefusal | null {
+  const { now } = input;
+  if (now > input.closeAt + PRESENCE_DELTA_MS) return { code: 'conflict', reason: 'claim-closed' };
+  const current = input.currentMoment;
+  if (current === null || !Number.isFinite(current)) return { code: 'not_found', reason: 'unknown-event' };
+  const opensAt = stampGrantedAt(current);
+  if (now < opensAt) return { code: 'unavailable', retryAfterMs: Math.max(1, opensAt - now) };
+  return null;
+}
+
 export function claimDecision(input: ClaimInput): ClaimDecision {
   const { now } = input;
   if (input.hasStamp) return { kind: 'existing' };
-  if (now > input.closeAt + PRESENCE_DELTA_MS) return { kind: 'refuse', error: { code: 'conflict', reason: 'claim-closed' } };
-  const current = input.currentMoment;
-  if (current === null || !Number.isFinite(current)) return { kind: 'refuse', error: { code: 'not_found', reason: 'unknown-event' } };
-
-  const opensAt = stampGrantedAt(current);
-  if (now < opensAt) return { kind: 'refuse', error: { code: 'unavailable', retryAfterMs: Math.max(1, opensAt - now) } };
+  const early = claimPrecheck(input);
+  if (early) return { kind: 'refuse', error: early };
+  const current = input.currentMoment as number;
 
   const windows = byPreference(
     input.windows.some((w) => w.moment === current) ? input.windows : [...input.windows, { moment: current, proofSource: null, record: null, downtime: false }],

@@ -18,6 +18,18 @@ export function isCelebrating(now: Ms, data: ZonesLike, delta = 0): boolean {
   return now >= first - CELEBRATION_LEAD && now <= last + CELEBRATION_TAIL + delta;
 }
 
+/**
+ * End of the season celebration: the last midnight + `CELEBRATION_TAIL` (+ Δ, which only moves this end later).
+ * No zones — `-Infinity` (nothing is celebrating). Inclusive: the celebration is still on at exactly this instant.
+ */
+export function celebrationEndAt(data: ZonesLike, delta = 0): Ms {
+  assertTolerance(delta);
+  if (data.zones.length === 0) return -Infinity;
+  let last = -Infinity;
+  for (const z of data.zones) if (z.midnightMs > last) last = z.midnightMs;
+  return last + CELEBRATION_TAIL + delta;
+}
+
 /** When toasts open: `CELEBRATION_LEAD` before the first midnight; no zones — `null`. */
 export function toastsOpenAt(data: ZonesLike): Ms | null {
   if (data.zones.length === 0) return null;

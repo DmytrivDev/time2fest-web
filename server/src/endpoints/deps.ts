@@ -6,7 +6,7 @@
 import type { AlarmService } from '../alarms/service';
 import type { AlarmStore } from '../alarms/ports';
 import type { AuthWiring } from '../auth/instance';
-import { rightsDbOf } from '../auth/pool';
+import { presenceDbOf, rightsDbOf } from '../auth/pool';
 import { seasonKeyOfEnd, type SeasonCtx } from '../domain/rights/passSeason';
 import { createBanMarks } from '../rights/banMarks';
 import { createBanService, type BanService } from '../rights/bans';
@@ -26,6 +26,7 @@ import type { ChannelPublisher, SubjectInvalidator } from '../realtime/ports';
 import type { SubjectResolver } from '../realtime/ports';
 import type { UnattendedDeps } from '../unattended/service';
 import type { Deps, EventPorts, LiveWiring, ModerationDeps, SiteWiring } from './types';
+import { randomUUID } from 'node:crypto';
 import { hostname } from 'node:os';
 import { presenceCatalogOf } from '../domain/presence/eventValidity';
 import { createBeatService, type BeatService, type PresenceCatalogView } from '../presence/beats';
@@ -36,6 +37,7 @@ import { createProofWriter, createSqlProofStore, type ProofWriter } from '../pre
 import { createDowntimeNotifier, createDowntimeService, createSqlDowntimeStore, PRESENCE_DOWNTIME_TOPIC, type DowntimeService } from '../presence/downtime';
 import { createFinaliser, createSqlHealthStore, type Finaliser } from '../presence/health';
 import { createSampler, createSqlSampleStore, type Sampler } from '../presence/samples';
+import { createSubjectAges } from '../presence/subjectAges';
 import { createSqlStampStore, createStampService, type StampService } from '../presence/stamps';
 import { createAchievementService, createSqlAchievementStore, type AchievementLookups } from '../presence/achievements';
 import { createGrantEvents } from '../presence/events';
@@ -240,6 +242,12 @@ async function readPresenceCatalog(deps: Deps): Promise<{ view: PresenceCatalogV
 }
 
 /**
+ * Per-boot part of the presence node id (W3): a crash and restart with the same hostname and pid (containers) is a new
+ * node, so its lost in-memory counts show as a `sample-gap` of the old node instead of being silently continued.
+ */
+const PRESENCE_BOOT_ID = randomUUID();
+
+/**
  * The deps a test dispatcher derives with `Object.create(deps, …)` (doors' subject resolver) share the base's
  * presence services: the routes, the sampler and the doors must see one node intake.
  */
@@ -256,12 +264,13 @@ export function presenceOf(served: Deps): PresenceServices {
   const deps = presenceRootOf(served);
   let built = presenceCache.get(deps);
   if (built === undefined) {
-    const db = () => rightsDbOf(deps);
+    // S14-03: presence reads and writes run on their own small pool with connect / statement timeouts.
+    const db = () => presenceDbOf(deps);
     const fast = () => faultyFastStore(deps.redis, presenceFaults);
     const intake = createNodeIntake();
     const windows = createWindowIntake(fast);
     const moments = createMomentBook({ db, store: createSqlMomentStore() });
-    const nodeId = `${hostname()}:${process.pid}`;
+    const nodeId = `${hostname()}:${process.pid}:${PRESENCE_BOOT_ID}`;
     const proofs = createProofWriter({
       db,
       fast,
@@ -303,8 +312,9 @@ export function presenceOf(served: Deps): PresenceServices {
     const downtimes = createDowntimeService({ db, store: downtimeStore, catalog, notifier });
     const sampleStore = createSqlSampleStore();
     const healthStore = createSqlHealthStore();
+    const subjectAges = createSubjectAges({ db });
     built = {
-      beats: createBeatService({ catalog, moments, proofs, windows, intake }),
+      beats: createBeatService({ catalog, moments, proofs, windows, intake, subjectCreatedAt: (id) => subjectAges.createdAt(id) }),
       proofs,
       moments,
       intake,

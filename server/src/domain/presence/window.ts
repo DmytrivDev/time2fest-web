@@ -5,7 +5,7 @@
  * widen the window (AC-11). The window bounds are derived from that rule (the end is `stampAcceptUntil`, the start is
  * found by bisection over the rule), never re-declared.
  */
-import { isPresentByPulses, PULSE_INTERVAL_MS, SERVER_CLOCK_TOLERANCE_MS, stampAcceptUntil, toastSeason } from '@time2fest/rules/time';
+import { celebrationEndAt, isPresentByPulses, PULSE_INTERVAL_MS, SERVER_CLOCK_TOLERANCE_MS, stampAcceptUntil } from '@time2fest/rules/time';
 
 /** Δ of every presence decision on the server. */
 export const PRESENCE_DELTA_MS = SERVER_CLOCK_TOLERANCE_MS;
@@ -59,9 +59,14 @@ export interface SeasonZones {
   readonly zones: readonly { readonly midnightMs: number }[];
 }
 
-/** True once the season's celebration (last midnight + `CELEBRATION_TAIL` + Δ) is over. */
+/**
+ * True once the SEASON celebration (last midnight + `CELEBRATION_TAIL` + Δ, `celebrationEndAt` of the rules) is over.
+ * Season-level cutoff on purpose (conductor decision, traced in the spec [А9]); no zones → never "over" here, so a
+ * missing catalog never drops an accepted old moment.
+ */
 export function celebrationOver(now: number, zones: SeasonZones): boolean {
-  return toastSeason(now, { zones: [...zones.zones] }, PRESENCE_DELTA_MS) === 'after';
+  if (zones.zones.length === 0) return false;
+  return now > celebrationEndAt({ zones: [...zones.zones] }, PRESENCE_DELTA_MS);
 }
 
 /**

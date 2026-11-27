@@ -125,6 +125,7 @@ describe('AC-31 empty zone list behaves as on master 3f2389f', () => {
     expect(toastSeason(now, empty)).toBe('before');
     expect(pinnedUntilAt(now, [])).toBeNull();
     expect(ratingCloseAt(empty)).toBe(-Infinity);
+    expect(rules.celebrationEndAt(empty)).toBe(-Infinity);
     expect(isRatingClosed(now, empty)).toBe(true);
   });
 });
@@ -160,6 +161,8 @@ describe('AC-20 Δ shifts only the shiftable bounds, in the person’s favour', 
     expect(isCelebrating(end + D + 1, data, D)).toBe(false);
     expect(toastSeason(end + D, data, D)).toBe('during');
     expect(toastSeason(end + D + 1, data, D)).toBe('after');
+    expect(rules.celebrationEndAt(data)).toBe(end);
+    expect(rules.celebrationEndAt(data, D)).toBe(end + D);
   });
   it('celebration start does not move', () => {
     const start = first - CELEBRATION_LEAD;
@@ -259,6 +262,7 @@ describe('NFR-2 no module state: equal arguments give equal results', () => {
     eventStatus: () => rules.eventStatus(now, ev),
     handoverMoment: () => rules.handoverMoment(m),
     isCelebrating: () => rules.isCelebrating(now, data, D),
+    celebrationEndAt: () => rules.celebrationEndAt(data, D),
     isInReminderWindow: () => rules.isInReminderWindow(now, m),
     isPresentByPulses: () => rules.isPresentByPulses({ moment: m, pulses: [{ receivedAt: now }], intervalMs: I, delta: D }),
     isRatingClosed: () => rules.isRatingClosed(now, data, D),

@@ -159,14 +159,23 @@ describe('finalisation (AC-15)', () => {
     const due = finaliseDueAt(M1);
     await h.nightRun({ speed: 4, from: M1 + 5 * SEC });
     start(E1);
-    const [rec] = await until(async () => {
-      const r = await records(E1);
-      return r.length > 0 ? r : undefined;
-    }, 90_000, 'E1 window record');
+    // W4: the moments row leaves a not-yet-due window to the 5 s process ticker (the primary finaliser). Stand-in for
+    // that ticker, scoped to E1 so the other cases' windows stay untouched: finalise E1 at server time every second.
+    const timer = setInterval(() => void presence().finaliser.finaliseEvents([E1], h.now()).catch(() => undefined), SEC);
+    const ticker = { stop: async () => clearInterval(timer) };
+    let rec: HealthRow | undefined;
+    try {
+      [rec] = await until(async () => {
+        const r = await records(E1);
+        return r.length > 0 ? r : undefined;
+      }, 90_000, 'E1 window record');
+    } finally {
+      await ticker.stop();
+    }
     expect(rec).toMatchObject({ event_id: E1, moment_ms: String(M1), recorded_by: 'system' });
     expect(Number(rec!.recorded_at)).toBeGreaterThanOrEqual(due);
     expect(Number(rec!.recorded_at) - due).toBeLessThanOrEqual(30 * SEC);
-    // No sampler runs in `test`: no samples → never `healthy`.
+    // The ticker only started at m + 5 s: the window start has no samples → never `healthy`.
     expect(rec).toMatchObject({ state: 'downtime' });
     expect(rec!.signs).toContain('sample-gap');
     await h.clock({ frozen: true });

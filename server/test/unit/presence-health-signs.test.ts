@@ -3,7 +3,10 @@
  */
 import { describe, expect, it } from 'vitest';
 import {
+  countingStartOf,
   finaliseDueAt,
+  isEstablishedFor,
+  RATE_DROP_MIN_PRE,
   healthOf,
   HEALTH_SIGNS,
   missingRecordAt,
@@ -82,9 +85,22 @@ describe('healthOf (W17)', () => {
     expect(healthOf(base({ samples: [] })).signs).toEqual(['sample-gap']);
   });
 
-  it('a node that stopped before the window is not judged', () => {
-    const gone = steady('n2').filter((s) => s.at < W.from - 30_000);
+  it('a node that stopped before the counting start is not judged', () => {
+    const gone = steady('n2').filter((s) => s.at < countingStartOf(M));
     expect(healthOf(base({ samples: [...steady(), ...gone] }))).toEqual({ state: 'healthy', signs: [] });
+  });
+
+  it('a node live in the counting span that stops before or inside the window → sample-gap (W3)', () => {
+    const beforeWindow = steady('n2').filter((s) => s.at < W.from - 30_000);
+    expect(healthOf(base({ samples: [...steady(), ...beforeWindow] })).signs).toEqual(['sample-gap']);
+    const insideWindow = steady('n2').filter((s) => s.at < W.from + 15_000);
+    expect(healthOf(base({ samples: [...steady(), ...insideWindow] })).signs).toEqual(['sample-gap']);
+  });
+
+  it('a restart under a new per-boot node id inside the window → sample-gap of the old id (W3)', () => {
+    const old = steady('host:1:boot-a').filter((s) => s.at < W.from + 10_000);
+    const fresh = steady('host:1:boot-b').filter((s) => s.at >= W.from + 15_000);
+    expect(healthOf(base({ samples: [...old, ...fresh] })).signs).toContain('sample-gap');
   });
 
   it('beat-errors: 2 % failed → sign; 0.5 % → healthy', () => {
@@ -92,10 +108,17 @@ describe('healthOf (W17)', () => {
     expect(healthOf(base({ samples: withBeats(steady(), 995, 5) }))).toEqual({ state: 'healthy', signs: [] });
   });
 
-  it('beat-rate-drop: 40 before / 15 inside → sign; 40/25 and 10/2 → healthy', () => {
-    expect(healthOf(base({ counters: { pre: 40, in: 15 } })).signs).toEqual(['beat-rate-drop']);
-    expect(healthOf(base({ counters: { pre: 40, in: 25 } })).state).toBe('healthy');
-    expect(healthOf(base({ counters: { pre: 10, in: 2 } })).state).toBe('healthy');
+  it('beat-rate-drop (established subjects, min 50): 60/20 → sign; 60/40 and 30/2 → healthy (AC-17, S14-01)', () => {
+    expect(RATE_DROP_MIN_PRE).toBe(50);
+    expect(healthOf(base({ counters: { pre: 60, in: 20 } })).signs).toEqual(['beat-rate-drop']);
+    expect(healthOf(base({ counters: { pre: 60, in: 40 } })).state).toBe('healthy');
+    expect(healthOf(base({ counters: { pre: 30, in: 2 } })).state).toBe('healthy');
+  });
+
+  it('established = created ≥ 1 h before the window start (S14-01)', () => {
+    expect(isEstablishedFor(W.from - 3_600_000, M)).toBe(true);
+    expect(isEstablishedFor(W.from - 3_599_999, M)).toBe(false);
+    expect(isEstablishedFor(null, M)).toBe(false);
   });
 
   it('beat-rate-drop: missing counters', () => {

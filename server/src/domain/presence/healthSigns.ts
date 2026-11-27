@@ -16,8 +16,13 @@ export const FINALISE_GRACE_MS = 10_000;
 export const MISSING_RECORD_MS = 120_000;
 /** `beat-errors`: failed beats above this share of all beats in the window ([А5]). */
 export const BEAT_ERROR_SHARE = 0.01;
-/** `beat-rate-drop` applies only when at least this many subjects beat before the window (AC-17). */
-export const RATE_DROP_MIN_PRE = 20;
+/**
+ * `beat-rate-drop` applies only when at least this many ESTABLISHED subjects beat before the window (AC-17, S14-01:
+ * raised from 20 so a handful of throwaway guests cannot switch a window to downtime).
+ */
+export const RATE_DROP_MIN_PRE = 50;
+/** A subject is established for a window when it was created at least this long before the window start (S14-01). */
+export const ESTABLISHED_SUBJECT_AGE_MS = 3_600_000;
 /** A downtime alarms when it overlaps `[m − span; m + span]` of any event (AC-20). */
 export const DOWNTIME_ALARM_SPAN_MS = 600_000;
 
@@ -87,6 +92,14 @@ export function samplesSpanOf(moment: number): { from: number; to: number } {
   return { from: countingStartOf(moment) - SAMPLE_GAP_MS, to: windowOf(moment).until + SAMPLE_INTERVAL_MS + SAMPLE_GAP_MS };
 }
 
+/**
+ * Whether a subject created at `createdAt` counts for the `beat-rate-drop` sign of `moment` (S14-01): created at
+ * least `ESTABLISHED_SUBJECT_AGE_MS` before the window start. Unknown creation time → not established.
+ */
+export function isEstablishedFor(createdAt: number | null, moment: number): boolean {
+  return createdAt !== null && Number.isFinite(createdAt) && createdAt <= windowOf(moment).from - ESTABLISHED_SUBJECT_AGE_MS;
+}
+
 /** Whether a downtime record applies to the window of `eventId` at `moment`. */
 export function downtimeApplies(d: HealthDowntime, eventId: string, moment: number): boolean {
   if (d.kind === 'manual' && d.eventId !== null) return d.eventId === eventId;
@@ -94,7 +107,12 @@ export function downtimeApplies(d: HealthDowntime, eventId: string, moment: numb
   return overlaps(d.from, d.to, w.from, w.until);
 }
 
-function sampleGap(samples: readonly HealthSample[], from: number, until: number): boolean {
+/**
+ * `sample-gap` (W3): a node is judged when it has a sample anywhere in the counting span `[countStart; until]` — a
+ * node live before the window that stops sampling inside it (crash, restart under a new per-boot id, deploy) is a gap.
+ * Inside the window `[from; until]` every judged node must sample at most `SAMPLE_GAP_MS` apart; no judged node → gap.
+ */
+function sampleGap(samples: readonly HealthSample[], countStart: number, from: number, until: number): boolean {
   const byNode = new Map<string, number[]>();
   for (const s of samples) {
     let list = byNode.get(s.nodeId);
@@ -103,8 +121,8 @@ function sampleGap(samples: readonly HealthSample[], from: number, until: number
   }
   let live = 0;
   for (const ats of byNode.values()) {
-    // Live in the window = at least one sample inside it; a node gone before the window is not judged.
-    if (!ats.some((t) => t >= from && t <= until)) continue;
+    // Live = at least one sample in the counting span; a node gone before the counting start is not judged.
+    if (!ats.some((t) => t >= countStart && t <= until)) continue;
     live += 1;
     const points = ats.filter((t) => t >= from - SAMPLE_GAP_MS && t <= until + SAMPLE_GAP_MS).sort((a, b) => a - b);
     let prev = from;
@@ -132,7 +150,7 @@ export function healthOf(input: HealthInput): HealthVerdict {
   const restartedInSpan = counting.some((s) => s.fastUptimeS !== null && s.fastUptimeS * 1_000 < s.at - countStart);
   if (runIds.size > 1 || restartedInSpan) signs.add('fast-store-restart');
 
-  if (sampleGap(input.samples, w.from, w.until)) signs.add('sample-gap');
+  if (sampleGap(input.samples, countStart, w.from, w.until)) signs.add('sample-gap');
 
   let accepted = 0;
   let failed = 0;

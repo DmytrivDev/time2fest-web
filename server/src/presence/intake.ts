@@ -4,11 +4,14 @@
  * - Per event × moment, in the fast store: how many DISTINCT subjects beat before the window
  *   (`[m − 5 min; window start)`) and inside it. Keys `pr:pre:<season>:<event>:<moment>:<subject>` /
  *   `pr:in:…:<subject>` (`setIfAbsent`) feed the counters `pr:cnt:pre|in:<season>:<event>:<moment>` (`incrWindow`).
- *   A subject counts in `in` only when its `pre` marker exists (AC-17: "less than half OF THEM"). Every key lives
- *   ≤ 48 h (AC-56).
+ *   A subject counts in `in` only when its `pre` marker exists (AC-17: "less than half OF THEM"), and gets a `pre`
+ *   marker only when it is ESTABLISHED for the window (created ≥ 1 h before the window start, S14-01) — so both
+ *   counters count established subjects only and fresh throwaway guests cannot steer `beat-rate-drop`. Every key
+ *   lives ≤ 48 h (AC-56).
  * Counter writes never fail a beat: a fast-store error is swallowed and reported as `false` (missing counters make
  * the window a downtime at finalisation, AC-15). Subject ids stay in the keys only — never in a log (NFR-5).
  */
+import { isEstablishedFor } from '../domain/presence/healthSigns';
 import { phaseOf } from '../domain/presence/window';
 import type { FastStore } from '../ports';
 
@@ -69,18 +72,20 @@ export interface WindowCounts {
 export interface WindowIntake {
   /**
    * Counts the subject for the window when `receivedAt` is in its `pre` span or inside it; `true` when the counters
-   * are up to date (counted or nothing to count), `false` when the fast store failed.
+   * are up to date (counted or nothing to count), `false` when the fast store failed. `createdAt` is the subject's
+   * creation time (`users.created_at`, ms; `null` unknown): only established subjects enter `pre` (S14-01).
    */
-  count(w: WindowRef, subject: string, receivedAt: number): Promise<boolean>;
+  count(w: WindowRef, subject: string, receivedAt: number, createdAt: number | null): Promise<boolean>;
   /** The distinct-subject counters of the window; `null` when the fast store cannot be read. */
   counts(w: WindowRef): Promise<WindowCounts | null>;
 }
 
 export function createWindowIntake(fast: () => FastStore): WindowIntake {
   return {
-    async count(w, subject, receivedAt) {
+    async count(w, subject, receivedAt, createdAt) {
       const phase = phaseOf(receivedAt, w.momentMs);
       if (phase === null) return true;
+      if (phase === 'pre' && !isEstablishedFor(createdAt, w.momentMs)) return true;
       try {
         const store = fast();
         if (phase === 'pre') {

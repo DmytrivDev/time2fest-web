@@ -6,7 +6,9 @@
  * AC-16 — fast store down during the window → `fast-store-unavailable`; a simulated restart (new run id) →
  *   `fast-store-restart`; no ticks for 15 s in the window → `sample-gap`; injected beat errors 2 % → `beat-errors`;
  *   a manual record → `manual`; each case records `downtime` with exactly that sign. Errors 0.5 % → `healthy`.
- * AC-17 — 40 subjects beat before the window, 15 inside it → `beat-rate-drop`.
+ * AC-17 (S14-01: established subjects only — created ≥ 1 h before the window start — and at least 50 of them) —
+ *   60 established before / 20 inside → `beat-rate-drop`; 60 / 40 → healthy; 30 / 2 → healthy (below 50);
+ *   60 fresh guests (< 1 h) / 2 → healthy.
  * AC-21 — one edge report overlapping two windows → both `downtime/edge-region`, the record `recordedBy: system`.
  * The real Redis stop/start is the exclusive restart test's job (P16).
  */
@@ -36,7 +38,11 @@ const CASES = {
   gap: B + 2 * HOUR,
   errors: B + 3 * HOUR,
   healthy: B + 4 * HOUR,
+  // The rate cases run before the edge cases: their ticks finalise every due window, so their moments come earlier.
   rateDrop: B + 5 * HOUR,
+  rateKeep: B + 5 * HOUR + 15 * 60 * SEC,
+  rateFew: B + 5 * HOUR + 30 * 60 * SEC,
+  rateFresh: B + 5 * HOUR + 45 * 60 * SEC,
   edgeA: B + 6 * HOUR,
   edgeB: B + 6 * HOUR + 30 * SEC,
   manual: B + 7 * HOUR,
@@ -223,18 +229,45 @@ describe('downtime signs (AC-16, AC-17, AC-21)', () => {
     await expectOnly('healthy', []);
   }, 180_000);
 
-  it('40 subjects before the window, 15 inside it → beat-rate-drop (AC-17)', async () => {
-    const m = CASES.rateDrop;
+  /** `pre` guests beat at m − 180 s, the first `inside` of them again at the first in-window tick. */
+  async function rateCase(k: CaseKey, gs: readonly Guest[], inside: number): Promise<void> {
+    const m = CASES[k];
     const t = windowTicks(m);
-    const gs = await guests(40);
     await tickThrough(m, m, {
       async before(at) {
-        if (at === m - 180 * SEC) expect(await beats(gs, 'rateDrop', 1)).toEqual(Array(40).fill(200));
-        if (at === t.first) expect(await beats(gs.slice(0, 15), 'rateDrop', 1)).toEqual(Array(15).fill(200));
+        if (at === m - 180 * SEC) expect(await beats(gs, k, 1)).toEqual(Array(gs.length).fill(200));
+        if (at === t.first) expect(await beats(gs.slice(0, inside), k, 1)).toEqual(Array(inside).fill(200));
       },
     });
+  }
+
+  let established: Guest[] = [];
+
+  it('60 established subjects before the window, 20 inside it → beat-rate-drop (AC-17)', async () => {
+    established = await guests(60);
+    await rateCase('rateDrop', established, 20);
     await expectOnly('rateDrop', ['beat-rate-drop']);
-  }, 180_000);
+  }, 240_000);
+
+  it('60 established before / 40 inside → healthy; 30 before / 2 inside → healthy (below 50, S14-01)', async () => {
+    await rateCase('rateKeep', established, 40);
+    await expectOnly('rateKeep', []);
+    await rateCase('rateFew', established.slice(0, 30), 2);
+    await expectOnly('rateFew', []);
+  }, 360_000);
+
+  it('60 fresh guests (created < 1 h before the window start) / 2 inside → healthy (S14-01)', async () => {
+    const since = new Date();
+    const fresh = await guests(60);
+    // The test clock runs decades ahead: move the new guests' creation to 30 min before the moment.
+    const upd = await pool.query('UPDATE users SET created_at = to_timestamp($1::double precision / 1000) WHERE created_at >= $2', [
+      CASES.rateFresh - 30 * 60 * SEC,
+      since,
+    ]);
+    expect(upd.rowCount).toBe(60);
+    await rateCase('rateFresh', fresh, 2);
+    await expectOnly('rateFresh', []);
+  }, 240_000);
 
   it('one edge report overlapping two windows → both downtime/edge-region, recordedBy system (AC-21)', async () => {
     await setClock(samplesSpanOf(CASES.edgeA).from - SEC);

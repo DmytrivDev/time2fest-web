@@ -13,6 +13,8 @@ import { createProofWriter, FAST_DOWN_ALARM_EVERY_MS, proofMarkerKey, PROOF_RETR
 
 const M = Date.parse('2026-12-31T22:00:00Z');
 const MAX_TTL_MS = 172_800_000;
+/** Created long before every window here: an established subject (S14-01). */
+const OLD = M - 30 * 86_400_000;
 
 function clockAt(t: number) {
   const c = { t, now: () => c.t };
@@ -170,6 +172,41 @@ describe('proof writer', () => {
     expect(s.intake.take()).toEqual({ accepted: 1, failed: 1 });
   });
 
+  it('a concurrent beat never answers ok on a pending marker whose insert then fails (W1)', async () => {
+    const s = setup();
+    const inner = s.proofs.store.insert;
+    let release!: () => void;
+    const gate = new Promise<void>((r) => (release = r));
+    let first = true;
+    s.proofs.store.insert = async (d, row) => {
+      if (first) {
+        first = false;
+        await gate;
+        throw new DependencyUnavailable('postgres');
+      }
+      return inner(d, row);
+    };
+    const a = s.writer.record(beat({ source: 'tv' }));
+    await new Promise((r) => setTimeout(r, 0));
+    expect(await s.memory.get(proofMarkerKey('2026-27', 'ua', M, 'sub-1'))).toBe('tv:pending');
+    // B sees the pending marker and writes its own row before answering ok.
+    expect(await s.writer.record(beat({ source: 'tv', receivedAt: M - 5_000 }))).toEqual({ ok: true, proof: 'inserted', via: 'fast' });
+    expect(s.proofs.rows.size).toBe(1);
+    release();
+    expect(await a).toEqual({ ok: false, retryAfterMs: PROOF_RETRY_AFTER_MS });
+    // The committed row of B stays; the next beat (marker gone) re-checks conditionally.
+    expect(s.proofs.rows.size).toBe(1);
+    expect(await s.writer.record(beat({ source: 'tv' }))).toEqual({ ok: true, proof: 'exists', via: 'fast' });
+    expect(await s.memory.get(proofMarkerKey('2026-27', 'ua', M, 'sub-1'))).toBe('tv');
+  });
+
+  it('a pending marker with a failing database → unavailable, never ok (W1)', async () => {
+    const s = setup();
+    await s.memory.set(proofMarkerKey('2026-27', 'ua', M, 'sub-1'), 'tv:pending', PRESENCE_KEY_TTL_MS);
+    s.proofs.state.fail = true;
+    expect(await s.writer.record(beat())).toEqual({ ok: false, retryAfterMs: PROOF_RETRY_AFTER_MS });
+  });
+
   it('an out-of-window beat writes no proof and still counts as accepted (AC-4)', async () => {
     const s = setup();
     expect(await s.writer.recordBeat([])).toEqual({ ok: true, written: [] });
@@ -181,24 +218,36 @@ describe('proof writer', () => {
 describe('window intake (AC-17)', () => {
   const w = { season: '2026-27', eventId: 'ua', momentMs: M };
 
+  it('only established subjects (created ≥ 1 h before the window start) enter pre, so in follows (S14-01)', async () => {
+    const memory = createMemoryStore(clockAt(M));
+    const intake = createWindowIntake(() => memory);
+    const pre = M - 120_000;
+    const from = windowOf(M).from;
+    await intake.count(w, 'old', pre, from - 3_600_000); // exactly 1 h before the window start: established
+    await intake.count(w, 'fresh', pre, from - 3_599_999); // a minute younger: not counted
+    await intake.count(w, 'unknown', pre, null);
+    for (const s of ['old', 'fresh', 'unknown']) await intake.count(w, s, from, null);
+    expect(await intake.counts(w)).toEqual({ pre: 1, in: 1 });
+  });
+
   it('distinct subjects before and in the window; in counts only subjects seen before', async () => {
     const clock = clockAt(M);
     const memory = createMemoryStore(clock);
     const intake = createWindowIntake(() => memory);
     const pre = M - 120_000;
     const inside = windowOf(M).from;
-    for (const s of ['a', 'b', 'c']) await intake.count(w, s, pre);
-    await intake.count(w, 'a', pre + 1_000); // the same subject again
-    await intake.count(w, 'a', inside);
-    await intake.count(w, 'a', inside + 1_000);
-    await intake.count(w, 'z', inside); // never seen before the window
-    await intake.count(w, 'b', M - 3_600_000); // far before: neither
+    for (const s of ['a', 'b', 'c']) await intake.count(w, s, pre, OLD);
+    await intake.count(w, 'a', pre + 1_000, OLD); // the same subject again
+    await intake.count(w, 'a', inside, OLD);
+    await intake.count(w, 'a', inside + 1_000, OLD);
+    await intake.count(w, 'z', inside, OLD); // never seen before the window
+    await intake.count(w, 'b', M - 3_600_000, OLD); // far before: neither
     expect(await intake.counts(w)).toEqual({ pre: 3, in: 1 });
   });
 
   it('a lost fast store never throws: count → false, counts → null', async () => {
     const intake = createWindowIntake(() => downStore());
-    expect(await intake.count(w, 'a', M)).toBe(false);
+    expect(await intake.count(w, 'a', M, OLD)).toBe(false);
     expect(await intake.counts(w)).toBeNull();
   });
 });
@@ -210,8 +259,8 @@ describe('fast-store keys (AC-56)', () => {
     await s.writer.record(beat({ source: 'country' }));
     const intake = createWindowIntake(() => s.spy.store);
     const w = { season: '2026-27', eventId: 'ua', momentMs: M };
-    await intake.count(w, 'a', M - 120_000);
-    await intake.count(w, 'a', M);
+    await intake.count(w, 'a', M - 120_000, OLD);
+    await intake.count(w, 'a', M, OLD);
     expect(s.spy.ttls.length).toBeGreaterThanOrEqual(6);
     for (const t of s.spy.ttls) expect(t).toBeLessThanOrEqual(MAX_TTL_MS);
     expect(PRESENCE_KEY_TTL_MS).toBeLessThanOrEqual(MAX_TTL_MS);

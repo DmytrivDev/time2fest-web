@@ -2,9 +2,9 @@
  * Finalisation of the presence windows (SPEC-14 [А4], [П-5]; AC-15, AC-16, AC-20, AC-22), application ring.
  * A window (one event × one seen moment) is due at its end + 10 s; then exactly ONE record is written:
  * `healthOf` over the samples of every node, the window's distinct-subject counters and the downtime records.
- * It runs (a) on every sampler tick for every due window of the season without a record, and (b) from the moments
- * registry row `presence-finalise` (`event-stamp`, `late: 'always'`), so a server that was down at the window
- * finalises it right after boot (AC-15, EC-4). The unique key of `presence_window_health` makes a second run a no-op.
+ * It runs (a) on every sampler tick for every due window of the season without a record (the primary finaliser,
+ * boot-after-downtime included, AC-15, EC-4), and (b) from the moments registry row `presence-finalise`
+ * (`event-stamp`, `late: 'always'`) for windows already due at that group; a window not due yet is left to (a). The unique key of `presence_window_health` makes a second run a no-op.
  * A failed read or write raises `presence/finalise-failed` (`log`) and writes nothing — never `healthy` on
  * incomplete data (AC-22); the window then has no record and counts as downtime for claims after end + 2 min (AC-18).
  * Every `downtime` record alarms once (`DowntimeNotifier`); the tick also sweeps records whose alarm did not go out.
@@ -193,14 +193,6 @@ export function createFinaliser(deps: FinaliserDeps): Finaliser {
   };
 }
 
-/** Thrown by the moments row while a window of its group is still open: the scheduler retries ≥ 1 s later. */
-export class WindowStillOpen extends Error {
-  readonly code = 'presence-window-open';
-  constructor() {
-    super('presence window still open');
-  }
-}
-
 /** Thrown by the moments row when a record could not be written (the scheduler retries; `late: 'always'`). */
 export class FinaliseFailed extends Error {
   readonly code = 'presence-finalise-failed';
@@ -211,8 +203,10 @@ export class FinaliseFailed extends Error {
 
 /**
  * The moments-registry row `presence-finalise` ([П-5]): at each `event-stamp` group the windows of its events are
- * finalised at `group.now`; a window not due yet (the stamp moment comes before the window end + 10 s) or a failed
- * write throws, so the scheduler retries. Idempotent by the window's unique record, so by `consequenceId` too.
+ * finalised at `group.now`. A window not due yet (the stamp moment comes before the window end + 10 s) returns
+ * quietly — the 5 s sampler tick (`finaliseDue`) is the primary finaliser and writes it once due (W4: no retry storm,
+ * no warn lines). Only a failed read or write throws, so the scheduler retries. Idempotent by the window's unique
+ * record, so by `consequenceId` too.
  */
 export function createPresenceFinaliseRow(finaliser: () => Promise<Finaliser>): MomentActionRow {
   return {
@@ -225,7 +219,6 @@ export function createPresenceFinaliseRow(finaliser: () => Promise<Finaliser>): 
       if (eventIds.length === 0) return;
       const report = await (await finaliser()).finaliseEvents(eventIds, group.now);
       if (report.failed > 0) throw new FinaliseFailed();
-      if (report.notDue > 0) throw new WindowStillOpen();
     },
   };
 }

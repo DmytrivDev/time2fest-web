@@ -1,10 +1,13 @@
 /**
  * Proof of presence outside Redis (SPEC-14 [А1], [А3], [П-3]; AC-3, AC-6, AC-7, AC-9, AC-12, AC-56), application ring.
  * Per in-window beat and event × moment:
- * - the fast-store marker `pr:mk:<season>:<event>:<moment>:<subject>` holds the best source so far (TTL 48 h);
+ * - the fast-store marker `pr:mk:<season>:<event>:<moment>:<subject>` holds the best source so far (TTL 48 h); it is
+ *   written as `<source>:pending` and switched to `<source>` only after the database row is committed (W1);
  * - marker set now (`setIfAbsent`) → `INSERT … ON CONFLICT DO NOTHING` into `presence_proofs` BEFORE the beat is
  *   answered `ok` (AC-3); a failed insert removes the marker again (so the next beat retries) and the beat is
  *   `unavailable` — the proof must be in the database before `ok`;
+ * - marker pending, missing or unknown → the beat does its own conditional insert (a concurrent uncommitted insert
+ *   makes it wait; a no-op once the row exists) — a beat never answers `ok` on another beat's uncommitted write;
  * - marker present with a lower source → the database row is upgraded first (only where its stored source is lower,
  *   AC-9), then the marker; a failed upgrade leaves the proof as it was (still `ok`, the next beat retries);
  * - the fast store fails (any error; `DependencyUnavailable` in practice) → the same conditional insert and upgrade
@@ -15,7 +18,7 @@
  * clock (NFR-8).
  */
 import type { Alarm, FastStore } from '../ports';
-import { sourceRank, sourcesBelow } from '../domain/presence/source';
+import { isPresenceSource, sourceRank, sourcesBelow } from '../domain/presence/source';
 import { assertDbWritable, presenceFaults, type PresenceFaultSwitch } from './faults';
 import { PRESENCE_KEY_TTL_MS, type NodeIntake } from './intake';
 import type { PresenceSourceName, ProofKey, ProofRow, ProofStore, RightsDb } from './ports';
@@ -27,6 +30,14 @@ export const FAST_DOWN_ALARM_EVERY_MS = 60_000;
 
 export const proofMarkerKey = (season: string, eventId: string, momentMs: number, subject: string): string =>
   `pr:mk:${season}:${eventId}:${momentMs}:${subject}`;
+
+/** Suffix of a marker whose database row is not committed yet (W1). */
+export const PENDING_SUFFIX = ':pending';
+export const pendingMarker = (source: string): string => `${source}${PENDING_SUFFIX}`;
+/** The confirmed source of a marker value, or null when it is pending or not a known source. */
+export function confirmedSource(value: string): PresenceSourceName | null {
+  return isPresenceSource(value) ? value : null;
+}
 
 /** One proof to write: a subject seen in the window of one event moment. */
 export interface ProofInput {
@@ -113,50 +124,72 @@ export function createProofWriter(deps: ProofWriterDeps): ProofWriter {
     }
   }
 
+  /** Marks the proof confirmed (the database row is committed) with its best source; best-effort. */
+  async function confirm(key: string, source: string): Promise<void> {
+    await deps.fast().set(key, source, PRESENCE_KEY_TTL_MS).catch(() => undefined);
+  }
+
+  /**
+   * Marker missing, pending or unreadable: the proof may not be committed yet. Do our own conditional insert (blocks
+   * on a concurrent uncommitted row, a no-op once it exists), upgrade a lower stored source, then confirm the marker.
+   * Never `ok` without a committed row (W1).
+   */
+  async function viaUnknown(i: ProofInput, key: string): Promise<ProofOutcome> {
+    let proof: ProofWrite;
+    try {
+      proof = (await dbInsert(i)) ? 'inserted' : (await dbUpgrade(i)) ? 'upgraded' : 'exists';
+    } catch {
+      return unavailable();
+    }
+    await confirm(key, i.source);
+    return { ok: true, proof, via: 'fast' };
+  }
+
   async function record(i: ProofInput): Promise<ProofOutcome> {
     const key = proofMarkerKey(i.season, i.eventId, i.momentMs, i.subjectId);
     let fresh: boolean;
     let stored: string | null = null;
     try {
       if (faults.get().fastStore === 'down') throw new Error('fast store down (fault)');
-      fresh = await deps.fast().setIfAbsent(key, i.source, PRESENCE_KEY_TTL_MS);
+      fresh = await deps.fast().setIfAbsent(key, pendingMarker(i.source), PRESENCE_KEY_TTL_MS);
       if (!fresh) stored = await deps.fast().get(key);
     } catch {
       return viaDb(i);
     }
 
     if (fresh) {
+      let inserted: boolean;
       try {
-        if (await dbInsert(i)) return { ok: true, proof: 'inserted', via: 'fast' };
+        inserted = await dbInsert(i);
       } catch {
         await deps.fast().del(key).catch(() => undefined);
         return unavailable();
       }
+      if (inserted) {
+        await confirm(key, i.source);
+        return { ok: true, proof: 'inserted', via: 'fast' };
+      }
       // The row predates the marker (the fast store was restarted or flushed, AC-12): it may hold a lower source.
       try {
-        return { ok: true, proof: (await dbUpgrade(i)) ? 'upgraded' : 'exists', via: 'fast' };
+        const upgraded = await dbUpgrade(i);
+        await confirm(key, i.source);
+        return { ok: true, proof: upgraded ? 'upgraded' : 'exists', via: 'fast' };
       } catch {
+        // The committed row keeps its lower source; drop the marker so the next beat retries the upgrade.
         await deps.fast().del(key).catch(() => undefined);
         return { ok: true, proof: 'exists', via: 'fast' };
       }
     }
 
-    // A marker expired between `setIfAbsent` and `get` (or was deleted): treat as unknown and write conditionally.
-    if (stored === null) {
-      try {
-        if (await dbInsert(i)) {
-          await deps.fast().set(key, i.source, PRESENCE_KEY_TTL_MS).catch(() => undefined);
-          return { ok: true, proof: 'inserted', via: 'fast' };
-        }
-      } catch {
-        return unavailable();
-      }
-    }
+    // Missing (expired / deleted between the calls), pending (another beat's insert is not committed yet) or an
+    // unknown value: unknown → conditional insert of our own.
+    const confirmed = stored === null ? null : confirmedSource(stored);
+    if (confirmed === null) return viaUnknown(i, key);
 
-    if (stored !== null && sourceRank(i.source) <= sourceRank(stored)) return { ok: true, proof: 'exists', via: 'fast' };
+    if (sourceRank(i.source) <= sourceRank(confirmed)) return { ok: true, proof: 'exists', via: 'fast' };
     try {
       const upgraded = await dbUpgrade(i);
-      await deps.fast().set(key, i.source, PRESENCE_KEY_TTL_MS).catch(() => undefined);
+      await confirm(key, i.source);
       return { ok: true, proof: upgraded ? 'upgraded' : 'exists', via: 'fast' };
     } catch {
       // The proof exists with the lower source; the marker keeps the lower one so the next beat retries.

@@ -11,10 +11,11 @@
 import type { PassportStamp } from '@time2fest/contracts';
 import { ratingCloseAt, type PresenceSource } from '@time2fest/rules/time';
 import { stampViewOf, type StampCatalog } from '../domain/passport/stampView';
-import { CLAIM_DB_RETRY_MS, claimDecision, type ClaimGrant, type ClaimRefusal, type ClaimWindow } from '../domain/presence/claimDecision';
+import { CLAIM_DB_RETRY_MS, claimDecision, claimPrecheck, type ClaimGrant, type ClaimRefusal, type ClaimWindow } from '../domain/presence/claimDecision';
 import { validEvent } from '../domain/presence/eventValidity';
 import { downtimeApplies } from '../domain/presence/healthSigns';
 import { isPresenceSource, sourceRank } from '../domain/presence/source';
+import { acceptedMomentsOf } from '../domain/presence/window';
 import type { RightsQuery } from '../rights/ports';
 import type { PresenceCatalogView } from './beats';
 import { healthDowntimeOf } from './downtime';
@@ -100,20 +101,28 @@ export function createStampService(deps: StampServiceDeps): StampService {
     const closeAt = zones.length > 0 ? ratingCloseAt({ zones: [...zones] }) : Infinity;
 
     const windows: ClaimWindow[] = [];
-    if (existing === null && event !== null) {
+    // S14-08: the time-only refusals need no proof / downtime / health reads (the stamp read above still wins).
+    const early = existing === null ? claimPrecheck({ now, closeAt, currentMoment: event?.momentMs ?? null }) : null;
+    if (existing === null && event !== null && early === null) {
       await deps.moments.observe(season, [{ eventId, momentMs: event.momentMs }], now);
-      const accepted = await deps.moments.accepted(season, eventId, event.momentMs, now, view.zones);
-      const [proofs, downtimeRows] = await Promise.all([proofSources(db, subjectId, season, eventId), deps.downtimes.list(db, season)]);
+      const [seen, proofs, downtimeRows] = await Promise.all([
+        deps.moments.seen(season, eventId, now),
+        proofSources(db, subjectId, season, eventId),
+        deps.downtimes.list(db, season),
+      ]);
+      // W2: the subject's own stored proof moments count too (until the celebration end), so a moment this node has
+      // not cached yet (a correction seen elsewhere, the 30 s moment cache) can never lead to `no-presence`.
+      const accepted = acceptedMomentsOf(event.momentMs, [...seen, ...proofs.keys()], now, view.zones);
       const downtimes = downtimeRows.map(healthDowntimeOf);
-      for (const moment of accepted) {
-        const record = await deps.health.get(db, season, eventId, moment);
+      const records = await Promise.all(accepted.map((moment) => deps.health.get(db, season, eventId, moment)));
+      accepted.forEach((moment, i) => {
         windows.push({
           moment,
           proofSource: proofs.get(moment) ?? null,
-          record: record?.state ?? null,
+          record: records[i]?.state ?? null,
           downtime: downtimes.some((d) => downtimeApplies(d, eventId, moment)),
         });
-      }
+      });
     }
     const decision = claimDecision({
       now,
