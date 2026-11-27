@@ -4,7 +4,8 @@
  * `healthOf` over the samples of every node, the window's distinct-subject counters and the downtime records.
  * It runs (a) on every sampler tick for every due window of the season without a record (the primary finaliser,
  * boot-after-downtime included, AC-15, EC-4), and (b) from the moments registry row `presence-finalise`
- * (`event-stamp`, `late: 'always'`) for windows already due at that group; a window not due yet is left to (a). The unique key of `presence_window_health` makes a second run a no-op.
+ * (`event-stamp`, `late: 'always'`) for windows already due at that group (a late group); an on-time group returns
+ * before any read, and a window not due yet is left to (a). The unique key of `presence_window_health` makes a second run a no-op.
  * A failed read or write raises `presence/finalise-failed` (`log`) and writes nothing — never `healthy` on
  * incomplete data (AC-22); the window then has no record and counts as downtime for claims after end + 2 min (AC-18).
  * Every `downtime` record alarms once (`DowntimeNotifier`); the tick also sweeps records whose alarm did not go out.
@@ -12,6 +13,7 @@
  */
 import { finaliseDueAt, healthOf, isRateDropOnly, samplesSpanOf, type HealthSample } from '../domain/presence/healthSigns';
 import { windowOf } from '../domain/presence/window';
+import { STAMP_DELAY } from '@time2fest/rules/time';
 import type { Alarm } from '../ports';
 import type { MomentActionRow } from '../scheduler/ports';
 import type { PresenceCatalogView } from './beats';
@@ -222,7 +224,12 @@ export function createPresenceFinaliseRow(finaliser: () => Promise<Finaliser>): 
     kinds: ['event-stamp'],
     late: 'always',
     async run(group) {
-      const eventIds = [...new Set(group.moments.map((m) => m.eventId).filter((e): e is string => typeof e === 'string' && e !== ''))];
+      // Cheap when nothing is due: an on-time `event-stamp` group (m + 15 s) never has its window due (the window ends
+      // at the claim close, after m + 15 s), so it touches neither the finaliser nor the database — the scheduler's
+      // per-instant work stays flat (scheduler-a p99). Only a late group (backlog, boot after downtime) finalises here;
+      // an old moment's window is left to the 5 s ticker.
+      const due = group.moments.filter((m) => group.now >= finaliseDueAt(m.at - STAMP_DELAY));
+      const eventIds = [...new Set(due.map((m) => m.eventId).filter((e): e is string => typeof e === 'string' && e !== ''))];
       if (eventIds.length === 0) return;
       const report = await (await finaliser()).finaliseEvents(eventIds, group.now);
       if (report.failed > 0) throw new FinaliseFailed();

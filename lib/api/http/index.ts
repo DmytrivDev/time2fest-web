@@ -7,7 +7,7 @@ import type { ServiceFactories, Services } from '../services';
 import { createHttpAuth } from '@/lib/api/http/auth';
 import { createHttpCatalog } from './catalog';
 import { createHttpLive } from './live';
-import { createHttpPassport } from './passport';
+import { createHttpPassport } from '@/lib/api/http/passport';
 import { createHttpProfile } from '@/lib/api/http/profile';
 import { createHttpSite } from './site';
 import { buildSnapshot } from '../site/buildSnapshot';

@@ -182,15 +182,15 @@ function addEndpoint(resolve: () => Promise<Deps>): Endpoint {
   };
 }
 
-/** Records are append-only: every change or removal is refused, for anyone. */
-const refused = (path: string, method: 'patch' | 'put' | 'delete'): Endpoint => ({ path, method, handler: () => fail('forbidden', 'append-only') });
+/**
+ * Records are append-only: every change or removal is refused, for anyone. One row per method: the path-to-regexp
+ * pattern covers `/presence/downtime`, `/presence/downtimes` and both with `/:id` (an unregistered route would be 404,
+ * AC-19 wants an explicit 403 `forbidden`).
+ */
+const REFUSED_PATH = '/presence/:record(downtimes?)/:id?';
+const refused = (method: 'patch' | 'put' | 'delete'): Endpoint => ({ path: REFUSED_PATH, method, handler: () => fail('forbidden', 'append-only') });
 
 /** The presence endpoints, in every class. `resolve` gives the process deps (tests may pass their own). */
 export function presenceEndpoints(resolve: () => Promise<Deps>): Endpoint[] {
-  const methods = ['patch', 'put', 'delete'] as const;
-  return [
-    listEndpoint(resolve),
-    addEndpoint(resolve),
-    ...methods.flatMap((m) => [refused('/presence/downtime', m), refused('/presence/downtimes', m), refused('/presence/downtime/:id', m), refused('/presence/downtimes/:id', m)]),
-  ];
+  return [listEndpoint(resolve), addEndpoint(resolve), refused('patch'), refused('put'), refused('delete')];
 }

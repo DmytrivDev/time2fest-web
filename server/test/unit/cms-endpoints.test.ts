@@ -67,7 +67,9 @@ describe('root cms endpoints per class', () => {
   const agentRows = ['get /stream-agent/channels', 'get /stream-agent/candidates', 'post /stream-agent/candidates'];
   // SPEC-11 W37: the owner's ban slice (list, ban, unban) in every class.
   const banRows = ['get /bans', 'post /bans/ban', 'post /bans/unban'];
-  const site = ['post /site/product', 'post /site/switch', 'get /site/view', ...liveRows, ...streamsRows, ...agentRows, 'get /ops/overview', 'post /ops/settings', ...banRows];
+  // SPEC-14 W38: the owner's presence slice (list, add a downtime) and one append-only refusal per method, in every class.
+  const presenceRows = ['get /presence', 'post /presence/downtime', ...['patch', 'put', 'delete'].map((m) => `${m} /presence/:record(downtimes?)/:id?`)];
+  const site = ['post /site/product', 'post /site/switch', 'get /site/view', ...liveRows, ...streamsRows, ...agentRows, 'get /ops/overview', 'post /ops/settings', ...banRows, ...presenceRows];
   it('AC-52: production has only the read-only slice; rehearsal and test also have POST /clock', () => {
     expect(paths('production')).toEqual(['get /festival-state', ...site]);
     expect(paths('rehearsal')).toEqual(['get /festival-state', 'post /clock', ...site]);

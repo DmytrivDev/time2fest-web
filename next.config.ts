@@ -89,6 +89,8 @@ const nextConfig: NextConfig = {
                   // Входу й кабінету немає: адаптери http/auth і http/profile не йдуть у пакет (check:prelaunch).
                   '@/lib/api/http/auth': './lib/prelaunch/noApi/httpAccount.ts',
                   '@/lib/api/http/profile': './lib/prelaunch/noApi/httpAccount.ts',
+                  // Паспорта на сервері теж немає: адаптер http/passport тягне адреси входу (`/api/auth/get-session`).
+                  '@/lib/api/http/passport': './lib/prelaunch/noApi/httpAccount.ts',
                 }
               : {}),
             ...(CATALOG_SOURCE === 'data'

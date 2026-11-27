@@ -10,7 +10,7 @@ import { realClock } from '../../src/clock';
 import { checkLimit } from '../../src/platform/rateLimit';
 import { rateLimitRegistry } from '../../src/registries/rateLimits';
 
-const SECRET = 'test-secret-0123456789abcdef0123456789abcdef';
+const SECRET = 'test-secret-0123456789abcdef0123456789abcdef'; // check-secrets: allow fake signing secret for the session cookie unit test
 const sign = (token: string, secret = SECRET): string =>
   encodeURIComponent(`${token}.${createHmac('sha256', secret).update(token).digest('base64')}`);
 

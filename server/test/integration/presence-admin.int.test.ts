@@ -114,8 +114,8 @@ describe('owner presence endpoints', { timeout: 120_000 }, () => {
     const before = await downtimeCount();
     const mark = await maxJournalId();
     const id = (await pool.query('SELECT id FROM presence_downtimes WHERE season = $1 LIMIT 1', [SEASON])).rows[0]?.id;
-    for (const method of ['PATCH', 'DELETE'] as const) {
-      for (const path of ['/presence/downtime', `/presence/downtime/${id}`, `/presence/downtimes/${id}`]) {
+    for (const method of ['PATCH', 'PUT', 'DELETE'] as const) {
+      for (const path of ['/presence/downtime', '/presence/downtimes', `/presence/downtime/${id}`, `/presence/downtimes/${id}`]) {
         const res = await rest(method, path, { headers: owner, body: { reason: 'x' } });
         expect(res.status, `${method} ${path}`).toBe(403);
         expect(((await res.json()) as Json).error?.code).toBe('forbidden');

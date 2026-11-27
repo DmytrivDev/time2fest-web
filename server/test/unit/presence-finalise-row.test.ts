@@ -3,6 +3,8 @@
 import { describe, expect, it } from 'vitest';
 import { createPresenceFinaliseRow, FinaliseFailed, type Finaliser, type FinaliseReport } from '../../src/presence/health';
 import type { ActionContext, MomentActionGroup } from '../../src/scheduler/ports';
+import { finaliseDueAt } from '../../src/domain/presence/healthSigns';
+import { STAMP_DELAY } from '@time2fest/rules/time';
 
 function rowWith(report: FinaliseReport) {
   const calls: string[][] = [];
@@ -12,7 +14,10 @@ function rowWith(report: FinaliseReport) {
   return { row: createPresenceFinaliseRow(async () => finaliser), calls };
 }
 
-const group = { action: 'presence-finalise', at: 0, now: 0, consequenceId: 'c', moments: [{ eventId: 'e1' }, { eventId: 'e1' }] } as unknown as MomentActionGroup;
+const M = Date.UTC(2031, 0, 1);
+const stamp = M + STAMP_DELAY;
+/** A late group: the stamp instant of moment M, run once M's window is due. */
+const group = { action: 'presence-finalise', at: stamp, now: finaliseDueAt(M), consequenceId: 'c', moments: [{ eventId: 'e1', at: stamp }, { eventId: 'e1', at: stamp }] } as unknown as MomentActionGroup;
 const ctx = {} as ActionContext;
 
 describe('presence-finalise row (W4)', () => {
@@ -20,6 +25,14 @@ describe('presence-finalise row (W4)', () => {
     const r = rowWith({ written: 0, failed: 0, notDue: 1 });
     await expect(r.row.run(group, ctx)).resolves.toBeUndefined();
     expect(r.calls).toEqual([['e1']]);
+  });
+
+  it('an on-time stamp group (window not due) → returns before resolving the finaliser', async () => {
+    let resolved = 0;
+    const row = createPresenceFinaliseRow(async () => (resolved++, {} as Finaliser));
+    await expect(row.run({ ...group, now: stamp } as MomentActionGroup, ctx)).resolves.toBeUndefined();
+    await expect(row.run({ ...group, now: finaliseDueAt(M) - 1 } as MomentActionGroup, ctx)).resolves.toBeUndefined();
+    expect(resolved).toBe(0);
   });
 
   it('a failed write → FinaliseFailed (retried)', async () => {
