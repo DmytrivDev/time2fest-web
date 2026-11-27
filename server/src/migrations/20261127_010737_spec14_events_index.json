@@ -2150,27 +2150,6 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
-        },
-        "topic_version_idx": {
-          "name": "topic_version_idx",
-          "columns": [
-            {
-              "expression": "topic",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "version",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
         }
       },
       "foreignKeys": {},

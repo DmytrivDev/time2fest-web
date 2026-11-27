@@ -23,8 +23,10 @@ export const rateLimitRegistry: readonly RateLimitRow[] = [
   // The same guests counted per IPv6 /48 (IPv4: /24) too, so rotating /64s inside one /48 does not multiply them
   // (S10-08). 10x the per-client limit: an IPv4 /24 (mobile CGNAT) carries many people. Keyed row (`25-subject`).
   { key: GUEST_CREATE_IP48_ROW, limit: 600, windowMs: 600_000, keys: [], onStoreDown: 'fail-closed' },
-  // The author path of the chat card (SPEC-14 AC-54): 60 a minute per device, counted in this process if Redis is down.
-  { key: 'author-path', limit: 60, windowMs: 60_000, keys: ['device'], onStoreDown: 'memory' },
+  // The author path of the chat card (SPEC-14 AC-54): 60 a minute per device AND per client (ipDay), counted in this
+  // process if Redis is down. The ipDay key limits a client that drops the device cookie (a fresh device each request,
+  // S14-02).
+  { key: 'author-path', limit: 60, windowMs: 60_000, keys: ['device', 'ipDay'], onStoreDown: 'memory' },
   // The public build-time read of the catalog (AC-63): 30 a minute per client (SPEC-05 daily fingerprint),
   // counted in this process if Redis is down.
   { key: 'catalog-read', limit: 30, windowMs: 60_000, keys: ['ipDay'], onStoreDown: 'memory' },

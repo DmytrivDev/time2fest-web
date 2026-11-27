@@ -3,10 +3,12 @@
  * - `GET /cms-api/presence` -> `{ ok, value: { season, records, downtimes, samples } }`: the window health records and the
  *   downtime records of the current season (newest first, capped), plus a per-node summary of the intake samples.
  * - `POST /cms-api/presence/downtime {eventId?, from?, to?, reason}` (strict) -> `{ ok, value: { downtime } }`: a manual
- *   downtime (an event, or a time range), `recorded_by: owner`, one journal row in its own transaction.
+ *   downtime (an event, or a time range), `recorded_by: owner`; the record and its journal row are written in ONE
+ *   Payload transaction (S14-05): both or neither, so a failed journal write never leaves an unaudited record.
  * - Records are append-only: PATCH / PUT / DELETE on `/presence/downtime(s)[/:id]` are always 403 `forbidden`.
  * All: behind the Access gate and the `owner` role, else 403 `forbidden`; POST bodies are JSON of at most 1 KB, else 400.
  */
+import { sql } from '@payloadcms/db-postgres';
 import { commitTransaction, initTransaction, killTransaction } from 'payload';
 import type { Endpoint, PayloadRequest } from 'payload';
 import { z } from 'zod';
@@ -15,7 +17,9 @@ import { rightsDbOf } from '../auth/pool';
 import { resolveActor } from '../audit/journal';
 import { presenceOf } from '../endpoints/deps';
 import type { Deps } from '../endpoints/types';
+import type { ManualInput } from '../presence/downtime';
 import type { DowntimeRow } from '../presence/ports';
+import type { RightsQuery } from '../rights/ports';
 import { isRevertible } from '../registries/revertHandlers';
 import { fail, isOwner, jsonBodyOf, NO_STORE } from './cmsHttp';
 
@@ -47,22 +51,54 @@ const downtimeView = (r: DowntimeRow) => ({
 });
 
 async function journal(req: PayloadRequest, now: number, row: DowntimeRow): Promise<void> {
-  const started = await initTransaction(req);
-  try {
-    await createPayloadJournal(isRevertible).append(req, {
-      actor: ownerActor(req),
-      action: PRESENCE_DOWNTIME_ACTION,
-      target: { collection: COLLECTION, id: row.id },
-      at: now,
-      before: null,
-      after: { season: row.season, eventId: row.event_id, from: iso(row.from_ms), to: iso(row.to_ms), reason: row.reason },
-      revertOf: null,
-    });
-    if (started) await commitTransaction(req);
-  } catch (err) {
-    if (started) await killTransaction(req);
-    throw err;
-  }
+  await createPayloadJournal(isRevertible).append(req, {
+    actor: ownerActor(req),
+    action: PRESENCE_DOWNTIME_ACTION,
+    target: { collection: COLLECTION, id: row.id },
+    at: now,
+    before: null,
+    after: { season: row.season, eventId: row.event_id, from: iso(row.from_ms), to: iso(row.to_ms), reason: row.reason },
+    revertOf: null,
+  });
+}
+
+interface DrizzleExec {
+  execute(query: ReturnType<typeof sql.join>): Promise<{ rows: Record<string, unknown>[]; rowCount?: number | null }>;
+}
+interface DrizzleAdapter {
+  sessions: Record<string, { db: DrizzleExec } | undefined>;
+}
+
+/** A `RightsQuery` over the open Payload transaction of `req` (`$n` placeholders become bound drizzle params). */
+async function txQueryOf(req: PayloadRequest): Promise<RightsQuery> {
+  const id = req.transactionID;
+  const session = id ? (req.payload.db as unknown as DrizzleAdapter).sessions[String(await id)]?.db : undefined;
+  if (!session) throw new Error('presence downtime: the write needs an open transaction');
+  return {
+    async query<R extends Record<string, unknown>>(text: string, values: readonly unknown[] = []) {
+      const parts = text.split(/\$(\d+)/);
+      const chunks = parts.map((p, i) => (i % 2 === 0 ? sql.raw(p) : sql`${values[Number(p) - 1]}`));
+      const res = await session.execute(sql.join(chunks));
+      return { rows: res.rows as R[], rowCount: res.rowCount ?? res.rows.length };
+    },
+  };
+}
+
+/** The record insert and its journal row in one Payload transaction; a throw rolls both back. `write` is the journal
+ * write (replaced only by tests, to prove the rollback). */
+export function ownerTx(req: PayloadRequest, now: number, write: typeof journal = journal) {
+  return async (insert: (db: RightsQuery) => Promise<DowntimeRow>): Promise<DowntimeRow> => {
+    const started = await initTransaction(req);
+    try {
+      const row = await insert(await txQueryOf(req));
+      await write(req, now, row);
+      if (started) await commitTransaction(req);
+      return row;
+    } catch (err) {
+      if (started) await killTransaction(req);
+      throw err;
+    }
+  };
 }
 
 function listEndpoint(resolve: () => Promise<Deps>): Endpoint {
@@ -136,9 +172,8 @@ function addEndpoint(resolve: () => Promise<Deps>): Endpoint {
           body.from !== undefined && body.to !== undefined
             ? { ...(body.eventId !== undefined ? { eventId: body.eventId } : {}), from: body.from, to: body.to, reason: body.reason }
             : { eventId: body.eventId as string, reason: body.reason };
-        const res = await presenceOf(deps).downtimes.addManual(input as Parameters<ReturnType<typeof presenceOf>['downtimes']['addManual']>[0], now);
+        const res = await presenceOf(deps).downtimes.addManual(input as ManualInput, now, ownerTx(req, now));
         if (!res.ok) return res.reason === 'unknown-event' ? fail('not-found', res.reason) : fail('validation', res.reason);
-        await journal(req, now, res.row);
         return Response.json({ ok: true, value: { downtime: downtimeView(res.row) } }, { headers: NO_STORE });
       } catch {
         return fail('unavailable');

@@ -1,6 +1,8 @@
 /**
  * Downtime records and the downtime alarm (SPEC-14 [А5], [А6], [П-5]; AC-19 (service), AC-20, AC-21), application ring.
  * - `addManual` appends an owner's record: one event (its window, or the given range) or a time range, reason ≤ 200;
+ *   with `within`, the caller runs the insert inside its own transaction (the owner endpoint: record and journal row
+ *   commit together, S14-05), and the alarm runs only after that commit;
  * - `reportEdgeFailure({region, from, to})` (internal; in this wave only the door calls it) appends an `edge-region`
  *   record by `system` — every window it overlaps gets the `edge-region` sign at finalisation;
  * - records are append-only: nothing here updates or deletes one (only `alarmed_at` is claimed);
@@ -15,6 +17,7 @@ import { DOWNTIME_ALARM_SPAN_MS, overlaps, type HealthDowntime } from '../domain
 import { validEvent } from '../domain/presence/eventValidity';
 import { windowOf } from '../domain/presence/window';
 import type { PresenceCatalogView } from './beats';
+import type { RightsQuery } from '../rights/ports';
 import type { DowntimeRow, DowntimeStore, RightsDb } from './ports';
 
 export const PRESENCE_DOWNTIME = 'presence/downtime';
@@ -73,6 +76,8 @@ export function createDowntimeNotifier(deps: { alarm: Alarm; publish(payload: Do
 
 /** The downtime store with the one-time alarm claim. */
 export interface DowntimeSqlStore extends DowntimeStore {
+  /** Takes any query handle, so a caller's transaction client can carry the insert (`ManualTx`). */
+  add(db: RightsQuery, row: Omit<DowntimeRow, 'id' | 'alarmed_at'>): Promise<DowntimeRow>;
   claimAlarm(db: RightsDb, id: string, at: number): Promise<boolean>;
   releaseAlarm(db: RightsDb, id: string): Promise<void>;
   listUnalarmed(db: RightsDb, season: string): Promise<DowntimeRow[]>;
@@ -97,10 +102,15 @@ export function eventsHitBy(r: HealthDowntime, view: PresenceCatalogView): strin
 }
 
 export type ManualInput = { eventId: string; from?: number; to?: number; reason: string } | { eventId?: undefined; from: number; to: number; reason: string };
+/**
+ * The caller's transaction for a manual record: gets the insert, runs it on its transaction's connection with whatever
+ * else must commit with it (the journal row), commits, and returns the stored row; a throw means nothing was kept.
+ */
+export type ManualTx = (insert: (db: RightsQuery) => Promise<DowntimeRow>) => Promise<DowntimeRow>;
 export type DowntimeAddResult = { ok: true; row: DowntimeRow } | { ok: false; reason: 'no-season' | 'unknown-event' | 'invalid-range' };
 
 export interface DowntimeService {
-  addManual(input: ManualInput, now: number): Promise<DowntimeAddResult>;
+  addManual(input: ManualInput, now: number, within?: ManualTx): Promise<DowntimeAddResult>;
   reportEdgeFailure(input: { region: string; from: number; to: number }, now: number): Promise<DowntimeAddResult>;
   list(season: string): Promise<DowntimeRow[]>;
   /** Alarms every record of the season not alarmed yet that overlaps an event's span (the sweep). */
@@ -125,14 +135,14 @@ export function createDowntimeService(deps: DowntimeDeps): DowntimeService {
     );
   }
 
-  async function append(row: Omit<DowntimeRow, 'id' | 'alarmed_at'>, view: PresenceCatalogView, now: number): Promise<DowntimeAddResult> {
-    const stored = await deps.store.add(await deps.db(), row);
+  async function append(row: Omit<DowntimeRow, 'id' | 'alarmed_at'>, view: PresenceCatalogView, now: number, within?: ManualTx): Promise<DowntimeAddResult> {
+    const stored = within ? await within((db) => deps.store.add(db, row)) : await deps.store.add(await deps.db(), row);
     await alarmRow(stored, view, now);
     return { ok: true, row: stored };
   }
 
   return {
-    async addManual(input, now) {
+    async addManual(input, now, within) {
       const view = await deps.catalog(now);
       const season = view.catalog.season;
       if (!season) return { ok: false, reason: 'no-season' };
@@ -152,6 +162,7 @@ export function createDowntimeService(deps: DowntimeDeps): DowntimeService {
         { season, kind: 'manual', event_id: input.eventId ?? null, from_ms: String(from), to_ms: String(to), region: null, reason: input.reason, recorded_by: 'owner', created_at: String(now) },
         view,
         now,
+        within,
       );
     },
     async reportEdgeFailure(input, now) {

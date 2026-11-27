@@ -94,6 +94,7 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
     "new_moment_ms" bigint NOT NULL,
     "at" bigint NOT NULL
   );
+  CREATE INDEX "stamp_old_moment_log_subject_idx" ON "stamp_old_moment_log" ("subject_id");
 
   CREATE TABLE "author_ids" (
     "subject_id" text NOT NULL PRIMARY KEY,

@@ -2,15 +2,17 @@
  * SPEC-14 W39 - the owner's presence slice endpoints `/cms-api/presence/*` (AC-19), straight into Payload's REST handler
  * like `rights-bans-admin.int.test.ts`: the owner lists the season's records and adds a manual downtime (by event and by
  * range) -> `recorded_by: owner` + one audit row each; edit / delete -> 403 `forbidden`; `content-agent` and an
- * anonymous caller -> 403 with nothing changed; bad bodies -> 400; an unknown event -> 404.
+ * anonymous caller -> 403 with nothing changed; bad bodies -> 400; an unknown event -> 404; a failed journal write rolls
+ * the record back with it (S14-05).
  */
 import config from '@payload-config';
 import { randomBytes } from 'node:crypto';
 import type { Payload } from 'payload';
-import { getPayload } from 'payload';
+import { createLocalReq, getPayload } from 'payload';
 import pg from 'pg';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { StoredCatalog } from '../../src/catalog/ports';
+import { ownerTx } from '../../src/admin/presenceEndpoints';
 import { getDeps } from '../../src/container';
 import { presenceOf } from '../../src/endpoints/deps';
 import type { Deps } from '../../src/endpoints/types';
@@ -24,6 +26,7 @@ const SEASON = `t14a-${run}`;
 const EVENT = `pa-${run}`;
 const MOMENT = Date.parse('2032-01-01T00:00:00Z');
 type Row = Record<string, unknown> & { id: number };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- loose JSON of the answers in the assertions
 type Json = { ok: boolean; value?: Record<string, any>; error?: { code: string; reason?: string } };
 
 const stored: StoredCatalog = {
@@ -145,5 +148,17 @@ describe('owner presence endpoints', { timeout: 120_000 }, () => {
     }
     expect(await downtimeCount()).toBe(before);
     expect(await rowsAfter(mark)).toHaveLength(0);
+  });
+
+  it('S14-05: the record and its journal row share one transaction - a failed journal write keeps neither', async () => {
+    const before = await downtimeCount();
+    const mark = await maxJournalId();
+    const req = await createLocalReq({}, payload);
+    const failing = ownerTx(req, MOMENT, async () => {
+      throw new Error('journal down');
+    });
+    await expect(presenceOf(deps).downtimes.addManual({ eventId: EVENT, reason: 'rolled back' }, MOMENT, failing)).rejects.toThrow('journal down');
+    expect(await downtimeCount()).toBe(before);
+    expect((await rowsAfter(mark)).filter((r) => r.action === 'presence.downtime-add')).toHaveLength(0);
   });
 });

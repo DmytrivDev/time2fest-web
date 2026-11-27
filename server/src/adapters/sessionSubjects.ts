@@ -9,6 +9,7 @@ import { createHmac, timingSafeEqual } from 'node:crypto';
 import { authPool } from '../auth/pool';
 import { clampSessionCookies, sessionCookieName } from '../auth/response';
 import type { AuthWiring } from '../auth/instance';
+import { realClock } from '../clock';
 import { SUBJECT_ID } from '../domain/realtime/channels';
 import type { RealtimeSubject, SubjectResolver } from '../realtime/ports';
 
@@ -32,8 +33,15 @@ function cookieValue(header: string, name: string): string | undefined {
   return found;
 }
 
+/**
+ * The longest cookie value the fast path verifies (S14-04): a Better Auth token is 32 chars, the signature 44, so a
+ * URI-encoded value is well under 128; anything longer goes to Better Auth without being decoded or hashed here.
+ */
+export const SIGNED_COOKIE_MAX = 512;
+
 /** The session token of a signed cookie value (better-call's `<token>.<base64 HMAC-SHA256>`), or `null`. */
 export function verifiedToken(raw: string, secret: string): string | null {
+  if (raw.length > SIGNED_COOKIE_MAX) return null;
   let value: string;
   try {
     value = decodeURIComponent(raw);
@@ -63,7 +71,7 @@ interface SessionRow extends Record<string, unknown> {
  * and a live, unexpired session. Anything else (`undefined`) goes through Better Auth, which also clears an expired
  * session exactly as before.
  */
-async function fastSubjectOf(wiring: AuthWiring, raw: string): Promise<RealtimeSubject | undefined> {
+async function fastSessionOf(wiring: AuthWiring, raw: string): Promise<RealtimeSubject | undefined> {
   const auth = wiring.instance();
   const token = verifiedToken(raw, (await auth.$context).secret);
   if (token === null) return undefined;
@@ -74,25 +82,35 @@ async function fastSubjectOf(wiring: AuthWiring, raw: string): Promise<RealtimeS
     [token],
   );
   const row = res.rows[0];
-  // Better Auth compares the expiry with the wall clock too (`expiresAt < new Date()`).
-  if (row === undefined || !(row.expires_at instanceof Date) || row.expires_at.getTime() < Date.now()) return undefined;
+  // Session expiry is wall time on purpose: Better Auth compares it with the wall clock too (`expiresAt < new Date()`),
+  // so the virtual test clock must not change which path answers.
+  if (row === undefined || !(row.expires_at instanceof Date) || row.expires_at.getTime() < realClock.now()) {
+    return undefined;
+  }
   if (!SUBJECT_ID.test(row.id)) return undefined;
   return { kind: row.is_anonymous === true ? 'guest' : 'account', id: row.id };
 }
 
-/** The subject of the session cookie in `headers`, or `null`. */
-export async function sessionSubjectOf(wiring: AuthWiring, headers: Headers): Promise<RealtimeSubject | null> {
+/**
+ * The answer of the fast path for `headers`: `null` (no session cookie: no subject, nothing read), the subject (a
+ * valid signature and a live session), or `undefined` — Better Auth must decide. Exported for the equivalence test
+ * against `auth.api.getSession` (`session-subjects-equivalence.int`).
+ */
+export async function fastSubjectOf(wiring: AuthWiring, headers: Headers): Promise<RealtimeSubject | null | undefined> {
   const cookie = headers.get('cookie') ?? '';
   // Cheap pre-check: a request without any session cookie never builds or reads Better Auth.
   if (!cookie.includes(SESSION_COOKIE_SUFFIX)) return null;
-  const auth = wiring.instance();
-  const name = await sessionCookieName(auth);
+  const name = await sessionCookieName(wiring.instance());
   if (!hasCookie(cookie, name)) return null;
   const raw = cookieValue(cookie, name);
-  if (raw !== undefined && raw !== '') {
-    const fast = await fastSubjectOf(wiring, raw);
-    if (fast !== undefined) return fast;
-  }
+  return raw !== undefined && raw !== '' ? fastSessionOf(wiring, raw) : undefined;
+}
+
+/** The subject of the session cookie in `headers`, or `null`. */
+export async function sessionSubjectOf(wiring: AuthWiring, headers: Headers): Promise<RealtimeSubject | null> {
+  const fast = await fastSubjectOf(wiring, headers);
+  if (fast !== undefined) return fast;
+  const auth = wiring.instance();
   const found = await auth.api.getSession({ headers, query: { disableRefresh: true } });
   if (found === null) return null;
   const id = found.user.id;
