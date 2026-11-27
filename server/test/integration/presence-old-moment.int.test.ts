@@ -89,7 +89,7 @@ afterAll(async () => {
     await pool.query(`DELETE FROM ${t} WHERE season = $1`, [SEASON]);
   await pool.query('DELETE FROM users WHERE created_at >= $1', [started]);
   await pool.end();
-  for (const p of ['pr:mk:', 'pr:pre:', 'pr:in:', 'pr:cnt:pre:', 'pr:cnt:in:']) await redis.deleteByPrefix(`${p}${SEASON}:`);
+  for (const p of ['pr:mk:', 'pr:pre:', 'pr:in:', 'pr:cnt:pre:', 'pr:cnt:in:', 'pr:ev:', 'pr:eva:']) await redis.deleteByPrefix(`${p}${SEASON}:`);
   await redis.close();
 });
 

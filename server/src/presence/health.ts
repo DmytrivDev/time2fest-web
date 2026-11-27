@@ -10,7 +10,7 @@
  * Every `downtime` record alarms once (`DowntimeNotifier`); the tick also sweeps records whose alarm did not go out.
  * Time comes only from the caller (`now`, `group.now`).
  */
-import { finaliseDueAt, healthOf, samplesSpanOf, type HealthSample } from '../domain/presence/healthSigns';
+import { finaliseDueAt, healthOf, isRateDropOnly, samplesSpanOf, type HealthSample } from '../domain/presence/healthSigns';
 import { windowOf } from '../domain/presence/window';
 import type { Alarm } from '../ports';
 import type { MomentActionRow } from '../scheduler/ports';
@@ -111,6 +111,13 @@ export function createFinaliser(deps: FinaliserDeps): Finaliser {
         deps.windows.counts({ season, eventId, momentMs }),
       ]);
       verdict = healthOf({ eventId, moment: momentMs, samples: rows.map(sampleOf), counters, downtimes: downtimeRows.map(healthDowntimeOf) });
+      // S14-01: a `beat-rate-drop`-only record grants a downtime stamp only to subjects with pre-window evidence, so
+      // the evidence must be complete and anchored first. Counters that could not be read (the fast store looked
+      // healthy otherwise) are a failed read: retried on the next tick, never recorded as rate-drop-only (AC-22).
+      if (isRateDropOnly(verdict.signs)) {
+        if (counters === null) return failed();
+        await deps.windows.anchorEvidence({ season, eventId, momentMs }, now);
+      }
     } catch {
       return failed();
     }

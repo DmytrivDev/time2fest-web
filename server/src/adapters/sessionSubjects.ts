@@ -62,7 +62,11 @@ interface SessionRow extends Record<string, unknown> {
   id: string;
   is_anonymous: boolean | null;
   expires_at: Date;
+  created_ms: number | string | null;
 }
+
+/** Receives `users.created_at` (ms) of a subject the fast path just read (S14-10: primes the presence age cache). */
+export type SubjectCreatedHint = (subjectId: string, createdAtMs: number) => void;
 
 /**
  * The fast path of the subject read (SPEC-14 NFR-1/NFR-2: Better Auth's `getSession` was about a quarter of a beat's
@@ -71,13 +75,14 @@ interface SessionRow extends Record<string, unknown> {
  * and a live, unexpired session. Anything else (`undefined`) goes through Better Auth, which also clears an expired
  * session exactly as before.
  */
-async function fastSessionOf(wiring: AuthWiring, raw: string): Promise<RealtimeSubject | undefined> {
+async function fastSessionOf(wiring: AuthWiring, raw: string, hint?: SubjectCreatedHint): Promise<RealtimeSubject | undefined> {
   const auth = wiring.instance();
   const token = verifiedToken(raw, (await auth.$context).secret);
   if (token === null) return undefined;
   const pool = await authPool({ auth: wiring });
   const res = await pool.query<SessionRow>(
-    `SELECT u.id::text AS id, u.is_anonymous, s.expires_at FROM user_sessions s JOIN users u ON u.id = s.user_id
+    `SELECT u.id::text AS id, u.is_anonymous, s.expires_at, (EXTRACT(EPOCH FROM u.created_at) * 1000)::float8 AS created_ms
+     FROM user_sessions s JOIN users u ON u.id = s.user_id
      WHERE s.token = $1`,
     [token],
   );
@@ -88,6 +93,15 @@ async function fastSessionOf(wiring: AuthWiring, raw: string): Promise<RealtimeS
     return undefined;
   }
   if (!SUBJECT_ID.test(row.id)) return undefined;
+  if (hint && row.created_ms !== null && row.created_ms !== undefined) {
+    const ms = Number(row.created_ms);
+    // A hint never fails the subject read.
+    try {
+      if (Number.isFinite(ms)) hint(row.id, ms);
+    } catch {
+      /* ignore */
+    }
+  }
   return { kind: row.is_anonymous === true ? 'guest' : 'account', id: row.id };
 }
 
@@ -96,19 +110,19 @@ async function fastSessionOf(wiring: AuthWiring, raw: string): Promise<RealtimeS
  * valid signature and a live session), or `undefined` — Better Auth must decide. Exported for the equivalence test
  * against `auth.api.getSession` (`session-subjects-equivalence.int`).
  */
-export async function fastSubjectOf(wiring: AuthWiring, headers: Headers): Promise<RealtimeSubject | null | undefined> {
+export async function fastSubjectOf(wiring: AuthWiring, headers: Headers, hint?: SubjectCreatedHint): Promise<RealtimeSubject | null | undefined> {
   const cookie = headers.get('cookie') ?? '';
   // Cheap pre-check: a request without any session cookie never builds or reads Better Auth.
   if (!cookie.includes(SESSION_COOKIE_SUFFIX)) return null;
   const name = await sessionCookieName(wiring.instance());
   if (!hasCookie(cookie, name)) return null;
   const raw = cookieValue(cookie, name);
-  return raw !== undefined && raw !== '' ? fastSessionOf(wiring, raw) : undefined;
+  return raw !== undefined && raw !== '' ? fastSessionOf(wiring, raw, hint) : undefined;
 }
 
 /** The subject of the session cookie in `headers`, or `null`. */
-export async function sessionSubjectOf(wiring: AuthWiring, headers: Headers): Promise<RealtimeSubject | null> {
-  const fast = await fastSubjectOf(wiring, headers);
+export async function sessionSubjectOf(wiring: AuthWiring, headers: Headers, hint?: SubjectCreatedHint): Promise<RealtimeSubject | null> {
+  const fast = await fastSubjectOf(wiring, headers, hint);
   if (fast !== undefined) return fast;
   const auth = wiring.instance();
   const found = await auth.api.getSession({ headers, query: { disableRefresh: true } });
@@ -119,11 +133,11 @@ export async function sessionSubjectOf(wiring: AuthWiring, headers: Headers): Pr
 }
 
 /** `SubjectResolver` over the auth wiring of the deps (read lazily: tests replace `deps.auth` after `createDeps`). */
-export function createSessionSubjects(auth: () => AuthWiring | undefined): SubjectResolver {
+export function createSessionSubjects(auth: () => AuthWiring | undefined, hint?: SubjectCreatedHint): SubjectResolver {
   return {
     async resolve(req) {
       const wiring = auth();
-      return wiring === undefined ? null : sessionSubjectOf(wiring, req.headers);
+      return wiring === undefined ? null : sessionSubjectOf(wiring, req.headers, hint);
     },
   };
 }

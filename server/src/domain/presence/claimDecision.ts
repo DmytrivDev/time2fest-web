@@ -6,6 +6,10 @@
  *   accepted old window → ok (`presence` / `old-moment`); a downtime over a window, or a window without a record past
  *   its deadline → ok (`downtime` / `old-moment`); a `healthy` record for every window → `forbidden/no-presence`;
  *   otherwise `unavailable` until the expected finalisation (1 000 … 30 000 ms).
+ * S14-01: a `downtime` record whose ONLY sign is `beat-rate-drop` (and no downtime row over the window) grants only a
+ * subject with pre-window evidence for the event; evidence known absent counts like a `healthy` record
+ * (`no-presence`), evidence unknown (the store lost or cannot read it) → `unavailable` 5 000 ms — never `no-presence`
+ * on uncertainty.
  * Inputs are server facts only: the client's `at` / `openedAt` and the pass are NOT part of the input type, so they
  * cannot change the outcome (AC-11, AC-34). `now` is passed in; nothing here reads a clock.
  */
@@ -30,6 +34,13 @@ export interface ClaimWindow {
   readonly record: 'healthy' | 'downtime' | null;
   /** A manual or edge-region downtime record applies to this window. */
   readonly downtime: boolean;
+  /** The record's only sign is `beat-rate-drop` (S14-01). Absent → `false`. */
+  readonly rateDropOnly?: boolean;
+  /**
+   * The subject beat this event in the window's pre span: `true` / `false` (the evidence is complete), `null` unknown.
+   * Read only for a rate-drop-only window; absent → unknown.
+   */
+  readonly preEvidence?: boolean | null;
 }
 
 export interface ClaimInput {
@@ -75,6 +86,19 @@ const clamp = (v: number, lo: number, hi: number): number => Math.min(hi, Math.m
 export function windowIsDowntime(w: ClaimWindow, now: number): boolean {
   return w.record === 'downtime' || w.downtime || (w.record === null && now >= missingRecordAt(w.moment));
 }
+
+/** A rate-drop-only downtime record with no downtime row over the window: it grants only with evidence (S14-01). */
+export const needsEvidence = (w: ClaimWindow): boolean => w.record === 'downtime' && w.rateDropOnly === true && !w.downtime;
+
+/** The window grants a downtime stamp to this subject. */
+export function windowGrantsDowntime(w: ClaimWindow, now: number): boolean {
+  if (!windowIsDowntime(w, now)) return false;
+  return !needsEvidence(w) || w.preEvidence === true;
+}
+
+/** The window refuses this subject for good: `healthy`, or rate-drop-only with evidence known absent. */
+const windowRefuses = (w: ClaimWindow): boolean =>
+  !w.downtime && (w.record === 'healthy' || (needsEvidence(w) && w.preEvidence === false));
 
 function grantFor(w: ClaimWindow, current: number, presenceSource: PresenceSource, kindAtCurrent: ClaimGrantKind): ClaimGrant {
   const atCurrent = w.moment === current;
@@ -122,11 +146,15 @@ export function claimDecision(input: ClaimInput): ClaimDecision {
   const proven = windows.find((w) => w.proofSource !== null);
   if (proven) return { kind: 'grant', grant: grantFor(proven, current, proven.proofSource as PresenceSource, 'presence') };
 
-  const down = windows.find((w) => windowIsDowntime(w, now));
+  const down = windows.find((w) => windowGrantsDowntime(w, now));
   if (down) return { kind: 'grant', grant: grantFor(down, current, input.source, 'downtime') };
 
-  if (windows.every((w) => w.record === 'healthy')) return { kind: 'refuse', error: { code: 'forbidden', reason: 'no-presence' } };
+  if (windows.every(windowRefuses)) return { kind: 'refuse', error: { code: 'forbidden', reason: 'no-presence' } };
 
+  // Unknown evidence of a rate-drop-only window: the store answer is retried like a database read (AC-26).
+  if (windows.some((w) => needsEvidence(w) && w.preEvidence !== true && w.preEvidence !== false)) {
+    return { kind: 'refuse', error: { code: 'unavailable', retryAfterMs: CLAIM_DB_RETRY_MS } };
+  }
   const due = Math.max(...windows.filter((w) => w.record === null).map((w) => finaliseDueAt(w.moment)));
   return { kind: 'refuse', error: { code: 'unavailable', retryAfterMs: clamp(due - now, CLAIM_RETRY_MIN_MS, CLAIM_RETRY_MAX_MS) } };
 }

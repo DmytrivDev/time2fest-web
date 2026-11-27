@@ -149,11 +149,12 @@ beforeAll(async () => {
 afterAll(async () => {
   presenceFaults.reset();
   if (h) await h.call('/api/_test/clock', { body: { at: Date.now(), speed: 1, frozen: false } });
+  await pool.query('DELETE FROM stamps WHERE season = $1', [SEASON]);
   for (const t of ['presence_window_health', 'presence_downtimes', 'presence_event_moments', 'presence_proofs']) await pool.query(`DELETE FROM ${t} WHERE season = $1`, [SEASON]);
   await pool.query('DELETE FROM presence_samples WHERE at >= $1 AND at <= $2', [String(B - HOUR), String(B + 9 * HOUR)]);
   await pool.query('DELETE FROM users WHERE created_at >= $1', [started]);
   await pool.end();
-  for (const p of ['pr:mk:', 'pr:pre:', 'pr:in:', 'pr:cnt:pre:', 'pr:cnt:in:']) await redis.deleteByPrefix(`${p}${SEASON}:`);
+  for (const p of ['pr:mk:', 'pr:pre:', 'pr:in:', 'pr:cnt:pre:', 'pr:cnt:in:', 'pr:ev:', 'pr:eva:']) await redis.deleteByPrefix(`${p}${SEASON}:`);
   await redis.close();
 });
 
@@ -248,6 +249,39 @@ describe('downtime signs (AC-16, AC-17, AC-21)', () => {
     await rateCase('rateDrop', established, 20);
     await expectOnly('rateDrop', ['beat-rate-drop']);
   }, 240_000);
+
+  it('beat-rate-drop alone: only pre-window evidence or a proof grants; evidence lost → unavailable (S14-01)', async () => {
+    type ClaimBody = { ok: boolean; error?: { code: string; reason?: string; retryAfterMs?: number } };
+    const claim = async (g: Guest): Promise<{ status: number; body: ClaimBody }> => {
+      const res = await h.call('/api/me/stamps', { body: { eventId: ev('rateDrop'), source: 'tv', at: CASES.rateDrop }, jar: g.jar, ip: g.ip });
+      return { status: res.status, body: (await res.json()) as ClaimBody };
+    };
+    const kindOf = async (g: Guest): Promise<string | undefined> =>
+      (await pool.query<{ grant_kind: string }>('SELECT grant_kind FROM stamps WHERE subject_id = $1 AND season = $2', [await subjectOf(g), SEASON])).rows[0]?.grant_kind;
+    const subjectOf = async (g: Guest): Promise<string> =>
+      ((await (await writeProbe(h, { jar: g.jar, ip: g.ip })).json()) as { value: { subject: string } }).value.subject;
+    const [none] = await guests(1);
+    const anchor = `pr:eva:${SEASON}:${ev('rateDrop')}:${CASES.rateDrop}`;
+    expect(await redis.get(anchor)).toBe('1');
+
+    // The evidence store lost the window (no anchor): never no-presence on uncertainty.
+    await redis.del(anchor);
+    const lost = await claim(none!);
+    expect(lost.status).toBe(503);
+    expect(lost.body.error).toMatchObject({ code: 'unavailable', retryAfterMs: 5_000 });
+    await redis.set(anchor, '1', HOUR);
+
+    // No beats at all → no-presence.
+    const refused = await claim(none!);
+    expect(refused.status).toBe(403);
+    expect(refused.body.error).toMatchObject({ code: 'forbidden', reason: 'no-presence' });
+    // Beat before the window only (established[59]: pre, not inside) → downtime.
+    expect((await claim(established[59]!)).status).toBe(200);
+    expect(await kindOf(established[59]!)).toBe('downtime');
+    // A proof (established[0] beat inside the window) → presence.
+    expect((await claim(established[0]!)).status).toBe(200);
+    expect(await kindOf(established[0]!)).toBe('presence');
+  }, 60_000);
 
   it('60 established before / 40 inside → healthy; 30 before / 2 inside → healthy (below 50, S14-01)', async () => {
     await rateCase('rateKeep', established, 40);

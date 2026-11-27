@@ -75,6 +75,12 @@ export interface HealthVerdict {
   readonly signs: readonly HealthSign[];
 }
 
+/**
+ * The record's only sign is `beat-rate-drop` (S14-01): the window is a downtime for claims only for subjects with
+ * pre-window evidence or a proof; any other sign, alone or combined, keeps the full downtime semantics.
+ */
+export const isRateDropOnly = (signs: readonly string[]): boolean => signs.length === 1 && signs[0] === 'beat-rate-drop';
+
 /** Closed intervals overlap. */
 export const overlaps = (aFrom: number, aTo: number, bFrom: number, bTo: number): boolean => aFrom <= bTo && bFrom <= aTo;
 

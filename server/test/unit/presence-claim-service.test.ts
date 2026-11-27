@@ -162,7 +162,7 @@ describe('presence pool timeout (S14-03)', () => {
         store: { record: async () => {}, list: async () => [] },
       }),
       proofs: { record: async () => ({ ok: true, proof: 'exists', via: 'fast' }), recordBeat: async () => ({ ok: true, written: [] }) },
-      windows: { count: async () => true, counts: async () => null },
+      windows: { count: async () => true, counts: async () => null, anchorEvidence: async () => undefined, evidence: async () => null },
       intake,
       faults: createPresenceFaults(),
       random: () => 0.99,

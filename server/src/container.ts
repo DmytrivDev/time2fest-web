@@ -344,7 +344,8 @@ export function createDeps(raw: RawEnv, overrides: DepsOverrides = {}): Deps {
   if (overrides.backupTuning) deps.backupTuning = overrides.backupTuning;
   if (ops && !deps.opsRunner) deps.opsRunner = createOpsRunner(opsRunnerDepsOf(deps, ops, payload, backupDepsOf(deps)));
   // Realtime (SPEC-06 C5): the subject of the session cookie (SPEC-10 AC-30); `deps.auth` read lazily, tests replace it.
-  deps.subjects = overrides.subjects ?? createSessionSubjects(() => deps.auth);
+  // S14-10: the fast path's `users.created_at` primes the presence age cache, so a beat makes no extra query.
+  deps.subjects = overrides.subjects ?? createSessionSubjects(() => deps.auth, (id, ms) => presenceOf(deps).subjectAges.prime(id, ms));
   // Sign-in (SPEC-10): the Better Auth instance is built on first use (no connection, no timer here).
   deps.auth = overrides.auth ?? createAuthWiring({ env, redis: deps.redis, getDeps: () => deps });
   // Mail (SPEC-10 W20): pooled SMTP transports, no connection until the first send; absent without SMTP_HOST.

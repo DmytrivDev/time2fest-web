@@ -13,13 +13,14 @@ import { ratingCloseAt, type PresenceSource } from '@time2fest/rules/time';
 import { stampViewOf, type StampCatalog } from '../domain/passport/stampView';
 import { CLAIM_DB_RETRY_MS, claimDecision, claimPrecheck, type ClaimGrant, type ClaimRefusal, type ClaimWindow } from '../domain/presence/claimDecision';
 import { validEvent } from '../domain/presence/eventValidity';
-import { downtimeApplies } from '../domain/presence/healthSigns';
+import { downtimeApplies, isRateDropOnly } from '../domain/presence/healthSigns';
 import { isPresenceSource, sourceRank } from '../domain/presence/source';
 import { acceptedMomentsOf } from '../domain/presence/window';
 import type { RightsQuery } from '../rights/ports';
 import type { PresenceCatalogView } from './beats';
 import { healthDowntimeOf } from './downtime';
 import { assertDbWritable, presenceFaults, type PresenceFaultSwitch } from './faults';
+import type { WindowIntake } from './intake';
 import type { MomentBook } from './moments';
 import type { DowntimeStore, HealthStore, OldMomentLogRow, ProofStore, RightsDb, StampRow } from './ports';
 
@@ -69,6 +70,8 @@ export interface StampServiceDeps {
   health: Pick<HealthStore, 'get'>;
   downtimes: Pick<DowntimeStore, 'list'>;
   store: StampSqlStore;
+  /** Pre-window evidence of a rate-drop-only window (S14-01); absent → unknown (`unavailable`, never `no-presence`). */
+  evidence?: Pick<WindowIntake, 'evidence'>;
   faults?: PresenceFaultSwitch;
   /** Consequences of a fresh grant (P9); a failure never undoes the grant. */
   onGranted?(granted: GrantedStamp): Promise<void>;
@@ -115,14 +118,22 @@ export function createStampService(deps: StampServiceDeps): StampService {
       const accepted = acceptedMomentsOf(event.momentMs, [...seen, ...proofs.keys()], now, view.zones);
       const downtimes = downtimeRows.map(healthDowntimeOf);
       const records = await Promise.all(accepted.map((moment) => deps.health.get(db, season, eventId, moment)));
-      accepted.forEach((moment, i) => {
-        windows.push({
-          moment,
-          proofSource: proofs.get(moment) ?? null,
-          record: records[i]?.state ?? null,
-          downtime: downtimes.some((d) => downtimeApplies(d, eventId, moment)),
-        });
-      });
+      await Promise.all(
+        accepted.map(async (moment, i) => {
+          const proofSource = proofs.get(moment) ?? null;
+          const record = records[i]?.state ?? null;
+          const downtime = downtimes.some((d) => downtimeApplies(d, eventId, moment));
+          const rateDropOnly = record === 'downtime' && isRateDropOnly(records[i]?.signs ?? []);
+          // S14-01: the evidence is read only where it decides (a rate-drop-only window, no proof, no downtime row).
+          const preEvidence =
+            rateDropOnly && proofSource === null && !downtime
+              ? deps.evidence
+                ? await deps.evidence.evidence({ season, eventId, momentMs: moment }, subjectId)
+                : null
+              : null;
+          windows[i] = { moment, proofSource, record, downtime, rateDropOnly, preEvidence };
+        }),
+      );
     }
     const decision = claimDecision({
       now,

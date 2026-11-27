@@ -144,6 +144,46 @@ describe('refusals', () => {
   });
 });
 
+describe('beat-rate-drop as the only sign (S14-01)', () => {
+  const now = finaliseDueAt(M) + 1_000;
+  const rd = (p: Partial<ClaimWindow> = {}): ClaimWindow => win(M, { record: 'downtime', rateDropOnly: true, ...p });
+  const kindOf = (d: ReturnType<typeof claimDecision>) => (d.kind === 'grant' ? d.grant.kind : d.kind === 'refuse' ? d.error : d.kind);
+
+  it('pre-window evidence → downtime grant with the body source', () => {
+    const d = claimDecision(input({ now, windows: [rd({ preEvidence: true })] }));
+    expect(d.kind === 'grant' && d.grant).toMatchObject({ kind: 'downtime', presenceSource: 'tv', moment: M });
+  });
+
+  it('evidence known absent → no-presence; a proof still grants presence', () => {
+    expect(kindOf(claimDecision(input({ now, windows: [rd({ preEvidence: false })] })))).toEqual({ code: 'forbidden', reason: 'no-presence' });
+    expect(kindOf(claimDecision(input({ now, windows: [rd({ preEvidence: false, proofSource: 'country' })] })))).toBe('presence');
+  });
+
+  it('evidence unknown (null / not read) → unavailable 5 000, never no-presence', () => {
+    for (const w of [rd({ preEvidence: null }), rd()]) {
+      expect(kindOf(claimDecision(input({ now, windows: [w] })))).toEqual({ code: 'unavailable', retryAfterMs: CLAIM_DB_RETRY_MS });
+    }
+  });
+
+  it('a downtime row over the window, or any other sign, keeps the full downtime semantics', () => {
+    expect(kindOf(claimDecision(input({ now, windows: [rd({ preEvidence: false, downtime: true })] })))).toBe('downtime');
+    expect(kindOf(claimDecision(input({ now, windows: [win(M, { record: 'downtime', rateDropOnly: false, preEvidence: false })] })))).toBe('downtime');
+  });
+
+  it('after the rating close a rate-drop-only window is claim-closed whatever the evidence', () => {
+    expect(kindOf(claimDecision(input({ now: CLOSE + PRESENCE_DELTA_MS + 1, windows: [rd({ preEvidence: null })] })))).toEqual({
+      code: 'conflict',
+      reason: 'claim-closed',
+    });
+  });
+
+  it('evidence absent in the current window but a full downtime in an old one → old-moment', () => {
+    const at = Math.min(now, CLOSE);
+    const d = claimDecision(input({ now: at, windows: [rd({ preEvidence: false }), win(M_OLD, { record: 'downtime' })] }));
+    expect(kindOf(d)).toBe('old-moment');
+  });
+});
+
 describe('old windows end with the celebration (AC-33)', () => {
   it('before the end the old moment is accepted; after it only the current window is judged', () => {
     const before = M + 3_600_000;

@@ -37,7 +37,7 @@ import { createProofWriter, createSqlProofStore, type ProofWriter } from '../pre
 import { createDowntimeNotifier, createDowntimeService, createSqlDowntimeStore, PRESENCE_DOWNTIME_TOPIC, type DowntimeService } from '../presence/downtime';
 import { createFinaliser, createSqlHealthStore, type Finaliser } from '../presence/health';
 import { createSampler, createSqlSampleStore, type Sampler } from '../presence/samples';
-import { createSubjectAges } from '../presence/subjectAges';
+import { createSubjectAges, type SubjectAges } from '../presence/subjectAges';
 import { createSqlStampStore, createStampService, type StampService } from '../presence/stamps';
 import { createAchievementService, createSqlAchievementStore, type AchievementLookups } from '../presence/achievements';
 import { createGrantEvents } from '../presence/events';
@@ -203,6 +203,8 @@ export interface PresenceServices {
   moments: MomentBook;
   intake: NodeIntake;
   windows: WindowIntake;
+  /** `users.created_at` cache of the established-subject rule (S14-01, S14-10); primed by the session fast path. */
+  subjectAges: SubjectAges;
   /** The presence view of the catalog, rebuilt at most every 30 s per `deps`. */
   catalog(now: number): Promise<PresenceCatalogView>;
   /** The intake sampler of this node (ticked by the background job of a server process, or the `presence-tick` door). */
@@ -319,6 +321,7 @@ export function presenceOf(served: Deps): PresenceServices {
       moments,
       intake,
       windows,
+      subjectAges,
       catalog,
       sampler: createSampler({ db, fast, store: sampleStore, intake, nodeId, alarm }),
       finaliser: createFinaliser({ db, store: healthStore, samples: sampleStore, downtimeStore, downtimes, windows, catalog, notifier, alarm, nodeId }),
@@ -332,6 +335,7 @@ export function presenceOf(served: Deps): PresenceServices {
         health: healthStore,
         downtimes: downtimeStore,
         store: stampStore,
+        evidence: windows,
         // Consequences of a fresh stamp (AC-39 .. AC-41): achievements first, then the events with the new keys.
         onGranted: async (granted) => {
           let newKeys: string[] = [];
