@@ -147,6 +147,9 @@ Verify: integration — 60 established subjects beat before the window, 20 insid
 **AC-18 [server]** IF запису стану вікна немає після кінця вікна + 2 хв, THEN the server shall вважати вікно простоєм для підтверджень.
 Verify: integration — finalisation disabled, claim at window end + 3 min without proof → `ok`, grant kind `downtime`.
 
+**AC-18a [server]** IF єдина ознака простою вікна — `beat-rate-drop`, THEN the server shall видавати штамп виду `downtime` лише суб'єктам, що слали пульс цій події в [m − 5 хв; початок вікна) або мають доказ; суб'єкт без пульсу до вікна й без доказу отримує `forbidden`/`no-presence`, а коли свідчення не прочитати (Redis без якоря вікна) — `unavailable` з `retryAfterMs`; за будь-якої іншої ознаки (окремо чи разом) простій діє як раніше — штамп без перевірки присутності (**рішення власника 2026-11-27**, рецензія безпеки S14-01).
+Verify: integration — 60 established pre / 20 inside → `downtime/beat-rate-drop`; pre-window beat only → `ok` `downtime`; no beats → `no-presence`; beat inside → `presence`; anchor deleted → `unavailable`.
+
 **AC-19 [server]** WHERE власник у зрізі адмінки `37-presence`, the server shall давати переглянути записи сезону й додати ручний простій (подія або проміжок часу, причина ≤200 символів) з журналом аудиту, а прибрати чи змінити будь-який запис — ні.
 Verify: integration — owner adds downtime → record `recordedBy: owner`, audit row; delete or edit attempt → `forbidden`; non-owner → `unauthorized`.
 
