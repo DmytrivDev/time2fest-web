@@ -15,6 +15,9 @@ export const internalEvents: CollectionConfig = {
   admin: { hidden: true },
   access: { read: never, create: never, update: never, delete: never },
   timestamps: false,
+  // `publish` reads MAX(version) of one topic under the outbox lock: with only `(topic)` that is a scan of
+  // every row of the topic per event; `(topic, version)` makes it one index probe (SPEC-14 PERF-2).
+  indexes: [{ fields: ['topic', 'version'] }],
   fields: [
     { name: 'topic', type: 'text', required: true, index: true },
     { name: 'version', type: 'number', required: true },
