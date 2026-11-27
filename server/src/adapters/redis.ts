@@ -2,7 +2,7 @@
  * Fast-store adapters (ring 4): the Redis `FastStore` and the in-process one used by the
  * `memory` rate-limit policy (AC-50).
  * - The Redis client is lazy, never queues offline and never retries a command: a request
- *   either reaches Redis now or fails with `DependencyUnavailable`.
+ *   either reaches Redis now or fails with `DependencyUnavailable`. Commands are auto-pipelined.
  * - Every key is under `T2F_REDIS_PREFIX` (applied by the client). `SCAN` does not apply the
  *   client prefix, so `deleteByPrefix` matches the full prefix itself and strips it again
  *   before `UNLINK` (which does apply it).
@@ -41,6 +41,9 @@ export function createRedisStore(vars: RedisStoreVars, opts: { onError?: (err: u
     maxRetriesPerRequest: 0,
     connectTimeout: 500,
     lazyConnect: true,
+    // Commands issued in one event-loop turn go out as one write (SPEC-14 NFR-1/NFR-2: a beat or a claim makes
+    // several small calls; one socket write per call was a large share of the node's CPU under load).
+    enableAutoPipelining: true,
   });
   // Without a listener ioredis prints every reconnect failure; the caller decides what to log.
   client.on('error', (err: unknown) => opts.onError?.(err));

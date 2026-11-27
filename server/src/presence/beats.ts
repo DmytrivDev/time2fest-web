@@ -78,17 +78,19 @@ export function createBeatService(deps: BeatServiceDeps): BeatService {
       }
 
       const proofs: ProofInput[] = [];
+      // The intake counters never fail the beat and do not depend on the proofs: they run alongside the proof writes.
+      const counting: Promise<boolean>[] = [];
       for (const e of valid) {
         const accepted = await deps.moments.accepted(season, e.eventId, e.momentMs, receivedAt, zones);
         for (const momentMs of accepted) {
-          await deps.windows.count({ season, eventId: e.eventId, momentMs }, subjectId, receivedAt);
+          counting.push(deps.windows.count({ season, eventId: e.eventId, momentMs }, subjectId, receivedAt));
         }
         for (const momentMs of windowsContaining(receivedAt, accepted)) {
           proofs.push({ subjectId, season, eventId: e.eventId, momentMs, receivedAt, source });
         }
       }
 
-      const written = await deps.proofs.recordBeat(proofs);
+      const [written] = await Promise.all([deps.proofs.recordBeat(proofs), Promise.all(counting)]);
       if (!written.ok) return { ok: false, retryAfterMs: written.retryAfterMs };
       return { ok: true, nextBeatMs: nextBeatMs(receivedAt, valid.map((e) => e.momentMs)) };
     },

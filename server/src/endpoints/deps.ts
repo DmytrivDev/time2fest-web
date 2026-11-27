@@ -272,10 +272,16 @@ export function presenceOf(served: Deps): PresenceServices {
       nodeId,
     });
     let cat: { at: number; view: PresenceCatalogView; stamps: StampCatalog; lookups: AchievementLookups } | undefined;
+    // One rebuild at a time: under load the beats that find the cache stale share it (no read stampede).
+    let reading: Promise<NonNullable<typeof cat>> | undefined;
     const readCatalog = async (now: number) => {
       if (cat !== undefined && now - cat.at < REFS_TTL_MS && now >= cat.at) return cat;
-      cat = { at: now, ...(await readPresenceCatalog(deps)) };
-      return cat;
+      reading ??= readPresenceCatalog(deps)
+        .then((v) => (cat = { at: now, ...v }))
+        .finally(() => {
+          reading = undefined;
+        });
+      return reading;
     };
     const catalog = async (now: number): Promise<PresenceCatalogView> => (await readCatalog(now)).view;
     const alarm = { raise: (a: Parameters<Deps['alarm']['raise']>[0]) => deps.alarm.raise(a) };
@@ -338,6 +344,7 @@ export function presenceOf(served: Deps): PresenceServices {
       },
       clear() {
         cat = undefined;
+        reading = undefined;
         moments.clear();
       },
       nodeId,

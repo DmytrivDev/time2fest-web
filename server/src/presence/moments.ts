@@ -44,17 +44,28 @@ export function createMomentBook(deps: MomentBookDeps): MomentBook {
     return s;
   };
 
+  /** `<season>
+<event>` → the database read in flight (concurrent beats share it). */
+  const reading = new Map<string, Promise<void>>();
+
   async function seen(season: string, eventId: string, now: number): Promise<number[]> {
     const k = keyOf(season, eventId);
     const last = readAt.get(k);
     if (last === undefined || now - last >= MOMENTS_CACHE_MS || now < last) {
-      const rows = await deps.store.list(await deps.db(), season, eventId);
-      const s = setOf(k);
-      for (const r of rows) {
-        const m = Number(r.moment_ms);
-        if (Number.isFinite(m)) s.add(m);
+      let p = reading.get(k);
+      if (p === undefined) {
+        p = (async () => {
+          const rows = await deps.store.list(await deps.db(), season, eventId);
+          const s = setOf(k);
+          for (const r of rows) {
+            const m = Number(r.moment_ms);
+            if (Number.isFinite(m)) s.add(m);
+          }
+          readAt.set(k, now);
+        })().finally(() => reading.delete(k));
+        reading.set(k, p);
       }
-      readAt.set(k, now);
+      await p;
     }
     return [...setOf(k)].sort((a, b) => a - b);
   }
@@ -77,6 +88,7 @@ export function createMomentBook(deps: MomentBookDeps): MomentBook {
     clear() {
       known.clear();
       readAt.clear();
+      reading.clear();
     },
   };
 }

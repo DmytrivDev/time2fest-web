@@ -5,6 +5,8 @@
  * Also the guest start of `25-subject` ([П-6], spike S8): `auth.api.signInAnonymous` with the request's device cookie,
  * so the guest is bound to the device (AC-4); its session cookie gets the clamped expiry like any other (AC-26).
  */
+import { createHmac, timingSafeEqual } from 'node:crypto';
+import { authPool } from '../auth/pool';
 import { clampSessionCookies, sessionCookieName } from '../auth/response';
 import type { AuthWiring } from '../auth/instance';
 import { SUBJECT_ID } from '../domain/realtime/channels';
@@ -17,13 +19,80 @@ function hasCookie(header: string, name: string): boolean {
   return header.split(';').some((p) => p.trim().startsWith(`${name}=`));
 }
 
+/** The raw value of the cookie `name` in a `Cookie` header; `undefined` when absent or sent more than once. */
+function cookieValue(header: string, name: string): string | undefined {
+  let found: string | undefined;
+  for (const part of header.split(';')) {
+    const p = part.trim();
+    if (!p.startsWith(`${name}=`)) continue;
+    // Duplicates: leave the choice to Better Auth's own cookie parser.
+    if (found !== undefined) return undefined;
+    found = p.slice(name.length + 1);
+  }
+  return found;
+}
+
+/** The session token of a signed cookie value (better-call's `<token>.<base64 HMAC-SHA256>`), or `null`. */
+export function verifiedToken(raw: string, secret: string): string | null {
+  let value: string;
+  try {
+    value = decodeURIComponent(raw);
+  } catch {
+    return null;
+  }
+  const dot = value.lastIndexOf('.');
+  if (dot < 1) return null;
+  const token = value.slice(0, dot);
+  const signature = value.slice(dot + 1);
+  if (signature.length !== 44 || !signature.endsWith('=')) return null;
+  const want = createHmac('sha256', secret).update(token).digest();
+  const got = Buffer.from(signature, 'base64');
+  return got.length === want.length && timingSafeEqual(got, want) ? token : null;
+}
+
+interface SessionRow extends Record<string, unknown> {
+  id: string;
+  is_anonymous: boolean | null;
+  expires_at: Date;
+}
+
+/**
+ * The fast path of the subject read (SPEC-14 NFR-1/NFR-2: Better Auth's `getSession` was about a quarter of a beat's
+ * CPU): the signed cookie is verified here and the live session is read with one indexed join, every request — so a
+ * revoked or deleted session stops at once (SPEC-10 AC-27). Only the plain case is answered here: a valid signature
+ * and a live, unexpired session. Anything else (`undefined`) goes through Better Auth, which also clears an expired
+ * session exactly as before.
+ */
+async function fastSubjectOf(wiring: AuthWiring, raw: string): Promise<RealtimeSubject | undefined> {
+  const auth = wiring.instance();
+  const token = verifiedToken(raw, (await auth.$context).secret);
+  if (token === null) return undefined;
+  const pool = await authPool({ auth: wiring });
+  const res = await pool.query<SessionRow>(
+    `SELECT u.id::text AS id, u.is_anonymous, s.expires_at FROM user_sessions s JOIN users u ON u.id = s.user_id
+     WHERE s.token = $1`,
+    [token],
+  );
+  const row = res.rows[0];
+  // Better Auth compares the expiry with the wall clock too (`expiresAt < new Date()`).
+  if (row === undefined || !(row.expires_at instanceof Date) || row.expires_at.getTime() < Date.now()) return undefined;
+  if (!SUBJECT_ID.test(row.id)) return undefined;
+  return { kind: row.is_anonymous === true ? 'guest' : 'account', id: row.id };
+}
+
 /** The subject of the session cookie in `headers`, or `null`. */
 export async function sessionSubjectOf(wiring: AuthWiring, headers: Headers): Promise<RealtimeSubject | null> {
   const cookie = headers.get('cookie') ?? '';
   // Cheap pre-check: a request without any session cookie never builds or reads Better Auth.
   if (!cookie.includes(SESSION_COOKIE_SUFFIX)) return null;
   const auth = wiring.instance();
-  if (!hasCookie(cookie, await sessionCookieName(auth))) return null;
+  const name = await sessionCookieName(auth);
+  if (!hasCookie(cookie, name)) return null;
+  const raw = cookieValue(cookie, name);
+  if (raw !== undefined && raw !== '') {
+    const fast = await fastSubjectOf(wiring, raw);
+    if (fast !== undefined) return fast;
+  }
   const found = await auth.api.getSession({ headers, query: { disableRefresh: true } });
   if (found === null) return null;
   const id = found.user.id;
